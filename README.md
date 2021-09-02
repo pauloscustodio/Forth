@@ -1,2 +1,30 @@
-# Forth
-My C implementation of Jonesforth by Richard W.M. Jones <rich@annexia.org> http://annexia.org/forth
+Forth
+-----
+
+This is a C implementation of a ANS Forth interpreter. It implements all the 
+CORE and CORE-EXT words. It is intended to be be used as a script interpreter, 
+i.e. calling ABORT exits the interpreter instead of restarting the QUIT loop.
+
+Why another Forth interpreter? Just for fun!
+
+Output of WORDS:
+```
+QUIT ENVIRONMENT? WORDS .RS ~~ .S ABORT" ABORT BYE ENDCASE ENDOF OF CASE 
+RECURSE REPEAT WHILE UNTIL AGAIN BEGIN UNLOOP LEAVE +LOOP LOOP ?DO DO THEN ELSE 
+IF [COMPILE] COMPILE, IMMEDIATE POSTPONE ['] ' \ ( ] [ DOES> LITERAL CONSTANT 
+TO VALUE VARIABLE CREATE ; :NONAME : EXIT EXECUTE EVALUATE INTERPRET U.R .R U. 
+. #> SIGN HOLD #S # <# SPACES SPACE CR EMIT TYPE RESTORE-INPUT SAVE-INPUT QUERY 
+KEY EXPECT ACCEPT REFILL SOURCE-ID SOURCE SPAN >IN #TIB #IN TIB .( C" S" ." 
+COUNT CONVERT >NUMBER NUMBER NUMBER? DPL [CHAR] CHAR WORD PARSE-WORD PARSE 
+MARKER UNUSED ALLOT ALIGNED ALIGN >BODY FIND LATEST HERE C, , 2R@ 2R> 2>R J I 
+R@ RSP! RSP@ RDROP R> >R -2ROT 2ROT 2OVER 2DUP 2SWAP 2DROP TUCK ROLL PICK NIP 
+DEPTH -ROT ROT OVER ?DUP DUP SWAP DROP MOVE ERASE FILL 2@ 2! C@ C! +! @ ! 0>= 
+0> 0<= 0< 0<> 0= U>= U> U<= U< >= > <= < <> = RSHIFT LSHIFT INVERT XOR OR AND 
+WITHIN CELLS CELL+ CHARS CHAR+ MIN MAX DABS ABS UM* S>D NEGATE 2/ 2* 1- 1+ M* 
+SM/REM UM/MOD FM/MOD */MOD */ /MOD MOD / - * + HEX DECIMAL BASE STATE TRUE 
+FALSE PAD R0 S0 BL 
+```
+
+Copyright (c) Paulo Custodio, 2020-2021
+
+License: [GPL3](https://www.gnu.org/licenses/gpl-3.0.html) 

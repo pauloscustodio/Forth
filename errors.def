@@ -1,0 +1,35 @@
+//-----------------------------------------------------------------------------
+// C implementation of a Forth interpreter
+// Copyright (c) Paulo Custodio, 2020-2021
+// License: GPL3 https://www.gnu.org/licenses/gpl-3.0.html
+//-----------------------------------------------------------------------------
+
+#ifndef X
+#define X(code, message)
+#endif
+
+X(ErrorDataStackOveflow, "data stack overflow")
+X(ErrorDataStackUnderflow, "data stack underflow")
+X(ErrorDivisionByZero, "division by zero")
+X(ErrorInputBufferOverflow, "input buffer overflow")
+X(ErrorInvalidNumber, "invalid number")
+X(ErrorMemoryAddressRange, "memory address range")
+X(ErrorMemoryAlignment, "memory alignment")
+X(ErrorMemoryOverflow, "memory overflow")
+X(ErrorNameExpected, "name expected")
+X(ErrorNameTooLong, "name too long")
+X(ErrorNestedColonDefinition, "nested colon definition")
+X(ErrorNumberOutputOverflow, "number output overflow")
+X(ErrorOpenFile, "open file")
+X(ErrorOutOfMemory, "out of memory")
+X(ErrorReturnStackOveflow, "return stack overflow")
+X(ErrorReturnStackUnderflow, "return stack underflow")
+X(ErrorSemicolonWithoutColon, "; without :")
+X(ErrorStringTooLong, "string too long")
+X(ErrorStructStackOveflow, "struct stack overflow")
+X(ErrorStructStackUnderflow, "struct stack underflow")
+X(ErrorTooManyOpenFiles, "too many open files")
+X(ErrorWordNotDefined, "word not defined")
+X(ErrorInvalidForthCode, "invalid Forth code")
+
+#undef X

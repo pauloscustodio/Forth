@@ -1,0 +1,344 @@
+//-----------------------------------------------------------------------------
+// C implementation of a Forth interpreter
+// Copyright (c) Paulo Custodio, 2020-2021
+// License: GPL3 https://www.gnu.org/licenses/gpl-3.0.html
+//-----------------------------------------------------------------------------
+
+#ifndef CONST
+#define CONST(word, name, flags, value)
+#endif
+
+#ifndef VAR
+#define VAR(word, name, flags, value)
+#endif
+
+#ifndef CODE
+#define CODE(word, name, flags, c_code)
+#endif
+
+#ifndef FORTH
+#define FORTH(word, name, flags, text)
+#endif
+
+//-----------------------------------------------------------------------------
+// constants
+//-----------------------------------------------------------------------------
+CONST("BL", BL, 0, BL)
+CONST("S0", S0, 0, S0)
+CONST("R0", R0, 0, R0)
+CONST("PAD", PAD, 0, user->pad - mem)
+CONST("FALSE", FALSE, 0, F_FALSE)
+CONST("TRUE", TRUE, 0, F_TRUE)
+
+//-----------------------------------------------------------------------------
+// variables
+//-----------------------------------------------------------------------------
+VAR("STATE", STATE, 0, STATE_INTERPRET)
+VAR("BASE", BASE, 0, 10)
+CODE("DECIMAL", DECIMAL, 0, user->BASE = 10)
+CODE("HEX", HEX, 0, user->BASE = 16)
+
+//-----------------------------------------------------------------------------
+// arithmetic
+//-----------------------------------------------------------------------------
+CODE("+", PLUS, 0, push(pop() + pop()))
+CODE("*", MULT, 0, push(pop()* pop()))
+CODE("-", MINUS, 0, int b = pop(); push(pop() - b))
+CODE("/", DIV, 0, int b = pop(); push(f_div(pop(), b)))
+CODE("MOD", MOD, 0, int b = pop(); push(f_mod(pop(), b)))
+CODE("/MOD", DIV_MOD, 0, f_div_mod())
+CODE("*/", MULT_DIV, 0, f_mul_div())
+CODE("*/MOD", MULT_DIV_MOD, 0, f_mul_div_mod())
+CODE("FM/MOD", FM_DIV_MOD, 0, f_fm_div_mod())
+CODE("UM/MOD", UM_DIV_MOD, 0, f_um_div_mod())
+CODE("SM/REM", SM_DIV_REM, 0, f_sm_div_rem())
+CODE("M*", M_STAR, 0, dint b = pop(); dint a = pop(); dpush(a* b))
+CODE("1+", ONE_PLUS, 0, push(pop() + 1))
+CODE("1-", ONE_MINUS, 0, push(pop() - 1))
+CODE("2*", TWO_MULT, 0, push(pop() * 2))
+CODE("2/", TWO_DIV, 0, push(f_div(pop(), 2)))
+CODE("NEGATE", NEGATE, 0, push(-pop()))
+CODE("S>D", S_TO_D, 0, dpush(pop()))
+CODE("UM*", UM_MULT, 0, udint b = (uint)pop(); udint a = (uint)pop(); dpush(a* b))
+CODE("ABS", ABS, 0, push(f_abs(pop())))
+CODE("DABS", DABS, 0, dpush(f_dabs(dpop())))
+CODE("MAX", FMAX, 0, push(f_max(pop(), pop())))
+CODE("MIN", FMIN, 0, push(f_min(pop(), pop())))
+CODE("CHAR+", CHAR_PLUS, 0, push(pop() + 1))
+CODE("CHARS", CHARS, 0, push(pop() * 1))
+CODE("CELL+", CELL_PLUS, 0, push(pop() + CELL_SZ))
+CODE("CELLS", CELLS, 0, push(pop()* CELL_SZ))
+CODE("WITHIN", WITHIN, 0, f_within())
+
+//-----------------------------------------------------------------------------
+// logical
+//-----------------------------------------------------------------------------
+CODE("AND", AND, 0, push(pop()& pop()))
+CODE("OR", OR, 0, push(pop() | pop()))
+CODE("XOR", XOR, 0, push(pop() ^ pop()))
+CODE("INVERT", INVERT, 0, push(~pop()))
+CODE("LSHIFT", LSHIFT, 0, int n = pop(); push(pop() << n))
+CODE("RSHIFT", RSHIFT, 0, int n = pop(); push(pop() >> n))
+
+//-----------------------------------------------------------------------------
+// comparison
+//-----------------------------------------------------------------------------
+CODE("=", EQUAL, 0, push(F_BOOL(pop() == pop())))
+CODE("<>", DIFFERENT, 0, push(F_BOOL(pop() != pop())))
+CODE("<", LESS, 0, int b = pop(); push(F_BOOL(pop() < b)))
+CODE("<=", LESS_EQUAL, 0, int b = pop(); push(F_BOOL(pop() <= b)))
+CODE(">", GREATER, 0, int b = pop(); push(F_BOOL(pop() > b)))
+CODE(">=", GREATER_EQUAL, 0, int b = pop(); push(F_BOOL(pop() >= b)))
+
+CODE("U<", U_LESS, 0, unsigned int b = pop(); push(F_BOOL((unsigned)pop() < b)))
+CODE("U<=", U_LESS_EQUAL, 0, unsigned int b = pop(); push(F_BOOL((unsigned)pop() <= b)))
+CODE("U>", U_GREATER, 0, unsigned int b = pop(); push(F_BOOL((unsigned)pop() > b)))
+CODE("U>=", U_GREATER_EQUAL, 0, unsigned int b = pop(); push(F_BOOL((unsigned)pop() >= b)))
+
+CODE("0=", ZERO_EQUAL, 0, push(F_BOOL(pop() == 0)))
+CODE("0<>", ZERO_DIFFERENT, 0, push(F_BOOL(pop() != 0)))
+CODE("0<", ZERO_LESS, 0, push(F_BOOL(pop() < 0)))
+CODE("0<=", ZERO_LESS_EQUAL, 0, push(F_BOOL(pop() <= 0)))
+CODE("0>", ZERO_GREATER, 0, push(F_BOOL(pop() > 0)))
+CODE("0>=", ZERO_GREATER_EQUAL, 0, push(F_BOOL(pop() >= 0)))
+
+//-----------------------------------------------------------------------------
+// memory
+//-----------------------------------------------------------------------------
+CODE("!", STORE, 0, int a = pop(); store(a, pop()))
+CODE("@", FETCH, 0, push(fetch(pop())))
+CODE("+!", PLUS_STORE, 0, int a = pop(); store(a, fetch(a) + pop()))
+CODE("C!", CSTORE, 0, int a = pop(); cstore(a, pop()))
+CODE("C@", CFETCH, 0, push(cfetch(pop())))
+CODE("2!", TWO_STORE, 0, int a = pop(); dstore(a, dpop()))
+CODE("2@", TWO_FETCH, 0, dpush(dfetch(pop())))
+CODE("FILL", FILL, 0, f_fill())
+CODE("ERASE", ERASE, 0, f_erase())
+CODE("MOVE", MOVE, 0, f_move())
+
+//-----------------------------------------------------------------------------
+// parameter stack
+//-----------------------------------------------------------------------------
+CODE("DROP", DROP, 0, pop())
+CODE("SWAP", SWAP, 0, int a = pop(); int b = pop(); push(a); push(b))
+CODE("DUP", DUP, 0, push(peek(0)))
+CODE("?DUP", QDUP, 0, int a = peek(0); if (a) push(a))
+CODE("OVER", OVER, 0, push(peek(1)))
+CODE("ROT", ROT, 0, int c = pop(); int b = pop(); int a = pop(); push(b); push(c); push(a))
+CODE("-ROT", MINUS_ROT, 0, int c = pop(); int b = pop(); int a = pop(); push(c); push(a); push(b))
+CODE("DEPTH", DEPTH, 0, push(depth()))
+CODE("NIP", NIP, 0, int a = pop(); pop(); push(a))
+CODE("PICK", PICK, 0, push(peek(pop())))
+CODE("ROLL", ROLL, 0, roll(pop()))
+CODE("TUCK", TUCK, 0, int a = pop(); int b = pop(); push(a); push(b); push(a))
+
+CODE("2DROP", TWO_DROP, 0, dpop())
+CODE("2SWAP", TWO_SWAP, 0, dint a = dpop(); dint b = dpop(); dpush(a); dpush(b))
+CODE("2DUP", TWO_DUP, 0, push(peek(1)); push(peek(1)))
+CODE("2OVER", TWO_OVER, 0, push(peek(3)); push(peek(3)))
+CODE("2ROT", TWO_ROT, 0, dint c = dpop(); dint b = dpop(); dint a = dpop(); dpush(b); dpush(c); dpush(a))
+CODE("-2ROT", MINUS_2ROT, 0, dint c = dpop(); dint b = dpop(); dint a = dpop(); dpush(c); dpush(a); dpush(b))
+
+//-----------------------------------------------------------------------------
+// return stack
+//-----------------------------------------------------------------------------
+CODE(">R", TOR, 0, rpush(pop()))
+CODE("R>", FROMR, 0, push(rpop()))
+CODE("RDROP", RDROP, 0, rpop())
+CODE("RSP@", RSPFETCH, 0, push(user->rp))
+CODE("RSP!", RSPSTORE, 0, user->rp = pop())
+CODE("R@", R_FETCH, 0, push(rpeek(0)))
+CODE("I", I, 0, push(rpeek(0)))
+CODE("J", J, 0, push(rpeek(2)))
+CODE("2>R", TWO_TO_R, 0, rdpush(dpop()))
+CODE("2R>", TWO_R_TO, 0, dpush(rdpop()))
+CODE("2R@", TWO_R_FETCH, 0, dpush(rdpeek(0)))
+
+//-----------------------------------------------------------------------------
+// dictionary
+//-----------------------------------------------------------------------------
+CODE(",", COMMA, 0, comma(pop()))
+CODE("C,", CCOMMA, 0, ccomma(pop()))
+CODE("HERE", HERE, 0, push(user->here))
+CODE("LATEST", LATEST, 0, push(user->latest))
+CODE("FIND", FIND, 0, f_find(pop()))
+CODE(">BODY", TO_BODY, 0, push(pop() + CELL_SZ))
+CODE("ALIGN", ALIGN, 0, align())
+CODE("ALIGNED", ALIGNED, 0, push(ALIGN(pop())))
+CODE("ALLOT", ALLOT, 0, user->here += pop())
+CODE("UNUSED", UNUSED, 0, push((DICT_SZ - user->here) / CELL_SZ);)
+
+CODE("MARKER", MARKER, 0, f_marker())
+CODE("(MARKER)", XMARKER, F_HIDDEN, f_xmarker(body))
+
+//-----------------------------------------------------------------------------
+// parser
+//-----------------------------------------------------------------------------
+CODE("PARSE", PARSE, 0, f_parse(pop()))
+CODE("PARSE-WORD", PARSE_WORD, 0, f_parse_word())
+CODE("WORD", WORD, 0, push(f_word(pop())))
+
+CODE("CHAR", CHAR, 0, push(f_char(BL)))
+CODE("[CHAR]", BRACKET_CHAR, F_IMMEDIATE, f_bracket_char(BL))
+
+VAR("DPL", DPL, 0, 0)
+CODE("NUMBER?", NUMBERQ, 0, f_number_q())
+CODE("NUMBER", NUMBER, 0, f_number())
+CODE(">NUMBER", TO_NUMBER, 0, f_to_number())
+CODE("CONVERT", CONVERT, 0, f_convert())
+
+//-----------------------------------------------------------------------------
+// strings
+//-----------------------------------------------------------------------------
+CODE("COUNT", COUNT, 0, f_count())
+CODE(".\"", DOT_QUOTE, F_IMMEDIATE, f_dot_quote())
+CODE("(.\")", XDOT_QUOTE, F_HIDDEN, f_xdot_quote())
+CODE("S\"", S_QUOTE, F_IMMEDIATE, f_s_quote())
+CODE("(S\")", XS_QUOTE, F_HIDDEN, f_xs_quote())
+CODE("C\"", C_QUOTE, F_IMMEDIATE, f_c_quote())
+CODE("(C\")", XC_QUOTE, F_HIDDEN, f_xc_quote())
+CODE(".(", DOT_PAREN, F_IMMEDIATE, f_dot_paren())
+
+//-----------------------------------------------------------------------------
+// input
+//-----------------------------------------------------------------------------
+CODE("TIB", TIB, 0, push(f_tib()))
+CODE("#IN", NRIN, 0, push(f_nr_in()))
+CODE("#TIB", NRTIB, 0, push(f_nr_in()))
+CODE(">IN", TOIN, 0, push(f_to_in()))
+VAR("SPAN", SPAN, 0, 0)
+CODE("SOURCE", SOURCE, 0, push(f_tib()); push(fetch(f_nr_in())))
+CODE("SOURCE-ID", SOURCE_ID, 0, push(user->source_id))
+CODE("REFILL", REFILL, 0, push(F_BOOL(f_refill())))
+CODE("ACCEPT", ACCEPT, 0, f_accept())
+CODE("EXPECT", EXPECT, 0, f_expect())
+CODE("KEY", KEY, 0, push(f_key()))
+CODE("QUERY", QUERY, 0, f_query())
+CODE("SAVE-INPUT", SAVE_INPUT, 0, f_save_input())
+CODE("RESTORE-INPUT", RESTORE_INPUT, 0, f_restore_input())
+
+//-----------------------------------------------------------------------------
+// output
+//-----------------------------------------------------------------------------
+CODE("TYPE", TYPE, 0, f_type())
+CODE("EMIT", EMIT, 0, f_emit(pop()))
+CODE("CR", CR, 0, f_emit(CR))
+CODE("SPACE", SPACE, 0, f_emit(BL))
+CODE("SPACES", SPACES, 0, f_spaces(pop()))
+
+CODE("<#", LESS_HASH, 0, numout_start())
+CODE("#", HASH, 0, numout_digit())
+CODE("#S", HASH_S, 0, numout_digits())
+CODE("HOLD", HOLD, 0, numout_char(pop()))
+CODE("SIGN", SIGN, 0, numout_sign(pop()))
+CODE("#>", HASH_GREATER, 0, numout_end())
+
+CODE(".", DOT, 0, print_int(pop()))
+CODE("U.", U_DOT, 0, print_uint((int)pop()))
+CODE(".R", DOT_R, 0, int w = pop(); print_int_aligned(pop(), w))
+CODE("U.R", U_DOT_R, 0, int w = pop(); print_uint_aligned((int)pop(), w))
+
+//-----------------------------------------------------------------------------
+// inner interpreter
+//-----------------------------------------------------------------------------
+CODE("INTERPRET", INTERPRET, 0, f_interpret())
+CODE("EVALUATE", EVALUATE, 0, f_evaluate())
+CODE("EXECUTE", EXECUTE, 0, f_execute(pop()))
+CODE("EXIT", EXIT, 0, if (rdepth() == 0) do_exit = true; else ip = rpop())
+
+//-----------------------------------------------------------------------------
+// compiler
+//-----------------------------------------------------------------------------
+CODE(":", COLON, 0, f_colon())
+CODE(":NONAME", COLON_NONAME, 0, f_colon_noname())
+CODE(";", SEMICOLON, F_IMMEDIATE, f_semicolon())
+CODE("(DOCOL)", XDOCOL, F_HIDDEN, rpush(ip); ip = body)
+
+CODE("CREATE", CREATE, 0, f_create())
+CODE("VARIABLE", VARIABLE, 0, f_variable())
+CODE("(DOVAR)", XDOVAR, F_HIDDEN, push(body))
+
+CODE("VALUE", VALUE, 0, f_value())
+CODE("TO", TO, F_IMMEDIATE, f_to())
+
+CODE("CONSTANT", CONSTANT, 0, f_constant())
+CODE("(DOCONST)", XDOCONST, F_HIDDEN, push(fetch(body)))
+
+CODE("LITERAL", LITERAL, F_IMMEDIATE, comma(xtXLITERAL); comma(pop()))
+CODE("(LITERAL)", XLITERAL, F_HIDDEN, push(fetch(ip)); ip += CELL_SZ)
+
+CODE("DOES>", DOES, F_IMMEDIATE, f_does())
+CODE("(DOES>DEFINE)", XDOES_DEFINE, F_HIDDEN, f_xdoes_define())
+CODE("(DOES>RUN)", XDOES_RUN, F_HIDDEN, f_xdoes_run(body))
+
+CODE("[", LBRACKET, F_IMMEDIATE, user->STATE = STATE_INTERPRET)
+CODE("]", RBRACKET, 0, user->STATE = STATE_COMPILE)
+CODE("(", OPEN_PAREN, F_IMMEDIATE, f_open_paren())
+CODE("\\", BACKSLASH, F_IMMEDIATE, f_backslash())
+CODE("BRANCH", BRANCH, F_HIDDEN, ip += fetch(ip))
+CODE("0BRANCH", ZBRANCH, F_HIDDEN, if (!pop()) ip += fetch(ip); else ip += CELL_SZ)
+
+CODE("'", TICK, 0, push(f_tick()))
+CODE("[']", BRACKET_TICK, F_IMMEDIATE, f_bracket_tick())
+CODE("POSTPONE", POSTPONE, F_IMMEDIATE, f_postpone())
+CODE("IMMEDIATE", IMMEDIATE, F_IMMEDIATE, toggle_immediate())
+CODE("COMPILE,", COMPILE_COMMA, F_IMMEDIATE, comma(pop()))
+CODE("[COMPILE]", BRACKET_COMPILE, F_IMMEDIATE, f_bracket_compile())
+
+CODE("IF", IF, F_IMMEDIATE, f_if())
+CODE("ELSE", ELSE, F_IMMEDIATE, f_else())
+CODE("THEN", THEN, F_IMMEDIATE, f_then())
+
+CODE("DO", DO, F_IMMEDIATE, f_do())
+CODE("(DO)", XDO, F_HIDDEN, f_xdo())
+CODE("?DO", QUERY_DO, F_IMMEDIATE, f_query_do())
+CODE("(?DO)", XQUERY_DO, F_HIDDEN, f_xquery_do())
+CODE("LOOP", LOOP, F_IMMEDIATE, f_loop())
+CODE("(LOOP)", XLOOP, F_HIDDEN, f_xloop())
+CODE("+LOOP", PLUS_LOOP, F_IMMEDIATE, f_plus_loop())
+CODE("(+LOOP)", XPLUS_LOOP, F_HIDDEN, f_xplus_loop())
+CODE("LEAVE", LEAVE, F_IMMEDIATE, f_leave())
+CODE("(LEAVE)", XLEAVE, F_HIDDEN, f_xleave())
+CODE("UNLOOP", UNLOOP, F_IMMEDIATE, f_unloop())
+CODE("(UNLOOP)", XUNLOOP, F_HIDDEN, f_xunloop())
+
+CODE("BEGIN", BEGIN, F_IMMEDIATE, f_begin())
+CODE("AGAIN", AGAIN, F_IMMEDIATE, f_again())
+CODE("UNTIL", UNTIL, F_IMMEDIATE, f_until())
+CODE("WHILE", WHILE, F_IMMEDIATE, f_while())
+CODE("REPEAT", REPEAT, F_IMMEDIATE, f_repeat())
+CODE("RECURSE", RECURSE, F_IMMEDIATE, comma(link_to_xt(user->latest)))
+
+CODE("CASE", CASE, F_IMMEDIATE, f_case())
+CODE("OF", OF, F_IMMEDIATE, f_of())
+CODE("(OF)", XOF, F_HIDDEN, f_xof())
+CODE("ENDOF", ENDOF, F_IMMEDIATE, f_endof())
+CODE("ENDCASE", ENDCASE, F_IMMEDIATE, f_endcase())
+
+//-----------------------------------------------------------------------------
+// main loop
+//-----------------------------------------------------------------------------
+FORTH("QUIT", QUIT, 0,
+    "R0 RSP! 0 STATE ! "
+    "BEGIN REFILL WHILE "
+    "INTERPRET "
+    "REPEAT EXIT "
+)
+CODE("BYE", BYE, 0, exit(EXIT_SUCCESS))
+CODE("ABORT", ABORT, 0, exit(EXIT_FAILURE))
+CODE("ABORT\"", ABORT_QUOTE, F_IMMEDIATE, f_abort_quote())
+CODE("(ABORT\")", XABORT_QUOTE, F_HIDDEN, f_xabort_quote())
+
+//-----------------------------------------------------------------------------
+// tools
+//-----------------------------------------------------------------------------
+CODE(".S", DOT_S, 0, print_stack())
+CODE("~~", TILDE_TILDE, F_IMMEDIATE, print_stack(); putchar(CR))
+CODE(".RS", DOT_RS, 0, print_rstack())
+CODE("WORDS", WORDS, 0, print_words())
+CODE("ENVIRONMENT?", ENVIRONMENT_Q, 0, f_environment_q())
+#undef CONST
+#undef VAR
+#undef CODE
+#undef FORTH
+
