@@ -5,10 +5,11 @@
 //-----------------------------------------------------------------------------
 
 #include "io.h"
+#include "block.h"
 #include "errors.h"
+#include "math.h"
 #include "memory.h"
 #include "stack.h"
-#include "math.h"
 #include <assert.h>
 #include <ctype.h>
 #include <stdio.h>
@@ -23,13 +24,17 @@ int     cmd_argc;
 char**  cmd_argv;
 
 void init_io(void) {
-    input->buff_p = -1;
+    input->buff_p = input->block_p - 1;
+    input->last_block = &input->block[0];
     push_stream(stdin);
     numout_start();
 }
 
 Buffer* cur_buffer(void) {
-    return &input->buff[input->buff_p];
+    if (user->blk)
+        return get_block(user->blk);
+    else
+        return &input->buff[input->buff_p];
 }
 
 void push_stream(FILE* file) {
@@ -39,6 +44,8 @@ void push_stream(FILE* file) {
         input->buff_p++;
         Buffer* buff = cur_buffer();
         buff->file = file;
+        buff->blk = 0;
+        buff->dirty = false;
         buff->nr_in = 0;
         buff->to_in = 0;
         user->source_id = input->buff_p;
@@ -54,6 +61,8 @@ void push_text(const char* text, int len) {
         input->buff_p++;
         Buffer* buff = cur_buffer();
         buff->file = NULL;
+        buff->blk = 0;
+        buff->dirty = false;
         buff->nr_in = len;
         buff->to_in = 0;
         memcpy(buff->tib, text, len);
@@ -113,21 +122,29 @@ static void chomp(char* text) {
 bool f_refill(void) {
     if (user->source_id < 0)
         return false;
-    else while (true) {
-            Buffer* buff = cur_buffer();
-            buff->nr_in = buff->to_in = 0;
-            if (!interactive && input->buff_p == 0)
-                return false;
-            else if (buff->file && fgets(buff->tib, sizeof(buff->tib), buff->file)) {
-                chomp(buff->tib);
-                buff->nr_in = strlen(buff->tib);
-                return true;
-            }
-            else if (input->buff_p > 0)
-                pop_input();
-            else
-                return false;
+    else if (user->blk != 0) {
+        user->blk++;
+        if (get_file_block(user->blk))
+            return true;
+        else
+            user->blk = 0;      // continue to read from source-id
+    }
+
+    while (true) {
+        Buffer* buff = cur_buffer();
+        buff->nr_in = buff->to_in = 0;
+        if (!interactive && input->buff_p == 0)
+            return false;
+        else if (buff->file && fgets(buff->tib, sizeof(buff->tib), buff->file)) {
+            chomp(buff->tib);
+            buff->nr_in = strlen(buff->tib);
+            return true;
         }
+        else if (input->buff_p > 0)
+            pop_input();
+        else
+            return false;
+    }
 }
 
 void f_query(void) {

@@ -78,4 +78,9 @@ note "Test -2ROT";
 forth_ok("1 2 3 4 5 6 -2ROT .S", "( 5 6 1 2 3 4 )");
 forth_nok("1 2 3 4 5 -2ROT", "\nError: data stack underflow\n");
 
+note "Test SP@";
+note "Test SP!";
+forth_ok("1 SP@ 2 SWAP SP! .S", "( 1 )");
+forth_ok("1 2 3 4 5 6 S0 SP! .S", "( )");
+
 end_test;

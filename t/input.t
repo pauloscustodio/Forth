@@ -3,7 +3,7 @@
 BEGIN { use lib 't'; require 'testlib.pl'; }
 
 note "Test SOURCE";
-forth_ok("SOURCE .S", "( 246432 9 )");
+forth_ok("SOURCE TYPE", "SOURCE TYPE");
 
 note "Test SOURCE-ID";
 capture_ok("echo SOURCE-ID .S | ./forth", "( 0 ) ok\n");

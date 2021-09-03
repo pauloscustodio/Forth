@@ -131,6 +131,7 @@
     <None Include="..\..\words.def" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\block.h" />
     <ClInclude Include="..\..\compiler.h" />
     <ClInclude Include="..\..\dict.h" />
     <ClInclude Include="..\..\errors.h" />
@@ -144,6 +145,7 @@
     <ClInclude Include="..\..\str.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\block.c" />
     <ClCompile Include="..\..\compiler.c" />
     <ClCompile Include="..\..\dict.c" />
     <ClCompile Include="..\..\errors.c" />

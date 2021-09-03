@@ -5,6 +5,7 @@
 //-----------------------------------------------------------------------------
 
 #include "interp.h"
+#include "block.h"
 #include "compiler.h"
 #include "dict.h"
 #include "errors.h"
@@ -72,10 +73,15 @@ void c_interpret_word(const char* word, int len) {
 
 void c_evaluate(const char* text, int len) {
     int old_source_id = user->source_id;    // save in case it's -1
+    int old_blk = user->blk;
+    user->blk = 0;
+
     push_text(text, len);
     f_execute(xtINTERPRET);
     pop_input();
+
     user->source_id = old_source_id;
+    user->blk = old_blk;
 }
 
 void c_evaluate_sz(const char* text) {
@@ -86,6 +92,15 @@ void f_evaluate(void) {
     int len = pop();
     int addr = pop();
     c_evaluate(mem + addr, len);
+}
+
+void f_load(int blk) {
+    user->blk = blk;
+    f_block(blk);
+
+    f_execute(xtINTERPRET);
+
+    user->blk = 0;
 }
 
 void f_interpret(void) {

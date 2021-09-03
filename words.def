@@ -138,6 +138,8 @@ CODE("2DUP", TWO_DUP, 0, push(peek(1)); push(peek(1)))
 CODE("2OVER", TWO_OVER, 0, push(peek(3)); push(peek(3)))
 CODE("2ROT", TWO_ROT, 0, dint c = dpop(); dint b = dpop(); dint a = dpop(); dpush(b); dpush(c); dpush(a))
 CODE("-2ROT", MINUS_2ROT, 0, dint c = dpop(); dint b = dpop(); dint a = dpop(); dpush(c); dpush(a); dpush(b))
+CODE("SP@", SPFETCH, 0, push(user->sp))
+CODE("SP!", SPSTORE, 0, user->sp = pop())
 
 //-----------------------------------------------------------------------------
 // return stack
@@ -333,10 +335,26 @@ CODE("(ABORT\")", XABORT_QUOTE, F_HIDDEN, f_xabort_quote())
 // tools
 //-----------------------------------------------------------------------------
 CODE(".S", DOT_S, 0, print_stack())
-CODE("~~", TILDE_TILDE, F_IMMEDIATE, print_stack(); putchar(CR))
 CODE(".RS", DOT_RS, 0, print_rstack())
 CODE("WORDS", WORDS, 0, print_words())
 CODE("ENVIRONMENT?", ENVIRONMENT_Q, 0, f_environment_q())
+
+//-----------------------------------------------------------------------------
+// blocks
+//-----------------------------------------------------------------------------
+CODE("BLK", BLK, 0, push((char*)&user->blk - mem))
+CODE("SCR", SCR, 0, push((char*)&user->scr - mem))
+CODE("BLOCK", BLOCK, 0, push(f_block(pop())))
+CODE("BUFFER", BUFFER, 0, push(f_buffer(pop())))
+CODE("SAVE-BUFFERS", SAVE_BUFFERS, 0, f_save_buffers())
+CODE("EMPTY-BUFFERS", EMPTY_BUFFERS, 0, f_empty_buffers())
+CODE("FLUSH", FLUSH, 0, f_flush())
+CODE("LOAD", LOAD, 0, f_load(pop()))
+CODE("UPDATE", UPDATE, 0, f_update())
+CODE("LIST", LIST, 0, f_list(pop()))
+CODE("THRU", THRU, 0, f_thru())
+
+
 #undef CONST
 #undef VAR
 #undef CODE

@@ -31,6 +31,7 @@ void c_interpret_word(const char* word, int len);
 void c_evaluate(const char* text, int len);
 void c_evaluate_sz(const char* text);
 void f_evaluate(void);
+void f_load(int blk);
 void f_interpret(void);
 void compile(const char* text);
 

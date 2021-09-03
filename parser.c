@@ -5,6 +5,7 @@
 //-----------------------------------------------------------------------------
 
 #include "parser.h"
+#include "block.h"
 #include "dict.h"
 #include "errors.h"
 #include "interp.h"
@@ -99,8 +100,14 @@ void f_open_paren(void) {
 }
 
 void f_backslash(void) {
-    int len;
-    c_parse(CR, &len);
+    if (user->blk != 0) {
+        Buffer* buff = cur_buffer();
+        buff->to_in = (buff->to_in + BLOCK_COLS - 1) & ~(BLOCK_COLS - 1);
+    }
+    else {
+        int len;
+        c_parse(CR, &len);
+    }
 }
 
 static int char_digit(char c) {

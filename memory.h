@@ -11,13 +11,15 @@
 #include <stdio.h>
 
 // VM size
-#define MEM_SZ      (256 * 1024)
-#define BUFFER_SZ   1024
-#define MAX_FILES   16
-#define PAD_SZ      256
-#define HOLD_SZ     128
-#define WORDBUF_SZ  256
-#define STACK_SZ    (16 * 1024)
+#define MEM_SZ          (256 * 1024)
+#define BUFFER_SZ       1024
+#define MAX_FILES       16
+#define MAX_BLOCKS      16
+#define PAD_SZ          256
+#define HOLD_SZ         128
+#define WORDBUF_SZ      256
+#define STACK_SZ        (16 * 1024)
+#define STRUCT_STACK_SZ 1024
 
 // user variables
 typedef struct User {
@@ -27,7 +29,7 @@ typedef struct User {
 
     int     sp, rp, struct_p;       // stack pointers
     int     here, latest;           // dictionary pointers
-    int     source_id;              // input source
+    int     source_id, blk, scr;    // input source
     int     hold_ptr;               // point to hold[]
     bool    in_colon;               // inside colon definition
 
@@ -39,21 +41,26 @@ typedef struct User {
 // input buffers
 typedef struct Buffer {
     FILE*   file;
-    int     nr_in;
-    int     to_in;
-    char    tib[BUFFER_SZ + 1];     // Forth buffer + space for C's null terminator
+    int     blk;            // block, if any
+    bool    dirty;          // true if block is dirty
+    int     nr_in;          // length
+    int     to_in;          // input cursor
+    char    tib[BUFFER_SZ + 1]; // Forth buffer + space for C's null terminator
 } Buffer;
 
 typedef struct Input {
     Buffer  buff[MAX_FILES];
     int     buff_p;
+    Buffer  block[MAX_BLOCKS];
+    int     block_p;        // last block allocated
+    Buffer* last_block;     // last block accessed
 } Input;
 
 // memory addresses
 #define PTR00       MEM_SZ
 #define PTR01       (PTR00 - sizeof(Input))     // input buffers
 #define PTR02       (PTR01 - STACK_SZ)          // return stack
-#define PTR03       (PTR02 - STACK_SZ)          // struct stack
+#define PTR03       (PTR02 - STRUCT_STACK_SZ)   // struct stack
 #define PTR04       (PTR03 - STACK_SZ)          // data stack
 
 #define INPUT0      PTR01
