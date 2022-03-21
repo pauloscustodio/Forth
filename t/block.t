@@ -120,8 +120,5 @@ forth_ok("SCR @  1 LIST  SCR @  .S CR", <<'END');
 ( 0 1 )
 END
 
-
-
-
 unlink <scr*.blk>;
 end_test;

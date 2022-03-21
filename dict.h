@@ -17,6 +17,7 @@
 void init_dict(void);
 
 void comma(int value);
+void dcomma(dint value);
 void ccomma(int value);
 void counted_str_comma(const char* text, int len);
 void dict_name_comma(const char* text, int len, int flags);
@@ -33,7 +34,10 @@ void f_colon_noname(void);
 void f_semicolon(void);
 
 void f_constant(void);
+void f_2constant(void);
+
 void f_variable(void);
+void f_2variable(void);
 
 void f_value(void);
 void f_to(void);

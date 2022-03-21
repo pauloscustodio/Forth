@@ -233,7 +233,7 @@ void numout_end(void) {
     push(NUMOUT_START - user->hold_ptr);
 }
 
-static void print_int_uint(int sign) {
+static void print_dint_uint(int sign) {
     numout_start();
     numout_char(BL);
     numout_digits();
@@ -244,16 +244,21 @@ static void print_int_uint(int sign) {
 
 void print_int(int n) {
     dpush(f_dabs(n));
-    print_int_uint(n);
+    print_dint_uint(n);
+}
+
+void print_dint(dint n) {
+    dpush(f_dabs(n));
+    print_dint_uint(n < 0 ? -1 : 1);
 }
 
 void print_uint(int n) {
     push(n);
     push(0);
-    print_int_uint(1);
+    print_dint_uint(1);
 }
 
-static void print_int_uint_aligned(int width, int sign) {
+static void print_dint_uint_aligned(int width, int sign) {
     numout_start();
 
     dint d;
@@ -279,13 +284,18 @@ static void print_int_uint_aligned(int width, int sign) {
 
 void print_int_aligned(int n, int width) {
     dpush(f_dabs(n));
-    print_int_uint_aligned(width, n);
+    print_dint_uint_aligned(width, n);
+}
+
+void print_dint_aligned(dint n, int width) {
+    dpush(f_dabs(n));
+    print_dint_uint_aligned(width, n < 0 ? -1 : 1);
 }
 
 void print_uint_aligned(int n, int width) {
     push(n);
     push(0);
-    print_int_uint_aligned(width, 1);
+    print_dint_uint_aligned(width, 1);
 }
 
 void f_emit(int c) {

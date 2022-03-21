@@ -118,15 +118,23 @@ int f_abs(int a) {
     return (a < 0) ? -a : a;
 }
 
-dint f_dabs(dint a) {
-    return (a < 0) ? -a : a;
-}
-
 int f_max(int a, int b) {
     return a > b ? a : b;
 }
 
 int f_min(int a, int b) {
+    return a < b ? a : b;
+}
+
+dint f_dabs(dint a) {
+    return (a < 0) ? -a : a;
+}
+
+dint f_dmax(dint a, dint b) {
+    return a > b ? a : b;
+}
+
+dint f_dmin(dint a, dint b) {
     return a < b ? a : b;
 }
 

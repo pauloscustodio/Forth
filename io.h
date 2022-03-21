@@ -50,8 +50,10 @@ void numout_sign(int n);
 void numout_end(void);
 
 void print_int(int n);
+void print_dint(dint n);
 void print_uint(int n);
 void print_int_aligned(int n, int width);
+void print_dint_aligned(dint n, int width);
 void print_uint_aligned(int n, int width);
 
 void f_emit(int c);

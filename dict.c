@@ -44,12 +44,16 @@ void init_dict(void) {
 #include "words.def"
 }
 
-
 void comma(int value) {
     if (user->here + CELL_SZ > DICT_SZ)
         error(ErrorMemoryOverflow);
     store(user->here, value);
     user->here += CELL_SZ;
+}
+
+void dcomma(dint value) {
+    comma(DCELL_HI(value));
+    comma(DCELL_LO(value));
 }
 
 void ccomma(int value) {
@@ -154,9 +158,19 @@ void f_constant(void) {
     comma(pop());
 }
 
+void f_2constant() {
+    parse_create(idXDO2CONST);
+    dcomma(dpop());
+}
+
 void f_variable(void) {
     parse_create(idXDOVAR);
     comma(0);
+}
+
+void f_2variable(void) {
+    parse_create(idXDOVAR);
+    dcomma(0);
 }
 
 void f_value(void) {

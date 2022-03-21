@@ -91,11 +91,6 @@ forth_ok(" 1 .S ABS .S", "( 1 )( 1 )");
 forth_ok(" 0 .S ABS .S", "( 0 )( 0 )");
 forth_ok("-1 .S ABS .S", "( -1 )( 1 )");
 
-note "Test DABS";
-forth_ok(" 1. .S DABS .S", "( 1 0 )( 1 0 )");
-forth_ok(" 0. .S DABS .S", "( 0 0 )( 0 0 )");
-forth_ok("-1. .S DABS .S", "( -1 -1 )( 1 0 )");
-
 note "Test MAX";
 forth_ok("1 2 MAX .S", "( 2 )");
 

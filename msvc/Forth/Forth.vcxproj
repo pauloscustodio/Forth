@@ -134,7 +134,9 @@
     <ClInclude Include="..\..\block.h" />
     <ClInclude Include="..\..\compiler.h" />
     <ClInclude Include="..\..\dict.h" />
+    <ClInclude Include="..\..\double.h" />
     <ClInclude Include="..\..\errors.h" />
+    <ClInclude Include="..\..\file.h" />
     <ClInclude Include="..\..\forth.h" />
     <ClInclude Include="..\..\interp.h" />
     <ClInclude Include="..\..\io.h" />
@@ -148,7 +150,9 @@
     <ClCompile Include="..\..\block.c" />
     <ClCompile Include="..\..\compiler.c" />
     <ClCompile Include="..\..\dict.c" />
+    <ClCompile Include="..\..\double.c" />
     <ClCompile Include="..\..\errors.c" />
+    <ClCompile Include="..\..\file.c" />
     <ClCompile Include="..\..\forth.c" />
     <ClCompile Include="..\..\interp.c" />
     <ClCompile Include="..\..\io.c" />
