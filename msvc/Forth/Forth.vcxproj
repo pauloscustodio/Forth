@@ -131,36 +131,13 @@
     <None Include="..\..\words.def" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\block.h" />
-    <ClInclude Include="..\..\compiler.h" />
-    <ClInclude Include="..\..\dict.h" />
-    <ClInclude Include="..\..\double.h" />
-    <ClInclude Include="..\..\errors.h" />
-    <ClInclude Include="..\..\file.h" />
-    <ClInclude Include="..\..\forth.h" />
-    <ClInclude Include="..\..\interp.h" />
-    <ClInclude Include="..\..\io.h" />
-    <ClInclude Include="..\..\math.h" />
-    <ClInclude Include="..\..\memory.h" />
-    <ClInclude Include="..\..\parser.h" />
-    <ClInclude Include="..\..\stack.h" />
-    <ClInclude Include="..\..\str.h" />
+    <ClCompile Include="..\..\errors.c" />
+    <ClCompile Include="..\..\forth.c" />
+    <ClCompile Include="..\..\main.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\block.c" />
-    <ClCompile Include="..\..\compiler.c" />
-    <ClCompile Include="..\..\dict.c" />
-    <ClCompile Include="..\..\double.c" />
-    <ClCompile Include="..\..\errors.c" />
-    <ClCompile Include="..\..\file.c" />
-    <ClCompile Include="..\..\forth.c" />
-    <ClCompile Include="..\..\interp.c" />
-    <ClCompile Include="..\..\io.c" />
-    <ClCompile Include="..\..\math.c" />
-    <ClCompile Include="..\..\memory.c" />
-    <ClCompile Include="..\..\parser.c" />
-    <ClCompile Include="..\..\stack.c" />
-    <ClCompile Include="..\..\str.c" />
+    <ClInclude Include="..\..\errors.h" />
+    <ClInclude Include="..\..\forth.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

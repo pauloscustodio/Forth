@@ -1,13 +1,16 @@
 //-----------------------------------------------------------------------------
 // C implementation of a Forth interpreter
-// Copyright (c) Paulo Custodio, 2020-2022
+// Copyright (c) Paulo Custodio, 2020-2023
 // License: GPL3 https://www.gnu.org/licenses/gpl-3.0.html
 //-----------------------------------------------------------------------------
 
 #pragma once
 
-#include <limits.h>
+#include <ctype.h>
 #include <stdbool.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #ifdef _MSC_VER
@@ -15,31 +18,32 @@
 #define strcasecmp  stricmp
 #endif
 
+// VM size
+#define MEM_SZ          (256 * 1024)
+#define STACK_SZ        (1024)
+
 // types
-typedef unsigned char       byte;
-typedef unsigned int        uint;
-typedef long long           dint;
-typedef unsigned long long  udint;
+typedef uint8_t			byte;
+typedef unsigned int	uint;
+typedef int64_t			dint;
+typedef uint64_t		udint;
 
-#define BYTE_SZ         ((int)sizeof(byte))
-#define BYTE_MAX        ((int)UCHAR_MAX)
-#define CELL_SZ         ((int)sizeof(int))
-#define CELL_MAX        ((int)INT_MAX)
-#define DCELL_SZ        ((int)sizeof(dint))
-#define DCELL_MAX       ((int)LLONG_MAX)
+// VM 
+typedef struct vm {
+	int		stack[STACK_SZ];
+	int		sp;
+	int		rstack[STACK_SZ];
+	int		rp;
+	byte	mem[MEM_SZ];
+} VM;
 
-#define ALIGN(x)        (((x) + CELL_SZ - 1) & ~(CELL_SZ - 1))
-#define DCELL_LO(x)     ((x) & 0xffffffffLL)
-#define DCELL_HI(x)     (((x) >> 32) & 0xffffffffLL)
-#define DCELL(hi, lo)   (((udint)DCELL_LO(hi) << 32) | (udint)DCELL_LO(lo))
+extern VM vm;
 
-#define MAX(a, b)       ((a) > (b) ? (a) : (b))
-#define MIN(a, b)       ((a) < (b) ? (a) : (b))
+void vm_init(void);
 
-#define F_TRUE          -1
-#define F_FALSE          0
-
-#define F_BOOL(x)       ((x) ? F_TRUE : F_FALSE)
-
-void init(void);
-void f_environment_q(void);
+// stack
+void stacks_init(void);
+void push(int value);
+int  pop(void);
+int  peek(int depth);
+void print_stack();

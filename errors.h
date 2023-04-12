@@ -1,6 +1,6 @@
 //-----------------------------------------------------------------------------
 // C implementation of a Forth interpreter
-// Copyright (c) Paulo Custodio, 2020-2022
+// Copyright (c) Paulo Custodio, 2020-2023
 // License: GPL3 https://www.gnu.org/licenses/gpl-3.0.html
 //-----------------------------------------------------------------------------
 
@@ -8,11 +8,10 @@
 
 #include "forth.h"
 
-typedef enum ErrorCode {
-#define X(code, message)    code,
+enum ErrorCode {
+#define X(id, code, message)    code = id,
 #include "errors.def"
-} ErrorCode;
+};
 
-void init_errors(void);
-void error(ErrorCode code);
-void error_arg(ErrorCode code, const char* arg);
+void error(int error_code);
+void error_arg(int error_code, const char* arg);
