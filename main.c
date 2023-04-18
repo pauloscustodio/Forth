@@ -9,14 +9,24 @@
 
 #define BLANKS	" \t\r\n\v\f"
 
+static bool parse_number(const char* str, int* value) {
+	const char* endptr = str;
+	*value = (int)strtol(str, (char**)&endptr, vm.base);
+	if (*endptr == '\0')
+		return true;
+	else
+		return false;
+}
+
 static void parse_text(char* text) {
+	int value;
 	const char* word = strtok(text, BLANKS);
 	while (word != NULL) {
 		if (false) {}
 #define X(name, id, flags, code)	else if (strcasecmp(word, name) == 0) { code; }
 #include "words.def"
-		else if (isdigit(*word) || (*word == '-' && isdigit(word[1]))) {
-			push(atoi(word));
+		else if (parse_number(word, &value)) {
+			push(value);
 		}
 		else {
 			error_arg(ErrorUndefinedWord, word);

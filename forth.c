@@ -13,6 +13,7 @@ VM vm;
 void vm_init(void) {
 	memset(&vm, 0, sizeof(vm));
 	stacks_init();
+	vm.base = 10;
 }
 
 //-----------------------------------------------------------------------------
@@ -53,9 +54,53 @@ int peek(int depth) {
 	}
 }
 
+int depth(void) {
+	return STACK_SZ - vm.sp;
+}
+
+void roll(int depth) {
+	if (depth > 0) {
+        int bot = vm.sp + depth;
+        if (bot >= STACK_SZ) {
+            error(ErrorStackUnderflow);
+		}
+		else {
+			int bot_value = vm.stack[bot];
+			memmove(&vm.stack[vm.sp + 1], &vm.stack[vm.sp], depth * CELL_SZ);
+			vm.stack[vm.sp] = bot_value;
+		}
+    }
+}
+
+void set_sp(int sp) {
+	if (sp < 0)
+		error(ErrorStackOverflow);
+	else if (sp > STACK_SZ)
+		error(ErrorStackUnderflow);
+	else 
+		vm.sp = sp;
+}
+
 void print_stack() {
 	printf("( ");
 	for (int i = STACK_SZ - 1; i >= vm.sp; i--)
 		printf("%d ", vm.stack[i]);
 	printf(")");
+}
+
+void dpush(dint value) {
+    push(DCELL_LO(value));
+    push(DCELL_HI(value));
+}
+
+dint dpop(void) {
+    int hi = pop();
+    int lo = pop();
+    return DCELL(hi, lo);
+}
+
+dint dpeek(int depth) {
+    int hi = peek(2 * depth);
+    int lo = peek(2 * depth + 1);
+    return DCELL(hi, lo);
 }

@@ -8,12 +8,42 @@
 #define X(name, id, flags, code)
 #endif
 
-X(".", fDot, 0, printf("%d ", pop()))
-X("THROW", fThrow, 0, error(pop()))
+//-----------------------------------------------------------------------------
+// parameter stack
+//-----------------------------------------------------------------------------
 X("DROP", fDrop, 0, pop())
+X("SWAP", fSwap, 0, int a = pop(); int b = pop(); push(a); push(b))
 X("DUP", fDup, 0, push(peek(0)))
+X("?DUP", fQDup, 0, int a = peek(0); if (a) push(a))
+X("OVER", fOver, 0, push(peek(1)))
+X("ROT", fRot, 0, int c = pop(); int b = pop(); int a = pop(); push(b); push(c); push(a))
+X("-ROT", fMinusRot, 0, int c = pop(); int b = pop(); int a = pop(); push(c); push(a); push(b))
+X("DEPTH", fDepth, 0, push(depth()))
+X("NIP", fNip, 0, int a = pop(); pop(); push(a))
 X("PICK", fPick, 0, push(peek(pop())))
+X("ROLL", fRoll, 0, roll(pop()))
+X("TUCK", fTuck, 0, int a = pop(); int b = pop(); push(a); push(b); push(a))
+X("2DROP", fTwoDrop, 0, dpop())
+X("2SWAP", fTwoSwap, 0, dint a = dpop(); dint b = dpop(); dpush(a); dpush(b))
+X("2DUP", fTwoDup, 0, push(peek(1)); push(peek(1)))
+X("2OVER", fTwoOver, 0, push(peek(3)); push(peek(3)))
+X("2ROT", fTwoRot, 0, dint c = dpop(); dint b = dpop(); dint a = dpop(); dpush(b); dpush(c); dpush(a))
+X("-2ROT", fMinusTwoRot, 0, dint c = dpop(); dint b = dpop(); dint a = dpop(); dpush(c); dpush(a); dpush(b))
+X("S0", fS0, 0, push(STACK_SZ))
+X("SP@", fSPFetch, 0, push(vm.sp))
+X("SP!", fSPStore, 0, set_sp(pop()))
+
+// math
 X("+", fPlus, 0, push(pop()+pop()))
+X("-", fMinus, 0, int b = pop(); int a = pop(); push(a - b))
+X("1+", fOnePlus, 0, push(pop() + 1))
+X("1-", fOneMinus, 0, push(pop() - 1))
+
+// i/o
+X(".", fDot, 0, printf("%d ", pop()))
 X(".S", fDotS, 0, print_stack())
+
+// exceptions
+X("THROW", fThrow, 0, error(pop()))
 
 #undef X
