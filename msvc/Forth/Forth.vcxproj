@@ -133,11 +133,17 @@
   <ItemGroup>
     <ClCompile Include="..\..\errors.c" />
     <ClCompile Include="..\..\forth.c" />
+    <ClCompile Include="..\..\io.c" />
     <ClCompile Include="..\..\main.c" />
+    <ClCompile Include="..\..\math.c" />
+    <ClCompile Include="..\..\str.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\errors.h" />
     <ClInclude Include="..\..\forth.h" />
+    <ClInclude Include="..\..\io.h" />
+    <ClInclude Include="..\..\math.h" />
+    <ClInclude Include="..\..\str.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

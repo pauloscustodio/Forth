@@ -12,8 +12,11 @@ X(-3, ErrorStackOverflow, "stack overflow")
 X(-4, ErrorStackUnderflow, "stack underflow")
 X(-5, ErrorReturnStackOverflow, "return stack overflow")
 X(-6, ErrorReturnStackUnderflow, "return stack underflow")
+X(-8, ErrorDictionaryOverflow, "dictionary overflow")
 X(-9, ErrorInvalidMemoryAddress, "invalid memory address")
+X(-10, ErrorDivisionByZero, "division by zero")
 X(-13, ErrorUndefinedWord, "undefined word")
+X(-23, ErrorAddressAlignmentException, "address alignment exception")
 X(-38, ErrorNonExistentFile, "non-existent file")
 
 #undef X

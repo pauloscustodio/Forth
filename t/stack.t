@@ -86,14 +86,14 @@ forth_ok("1 2 3 4 5 6 -2ROT .S", "( 5 6 1 2 3 4 )");
 forth_nok("1 2 3 4 5 -2ROT", "\nError: stack underflow\n");
 
 note "Test S0";
-forth_ok("S0 SP@ - .S", "( 1 )");
-forth_ok("1 2 S0 SP@ - .S", "( 1 2 3 )");
+forth_ok("S0 SP@ - .S", "( 4 )");
+forth_ok("1 2 S0 SP@ - .S", "( 1 2 12 )");
 
 note "Test SP@";
 note "Test SP!";
 forth_ok("1 SP@ 2 SWAP SP! .S", "( 1 )");
 forth_ok("1 2 3 4 5 6 S0 SP! .S", "( )");
-forth_nok("-1 SP!", "\nError: stack overflow\n");
-forth_nok("S0 1+ SP!", "\nError: stack underflow\n");
+forth_nok("-4 SP!", "\nError: invalid memory address\n");
+forth_nok("S0 4 + SP!", "\nError: invalid memory address\n");
 
 end_test;

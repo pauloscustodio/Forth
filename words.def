@@ -4,46 +4,199 @@
 // License: GPL3 https://www.gnu.org/licenses/gpl-3.0.html
 //-----------------------------------------------------------------------------
 
-#ifndef X
-#define X(name, id, flags, code)
+#ifndef CONST
+#define CONST(word, name, flags, value)
 #endif
+
+#ifndef VAR
+#define VAR(word, name, flags, value)
+#endif
+
+#ifndef CODE
+#define CODE(word, name, flags, c_code)
+#endif
+
+#ifndef FORTH
+#define FORTH(word, name, flags, text)
+#endif
+
+//-----------------------------------------------------------------------------
+// constants
+//-----------------------------------------------------------------------------
+CONST("BL", BL, 0, BL)
+CONST("FALSE", FALSE, 0, F_FALSE)
+CONST("TRUE", TRUE, 0, F_TRUE)
+CONST("PAD", PAD, 0, ptr_to_addr(&vm.pad))
+
+//-----------------------------------------------------------------------------
+// variables
+//-----------------------------------------------------------------------------
+VAR("STATE", STATE, 0, STATE_INTERPRET)
+VAR("BASE", BASE, 0, 10)
+VAR("DPL", DPL, 0, 0)
+CODE("DECIMAL", DECIMAL, 0, vm.BASE = 10)
+CODE("HEX", HEX, 0, vm.BASE = 16)
+
+//-----------------------------------------------------------------------------
+// arithmetic
+//-----------------------------------------------------------------------------
+CODE("+", PLUS, 0, push(pop() + pop()))
+CODE("*", MULT, 0, push(pop()* pop()))
+CODE("-", MINUS, 0, int b = pop(); push(pop() - b))
+CODE("/", DIV, 0, int b = pop(); push(f_div(pop(), b)))
+CODE("MOD", MOD, 0, int b = pop(); push(f_mod(pop(), b)))
+CODE("/MOD", DIV_MOD, 0, f_div_mod())
+CODE("*/", MULT_DIV, 0, f_mul_div())
+CODE("*/MOD", MULT_DIV_MOD, 0, f_mul_div_mod())
+CODE("FM/MOD", FM_DIV_MOD, 0, f_fm_div_mod())
+CODE("UM/MOD", UM_DIV_MOD, 0, f_um_div_mod())
+CODE("SM/REM", SM_DIV_REM, 0, f_sm_div_rem())
+CODE("M*", M_STAR, 0, dint b = pop(); dint a = pop(); dpush(a* b))
+CODE("1+", ONE_PLUS, 0, push(pop() + 1))
+CODE("1-", ONE_MINUS, 0, push(pop() - 1))
+CODE("2*", TWO_MULT, 0, push(pop() * 2))
+CODE("2/", TWO_DIV, 0, push(f_div(pop(), 2)))
+CODE("NEGATE", NEGATE, 0, push(-pop()))
+CODE("S>D", S_TO_D, 0, dpush(pop()))
+CODE("UM*", UM_MULT, 0, udint b = (uint)pop(); udint a = (uint)pop(); dpush(a* b))
+CODE("ABS", ABS, 0, push(f_abs(pop())))
+CODE("MAX", FMAX, 0, push(f_max(pop(), pop())))
+CODE("MIN", FMIN, 0, push(f_min(pop(), pop())))
+CODE("CHAR+", CHAR_PLUS, 0, push(pop() + 1))
+CODE("CHARS", CHARS, 0, push(pop() * 1))
+CODE("CELL+", CELL_PLUS, 0, push(pop() + CELL_SZ))
+CODE("CELLS", CELLS, 0, push(pop()* CELL_SZ))
+CODE("WITHIN", WITHIN, 0, f_within())
+
+//-----------------------------------------------------------------------------
+// logical
+//-----------------------------------------------------------------------------
+CODE("AND", AND, 0, push(pop()& pop()))
+CODE("OR", OR, 0, push(pop() | pop()))
+CODE("XOR", XOR, 0, push(pop() ^ pop()))
+CODE("INVERT", INVERT, 0, push(~pop()))
+CODE("LSHIFT", LSHIFT, 0, int n = pop(); push(pop() << n))
+CODE("RSHIFT", RSHIFT, 0, int n = pop(); push(pop() >> n))
+
+CODE("=", EQUAL, 0, push(F_BOOL(pop() == pop())))
+CODE("<>", DIFFERENT, 0, push(F_BOOL(pop() != pop())))
+CODE("<", LESS, 0, int b = pop(); push(F_BOOL(pop() < b)))
+CODE("<=", LESS_EQUAL, 0, int b = pop(); push(F_BOOL(pop() <= b)))
+CODE(">", GREATER, 0, int b = pop(); push(F_BOOL(pop() > b)))
+CODE(">=", GREATER_EQUAL, 0, int b = pop(); push(F_BOOL(pop() >= b)))
+
+CODE("U<", U_LESS, 0, unsigned int b = pop(); push(F_BOOL((unsigned)pop() < b)))
+CODE("U<=", U_LESS_EQUAL, 0, unsigned int b = pop(); push(F_BOOL((unsigned)pop() <= b)))
+CODE("U>", U_GREATER, 0, unsigned int b = pop(); push(F_BOOL((unsigned)pop() > b)))
+CODE("U>=", U_GREATER_EQUAL, 0, unsigned int b = pop(); push(F_BOOL((unsigned)pop() >= b)))
+
+CODE("0=", ZERO_EQUAL, 0, push(F_BOOL(pop() == 0)))
+CODE("0<>", ZERO_DIFFERENT, 0, push(F_BOOL(pop() != 0)))
+CODE("0<", ZERO_LESS, 0, push(F_BOOL(pop() < 0)))
+CODE("0<=", ZERO_LESS_EQUAL, 0, push(F_BOOL(pop() <= 0)))
+CODE("0>", ZERO_GREATER, 0, push(F_BOOL(pop() > 0)))
+CODE("0>=", ZERO_GREATER_EQUAL, 0, push(F_BOOL(pop() >= 0)))
+
+//-----------------------------------------------------------------------------
+// memory
+//-----------------------------------------------------------------------------
+CODE("!", STORE, 0, int a = pop(); store(a, pop()))
+CODE("@", FETCH, 0, push(fetch(pop())))
+CODE("+!", PLUS_STORE, 0, int a = pop(); store(a, fetch(a) + pop()))
+CODE("C!", CSTORE, 0, int a = pop(); cstore(a, pop()))
+CODE("C@", CFETCH, 0, push(cfetch(pop())))
+CODE("2!", TWO_STORE, 0, int a = pop(); dstore(a, dpop()))
+CODE("2@", TWO_FETCH, 0, dpush(dfetch(pop())))
+CODE("FILL", FILL, 0, f_fill())
+CODE("ERASE", ERASE, 0, f_erase())
+CODE("MOVE", MOVE, 0, f_move())
 
 //-----------------------------------------------------------------------------
 // parameter stack
 //-----------------------------------------------------------------------------
-X("DROP", fDrop, 0, pop())
-X("SWAP", fSwap, 0, int a = pop(); int b = pop(); push(a); push(b))
-X("DUP", fDup, 0, push(peek(0)))
-X("?DUP", fQDup, 0, int a = peek(0); if (a) push(a))
-X("OVER", fOver, 0, push(peek(1)))
-X("ROT", fRot, 0, int c = pop(); int b = pop(); int a = pop(); push(b); push(c); push(a))
-X("-ROT", fMinusRot, 0, int c = pop(); int b = pop(); int a = pop(); push(c); push(a); push(b))
-X("DEPTH", fDepth, 0, push(depth()))
-X("NIP", fNip, 0, int a = pop(); pop(); push(a))
-X("PICK", fPick, 0, push(peek(pop())))
-X("ROLL", fRoll, 0, roll(pop()))
-X("TUCK", fTuck, 0, int a = pop(); int b = pop(); push(a); push(b); push(a))
-X("2DROP", fTwoDrop, 0, dpop())
-X("2SWAP", fTwoSwap, 0, dint a = dpop(); dint b = dpop(); dpush(a); dpush(b))
-X("2DUP", fTwoDup, 0, push(peek(1)); push(peek(1)))
-X("2OVER", fTwoOver, 0, push(peek(3)); push(peek(3)))
-X("2ROT", fTwoRot, 0, dint c = dpop(); dint b = dpop(); dint a = dpop(); dpush(b); dpush(c); dpush(a))
-X("-2ROT", fMinusTwoRot, 0, dint c = dpop(); dint b = dpop(); dint a = dpop(); dpush(c); dpush(a); dpush(b))
-X("S0", fS0, 0, push(STACK_SZ))
-X("SP@", fSPFetch, 0, push(vm.sp))
-X("SP!", fSPStore, 0, set_sp(pop()))
+CODE("DROP", DROP, 0, pop())
+CODE("SWAP", SWAP, 0, int a = pop(); int b = pop(); push(a); push(b))
+CODE("DUP", DUP, 0, push(peek(0)))
+CODE("?DUP", QDUP, 0, int a = peek(0); if (a) push(a))
+CODE("OVER", OVER, 0, push(peek(1)))
+CODE("ROT", ROT, 0, int c = pop(); int b = pop(); int a = pop(); push(b); push(c); push(a))
+CODE("-ROT", MINUS_ROT, 0, int c = pop(); int b = pop(); int a = pop(); push(c); push(a); push(b))
+CODE("NIP", NIP, 0, int a = pop(); pop(); push(a))
+CODE("PICK", PICK, 0, push(peek(pop())))
+CODE("ROLL", ROLL, 0, roll(pop()))
+CODE("TUCK", TUCK, 0, int a = pop(); int b = pop(); push(a); push(b); push(a))
 
-// math
-X("+", fPlus, 0, push(pop()+pop()))
-X("-", fMinus, 0, int b = pop(); int a = pop(); push(a - b))
-X("1+", fOnePlus, 0, push(pop() + 1))
-X("1-", fOneMinus, 0, push(pop() - 1))
+CODE("2DROP", TWO_DROP, 0, dpop())
+CODE("2SWAP", TWO_SWAP, 0, dint a = dpop(); dint b = dpop(); dpush(a); dpush(b))
+CODE("2DUP", TWO_DUP, 0, push(peek(1)); push(peek(1)))
+CODE("2OVER", TWO_OVER, 0, push(peek(3)); push(peek(3)))
+CODE("2ROT", TWO_ROT, 0, dint c = dpop(); dint b = dpop(); dint a = dpop(); dpush(b); dpush(c); dpush(a))
+CODE("-2ROT", MINUS_2ROT, 0, dint c = dpop(); dint b = dpop(); dint a = dpop(); dpush(c); dpush(a); dpush(b))
+
+CODE("S0", S0, 0, push(s0()))
+CODE("SP@", SPFETCH, 0, push(get_sp()))
+CODE("SP!", SPSTORE, 0, set_sp(pop()))
+CODE("DEPTH", DEPTH, 0, push(depth()))
+
+//-----------------------------------------------------------------------------
+// return stack
+//-----------------------------------------------------------------------------
+CODE(">R", TOR, 0, rpush(pop()))
+CODE("R>", FROMR, 0, push(rpop()))
+CODE("RDROP", RDROP, 0, rpop())
+CODE("R@", R_FETCH, 0, push(rpeek(0)))
+CODE("I", I, 0, push(rpeek(0)))
+CODE("J", J, 0, push(rpeek(2)))
+CODE("2>R", TWO_TO_R, 0, rdpush(dpop()))
+CODE("2R>", TWO_R_TO, 0, dpush(rdpop()))
+CODE("2R@", TWO_R_FETCH, 0, dpush(rdpeek(0)))
+
+CODE("R0", R0, 0, push(r0()))
+CODE("RSP@", RSPFETCH, 0, push(get_rp()))
+CODE("RSP!", RSPSTORE, 0, set_rp(pop()))
+
+//-----------------------------------------------------------------------------
+// dictionary
+//-----------------------------------------------------------------------------
+CODE(",", COMMA, 0, comma(pop()))
+CODE("C,", CCOMMA, 0, ccomma(pop()))
+CODE("HERE", HERE, 0, push(here()))
+CODE("LATEST", LATEST, 0, push(latest()))
+
+//-----------------------------------------------------------------------------
+// strings
+//-----------------------------------------------------------------------------
+CODE("COUNT", COUNT, 0, f_count())
+
+//-----------------------------------------------------------------------------
+// main loop
+//-----------------------------------------------------------------------------
+CODE("BYE", BYE, 0, exit(EXIT_SUCCESS))
+CODE("THROW", THROW, 0, error(pop()))
+
+//-----------------------------------------------------------------------------
+// tools
+//-----------------------------------------------------------------------------
+CODE(".S", DOT_S, 0, print_stack())
+CODE(".RS", DOT_RS, 0, print_rstack())
+CODE("WORDS", WORDS, 0, f_words())
+
+//-----------------------------------------------------------------------------
+// input
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+// output
+//-----------------------------------------------------------------------------
+CODE("DUMP", DUMP, 0, f_dump())
+CODE("TYPE", TYPE, 0, f_type())
 
 // i/o
-X(".", fDot, 0, printf("%d ", pop()))
-X(".S", fDotS, 0, print_stack())
+CODE(".", DOT, 0, printf("%d ", pop()))
 
 // exceptions
-X("THROW", fThrow, 0, error(pop()))
 
-#undef X
+#undef CONST
+#undef VAR
+#undef CODE
+#undef FORTH
