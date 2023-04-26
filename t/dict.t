@@ -23,13 +23,13 @@ forth_ok("BL WORD literal FIND SWAP ' literal = SWAP .S", "( -1 1 )");
 
 note "Test '";
 note "Test EXECUTE";
-forth_nok("'", "\nError: word not defined: \n");
-forth_nok("' hello", "\nError: word not defined: hello\n");
+forth_nok("'", "\nError: undefined word: \n");
+forth_nok("' hello", "\nError: undefined word: hello\n");
 forth_ok("1 2 3 ' .S EXECUTE", "( 1 2 3 )");
 
 note "Test [']";
 note "Test EXECUTE";
-forth_nok(": x ['] hello ; x", "\nError: word not defined: hello\n");
+forth_nok(": x ['] hello ; x", "\nError: undefined word: hello\n");
 forth_ok(": x ['] .S EXECUTE ; 1 2 3 x", "( 1 2 3 )");
 
 note "Test POSTPONE";
@@ -48,9 +48,9 @@ forth_ok("$func  0 x", "2 ");
 forth_ok("$func -1 x", "1 ");
 
 note "Test CREATE";
-forth_nok("CREATE", "\nError: name expected\n");
+forth_nok("CREATE", "\nError: attempt to use zero-length string as a name\n");
 forth_ok("CREATE ".("x" x 63), "");
-forth_nok("CREATE ".("x" x 64), "\nError: name too long: ".("x" x 64)."\n");
+forth_nok("CREATE ".("x" x 64), "\nError: definition name too long: ".("x" x 64)."\n");
 forth_ok("CREATE x 123 , x @ .S", "( 123 )");
 
 note "Test CONSTANT";
@@ -64,10 +64,10 @@ forth_ok("CREATE x 123 , ' x >BODY @ .S", "( 123 )");
 
 note "Test :";
 note "Test ;";
-forth_nok(":", "\nError: name expected\n");
-forth_nok(": ".("x" x 64), "\nError: name too long: ".("x" x 64)."\n");
-forth_nok(": x [ :", "\nError: nested colon definition\n");
-forth_nok(";", "\nError: ; without :\n");
+forth_nok(":", "\nError: attempt to use zero-length string as a name\n");
+forth_nok(": ".("x" x 64), "\nError: definition name too long: ".("x" x 64)."\n");
+forth_nok(": x [ :", "\nError: compiler nesting\n");
+forth_nok(";", "\nError: control structure mismatch\n");
 forth_ok(": x DUP ; 1 x .S", "( 1 1 )");
 
 note "Test :NONAME";

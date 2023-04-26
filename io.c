@@ -77,7 +77,7 @@ void push_file(const char* filename, int len) {
         filename = fstr_to_cstr(filename, len);
         FILE* fp = fopen(filename, "r");
         if (!fp)
-            error_arg(ErrorOpenFile, filename);
+            error_arg(ErrorNonExistentFile, filename);
         else
             push_stream(fp);
     }
@@ -217,7 +217,7 @@ void numout_digits(void) {
 void numout_char(char c) {
     char* p = mem + --user->hold_ptr;
     if (p < user->hold)
-        error(ErrorNumberOutputOverflow);
+        error(ErrorPicturedNumericOutputStringOverflow);
     else
         *p = c;
 }

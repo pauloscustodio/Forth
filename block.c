@@ -32,7 +32,7 @@ static bool read_block_buf(Buffer* buff, int blk) {
     const char* filename = block_filename(blk);
     FILE* fp = fopen(filename, "rb");
     if (fp) {
-        buff->nr_in = fread(buff->tib, 1, BUFFER_SZ, fp);
+        buff->nr_in = (int)fread(buff->tib, 1, BUFFER_SZ, fp);
         fclose(fp);
         return true;
     }

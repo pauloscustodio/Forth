@@ -15,7 +15,6 @@
 #include <stdlib.h>
 
 void init(void) {
-    init_errors();
     init_memory();
     init_stacks();
     init_dict();

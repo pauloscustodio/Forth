@@ -46,7 +46,7 @@ void init_dict(void) {
 
 void comma(int value) {
     if (user->here + CELL_SZ > DICT_SZ)
-        error(ErrorMemoryOverflow);
+        error(ErrorDictionaryOverflow);
     store(user->here, value);
     user->here += CELL_SZ;
 }
@@ -58,7 +58,7 @@ void dcomma(dint value) {
 
 void ccomma(int value) {
     if (user->here + 1 > DICT_SZ)
-        error(ErrorMemoryOverflow);
+        error(ErrorDictionaryOverflow);
     cstore(user->here, value);
     user->here++;
 }
@@ -85,7 +85,7 @@ void align(void) {
 // create a word, return xt
 int create(const char* name, int len, int flags, int id) {
     if (len > F_LENMASK)
-        error_arg(ErrorNameTooLong, fstr_to_cstr(name, len));
+        error_arg(ErrorDefinitionNameTooLong, fstr_to_cstr(name, len));
 
     align();
 
@@ -110,7 +110,7 @@ void parse_create(int id) {
     int len = 0;
     const char* name = c_parse_word(&len);
     if (len == 0)
-        error(ErrorNameExpected);
+        error(ErrorAttemptToUseZeroLengthStringAsName);
     else
         create(name, len, 0, id);
 }
@@ -121,7 +121,7 @@ void f_create(void) {
 
 void f_colon(void) {
     if (user->in_colon)
-        error(ErrorNestedColonDefinition);
+        error(ErrorCompilerNesting);
     else {
         user->in_colon = true;
         parse_create(idXDOCOL);
@@ -132,7 +132,7 @@ void f_colon(void) {
 
 void f_colon_noname(void) {
     if (user->in_colon)
-        error(ErrorNestedColonDefinition);
+        error(ErrorCompilerNesting);
     else {
         user->in_colon = true;
         create("", 0, 0, idXDOCOL);
@@ -144,7 +144,7 @@ void f_colon_noname(void) {
 
 void f_semicolon(void) {
     if (!user->in_colon)
-        error(ErrorSemicolonWithoutColon);
+        error(ErrorControlStructureMismatch);
     else {
         comma(xtEXIT);
         user->in_colon = false;
@@ -292,7 +292,7 @@ int f_tick(void) {
     const char* word = c_parse_word(&len);
     int link = c_find_link(word, len);
     if (!link) 				// not found
-        error_arg(ErrorWordNotDefined, fstr_to_cstr(word, len));
+        error_arg(ErrorUndefinedWord, fstr_to_cstr(word, len));
 
     return link_to_xt(link);
 }

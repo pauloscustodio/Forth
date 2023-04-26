@@ -67,7 +67,7 @@ void c_interpret_word(const char* word, int len) {
                 }
                 break;
             default:
-                error_arg(ErrorWordNotDefined, fstr_to_cstr(word, len));
+                error_arg(ErrorUndefinedWord, fstr_to_cstr(word, len));
             }
         }
     }

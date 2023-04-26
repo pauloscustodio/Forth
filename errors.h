@@ -6,13 +6,14 @@
 
 #pragma once
 
+#pragma once
+
 #include "forth.h"
 
-typedef enum ErrorCode {
-#define X(code, message)    code,
+enum ErrorCode {
+#define X(id, code, message)    code = id,
 #include "errors.def"
-} ErrorCode;
+};
 
-void init_errors(void);
-void error(ErrorCode code);
-void error_arg(ErrorCode code, const char* arg);
+void error(int error_code);
+void error_arg(int error_code, const char* arg);

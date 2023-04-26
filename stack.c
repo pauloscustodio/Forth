@@ -15,14 +15,14 @@ void init_stacks(void) {
     user->struct_p = STRUCT0;
 }
 
-static void _push(int value, int* sp, int s1, ErrorCode overflow) {
+static void _push(int value, int* sp, int s1, enum ErrorCode overflow) {
     if (*sp - CELL_SZ <= s1)
         error(overflow);
     *sp -= CELL_SZ;
     store(*sp, value);
 }
 
-static int _pop(int* sp, int s0, ErrorCode underflow) {
+static int _pop(int* sp, int s0, enum ErrorCode underflow) {
     if (*sp >= s0)
         error(underflow);
     int out = fetch(*sp);
@@ -30,25 +30,25 @@ static int _pop(int* sp, int s0, ErrorCode underflow) {
     return out;
 }
 
-static int _peek(int depth, int* sp, int s0, ErrorCode underflow) {
+static int _peek(int depth, int* sp, int s0, enum ErrorCode underflow) {
     int idx = *sp + depth * CELL_SZ;
     if (idx >= s0)
         error(underflow);
     return fetch(idx);
 }
 
-static void _dpush(dint value, int* sp, int s1, ErrorCode overflow) {
+static void _dpush(dint value, int* sp, int s1, enum ErrorCode overflow) {
     _push(DCELL_LO(value), sp, s1, overflow);
     _push(DCELL_HI(value), sp, s1, overflow);
 }
 
-static dint _dpop(int* sp, int s0, ErrorCode underflow) {
+static dint _dpop(int* sp, int s0, enum ErrorCode underflow) {
     int hi = _pop(sp, s0, underflow);
     int lo = _pop(sp, s0, underflow);
     return DCELL(hi, lo);
 }
 
-static dint _dpeek(int depth, int* sp, int s0, ErrorCode underflow) {
+static dint _dpeek(int depth, int* sp, int s0, enum ErrorCode underflow) {
     int hi = _peek(2 * depth, sp, s0, underflow);
     int lo = _peek(2 * depth + 1, sp, s0, underflow);
     return DCELL(hi, lo);
@@ -70,27 +70,27 @@ static void _print(int* sp, int s0, const char* prefix) {
 
 
 void push(int value) {
-    _push(value, &user->sp, S1, ErrorDataStackOveflow);
+    _push(value, &user->sp, S1, ErrorStackOverflow);
 }
 
 int pop(void) {
-    return _pop(&user->sp, S0, ErrorDataStackUnderflow);
+    return _pop(&user->sp, S0, ErrorStackUnderflow);
 }
 
 int peek(int depth) {
-    return _peek(depth, &user->sp, S0, ErrorDataStackUnderflow);
+    return _peek(depth, &user->sp, S0, ErrorStackUnderflow);
 }
 
 void dpush(dint value) {
-    _dpush(value, &user->sp, S1, ErrorDataStackOveflow);
+    _dpush(value, &user->sp, S1, ErrorStackOverflow);
 }
 
 dint dpop(void) {
-    return _dpop(&user->sp, S0, ErrorDataStackUnderflow);
+    return _dpop(&user->sp, S0, ErrorStackUnderflow);
 }
 
 dint dpeek(int depth) {
-    return _dpeek(depth, &user->sp, S0, ErrorDataStackUnderflow);
+    return _dpeek(depth, &user->sp, S0, ErrorStackUnderflow);
 }
 
 int depth(void) {
@@ -104,7 +104,7 @@ void roll(int depth) {
     if (depth > 0) {
         int bot = user->sp + depth * CELL_SZ;
         if (bot >= S0)
-            error(ErrorDataStackUnderflow);
+            error(ErrorStackUnderflow);
         int bot_value = fetch(bot);
         memmove(mem + user->sp + CELL_SZ, mem + user->sp, depth * CELL_SZ);
         store(user->sp, bot_value);
@@ -117,7 +117,7 @@ void print_stack(void) {
 
 
 void rpush(int value) {
-    _push(value, &user->rp, R1, ErrorReturnStackOveflow);
+    _push(value, &user->rp, R1, ErrorReturnStackOverflow);
 }
 
 int rpop(void) {
@@ -129,7 +129,7 @@ int rpeek(int depth) {
 }
 
 void rdpush(dint value) {
-    _dpush(value, &user->rp, R1, ErrorReturnStackOveflow);
+    _dpush(value, &user->rp, R1, ErrorReturnStackOverflow);
 }
 
 dint rdpop(void) {
@@ -150,13 +150,13 @@ void print_rstack(void) {
 
 
 void struct_push(int value) {
-    _push(value, &user->struct_p, STRUCT1, ErrorStructStackOveflow);
+    _push(value, &user->struct_p, STRUCT1, ErrorControlFlowStackOverflow);
 }
 
 int struct_pop(void) {
-    return _pop(&user->struct_p, STRUCT0, ErrorStructStackUnderflow);
+    return _pop(&user->struct_p, STRUCT0, ErrorControlFlowStackUnderflow);
 }
 
 int struct_peek(int depth) {
-    return _peek(depth, &user->struct_p, STRUCT0, ErrorStructStackUnderflow);
+    return _peek(depth, &user->struct_p, STRUCT0, ErrorControlFlowStackUnderflow);
 }

@@ -31,7 +31,7 @@ static int check_addr(int addr, int size) {
     if (addr + size > MEM_SZ)
         error(ErrorMemoryOverflow);
     if (size != BYTE_SZ && (addr % CELL_SZ) != 0)
-        error(ErrorMemoryAlignment);
+        error(ErrorAddressAlignmentException);
     return addr;
 }
 

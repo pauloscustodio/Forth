@@ -24,7 +24,7 @@ forth_ok("-1234567890123. SWAP OVER DABS .S <# #S ROT SIGN #> TYPE",
 		 "( -288 1912276171 287 )-1234567890123");
 forth_ok("0. <# ".("#\n" x 128)." #> TYPE", "0" x 128);
 forth_nok("0. <# ".("#\n" x 129)." #> TYPE", 
-		  "\nError: number output overflow\n");
+		  "\nError: pictured numeric output string overflow\n");
 
 note "Test .";
 forth_ok("0 .", "0 ");
