@@ -22,6 +22,11 @@
 #define DICT_SZ         (256 * 1024)
 #define STACK_SZ        1024
 #define PAD_SZ          256
+#define HOLD_SZ         128
+#define WORDBUF_SZ      256
+#define BUFFER_SZ       1024
+#define MAX_FILES       16
+#define MAX_BLOCKS      16
 
 // types
 typedef uint8_t			byte;
@@ -59,17 +64,41 @@ typedef uint64_t		udint;
 #define STATE_INTERPRET     0
 #define STATE_COMPILE       1
 
+// input buffers
+typedef struct Buffer {
+	FILE*	file;
+	int     blk;            // block, if any
+	bool    dirty;          // true if block is dirty
+	int     nr_in;          // length
+	int     to_in;          // input cursor
+	char    tib[BUFFER_SZ + 1]; // Forth buffer + space for C's null terminator
+} Buffer;
+
+typedef struct Input {
+	Buffer  buff[MAX_FILES];
+	int		buff_p;
+	Buffer  block[MAX_BLOCKS];
+	int     block_p;        // last block allocated
+	Buffer* last_block;     // last block accessed
+} Input;
+
 // VM 
 typedef struct vm {
 	char	pad[PAD_SZ];
+	char    hold[HOLD_SZ];
+	char	wordbuf[WORDBUF_SZ];
 
 #define VAR(word, name, flags, value)	int name;
 #include "words.def"
 
+	char*	wordbuf_p;
+	char*	hold_p;
 	byte*	dict_p;
 	byte*	latest_p;
 	int 	sp;
 	int 	rp;
+	int     source_id, blk, scr;    // input source
+	Input   input;
 
 	byte	dict[DICT_SZ];
 	int		stack[STACK_SZ];
@@ -107,6 +136,8 @@ void dict_name_store(uint addr, const char* text, uint len, int flags);
 int long_str_size(uint len);
 const char* long_str_fetch(uint addr, uint* len);
 void long_str_store(uint addr, const char* text, uint len);
+
+char* str_to_wordbuff_cstr(const char* str, uint len);
 
 // dictionary
 uint here(void);

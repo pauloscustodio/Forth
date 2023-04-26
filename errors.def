@@ -16,6 +16,7 @@ X(-8, ErrorDictionaryOverflow, "dictionary overflow")
 X(-9, ErrorInvalidMemoryAddress, "invalid memory address")
 X(-10, ErrorDivisionByZero, "division by zero")
 X(-13, ErrorUndefinedWord, "undefined word")
+X(-18, ErrorParsedStringOverflow, "parsed string overflow")
 X(-23, ErrorAddressAlignmentException, "address alignment exception")
 X(-38, ErrorNonExistentFile, "non-existent file")
 

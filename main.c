@@ -158,6 +158,7 @@ int main(int argc, char* argv[]) {
 		fputs("usage: forth file.fs args...\n", stderr);
 		return EXIT_FAILURE;
 	}
+
 	vm_init();
-	parse_file(argv[1]);
+    parse_file(argv[1]);
 }

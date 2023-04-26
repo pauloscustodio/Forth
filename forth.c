@@ -19,7 +19,8 @@ void vm_init(void) {
 	
     // blank all buffers
 	memset(&vm.pad, BL, sizeof(vm.pad));
-	
+
+	vm.wordbuf_p = &vm.wordbuf[0];
 	vm.latest_p = NULL;
 	vm.dict_p = &vm.dict[0];
 	vm.sp = STACK_SZ;
@@ -165,6 +166,21 @@ void long_str_store(uint addr, const char* text, uint len) {
 	addr_to_cptr(addr + CELL_SZ + len - 1);      // check for overflow
 	store(addr, len);
 	memcpy(addr_to_cptr(addr + CELL_SZ), text, len);
+}
+
+char* str_to_wordbuff_cstr(const char* str, uint len) {
+	if (len > F_COUNTED_STR_MASK)
+		error(ErrorParsedStringOverflow);
+	if (vm.wordbuf_p + 1 + len + 1 > &vm.wordbuf[WORDBUF_SZ])
+		vm.wordbuf_p = &vm.wordbuf[0];
+	char* ret = vm.wordbuf_p;
+	char* p = ret;
+	*(byte*)p++ = len & F_COUNTED_STR_MASK;
+	memcpy(p, str, len); 
+	p += len;
+	*p++ = '\0';
+	vm.wordbuf_p = p;
+	return ret;
 }
 
 //-----------------------------------------------------------------------------
