@@ -28,6 +28,6 @@ NEGATE 2/ 2* 1- 1+ M* SM/REM UM/MOD FM/MOD */MOD */ /MOD MOD / - * + HEX
 DECIMAL BASE STATE TRUE FALSE PAD R0 S0 BL 
 ```
 
-Copyright (c) Paulo Custodio, 2020-2022
+Copyright (c) Paulo Custodio, 2020-2025
 
 License: [GPL3](https://www.gnu.org/licenses/gpl-3.0.html) 
