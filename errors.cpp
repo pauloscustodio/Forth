@@ -85,9 +85,7 @@ static string lookup_error_msg(Error error_code) {
 }
 
 void error(Error error_code, const string& arg) {
-	if (error_code == Error::Ok)
-		exit(EXIT_SUCCESS);
-	else {
+	if (error_code != Error::Ok) {
 		string error_msg = lookup_error_msg(error_code);
 		cerr << endl << "Error: " << error_msg;
 		if (!arg.empty())

@@ -77,7 +77,7 @@ static void exec_file(const string& filename) {
 }
 
 static void die_usage() {
-	cerr << "usage: forth file.fs args..." << endl;
+	cerr << "Usage: forth [-e forth] [source [args...]]" << endl;
 	exit(EXIT_FAILURE);
 }
 
