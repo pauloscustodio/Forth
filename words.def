@@ -4,14 +4,42 @@
 // License: GPL3 https://www.gnu.org/licenses/gpl-3.0.html
 //-----------------------------------------------------------------------------
 
-".", 			DOT, 			0, 		cout << vm.pop() << VM::BL
-"THROW", 		THROW, 			0, 		error(static_cast<Error>(vm.pop()))
-"DROP", 		DROP, 			0, 		vm.pop()
-"DUP", 			DUP, 			0, 		vm.push(vm.peek(0))
-"PICK", 		PICK, 			0, 		vm.push(vm.peek(vm.pop()))
-"+", 			PLUS, 			0, 		vm.push(vm.pop()+vm.pop())
-".S", 			DOT_S, 			0, 		vm.dot_stack()
-"WORDS", 		WORDS, 			0, 		vm.words()
-"S""",			S_QUOTE,		0,		vm.f_s_quote()
-"TYPE",			TYPE,			0,		vm.f_type()
+//-----------------------------------------------------------------------------
+// CORE
+//-----------------------------------------------------------------------------
+
+// Variables
+"PAD",			PAD,			0,		f_pad()
+
+// Memory access
+"!",			STORE,			0,		f_store()
+"@",			FETCH,			0,		f_fetch()
+"C!",			C_STORE,		0,		f_c_store()
+"C@",			C_FETCH,		0,		f_c_fetch()
+
+// Stack manipulation
+
+
+".", 			DOT, 			0, 		cout << pop() << BL
+"THROW", 		THROW, 			0, 		error(static_cast<Error>(pop()))
+"DROP", 		DROP, 			0, 		pop()
+"DUP", 			DUP, 			0, 		push(peek(0))
+"PICK", 		PICK, 			0, 		push(peek(pop()))
+"+", 			PLUS, 			0, 		push(pop()+pop())
+"WORDS", 		WORDS, 			0, 		f_words()
 "ENVIRONMENT?", ENVIRONMENT_Q, 	0, 		vm.f_environment_q()
+
+//-----------------------------------------------------------------------------
+// STRINGS
+//-----------------------------------------------------------------------------
+
+"TYPE",			TYPE,			0,		vm.f_type()
+"COUNT",		COUNT,			0,		f_count()
+"S""",			S_QUOTE,		0,		vm.f_s_quote()
+
+//-----------------------------------------------------------------------------
+// TOOLS
+//-----------------------------------------------------------------------------
+
+".S", 			DOT_S, 			0, 		vm.stack->print()
+

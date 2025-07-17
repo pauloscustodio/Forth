@@ -63,7 +63,7 @@ sub patch_file {
 		elsif (/^(\s*)\/\/\@\@BEGIN:\s*Words\b/) {
 			my $prefix = $1;
 			push @out, $_;
-			for my $word (@words) {
+			for my $word (reverse @words) {
 				push @out, $prefix.c_string($word->{name}).",\n";
 			}
 			while (@in && $in[0] !~ /^\s*\/\/\@\@END/) {
@@ -73,7 +73,7 @@ sub patch_file {
 		elsif (/^(\s*)\/\/\@\@BEGIN:\s*WordsImplementation\b/) {
 			my $prefix = $1;
 			push @out, $_;
-			for my $word (@words) {
+			for my $word (reverse @words) {
 				push @out, $prefix."else if (case_insensitive_equal(word, ".
 					c_string($word->{name}).")) { ".$word->{code}."; }\n";
 			}

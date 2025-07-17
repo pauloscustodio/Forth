@@ -17,34 +17,39 @@ using namespace std;
 static bool case_insensitive_equal(const string& a, const string& b) {
 	return a.size() == b.size() &&
 		equal(a.begin(), a.end(), b.begin(), [](char c1, char c2) {
-		return tolower(static_cast<unsigned char>(c1)) ==
-			tolower(static_cast<unsigned char>(c2));
+		return tolower(static_cast<uchar>(c1)) ==
+			tolower(static_cast<uchar>(c2));
 			});
 }
 
-static void exec_word() {
-	int len = vm.pop();
-	int addr = vm.pop();
-	const char* str = reinterpret_cast<char*>(&vm) + addr;
-	string word{ str, str + len };
+static void exec_word(const string& word) {
 	if (!word.empty()) {
 		if (false) {}
 		//@@BEGIN: WordsImplementation
-		else if (case_insensitive_equal(word, ".")) { cout << vm.pop() << VM::BL; }
-		else if (case_insensitive_equal(word, "THROW")) { error(static_cast<Error>(vm.pop())); }
-		else if (case_insensitive_equal(word, "DROP")) { vm.pop(); }
-		else if (case_insensitive_equal(word, "DUP")) { vm.push(vm.peek(0)); }
-		else if (case_insensitive_equal(word, "PICK")) { vm.push(vm.peek(vm.pop())); }
-		else if (case_insensitive_equal(word, "+")) { vm.push(vm.pop()+vm.pop()); }
-		else if (case_insensitive_equal(word, ".S")) { vm.dot_stack(); }
-		else if (case_insensitive_equal(word, "WORDS")) { vm.words(); }
+		else if (case_insensitive_equal(word, ".S")) { vm.stack->print(); }
 		else if (case_insensitive_equal(word, "S\"")) { vm.f_s_quote(); }
+		else if (case_insensitive_equal(word, "COUNT")) { f_count(); }
 		else if (case_insensitive_equal(word, "TYPE")) { vm.f_type(); }
 		else if (case_insensitive_equal(word, "ENVIRONMENT?")) { vm.f_environment_q(); }
+		else if (case_insensitive_equal(word, "WORDS")) { f_words(); }
+		else if (case_insensitive_equal(word, "+")) { push(pop()+pop()); }
+		else if (case_insensitive_equal(word, "PICK")) { push(peek(pop())); }
+		else if (case_insensitive_equal(word, "DUP")) { push(peek(0)); }
+		else if (case_insensitive_equal(word, "DROP")) { pop(); }
+		else if (case_insensitive_equal(word, "THROW")) { error(static_cast<Error>(pop())); }
+		else if (case_insensitive_equal(word, ".")) { cout << pop() << BL; }
+		else if (case_insensitive_equal(word, "C@")) { f_c_fetch(); }
+		else if (case_insensitive_equal(word, "C!")) { f_c_store(); }
+		else if (case_insensitive_equal(word, "@")) { f_fetch(); }
+		else if (case_insensitive_equal(word, "!")) { f_store(); }
+		else if (case_insensitive_equal(word, "PAD")) { f_pad(); }
 		//@@END
-		else if (isdigit(static_cast<unsigned char>(word[0])) ||
-			(word.size() >= 2 && word[0] == '-' && isdigit(static_cast<unsigned char>(word[1])))) {
-			vm.push(stoi(word));
+		else if (isdigit(static_cast<uchar>(word[0])) ||
+			(word.size() >= 2 && word[0] == '-' && isdigit(static_cast<uchar>(word[1])))) {
+			push(stoi(word));
+		}
+		else if (word.size() == 3 && word[0] == '\'' && word[2] == '\'') {
+			push(word[1]);
 		}
 		else {
 			error(Error::UndefinedWord, word);
@@ -52,10 +57,11 @@ static void exec_word() {
 	}
 }
 
-static void exec_text(const string& text) {
-	vm.refill(text);
-	while (vm.parse_word())
-		exec_word();
+static void exec_text(const string& str) {
+	vm.tib->refill(str.c_str(), static_cast<int>(str.size()));
+	char* word;
+	while ((word = c_word()) != nullptr)
+		exec_word(string(word + 1, word + 1 + *reinterpret_cast<uchar*>(word)));
 }
 
 static void exec_file(const string& filename) {
@@ -76,8 +82,6 @@ static void die_usage() {
 }
 
 int main(int argc, char* argv[]) {
-	vm.init();
-
 	argc--; argv++;
 	while (argc > 0 && argv[0][0] == '-') {
 		switch (argv[0][1]) {

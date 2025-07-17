@@ -1,0 +1,93 @@
+//-----------------------------------------------------------------------------
+// C++ implementation of a Forth interpreter
+// Copyright (c) Paulo Custodio, 2020-2025
+// License: GPL3 https://www.gnu.org/licenses/gpl-3.0.html
+//-----------------------------------------------------------------------------
+
+#include "errors.h"
+#include "core_mem.h"
+#include <cstring>
+using namespace std;
+
+Mem::Mem() {
+	memset(m_mem, 0, MEM_SZ);
+	m_bot = 0;
+	m_top = MEM_SZ;
+}
+
+int Mem::addr(const char* ptr) const {
+	int addr = check_addr(static_cast<int>(ptr - m_mem));
+	return addr;
+}
+
+int Mem::addr(const int* ptr) const {
+	int addr = check_addr(static_cast<int>(
+		reinterpret_cast<const char*>(ptr) - m_mem));
+	return addr;
+}
+
+char* Mem::char_ptr(int addr, int size) {
+	addr = check_addr(addr, size);
+	return m_mem + addr;
+}
+
+int* Mem::int_ptr(int addr, int size) {
+	addr = check_addr(addr, size);
+	return reinterpret_cast<int*>(m_mem + addr);
+}
+
+int Mem::fetch(int addr) {
+	return *int_ptr(addr, CELL_SZ);
+}
+
+void Mem::store(int addr, int value) {
+	*int_ptr(addr, CELL_SZ) = value;
+}
+
+dint Mem::dfetch(int addr) {
+	int hi = fetch(addr);
+	int lo = fetch(addr + CELL_SZ);
+	return dcell(hi, lo);
+}
+
+void Mem::dstore(int addr, dint value) {
+	store(addr, dcell_hi(value));
+	store(addr + CELL_SZ, dcell_lo(value));
+}
+
+int Mem::cfetch(int addr) {
+	return static_cast<uchar>(m_mem[check_addr(addr, CHAR_SZ)]);
+}
+
+void Mem::cstore(int addr, int value) {
+	m_mem[check_addr(addr, CHAR_SZ)] = value;
+}
+
+char* Mem::alloc_bot(int size) {
+	if (m_bot + size >= m_top)
+		error(Error::MemoryOverflow);
+	char* ret = char_ptr(m_bot);
+	m_bot += align(size);
+	return ret;
+}
+
+char* Mem::alloc_top(int size) {
+	if (m_bot + size >= m_top)
+		error(Error::MemoryOverflow);
+	m_top -= align(size);
+	return char_ptr(m_top);
+}
+
+int Mem::check_addr(int addr, int size) const {
+	if (addr < 0 || addr + size > MEM_SZ) {
+		error(Error::InvalidMemoryAddress);
+		return 0;
+	}
+	else if (size > CHAR_SZ && (addr % CELL_SZ) != 0) {
+		error(Error::AddressAlignmentException);
+		return 0;
+	}
+	else {
+		return addr;
+	}
+}
