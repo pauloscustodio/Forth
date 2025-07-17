@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include "types.h"
+#include "forth.h"
 using namespace std;
 
 class Stack {

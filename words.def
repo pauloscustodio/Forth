@@ -8,38 +8,52 @@
 // CORE
 //-----------------------------------------------------------------------------
 
-// Variables
-"PAD",			PAD,			0,		f_pad()
-
 // Memory access
-"!",			STORE,			0,		f_store()
-"@",			FETCH,			0,		f_fetch()
-"C!",			C_STORE,		0,		f_c_store()
-"C@",			C_FETCH,		0,		f_c_fetch()
-
-// Stack manipulation
+"!", f_STORE, 0
+"@", f_FETCH, 0
+"C!", f_C_STORE, 0
+"C@", f_C_FETCH, 0
 
 
-".", 			DOT, 			0, 		cout << pop() << BL
-"THROW", 		THROW, 			0, 		error(static_cast<Error>(pop()))
-"DROP", 		DROP, 			0, 		pop()
-"DUP", 			DUP, 			0, 		push(peek(0))
-"PICK", 		PICK, 			0, 		push(peek(pop()))
-"+", 			PLUS, 			0, 		push(pop()+pop())
-"WORDS", 		WORDS, 			0, 		f_words()
-"ENVIRONMENT?", ENVIRONMENT_Q, 	0, 		vm.f_environment_q()
+
+
+
+
+
 
 //-----------------------------------------------------------------------------
 // STRINGS
 //-----------------------------------------------------------------------------
 
-"TYPE",			TYPE,			0,		vm.f_type()
-"COUNT",		COUNT,			0,		f_count()
-"S""",			S_QUOTE,		0,		vm.f_s_quote()
-
 //-----------------------------------------------------------------------------
 // TOOLS
 //-----------------------------------------------------------------------------
 
-".S", 			DOT_S, 			0, 		vm.stack->print()
+//-----------------------------------------------------------------------------
+// Unsorted words
+//-----------------------------------------------------------------------------
 
+// Variables
+"PAD", f_PAD, 0
+
+// Memory access
+
+// Stack manipulation
+
+
+".", f_DOT, 0
+"THROW", f_THROW, 0
+"DROP", f_DROP, 0
+"DUP", f_DUP, 0
+"PICK", f_PICK, 0
+"+", f_PLUS, 0
+"WORDS", f_WORDS, 0
+"ENVIRONMENT?", f_ENVIRONMENT_Q, 0
+
+"TYPE", f_TYPE, 0
+"COUNT", f_COUNT, 0
+"S""", f_S_QUOTE, 0
+
+".S", f_DOT_S, 0
+
+"WORD", f_WORD, 0

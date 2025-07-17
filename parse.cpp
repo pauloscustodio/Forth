@@ -4,7 +4,7 @@
 // License: GPL3 https://www.gnu.org/licenses/gpl-3.0.html
 //-----------------------------------------------------------------------------
 
-#include "core_parse.h"
+#include "parse.h"
 #include "errors.h"
 #include <cctype>
 #include <cstring>

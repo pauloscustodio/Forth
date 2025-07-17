@@ -32,16 +32,16 @@
     <ClInclude Include="..\..\vm.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\types.h">
+    <ClInclude Include="..\..\forth.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\core_mem.h">
+    <ClInclude Include="..\..\memory.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\core_parse.h">
+    <ClInclude Include="..\..\parse.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\core_stack.h">
+    <ClInclude Include="..\..\stack.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -55,13 +55,16 @@
     <ClCompile Include="..\..\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\core_mem.cpp">
+    <ClCompile Include="..\..\forth.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\core_parse.cpp">
+    <ClCompile Include="..\..\memory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\core_stack.cpp">
+    <ClCompile Include="..\..\parse.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\stack.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

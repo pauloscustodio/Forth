@@ -5,7 +5,9 @@
 //-----------------------------------------------------------------------------
 
 #include "errors.h"
-#include "core_mem.h"
+#include "forth.h"
+#include "memory.h"
+#include "vm.h"
 #include <cstring>
 using namespace std;
 
@@ -91,3 +93,28 @@ int Mem::check_addr(int addr, int size) const {
 		return addr;
 	}
 }
+
+void f_STORE() {
+	int addr = pop();
+	int value = pop();
+	vm.mem.store(addr, value);
+}
+
+void f_FETCH() {
+	int addr = pop();
+	int value = vm.mem.fetch(addr);
+	push(value);
+}
+
+void f_C_STORE() {
+	int addr = pop();
+	int value = pop();
+	vm.mem.cstore(addr, value);
+}
+
+void f_C_FETCH() {
+	int addr = pop();
+	int value = vm.mem.cfetch(addr);
+	push(value);
+}
+

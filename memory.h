@@ -6,8 +6,7 @@
 
 #pragma once
 
-#include "types.h"
-#include "core_parse.h"
+#include "forth.h"
 using namespace std;
 
 class Mem {

@@ -136,19 +136,20 @@
     <None Include="..\..\words.def" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\core_mem.h" />
-    <ClInclude Include="..\..\core_parse.h" />
-    <ClInclude Include="..\..\core_stack.h" />
     <ClInclude Include="..\..\errors.h" />
-    <ClInclude Include="..\..\types.h" />
+    <ClInclude Include="..\..\forth.h" />
+    <ClInclude Include="..\..\memory.h" />
+    <ClInclude Include="..\..\parse.h" />
+    <ClInclude Include="..\..\stack.h" />
     <ClInclude Include="..\..\vm.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\core_mem.cpp" />
-    <ClCompile Include="..\..\core_parse.cpp" />
-    <ClCompile Include="..\..\core_stack.cpp" />
     <ClCompile Include="..\..\errors.cpp" />
+    <ClCompile Include="..\..\forth.cpp" />
     <ClCompile Include="..\..\main.cpp" />
+    <ClCompile Include="..\..\memory.cpp" />
+    <ClCompile Include="..\..\parse.cpp" />
+    <ClCompile Include="..\..\stack.cpp" />
     <ClCompile Include="..\..\vm.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

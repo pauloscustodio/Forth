@@ -41,9 +41,9 @@ sub patch_file {
 		if (/^(\s*)\/\/\@\@BEGIN:\s*Error\b/) {
 			my $prefix = $1;
 			push @out, $_;
-			for my $err (@errors) {
-				push @out, $prefix.$err->{id}." = ".$err->{code}.
-						", // ".$err->{text}."\n";
+			for my $error (@errors) {
+				push @out, $prefix.$error->{id}." = ".$error->{code}.
+						", // ".$error->{text}."\n";
 			}
 			while (@in && $in[0] !~ /^\s*\/\/\@\@END/) {
 				shift @in;
@@ -52,9 +52,9 @@ sub patch_file {
 		elsif (/^(\s*)\/\/\@\@BEGIN:\s*ErrorMessage\b/) {
 			my $prefix = $1;
 			push @out, $_;
-			for my $err (@errors) {
-				push @out, $prefix."case Error::".$err->{id}.": return ".
-						c_string($err->{text})."; // ".$err->{code}."\n";
+			for my $error (@errors) {
+				push @out, $prefix."case Error::".$error->{id}.": return ".
+						c_string($error->{text})."; // ".$error->{code}."\n";
 			}
 			while (@in && $in[0] !~ /^\s*\/\/\@\@END/) {
 				shift @in;
@@ -70,12 +70,22 @@ sub patch_file {
 				shift @in;
 			}
 		}
+		elsif (/^(\s*)\/\/\@\@BEGIN:\s*WordsDeclarations\b/) {
+			my $prefix = $1;
+			push @out, $_;
+			for my $word (@words) {
+				push @out, $prefix."void ".$word->{id}."(); // ".$word->{name}."\n";
+			}
+			while (@in && $in[0] !~ /^\s*\/\/\@\@END/) {
+				shift @in;
+			}
+		}
 		elsif (/^(\s*)\/\/\@\@BEGIN:\s*WordsImplementation\b/) {
 			my $prefix = $1;
 			push @out, $_;
 			for my $word (reverse @words) {
 				push @out, $prefix."else if (case_insensitive_equal(word, ".
-					c_string($word->{name}).")) { ".$word->{code}."; }\n";
+					c_string($word->{name}).")) { ".$word->{id}."(); }\n";
 			}
 			while (@in && $in[0] !~ /^\s*\/\/\@\@END/) {
 				shift @in;
@@ -138,8 +148,8 @@ sub parse_words {
 	open my $fh, "<", $filename or die "$filename: $!";
 	while (my $row = $csv->getline($fh)) {
 		next if $row->[0] =~ /^\/\//;
-		my ($name, $id, $flags, $code) = @$row;
-		push @words, {name=>$name, id=>$id, flags=>$flags, code=>$code};
+		my ($name, $id, $flags) = @$row;
+		push @words, {name=>$name, id=>$id, flags=>$flags};
 	}
 	close $fh;
 	
