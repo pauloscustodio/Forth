@@ -4,9 +4,9 @@
 // License: GPL3 https://www.gnu.org/licenses/gpl-3.0.html
 //-----------------------------------------------------------------------------
 
+#include "dict.h"
 #include "errors.h"
 #include "vm.h"
-#include <algorithm>
 #include <cctype>
 #include <fstream>
 #include <iostream>
@@ -14,37 +14,13 @@
 #include <string>
 using namespace std;
 
-static bool case_insensitive_equal(const string& a, const string& b) {
-	return a.size() == b.size() &&
-		equal(a.begin(), a.end(), b.begin(), [](char c1, char c2) {
-		return tolower(static_cast<uchar>(c1)) ==
-			tolower(static_cast<uchar>(c2));
-			});
-}
-
 static void exec_word(const string& word) {
 	if (!word.empty()) {
-		if (false) {}
-		//@@BEGIN: WordsImplementation
-		else if (case_insensitive_equal(word, "WORD")) { f_WORD(); }
-		else if (case_insensitive_equal(word, ".S")) { f_DOT_S(); }
-		else if (case_insensitive_equal(word, "S\"")) { f_S_QUOTE(); }
-		else if (case_insensitive_equal(word, "COUNT")) { f_COUNT(); }
-		else if (case_insensitive_equal(word, "TYPE")) { f_TYPE(); }
-		else if (case_insensitive_equal(word, "ENVIRONMENT?")) { f_ENVIRONMENT_Q(); }
-		else if (case_insensitive_equal(word, "WORDS")) { f_WORDS(); }
-		else if (case_insensitive_equal(word, "+")) { f_PLUS(); }
-		else if (case_insensitive_equal(word, "PICK")) { f_PICK(); }
-		else if (case_insensitive_equal(word, "DUP")) { f_DUP(); }
-		else if (case_insensitive_equal(word, "DROP")) { f_DROP(); }
-		else if (case_insensitive_equal(word, "THROW")) { f_THROW(); }
-		else if (case_insensitive_equal(word, ".")) { f_DOT(); }
-		else if (case_insensitive_equal(word, "PAD")) { f_PAD(); }
-		else if (case_insensitive_equal(word, "C@")) { f_C_FETCH(); }
-		else if (case_insensitive_equal(word, "C!")) { f_C_STORE(); }
-		else if (case_insensitive_equal(word, "@")) { f_FETCH(); }
-		else if (case_insensitive_equal(word, "!")) { f_STORE(); }
-		//@@END
+		bool is_immediate = false;
+		Header* header = cFIND(word.c_str(), static_cast<int>(word.size()), is_immediate);
+		if (header) {
+			header->f_word();
+		}
 		else if (isdigit(static_cast<uchar>(word[0])) ||
 			(word.size() >= 2 && word[0] == '-' && isdigit(static_cast<uchar>(word[1])))) {
 			push(stoi(word));
@@ -60,9 +36,10 @@ static void exec_word(const string& word) {
 
 static void exec_text(const string& str) {
 	vm.tib->refill(str.c_str(), static_cast<int>(str.size()));
-	char* word;
-	while ((word = c_WORD()) != nullptr)
-		exec_word(string(word + 1, word + 1 + *reinterpret_cast<uchar*>(word)));
+	CountedString* word;
+	while ((word = cWORD()) != nullptr) {
+		exec_word(word->to_string());
+	}
 }
 
 static void exec_file(const string& filename) {

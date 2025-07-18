@@ -19,8 +19,8 @@ DEFS	= $(wildcard *.def)
 OBJS 	= $(SRCS:.cpp=.o)
 DEPENDS	= $(SRCS:.cpp=.d)
 
-TEMPLATE_CPP= errors.cpp vm.cpp forth.cpp main.cpp
-TEMPLATE_H	= errors.h   vm.h   forth.h    
+TEMPLATE_CPP= errors.cpp vm.cpp forth.cpp dict.cpp main.cpp
+TEMPLATE_H	= errors.h   vm.h   forth.h   dict.h  
 
 ASTYLE	= astyle --style=attach --pad-oper --align-pointer=type \
 		  --break-closing-braces --remove-braces --attach-return-type \

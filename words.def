@@ -9,10 +9,10 @@
 //-----------------------------------------------------------------------------
 
 // Memory access
-"!", f_STORE, 0
-"@", f_FETCH, 0
-"C!", f_C_STORE, 0
-"C@", f_C_FETCH, 0
+"!", STORE, 0
+"@", FETCH, 0
+"C!", C_STORE, 0
+"C@", C_FETCH, 0
 
 
 
@@ -34,26 +34,27 @@
 //-----------------------------------------------------------------------------
 
 // Variables
-"PAD", f_PAD, 0
+"PAD", PAD, 0
 
 // Memory access
 
 // Stack manipulation
 
 
-".", f_DOT, 0
-"THROW", f_THROW, 0
-"DROP", f_DROP, 0
-"DUP", f_DUP, 0
-"PICK", f_PICK, 0
-"+", f_PLUS, 0
-"WORDS", f_WORDS, 0
-"ENVIRONMENT?", f_ENVIRONMENT_Q, 0
+".", DOT, 0
+"THROW", THROW, 0
+"DROP", DROP, 0
+"DUP", DUP, 0
+"PICK", PICK, 0
+"+", PLUS, 0
+"ENVIRONMENT?", ENVIRONMENT_Q, 0
 
-"TYPE", f_TYPE, 0
-"COUNT", f_COUNT, 0
-"S""", f_S_QUOTE, 0
+"TYPE", TYPE, 0
+"COUNT", COUNT, 0
+"S""", S_QUOTE, 0
 
-".S", f_DOT_S, 0
+".S", DOT_S, 0
 
-"WORD", f_WORD, 0
+"WORD", WORD, 0
+"WORDS", WORDS, 0
+"FIND", FIND, 0

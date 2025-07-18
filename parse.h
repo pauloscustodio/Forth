@@ -7,7 +7,15 @@
 #pragma once
 
 #include "forth.h"
+#include <string>
 using namespace std;
+
+struct CountedString {
+	uchar size;
+	char str[1];
+
+	string to_string() const { return string(str, str + size); }
+};
 
 class Pad {
 public: 
@@ -50,7 +58,7 @@ class Wordbuf {
 public:
 	void init();
 
-	char* append(const char* str, int size);
+	CountedString* append(const char* str, int size);
 
 private:
 	char m_buffer[BUFFER_SZ];

@@ -21,6 +21,7 @@ use Data::Dump 'dump';
 my(@source_files) = @ARGV;
 
 my @errors = parse_errors("errors.def");
+my @vars = parse_vars("vars.def");
 my @words = parse_words("words.def");
 
 for my $file (@source_files) {
@@ -60,32 +61,86 @@ sub patch_file {
 				shift @in;
 			}
 		}
-		elsif (/^(\s*)\/\/\@\@BEGIN:\s*Words\b/) {
+		elsif (/^(\s*)\/\/\@\@BEGIN:\s*Vars\b/) {
 			my $prefix = $1;
 			push @out, $_;
-			for my $word (reverse @words) {
-				push @out, $prefix.c_string($word->{name}).",\n";
+			for my $var (@vars) {
+				push @out, $prefix."int v".$var->{id}.";\n";
 			}
 			while (@in && $in[0] !~ /^\s*\/\/\@\@END/) {
 				shift @in;
 			}
 		}
-		elsif (/^(\s*)\/\/\@\@BEGIN:\s*WordsDeclarations\b/) {
+		elsif (/^(\s*)\/\/\@\@BEGIN:\s*VarsInit\b/) {
 			my $prefix = $1;
 			push @out, $_;
+			for my $var (@vars) {
+				push @out, $prefix."v".$var->{id}." = ".$var->{value}.";\n";
+			}
+			while (@in && $in[0] !~ /^\s*\/\/\@\@END/) {
+				shift @in;
+			}
+		}
+		elsif (/^(\s*)\/\/\@\@BEGIN:\s*VarsImplementation\b/) {
+			my $prefix = $1;
+			push @out, $_;
+			for my $var (@vars) {
+				push @out, $prefix."void f".$var->{id}."() ".
+						"{ push(vm.mem.addr(&vm.v".$var->{id}.")); }\n";
+			}
+			while (@in && $in[0] !~ /^\s*\/\/\@\@END/) {
+				shift @in;
+			}
+		}
+		elsif (/^(\s*)\/\/\@\@BEGIN:\s*WordsXtDeclaration\b/) {
+			my $prefix = $1;
+			push @out, $_;
+			for my $var (@vars) {
+				push @out, $prefix."extern int xt".$var->{id}."; // ".$var->{name}."\n";
+			}
 			for my $word (@words) {
-				push @out, $prefix."void ".$word->{id}."(); // ".$word->{name}."\n";
+				push @out, $prefix."extern int xt".$word->{id}."; // ".$word->{name}."\n";
 			}
 			while (@in && $in[0] !~ /^\s*\/\/\@\@END/) {
 				shift @in;
 			}
 		}
-		elsif (/^(\s*)\/\/\@\@BEGIN:\s*WordsImplementation\b/) {
+		elsif (/^(\s*)\/\/\@\@BEGIN:\s*WordsXtDefinition\b/) {
 			my $prefix = $1;
 			push @out, $_;
-			for my $word (reverse @words) {
-				push @out, $prefix."else if (case_insensitive_equal(word, ".
-					c_string($word->{name}).")) { ".$word->{id}."(); }\n";
+			for my $var (@vars) {
+				push @out, $prefix."int xt".$var->{id}." = 0; // ".$var->{name}."\n";
+			}
+			for my $word (@words) {
+				push @out, $prefix."int xt".$word->{id}." = 0; // ".$word->{name}."\n";
+			}
+			while (@in && $in[0] !~ /^\s*\/\/\@\@END/) {
+				shift @in;
+			}
+		}
+		elsif (/^(\s*)\/\/\@\@BEGIN:\s*WordsDeclaration\b/) {
+			my $prefix = $1;
+			push @out, $_;
+			for my $var (@vars) {
+				push @out, $prefix."void f".$var->{id}."(); // ".$var->{name}."\n";
+			}
+			for my $word (@words) {
+				push @out, $prefix."void f".$word->{id}."(); // ".$word->{name}."\n";
+			}
+			while (@in && $in[0] !~ /^\s*\/\/\@\@END/) {
+				shift @in;
+			}
+		}
+		elsif (/^(\s*)\/\/\@\@BEGIN:\s*WordsCreateDictionary\b/) {
+			my $prefix = $1;
+			push @out, $_;
+			for my $var (@vars) {
+				push @out, $prefix."xt".$var->{id}." = create(".c_string($var->{name}).", 0, ".
+							"f".$var->{id}.");\n";
+			}
+			for my $word (@words) {
+				push @out, $prefix."xt".$word->{id}." = create(".c_string($word->{name}).", ".
+							$word->{flags}.", f".$word->{id}.");\n";
 			}
 			while (@in && $in[0] !~ /^\s*\/\/\@\@END/) {
 				shift @in;
@@ -132,6 +187,28 @@ sub parse_errors {
 	close $fh;
 	
 	return @errors;
+}
+
+#-------------------------------------------------------------------------------
+# parse vars.def
+#-------------------------------------------------------------------------------
+sub parse_vars {
+	my($filename) = @_;
+	my @vars;
+	
+	my $csv = Text::CSV->new({ 	auto_diag => 1, 
+								allow_whitespace => 1,
+								skip_empty_rows => 1,
+								});
+	open my $fh, "<", $filename or die "$filename: $!";
+	while (my $row = $csv->getline($fh)) {
+		next if $row->[0] =~ /^\/\//;
+		my ($name, $id, $value) = @$row;
+		push @vars, {name=>$name, id=>$id, value=>$value};
+	}
+	close $fh;
+	
+	return @vars;
 }
 
 #-------------------------------------------------------------------------------

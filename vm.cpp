@@ -14,6 +14,7 @@ using namespace std;
 VM vm;
 
 VM::VM() {
+
 	// bottom of memory
 	pad = reinterpret_cast<Pad*>(mem.alloc_bot(sizeof(Pad)));
 	pad->init();
@@ -27,5 +28,17 @@ VM::VM() {
 	rstack->init();
 	stack = reinterpret_cast<Stack*>(mem.alloc_top(sizeof(Stack)));
 	stack->init();
+
+	// user variables
+	//@@BEGIN: VarsInit
+	vBASE = 10;
+	vSTATE = STATE_INTERPRET;
+	//@@END
+
+	// use the remaing as dictionary space
+	dict = reinterpret_cast<Dict*>(mem.alloc_bot(sizeof(Dict)));
+	int start_dict = mem.addr(mem.alloc_bot(0));
+	int end_dict = mem.addr(mem.alloc_top(0));
+	dict->init(start_dict, end_dict);
 }
 

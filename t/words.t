@@ -5,7 +5,8 @@ BEGIN { use lib 't'; require 'testlib.pl'; }
 note "Test WORDS";
 
 forth_ok("words", <<'END');
-.S S" COUNT TYPE ENVIRONMENT? WORDS + PICK DUP DROP THROW . C@ C! @ ! PAD
+FIND WORDS WORD .S S" COUNT TYPE ENVIRONMENT? + PICK DUP DROP THROW . PAD C@ C!
+@ ! STATE BASE
 END
 die if !Test::More->builder->is_passing;
 

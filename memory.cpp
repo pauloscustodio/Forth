@@ -94,25 +94,25 @@ int Mem::check_addr(int addr, int size) const {
 	}
 }
 
-void f_STORE() {
+void fSTORE() {
 	int addr = pop();
 	int value = pop();
 	vm.mem.store(addr, value);
 }
 
-void f_FETCH() {
+void fFETCH() {
 	int addr = pop();
 	int value = vm.mem.fetch(addr);
 	push(value);
 }
 
-void f_C_STORE() {
+void fC_STORE() {
 	int addr = pop();
 	int value = pop();
 	vm.mem.cstore(addr, value);
 }
 
-void f_C_FETCH() {
+void fC_FETCH() {
 	int addr = pop();
 	int value = vm.mem.cfetch(addr);
 	push(value);

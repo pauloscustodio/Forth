@@ -69,7 +69,7 @@ void Wordbuf::init() {
 	m_ptr = 0;
 }
 
-char* Wordbuf::append(const char* str, int size) {
+CountedString* Wordbuf::append(const char* str, int size) {
 	if (size > MAX_WORD_SZ) {
 		error(Error::ParsedStringOverflow);
 		return append("", 0);
@@ -77,7 +77,7 @@ char* Wordbuf::append(const char* str, int size) {
 	else {
 		if (m_ptr + 1 + size + 1 >= BUFFER_SZ)
 			m_ptr = 0;
-		char* ret = m_buffer + m_ptr;
+		CountedString* ret = reinterpret_cast<CountedString*>(m_buffer + m_ptr);
 		m_buffer[m_ptr++] = size & MAX_WORD_SZ; // size
 		memcpy(m_buffer + m_ptr, str, size);
 		m_ptr += size;
