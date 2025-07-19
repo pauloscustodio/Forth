@@ -13,12 +13,14 @@ using namespace std;
 struct Header {
 	int prev_addr;		// address of previous header
 	int name_addr;		// address of name
-	int len_flags;		// len + F_HIDDEN/F_IMMEDIATE/S_SMUDGE
+	uchar flags;		// F_HIDDEN/F_IMMEDIATE/S_SMUDGE
+	func_ptr_t f_does;	// DOES> word
 	func_ptr_t f_word;	// executable word
 
 	string name() const;
-	int len() const;
+	int name_size() const;
 	int xt() const;
+	Header* header(int xt);
 };
 
 class Dict {
@@ -28,6 +30,11 @@ public:
 	int create(const char* name, int size, int flags, func_ptr_t f_word); // return xt of word
 
 	int latest() const { return m_latest; }
+
+	void ccomma(int value);
+	void comma(int value);
+	void dcomma(dint value);
+	void align();
 
 private:
 	int m_lo_mem;

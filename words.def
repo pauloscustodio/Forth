@@ -58,3 +58,7 @@
 "WORD", WORD, 0
 "WORDS", WORDS, 0
 "FIND", FIND, 0
+
+",", COMMA, 0
+"C,", C_COMMA, 0
+"ALIGN", ALIGN, 0

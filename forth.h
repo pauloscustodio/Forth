@@ -44,15 +44,15 @@ inline static const int F_TRUE = -1;
 inline static const int F_FALSE = 0;
 
 inline static const int MAX_WORD_SZ = 0xff;
-inline static const int F_SMUDGE = 0x100;
-inline static const int F_HIDDEN = 0x200;
-inline static const int F_IMMEDIATE = 0x400;
+inline static const int F_SMUDGE = 0x1;
+inline static const int F_HIDDEN = 0x2;
+inline static const int F_IMMEDIATE = 0x4;
 
 inline static const int STATE_INTERPRET = 0;
 inline static const int STATE_COMPILE = 1;
 
 // alignment and double cells
-int align(int x);
+int aligned(int x);
 int dcell_lo(dint x);
 int dcell_hi(dint x);
 int dcell(int hi, int lo);
@@ -64,6 +64,8 @@ int peek(int depth = 0);
 void rpush(int value);
 int rpop();
 int rpeek(int depth = 0);
+
+void fVOID();
 
 struct CountedString;
 CountedString* cWORD(char delimiter = BL);
@@ -98,6 +100,9 @@ extern int xtDOT_S; // .S
 extern int xtWORD; // WORD
 extern int xtWORDS; // WORDS
 extern int xtFIND; // FIND
+extern int xtCOMMA; // ,
+extern int xtC_COMMA; // C,
+extern int xtALIGN; // ALIGN
 //@@END
 
 //@@BEGIN: WordsDeclaration
@@ -122,4 +127,7 @@ void fDOT_S(); // .S
 void fWORD(); // WORD
 void fWORDS(); // WORDS
 void fFIND(); // FIND
+void fCOMMA(); // ,
+void fC_COMMA(); // C,
+void fALIGN(); // ALIGN
 //@@END

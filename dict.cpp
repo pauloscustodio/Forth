@@ -6,6 +6,7 @@
 
 #include "dict.h"
 #include "errors.h"
+#include "forth.h"
 #include "vm.h"
 #include <cstring>
 using namespace std;
@@ -16,12 +17,17 @@ string Header::name() const {
 	return name->to_string();
 }
 
-int Header::len() const {
-	return len_flags & MAX_WORD_SZ;
+int Header::name_size() const {
+	return vm.mem.cfetch(name_addr);
 }
 
 int Header::xt() const {
 	return vm.mem.addr(reinterpret_cast<const char*>(&this->f_word));
+}
+
+Header* Header::header(int xt) {
+	int addr = xt - offsetof(Header, f_word);
+	return reinterpret_cast<Header*>(vm.mem.char_ptr(addr));
 }
 
 void Dict::init(int lo_mem, int hi_mem) {
@@ -52,6 +58,9 @@ void Dict::init(int lo_mem, int hi_mem) {
 	xtWORD = create("WORD", 0, fWORD);
 	xtWORDS = create("WORDS", 0, fWORDS);
 	xtFIND = create("FIND", 0, fFIND);
+	xtCOMMA = create(",", 0, fCOMMA);
+	xtC_COMMA = create("C,", 0, fC_COMMA);
+	xtALIGN = create("ALIGN", 0, fALIGN);
 	//@@END
 }
 
@@ -62,6 +71,8 @@ int Dict::create(const char* name, int flags, func_ptr_t f_word) {
 int Dict::create(const char* name, int size, int flags, func_ptr_t f_word) {
 	if (size > MAX_WORD_SZ)
 		error(Error::ParsedStringOverflow);
+
+	align();
 	check_free_space(sizeof(Header) + 1 + size + 1);
 
 	// store name
@@ -75,11 +86,33 @@ int Dict::create(const char* name, int size, int flags, func_ptr_t f_word) {
 	Header* header = reinterpret_cast<Header*>(vm.mem.char_ptr(m_here));
 	header->prev_addr = m_latest; m_latest = m_here;
 	header->name_addr = m_names;
-	header->len_flags = (size & MAX_WORD_SZ) | flags;
+	header->flags = flags;
+	header->f_does = fVOID;
 	header->f_word = f_word;
 
-	m_here += align(sizeof(Header));
+	m_here += aligned(sizeof(Header));
 	return vm.mem.addr(reinterpret_cast<char*>(&header->f_word));
+}
+
+void Dict::ccomma(int value) {
+	check_free_space(CHAR_SZ);
+	vm.mem.cstore(m_here++, value);
+}
+
+void Dict::comma(int value) {
+	check_free_space(CELL_SZ);
+	vm.mem.store(m_here, value);
+	m_here += CELL_SZ;
+}
+
+void Dict::dcomma(dint value) {
+	check_free_space(DCELL_SZ);
+	vm.mem.dstore(m_here, value);
+	m_here += DCELL_SZ;
+}
+
+void Dict::align() {
+	m_here = aligned(m_here);
 }
 
 void Dict::check_free_space(int size) const {
@@ -87,3 +120,16 @@ void Dict::check_free_space(int size) const {
 		error(Error::DictionaryOverflow);
 }
 
+void fCOMMA() {
+	int value = pop();
+	vm.dict->comma(value);
+}
+
+void fC_COMMA() {
+	int value = pop();
+	vm.dict->ccomma(value);
+}
+
+void fALIGN() {
+	vm.dict->align();
+}

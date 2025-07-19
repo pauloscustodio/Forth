@@ -69,14 +69,14 @@ char* Mem::alloc_bot(int size) {
 	if (m_bot + size >= m_top)
 		error(Error::MemoryOverflow);
 	char* ret = char_ptr(m_bot);
-	m_bot += align(size);
+	m_bot += aligned(size);
 	return ret;
 }
 
 char* Mem::alloc_top(int size) {
 	if (m_bot + size >= m_top)
 		error(Error::MemoryOverflow);
-	m_top -= align(size);
+	m_top -= aligned(size);
 	return char_ptr(m_top);
 }
 

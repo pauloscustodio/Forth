@@ -37,6 +37,9 @@ int xtDOT_S = 0; // .S
 int xtWORD = 0; // WORD
 int xtWORDS = 0; // WORDS
 int xtFIND = 0; // FIND
+int xtCOMMA = 0; // ,
+int xtC_COMMA = 0; // C,
+int xtALIGN = 0; // ALIGN
 //@@END
 
 //@@BEGIN: VarsImplementation
@@ -45,7 +48,7 @@ void fSTATE() { push(vm.mem.addr(&vm.vSTATE)); }
 //@@END
 
 // alignment and double cells
-int align(int x) {
+int aligned(int x) {
 	return (x + CELL_SZ - 1) & ~(CELL_SZ - 1);
 }
 
@@ -86,6 +89,9 @@ int rpeek(int depth) {
 	return vm.rstack->peek(depth);
 }
 
+void fVOID() {	// do nothing
+}
+
 CountedString* cWORD(char delimiter) {
 	if (delimiter == BL)
 		vm.tib->skip_blanks();	// skip blanks before word
@@ -114,10 +120,10 @@ Header* cFIND(const char* name, int size, bool& is_immediate) {
 	int ptr = vm.dict->latest();
 	while (ptr != 0) {
 		Header* header = reinterpret_cast<Header*>(vm.mem.char_ptr(ptr));
-		if (size == header->len()) {
+		if (size == header->name_size()) {
 			string s_found_name = header->name();
 			if (case_insensitive_equal(s_name, s_found_name)) {
-				is_immediate = (header->len_flags & F_IMMEDIATE) ? true : false;
+				is_immediate = (header->flags & F_IMMEDIATE) ? true : false;
 				return header;
 			}
 		}
@@ -155,7 +161,7 @@ vector<string> cWORDS() {
 	while (ptr != 0) {
 		Header* header = reinterpret_cast<Header*>(vm.mem.char_ptr(ptr));
 		string s_found_name = header->name();
-		if ((header->len_flags & F_HIDDEN) == 0) {
+		if ((header->flags & F_HIDDEN) == 0) {
 			words.push_back(s_found_name);
 		}
 		ptr = header->prev_addr;
