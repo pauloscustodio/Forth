@@ -31,9 +31,8 @@ static_assert(PTR_SZ <= DCELL_SZ, "PTR should fit in DCELL");
 static inline const int MEM_SZ = 256 * 1024 * CELL_SZ;
 static inline const int BUFFER_SZ = 1024;
 static inline const int PAD_SZ = 256;
-static inline const int WORDBUF_SZ = BUFFER_SZ;
-static inline const int TIB_SZ = BUFFER_SZ;
 static inline const int STACK_SZ = 1024 * CELL_SZ;
+static inline const int MAX_FILES = 16;
 
 // constants
 static inline const char BL = ' ';
@@ -51,6 +50,9 @@ static inline const int F_IMMEDIATE = 0x4;
 static inline const int STATE_INTERPRET = 0;
 static inline const int STATE_COMPILE = 1;
 
+// file names
+static inline const string BLOCK_FILENAME = "forth.blk";
+
 // alignment and double cells
 int aligned(int x);
 int dcell_lo(dint x);
@@ -66,9 +68,6 @@ int rpop();
 int rpeek(int depth = 0);
 
 void fVOID();
-
-struct CountedString;
-CountedString* cWORD(char delimiter = BL);
 
 struct Header;
 Header* cFIND(const char* name, bool& is_immediate);

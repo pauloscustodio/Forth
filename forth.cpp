@@ -7,9 +7,9 @@
 #include "dict.h"
 #include "errors.h"
 #include "forth.h"
-#include "parse.h"
 #include "vm.h"
 #include <algorithm>
+#include <cassert>
 #include <cstring>
 #include <iostream>
 #include <vector>
@@ -85,24 +85,6 @@ int rpeek(int depth) {
 }
 
 void fVOID() {	// do nothing
-}
-
-CountedString* cWORD(char delimiter) {
-	if (delimiter == BL)
-		vm.tib->skip_blanks();	// skip blanks before word
-	else
-		vm.tib->skip_blank();	// skip space after quote
-
-	int start = vm.tib->ptr();
-	int end = vm.tib->skip_to_delimiter(delimiter);
-
-	if (end > start) {
-		int size = end - start;
-		CountedString* ret = vm.wordbuf->append(vm.tib->tib() + start, size);
-		return ret;
-	}
-	else
-		return nullptr;
 }
 
 Header* cFIND(const char* name, bool& is_immediate) {
@@ -269,15 +251,3 @@ void fDOT_S() {
 	vm.stack->print();
 }
 
-void fWORD() {
-	char delimiter = pop();
-	CountedString* word = cWORD(delimiter);
-	if (word) {
-		push(vm.mem.addr(word->str));			// address of word
-		push(word->size);						// length of word
-	}
-	else {	// TODO: refill from input
-		push(0);
-		push(0);
-	}
-}

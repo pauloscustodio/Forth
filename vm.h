@@ -8,22 +8,23 @@
 
 #include "dict.h"
 #include "forth.h"
+#include "input.h"
 #include "memory.h"
-#include "parse.h"
 #include "stack.h"
 #include "user.h"
 using namespace std;
 
 struct VM {
 	VM();
+	virtual ~VM();
 
 	// memory
 	Mem mem;
 
-	// character buffers
+	// input
 	Pad* pad;
-	Tib* tib;
 	Wordbuf* wordbuf;
+	Input* input;
 
 	// user variables
 	User* user;
@@ -37,5 +38,3 @@ struct VM {
 };
 
 extern VM vm;
-
-

@@ -34,23 +34,12 @@ static void exec_word(const string& word) {
 	}
 }
 
-static void exec_text(const string& str) {
-	vm.tib->refill(str.c_str(), static_cast<int>(str.size()));
-	CountedString* word;
-	while ((word = cWORD()) != nullptr) {
+static void exec_buffers() {
+	while (true) {
+		CountedString* word = vm.input->parse_word(BL);
+		if (word == nullptr)
+			break;
 		exec_word(word->to_string());
-	}
-}
-
-static void exec_file(const string& filename) {
-	ifstream ifs(filename);
-	if (!ifs.is_open()) {
-		error(Error::NonExistentFile, filename);
-	}
-	else {
-		string line;
-		while (getline(ifs, line))
-			exec_text(line);
 	}
 }
 
@@ -60,6 +49,7 @@ static void die_usage() {
 }
 
 int main(int argc, char* argv[]) {
+	bool did_forth = false;
 	argc--; argv++;
 	while (argc > 0 && argv[0][0] == '-') {
 		switch (argv[0][1]) {
@@ -68,7 +58,10 @@ int main(int argc, char* argv[]) {
 				die_usage();
 			else {
 				argc--; argv++;
-				exec_text(argv[0]);
+				vm.input->push_text(argv[0]);
+				exec_buffers();
+				vm.input->pop();
+				did_forth = true;
 			}
 			break;
 		default:
@@ -78,7 +71,19 @@ int main(int argc, char* argv[]) {
 	}
 
 	// get script, if any
-	if (argc > 0) 
-		exec_file(argv[0]);
+	if (argc == 0) {
+		if (!did_forth) {
+			vm.input->push_cin();
+			exec_buffers();
+		}
+	}
+	else {
+		const char* source = argv[0];
+		argc--; argv++;
+
+		vm.input->push_file(source);
+		exec_buffers();
+	}
+
 	return EXIT_SUCCESS;
 }

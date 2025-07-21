@@ -14,14 +14,17 @@ using namespace std;
 VM vm;
 
 VM::VM() {
-
 	// bottom of memory
 	pad = reinterpret_cast<Pad*>(mem.alloc_bot(sizeof(Pad)));
 	pad->init();
-	tib = reinterpret_cast<Tib*>(mem.alloc_bot(sizeof(Tib)));
-	tib->init();
 	wordbuf = reinterpret_cast<Wordbuf*>(mem.alloc_bot(sizeof(Wordbuf)));
 	wordbuf->init();
+	input = reinterpret_cast<Input*>(mem.alloc_bot(sizeof(Input)));
+	input->init();
+
+	// user variables
+	user = reinterpret_cast<User*>(mem.alloc_bot(sizeof(User)));
+	user->init();
 
 	// user variables
 	user = reinterpret_cast<User*>(mem.alloc_bot(sizeof(User)));
@@ -40,3 +43,6 @@ VM::VM() {
 	dict->init(start_dict, end_dict);
 }
 
+VM::~VM() {
+	input->deinit();
+}
