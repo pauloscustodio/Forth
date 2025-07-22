@@ -22,14 +22,14 @@ public:
     const char* buffer() const { return m_buffer; }
     int buffer_ptr() const { return m_ptr; }
     int buffer_size() const { return m_size; }
+    void set_buffer_ptr(int ptr);
 
 	void read_text(const char* text, int size);
 	void read_file(int source_id, const char* filename, int size);
 	void close_file();
 	void read_block(int blk);
 	void read_cin();
-
-	CountedString* parse_word(char delimiter = BL);		// nullptr at EOF
+	bool refill();
 
 private:
 	ifstream* m_ifs;				// input stream, if any
@@ -40,12 +40,9 @@ private:
 	int m_ptr;					// input buffer index
 
 	void check_error(int error_number);
-	bool getline();
 	void set_buffer(const string& text);
 	void set_buffer(const char* text, int size);
-	void skip_blank();
-	void skip_blanks();
-	int skip_to_delimiter(char delimiter);
+
 	static string block_filename();
 };
 
@@ -56,11 +53,12 @@ public:
 	void init();
 	void deinit();
 
-	int blk() const { return m_buffers[m_size - 1].blk(); }
-    int source_id() const { return m_buffers[m_size - 1].source_id(); }
-    const char* tib() const { return m_buffers[m_size - 1].buffer(); }
-    int tib_ptr() const { return m_buffers[m_size - 1].buffer_ptr(); }
-    int tib_size() const { return m_buffers[m_size - 1].buffer_size(); }
+	int blk() const;
+    int source_id() const;
+    const char* buffer() const;
+    int buffer_ptr() const;
+    int buffer_size() const;
+	void set_buffer_ptr(int ptr);
 
 	void push_text(const string& text);
 	void push_text(const char* text, int size);
@@ -68,14 +66,11 @@ public:
 	void push_file(const char* filename, int size);
     void push_block(int blk);
 	void push_cin();
+    bool has_input() const;
+    bool refill();
 	void pop_input();
-
-	CountedString* parse_word(char delimiter = BL);		// nullptr at EOF
 
 private:
 	Buffer m_buffers[MAX_FILES];		// input buffers
 	int m_size;						// number of used input buffer
 };
-
-
-CountedString* cWORD(char delimiter = BL);

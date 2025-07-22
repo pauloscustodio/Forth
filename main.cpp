@@ -6,6 +6,7 @@
 
 #include "dict.h"
 #include "errors.h"
+#include "parser.h"
 #include "vm.h"
 #include <fstream>
 #include <iostream>
@@ -35,7 +36,7 @@ static void exec_word(const string& word) {
 
 static void exec_buffers() {
 	while (true) {
-		CountedString* word = vm.input->parse_word(BL);
+		CountedString* word = parse_word(BL);
 		if (word == nullptr)
 			break;
 		exec_word(word->to_string());

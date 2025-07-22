@@ -13,17 +13,21 @@
 #include <cstring>
 using namespace std;
 
-// Forth ignores all control characters
-static bool is_space(char c) {
-	return c >= 0 && c <= BL;
-}
-
 void Buffer::init() {
 	m_ifs = nullptr;
 	m_blk = 0;
 	m_source_id = 0;
 	m_size = 0;
 	m_ptr = 0;
+}
+
+void Buffer::set_buffer_ptr(int ptr) {
+	if (ptr < 0)
+		m_ptr = 0;
+	else if (ptr > m_size)
+		m_ptr = m_size;
+	else
+		m_ptr = ptr;
 }
 
 void Buffer::read_text(const char* text, int size) {
@@ -93,64 +97,7 @@ void Buffer::check_error(int error_number) {
 		error(Error::FileIOException);
 }
 
-void Buffer::skip_blank() {
-	if (m_ptr < m_size &&
-		is_space(m_buffer[m_ptr])) {
-		++m_ptr;
-	}
-}
-
-void Buffer::skip_blanks() {
-	while (m_ptr < m_size &&
-		is_space(m_buffer[m_ptr])) {
-		++m_ptr;
-	}
-}
-
-int Buffer::skip_to_delimiter(char delimiter) {
-	int end = m_size;
-	if (delimiter == BL) {
-		while (m_ptr < m_size &&
-			!is_space(m_buffer[m_ptr]))
-			++m_ptr;
-		end = m_ptr;
-	}
-	else {
-		while (m_ptr < m_size && m_buffer[m_ptr] != delimiter)
-			++m_ptr;
-		end = m_ptr;
-		if (m_ptr < m_size && m_buffer[m_ptr] == delimiter)
-			++m_ptr;		// skip delimiter
-	}
-    return end;	// end of word, char before delimiter
-}
-
-CountedString* Buffer::parse_word(char delimiter) {
-	while (true) {
-		if (m_ptr >= m_size) {		// end of buffer
-			if (!getline())			// try to read next line
-				return nullptr;		// EOF
-			else
-				continue;			// try again
-		}
-
-		if (delimiter == BL)
-			skip_blanks();	// skip blanks before word
-		else
-			skip_blank();	// skip space after quote
-
-		int start = m_ptr;
-		int end = skip_to_delimiter(delimiter);
-
-		if (end > start) {
-			int size = end - start;
-			CountedString* ret = vm.wordbuf->append(m_buffer + start, size);
-			return ret;
-		}
-	}
-}
-
-bool Buffer::getline() {
+bool Buffer::refill() {
 	if (m_source_id < 0)				// input from string
 		return false;
 	else if (m_blk > 0)				// input from block
@@ -184,12 +131,15 @@ void Buffer::set_buffer(const string& text) {
 }
 
 void Buffer::set_buffer(const char* text, int size) {
-	if (size > BUFFER_SZ)
+	if (size > BUFFER_SZ) {
 		error(Error::InputBufferOverflow);
-
-	memcpy(m_buffer, text, size);
-	m_ptr = 0;
-	m_size = size;
+        m_ptr = m_size = 0;	// reset buffer
+	}
+	else {
+		memcpy(m_buffer, text, size);
+		m_ptr = 0;
+		m_size = size;
+	}
 }
 	
 string Buffer::block_filename() {
@@ -209,6 +159,46 @@ void Input::deinit() {
 	for (int i = 0; i < MAX_FILES; ++i) {
 		m_buffers[i].close_file();
 	}
+}
+
+int Input::blk() const { 
+	if (m_size > 0)
+		return m_buffers[m_size - 1].blk();
+	else
+		return 0;
+}
+
+int Input::source_id() const { 
+	if (m_size > 0)
+		return m_buffers[m_size - 1].source_id();
+	else
+		return -1;
+}
+
+const char* Input::buffer() const { 
+	if (m_size > 0)
+		return m_buffers[m_size - 1].buffer();
+	else
+        return m_buffers[0].buffer(); // reuse first buffer if no input
+}
+
+int Input::buffer_ptr() const { 
+	if (m_size > 0)
+		return m_buffers[m_size - 1].buffer_ptr();
+	else
+        return 0; // no input, pointer at start
+}
+
+int Input::buffer_size() const { 
+	if (m_size > 0)
+		return m_buffers[m_size - 1].buffer_size();
+	else
+        return 0; // no input, size is zero
+}
+
+void Input::set_buffer_ptr(int ptr) {
+	if (m_size > 0)
+		m_buffers[m_size - 1].set_buffer_ptr(ptr);
 }
 
 void Input::push_text(const string& text) {
@@ -260,6 +250,17 @@ void Input::push_cin() {
 	}
 }
 
+bool Input::has_input() const { 
+	return m_size > 0; 
+}
+
+bool Input::refill() {
+	if (m_size > 0)
+		return m_buffers[m_size - 1].refill();
+	else
+		return false;		// no input to refill
+}
+
 void Input::pop_input() {
 	if (m_size > 0) {
 		m_buffers[m_size - 1].close_file();
@@ -268,37 +269,5 @@ void Input::pop_input() {
 	}
 }
 
-CountedString* Input::parse_word(char delimiter) {
-	while (m_size > 0) {
-		CountedString* word = m_buffers[m_size - 1].parse_word(delimiter);
-		if (word != nullptr)			// found a word
-			return word;
-		else if (source_id() < 0)	// input from string
-			return nullptr;
-		else if (m_size == 0)		// no more buffers
-			return nullptr;
-		else {
-			pop_input();					// remove last buffer
-		}
-	}
-	return nullptr;
-}
-
 //-----------------------------------------------------------------------------
 
-CountedString* cWORD(char delimiter) {
-	CountedString* word = vm.input->parse_word(delimiter);
-	if (word == nullptr)
-		exit(EXIT_SUCCESS);		// no more input
-	else
-		return word;				// valid word
-}
-
-void fWORD() {
-	char delimiter = pop();
-	CountedString* word = cWORD(delimiter);
-	assert(word != nullptr);
-
-	push(vm.mem.addr(word->str));			// address of word
-	push(word->size);						// length of word
-}
