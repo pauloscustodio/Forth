@@ -19,37 +19,37 @@ typedef uint64_t udint;
 typedef void (*func_ptr_t)();
 
 // types sizes
-inline static const int CHAR_SZ = static_cast<int>(sizeof(char));
-inline static const int CELL_SZ = static_cast<int>(sizeof(int));
-inline static const int DCELL_SZ = static_cast<int>(sizeof(dint));
-inline static const int PTR_SZ = static_cast<int>(sizeof(func_ptr_t));
+static inline const int CHAR_SZ = static_cast<int>(sizeof(char));
+static inline const int CELL_SZ = static_cast<int>(sizeof(int));
+static inline const int DCELL_SZ = static_cast<int>(sizeof(dint));
+static inline const int PTR_SZ = static_cast<int>(sizeof(func_ptr_t));
 
 static_assert(CELL_SZ * 2 == DCELL_SZ, "DCELL should be double of CELL");
 static_assert(PTR_SZ <= DCELL_SZ, "PTR should fit in DCELL");
 
 // VM size
-inline static const int MEM_SZ = 256 * 1024 * CELL_SZ;
-inline static const int BUFFER_SZ = 1024;
-inline static const int PAD_SZ = 256;
-inline static const int WORDBUF_SZ = BUFFER_SZ;
-inline static const int TIB_SZ = BUFFER_SZ;
-inline static const int STACK_SZ = 1024 * CELL_SZ;
+static inline const int MEM_SZ = 256 * 1024 * CELL_SZ;
+static inline const int BUFFER_SZ = 1024;
+static inline const int PAD_SZ = 256;
+static inline const int WORDBUF_SZ = BUFFER_SZ;
+static inline const int TIB_SZ = BUFFER_SZ;
+static inline const int STACK_SZ = 1024 * CELL_SZ;
 
 // constants
-inline static const char BL = ' ';
-inline static const char CR = '\n';
-inline static const int SCREEN_WIDTH = 80;
+static inline const char BL = ' ';
+static inline const char CR = '\n';
+static inline const int SCREEN_WIDTH = 80;
 
-inline static const int F_TRUE = -1;
-inline static const int F_FALSE = 0;
+static inline const int F_TRUE = -1;
+static inline const int F_FALSE = 0;
 
-inline static const int MAX_WORD_SZ = 0xff;
-inline static const int F_SMUDGE = 0x1;
-inline static const int F_HIDDEN = 0x2;
-inline static const int F_IMMEDIATE = 0x4;
+static inline const int MAX_WORD_SZ = 0xff;
+static inline const int F_SMUDGE = 0x1;
+static inline const int F_HIDDEN = 0x2;
+static inline const int F_IMMEDIATE = 0x4;
 
-inline static const int STATE_INTERPRET = 0;
-inline static const int STATE_COMPILE = 1;
+static inline const int STATE_INTERPRET = 0;
+static inline const int STATE_COMPILE = 1;
 
 // alignment and double cells
 int aligned(int x);
