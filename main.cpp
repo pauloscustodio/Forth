@@ -60,7 +60,7 @@ int main(int argc, char* argv[]) {
 				argc--; argv++;
 				vm.input->push_text(argv[0]);
 				exec_buffers();
-				vm.input->pop();
+				vm.input->pop_input();
 				did_forth = true;
 			}
 			break;

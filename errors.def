@@ -74,3 +74,5 @@
 -261, TooManyOpenFiles, "too many open files"
 -262, InvalidForthCode, "invalid Forth code"
 -263, MemoryOverflow, "memory overflow"
+-264, NumberOutputOverflow, "number output overflow"
+

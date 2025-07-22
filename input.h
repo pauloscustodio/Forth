@@ -104,7 +104,7 @@ public:
 	void push_file(const char* filename, int size);
     void push_block(int blk);
 	void push_cin();
-	void pop();
+	void pop_input();
 
 	CountedString* parse_word(char delimiter = BL);		// nullptr at EOF
 

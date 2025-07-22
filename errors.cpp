@@ -79,6 +79,7 @@ static string lookup_error_msg(Error error_code) {
 	case Error::TooManyOpenFiles: return "too many open files"; // -261
 	case Error::InvalidForthCode: return "invalid Forth code"; // -262
 	case Error::MemoryOverflow: return "memory overflow"; // -263
+	case Error::NumberOutputOverflow: return "number output overflow"; // -264
 	//@@END
 	default: return to_string(static_cast<int>(error_code));
 	}

@@ -10,6 +10,7 @@
 #include "forth.h"
 #include "input.h"
 #include "memory.h"
+#include "output.h"
 #include "stack.h"
 #include "user.h"
 using namespace std;
@@ -22,8 +23,9 @@ struct VM {
 	Mem mem;
 
 	// input
-	Pad* pad;
 	Wordbuf* wordbuf;
+	Pad* pad;
+	NumberOutput* number_output;
 	Input* input;
 
 	// user variables

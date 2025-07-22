@@ -287,7 +287,7 @@ void Input::push_cin() {
 	}
 }
 
-void Input::pop() {
+void Input::pop_input() {
 	if (m_size > 0) {
 		m_buffers[m_size - 1].close_file();
 		m_buffers[m_size - 1].init();
@@ -305,7 +305,7 @@ CountedString* Input::parse_word(char delimiter) {
 		else if (m_size == 0)		// no more buffers
 			return nullptr;
 		else {
-			pop();					// remove last buffer
+			pop_input();					// remove last buffer
 		}
 	}
 	return nullptr;

@@ -78,6 +78,7 @@ enum class Error {
 	TooManyOpenFiles = -261, // too many open files
 	InvalidForthCode = -262, // invalid Forth code
 	MemoryOverflow = -263, // memory overflow
+	NumberOutputOverflow = -264, // number output overflow
 	//@@END
 };
 

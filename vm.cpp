@@ -15,10 +15,12 @@ VM vm;
 
 VM::VM() {
 	// bottom of memory
-	pad = reinterpret_cast<Pad*>(mem.alloc_bot(sizeof(Pad)));
-	pad->init();
 	wordbuf = reinterpret_cast<Wordbuf*>(mem.alloc_bot(sizeof(Wordbuf)));
 	wordbuf->init();
+	pad = reinterpret_cast<Pad*>(mem.alloc_bot(sizeof(Pad)));
+	pad->init();
+	number_output = reinterpret_cast<NumberOutput*>(mem.alloc_bot(sizeof(NumberOutput)));
+	number_output->init();
 	input = reinterpret_cast<Input*>(mem.alloc_bot(sizeof(Input)));
 	input->init();
 

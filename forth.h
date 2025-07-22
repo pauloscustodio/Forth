@@ -63,6 +63,10 @@ void push(int value);
 int pop();
 int peek(int depth = 0);
 
+void dpush(dint value);
+dint dpop();
+dint dpeek(int depth = 0);
+
 void rpush(int value);
 int rpop();
 int rpeek(int depth = 0);
@@ -84,15 +88,30 @@ extern int xtSTORE; // !
 extern int xtFETCH; // @
 extern int xtC_STORE; // C!
 extern int xtC_FETCH; // C@
-extern int xtPAD; // PAD
+extern int xtTYPE; // TYPE
+extern int xtEMIT; // EMIT
+extern int xtCR; // CR
+extern int xtSPACE; // SPACE
+extern int xtSPACES; // SPACES
+extern int xtLESS_HASH; // <#
+extern int xtHASH; // #
+extern int xtHASH_S; // #S
+extern int xtHOLD; // HOLD
+extern int xtSIGN; // SIGN
+extern int xtHASH_GREATER; // #>
 extern int xtDOT; // .
+extern int xtD_DOT; // D.
+extern int xtD_DOT_R; // D.R
+extern int xtU_DOT; // U.
+extern int xtDOT_R; // .R
+extern int xtU_DOT_R; // U.R
+extern int xtPAD; // PAD
 extern int xtTHROW; // THROW
 extern int xtDROP; // DROP
 extern int xtDUP; // DUP
 extern int xtPICK; // PICK
 extern int xtPLUS; // +
 extern int xtENVIRONMENT_Q; // ENVIRONMENT?
-extern int xtTYPE; // TYPE
 extern int xtCOUNT; // COUNT
 extern int xtS_QUOTE; // S"
 extern int xtDOT_S; // .S
@@ -111,15 +130,30 @@ void fSTORE(); // !
 void fFETCH(); // @
 void fC_STORE(); // C!
 void fC_FETCH(); // C@
-void fPAD(); // PAD
+void fTYPE(); // TYPE
+void fEMIT(); // EMIT
+void fCR(); // CR
+void fSPACE(); // SPACE
+void fSPACES(); // SPACES
+void fLESS_HASH(); // <#
+void fHASH(); // #
+void fHASH_S(); // #S
+void fHOLD(); // HOLD
+void fSIGN(); // SIGN
+void fHASH_GREATER(); // #>
 void fDOT(); // .
+void fD_DOT(); // D.
+void fD_DOT_R(); // D.R
+void fU_DOT(); // U.
+void fDOT_R(); // .R
+void fU_DOT_R(); // U.R
+void fPAD(); // PAD
 void fTHROW(); // THROW
 void fDROP(); // DROP
 void fDUP(); // DUP
 void fPICK(); // PICK
 void fPLUS(); // +
 void fENVIRONMENT_Q(); // ENVIRONMENT?
-void fTYPE(); // TYPE
 void fCOUNT(); // COUNT
 void fS_QUOTE(); // S"
 void fDOT_S(); // .S

@@ -4,8 +4,9 @@
 // License: GPL3 https://www.gnu.org/licenses/gpl-3.0.html
 //-----------------------------------------------------------------------------
 
-#include "stack.h"
 #include "errors.h"
+#include "output.h"
+#include "stack.h"
 #include <cstring>
 #include <iostream>
 using namespace std;
@@ -49,9 +50,26 @@ int Stack::peek(int depth) const {
 	}
 }
 
+void Stack::dpush(dint value) {
+	push(dcell_lo(value));
+	push(dcell_hi(value));
+}
+
+dint Stack::dpop() {
+	int hi = pop();
+	int lo = pop();
+	return dcell(hi, lo);
+}
+
+dint Stack::dpeek(int depth) const {
+	int hi = peek(2 * depth);
+	int lo = peek(2 * depth + 1);
+	return dcell(hi, lo);
+}
+
 void Stack::print() const {
 	cout << "( ";
 	for (int i = STACK_SZ - 1; i >= m_ptr; i--)
-		cout << m_stack[i] << " ";		// TODO: use Forth output to respect BASE
+		cDOT(m_stack[i]);
 	cout << ") ";
 }

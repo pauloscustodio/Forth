@@ -5,8 +5,9 @@ BEGIN { use lib 't'; require 'testlib.pl'; }
 note "Test WORDS";
 
 forth_ok("words", <<'END');
-ALIGN C, , FIND WORDS WORD .S S" COUNT TYPE ENVIRONMENT? + PICK DUP DROP THROW
-. PAD C@ C! @ ! STATE BASE
+ALIGN C, , FIND WORDS WORD .S S" COUNT ENVIRONMENT? + PICK DUP DROP THROW PAD
+U.R .R U. D.R D. . #> SIGN HOLD #S # <# SPACES SPACE CR EMIT TYPE C@ C! @ !
+STATE BASE
 END
 die if !Test::More->builder->is_passing;
 

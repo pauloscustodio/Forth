@@ -4,24 +4,9 @@
 // License: GPL3 https://www.gnu.org/licenses/gpl-3.0.html
 //-----------------------------------------------------------------------------
 
-#pragma once
-
-#include "forth.h"
+#include "math.h"
 using namespace std;
 
-class Stack {
-public:
-	void init();
-
-	void push(int value);
-	int pop();
-	int peek(int depth = 0) const;
-	void dpush(dint value);
-	dint dpop();
-	dint dpeek(int depth = 0) const;
-	void print() const;
-
-private:
-	int m_stack[STACK_SZ];
-	int m_ptr;
-};
+dint cDABS(dint a) {
+    return a < 0 ? -a : a;
+}

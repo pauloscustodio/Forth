@@ -22,15 +22,30 @@ int xtSTORE = 0; // !
 int xtFETCH = 0; // @
 int xtC_STORE = 0; // C!
 int xtC_FETCH = 0; // C@
-int xtPAD = 0; // PAD
+int xtTYPE = 0; // TYPE
+int xtEMIT = 0; // EMIT
+int xtCR = 0; // CR
+int xtSPACE = 0; // SPACE
+int xtSPACES = 0; // SPACES
+int xtLESS_HASH = 0; // <#
+int xtHASH = 0; // #
+int xtHASH_S = 0; // #S
+int xtHOLD = 0; // HOLD
+int xtSIGN = 0; // SIGN
+int xtHASH_GREATER = 0; // #>
 int xtDOT = 0; // .
+int xtD_DOT = 0; // D.
+int xtD_DOT_R = 0; // D.R
+int xtU_DOT = 0; // U.
+int xtDOT_R = 0; // .R
+int xtU_DOT_R = 0; // U.R
+int xtPAD = 0; // PAD
 int xtTHROW = 0; // THROW
 int xtDROP = 0; // DROP
 int xtDUP = 0; // DUP
 int xtPICK = 0; // PICK
 int xtPLUS = 0; // +
 int xtENVIRONMENT_Q = 0; // ENVIRONMENT?
-int xtTYPE = 0; // TYPE
 int xtCOUNT = 0; // COUNT
 int xtS_QUOTE = 0; // S"
 int xtDOT_S = 0; // .S
@@ -60,6 +75,10 @@ int dcell(int hi, int lo) {
 		static_cast<udint>(dcell_lo(lo));
 }
 
+void push(int value) { 
+	vm.stack->push(value); 
+}
+
 int peek(int depth) { 
 	return vm.stack->peek(depth);
 }
@@ -68,8 +87,16 @@ int pop() {
 	return vm.stack->pop();
 }
 
-void push(int value) { 
-	vm.stack->push(value); 
+void dpush(dint value) {
+	vm.stack->dpush(value);
+}
+
+dint dpop() {
+	return vm.stack->dpop();
+}
+
+dint dpeek(int depth) {
+	return vm.stack->dpeek(depth);
 }
 
 void rpush(int value) { 
@@ -175,12 +202,8 @@ bool case_insensitive_equal(const string& a, const string& b) {
 }
 
 void fPAD() {
-	push(vm.mem.addr(vm.pad->pad()));
-}
-
-void fDOT() {
-	int value = pop();
-	cout << value << BL;		// TODO: use Forth output to respect BASE
+	char* pad = vm.pad->pad();
+	push(vm.mem.addr(pad));
 }
 
 void fTHROW() {
@@ -225,14 +248,6 @@ void fENVIRONMENT_Q() {
 	else {
 		push(F_FALSE);
 	}
-}
-
-void fTYPE() {
-	int size = pop();
-	int addr = pop();
-	const char* str = vm.mem.char_ptr(addr);
-	for (int i = 0; i < size; ++i)
-		cout << str[i];
 }
 
 void fCOUNT() {
