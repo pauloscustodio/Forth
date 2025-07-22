@@ -9,21 +9,21 @@
 #include "forth.h"
 using namespace std;
 
-class Pad {
-public:
-	void init() {}
+struct CountedString {
+	uchar size;
+	char str[1];
 
-	char* pad() { return m_pad; }
-
-private:
-	char m_pad[PAD_SZ];
+	string to_string() const;
 };
 
-struct User {
-	//@@BEGIN: Vars
-	int BASE;
-	int STATE;
-	//@@END
+class Wordbuf {
+public:
+	void init() { m_ptr = 0; }
 
-	void init();
+	CountedString* append(const string& str);
+	CountedString* append(const char* str, int size);
+
+private:
+	char m_buffer[BUFFER_SZ];
+	int m_ptr;
 };

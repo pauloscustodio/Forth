@@ -7,47 +7,11 @@
 #pragma once
 
 #include "forth.h"
+#include "wordbuf.h"
 #include <fstream>
 #include <iostream>
 #include <string>
 using namespace std;
-
-//-----------------------------------------------------------------------------
-
-class Pad {
-public:
-	void init() {}
-
-	char* pad() { return m_pad; }
-
-private:
-	char m_pad[PAD_SZ];
-};
-
-//-----------------------------------------------------------------------------
-
-struct CountedString {
-	uchar size;
-	char str[1];
-
-	string to_string() const;
-};
-
-//-----------------------------------------------------------------------------
-
-class Wordbuf {
-public:
-	void init() { m_ptr = 0; }
-
-	CountedString* append(const string& str);
-	CountedString* append(const char* str, int size);
-
-private:
-	char m_buffer[BUFFER_SZ];
-	int m_ptr;
-};
-
-//-----------------------------------------------------------------------------
 
 class Buffer {
 public:
