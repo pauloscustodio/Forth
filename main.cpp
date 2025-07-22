@@ -7,7 +7,6 @@
 #include "dict.h"
 #include "errors.h"
 #include "vm.h"
-#include <cctype>
 #include <fstream>
 #include <iostream>
 #include <sstream>

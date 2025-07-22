@@ -9,10 +9,14 @@
 #include "input.h"
 #include "vm.h"
 #include <cassert>
-#include <cctype>
 #include <cerrno>
 #include <cstring>
 using namespace std;
+
+// Forth ignores all control characters
+static bool is_space(char c) {
+	return c >= 0 && c <= BL;
+}
 
 void Buffer::init() {
 	m_ifs = nullptr;
@@ -91,14 +95,14 @@ void Buffer::check_error(int error_number) {
 
 void Buffer::skip_blank() {
 	if (m_ptr < m_size &&
-		isspace(static_cast<unsigned char>(m_buffer[m_ptr]))) {
+		is_space(m_buffer[m_ptr])) {
 		++m_ptr;
 	}
 }
 
 void Buffer::skip_blanks() {
 	while (m_ptr < m_size &&
-		isspace(static_cast<unsigned char>(m_buffer[m_ptr]))) {
+		is_space(m_buffer[m_ptr])) {
 		++m_ptr;
 	}
 }
@@ -107,7 +111,7 @@ int Buffer::skip_to_delimiter(char delimiter) {
 	int end = m_size;
 	if (delimiter == BL) {
 		while (m_ptr < m_size &&
-			!isspace(static_cast<unsigned char>(m_buffer[m_ptr])))
+			!is_space(m_buffer[m_ptr]))
 			++m_ptr;
 		end = m_ptr;
 	}
