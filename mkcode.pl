@@ -65,7 +65,7 @@ sub patch_file {
 			my $prefix = $1;
 			push @out, $_;
 			for my $var (@vars) {
-				push @out, $prefix."int v".$var->{id}.";\n";
+				push @out, $prefix."int ".$var->{id}.";\n";
 			}
 			while (@in && $in[0] !~ /^\s*\/\/\@\@END/) {
 				shift @in;
@@ -75,7 +75,7 @@ sub patch_file {
 			my $prefix = $1;
 			push @out, $_;
 			for my $var (@vars) {
-				push @out, $prefix."v".$var->{id}." = ".$var->{value}.";\n";
+				push @out, $prefix.$var->{id}." = ".$var->{value}.";\n";
 			}
 			while (@in && $in[0] !~ /^\s*\/\/\@\@END/) {
 				shift @in;
@@ -86,7 +86,7 @@ sub patch_file {
 			push @out, $_;
 			for my $var (@vars) {
 				push @out, $prefix."void f".$var->{id}."() ".
-						"{ push(vm.mem.addr(&vm.v".$var->{id}.")); }\n";
+						"{ push(vm.mem.addr(&vm.user->".$var->{id}.")); }\n";
 			}
 			while (@in && $in[0] !~ /^\s*\/\/\@\@END/) {
 				shift @in;

@@ -4,38 +4,20 @@
 // License: GPL3 https://www.gnu.org/licenses/gpl-3.0.html
 //-----------------------------------------------------------------------------
 
-#pragma once
-
-#include "dict.h"
 #include "forth.h"
-#include "memory.h"
-#include "parse.h"
-#include "stack.h"
 #include "user.h"
+#include "vm.h"
 using namespace std;
 
-struct VM {
-	VM();
+void User::init() {
+	//@@BEGIN: VarsInit
+	BASE = 10;
+	STATE = STATE_INTERPRET;
+	//@@END
+}
 
-	// memory
-	Mem mem;
-
-	// character buffers
-	Pad* pad;
-	Tib* tib;
-	Wordbuf* wordbuf;
-
-	// user variables
-	User* user;
-
-	// stacks
-	Stack* rstack;			// return stack
-	Stack* stack;			// data stack
-
-	// dictionary
-	Dict* dict;
-};
-
-extern VM vm;
-
+//@@BEGIN: VarsImplementation
+void fBASE() { push(vm.mem.addr(&vm.user->BASE)); }
+void fSTATE() { push(vm.mem.addr(&vm.user->STATE)); }
+//@@END
 

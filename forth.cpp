@@ -42,11 +42,6 @@ int xtC_COMMA = 0; // C,
 int xtALIGN = 0; // ALIGN
 //@@END
 
-//@@BEGIN: VarsImplementation
-void fBASE() { push(vm.mem.addr(&vm.vBASE)); }
-void fSTATE() { push(vm.mem.addr(&vm.vSTATE)); }
-//@@END
-
 // alignment and double cells
 int aligned(int x) {
 	return (x + CELL_SZ - 1) & ~(CELL_SZ - 1);

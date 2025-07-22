@@ -23,17 +23,15 @@ VM::VM() {
 	wordbuf = reinterpret_cast<Wordbuf*>(mem.alloc_bot(sizeof(Wordbuf)));
 	wordbuf->init();
 
+	// user variables
+	user = reinterpret_cast<User*>(mem.alloc_bot(sizeof(User)));
+	user->init();
+
 	// top of memory
 	rstack = reinterpret_cast<Stack*>(mem.alloc_top(sizeof(Stack)));
 	rstack->init();
 	stack = reinterpret_cast<Stack*>(mem.alloc_top(sizeof(Stack)));
 	stack->init();
-
-	// user variables
-	//@@BEGIN: VarsInit
-	vBASE = 10;
-	vSTATE = STATE_INTERPRET;
-	//@@END
 
 	// use the remaing as dictionary space
 	dict = reinterpret_cast<Dict*>(mem.alloc_bot(sizeof(Dict)));

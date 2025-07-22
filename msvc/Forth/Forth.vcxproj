@@ -133,23 +133,28 @@
   <ItemGroup>
     <None Include="..\..\errors.def" />
     <None Include="..\..\mkcode.pl" />
+    <None Include="..\..\vars.def" />
     <None Include="..\..\words.def" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\dict.h" />
     <ClInclude Include="..\..\errors.h" />
     <ClInclude Include="..\..\forth.h" />
     <ClInclude Include="..\..\memory.h" />
     <ClInclude Include="..\..\parse.h" />
     <ClInclude Include="..\..\stack.h" />
+    <ClInclude Include="..\..\user.h" />
     <ClInclude Include="..\..\vm.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\dict.cpp" />
     <ClCompile Include="..\..\errors.cpp" />
     <ClCompile Include="..\..\forth.cpp" />
     <ClCompile Include="..\..\main.cpp" />
     <ClCompile Include="..\..\memory.cpp" />
     <ClCompile Include="..\..\parse.cpp" />
     <ClCompile Include="..\..\stack.cpp" />
+    <ClCompile Include="..\..\user.cpp" />
     <ClCompile Include="..\..\vm.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
