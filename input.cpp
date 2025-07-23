@@ -127,7 +127,11 @@ bool Buffer::refill() {
 }
 
 void Buffer::set_buffer(const string& text) {
-	set_buffer(text.c_str(), static_cast<int>(text.size()));
+	set_buffer(text.c_str(), text.size());
+}
+
+void Buffer::set_buffer(const char* text, size_t size) {
+	set_buffer(text, static_cast<int>(size));
 }
 
 void Buffer::set_buffer(const char* text, int size) {
@@ -202,7 +206,11 @@ void Input::set_buffer_ptr(int ptr) {
 }
 
 void Input::push_text(const string& text) {
-    push_text(text.c_str(), static_cast<int>(text.size()));
+    push_text(text.c_str(), text.size());
+}
+
+void Input::push_text(const char* text, size_t size) {
+	push_text(text, static_cast<int>(size));
 }
 
 void Input::push_text(const char* text, int size) {
@@ -216,7 +224,11 @@ void Input::push_text(const char* text, int size) {
 }
 
 void Input::push_file(const string& filename) {
-	push_file(filename.c_str(), static_cast<int>(filename.size()));
+	push_file(filename.c_str(), filename.size());
+}
+
+void Input::push_file(const char* filename, size_t size) {
+	push_file(filename, static_cast<int>(size));
 }
 
 void Input::push_file(const char* filename, int size) {

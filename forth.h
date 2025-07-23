@@ -19,10 +19,10 @@ typedef uint64_t udint;
 typedef void (*func_ptr_t)();
 
 // types sizes
-static inline const int CHAR_SZ = static_cast<int>(sizeof(char));
-static inline const int CELL_SZ = static_cast<int>(sizeof(int));
-static inline const int DCELL_SZ = static_cast<int>(sizeof(dint));
-static inline const int PTR_SZ = static_cast<int>(sizeof(func_ptr_t));
+static inline const int CHAR_SZ = sizeof(char);
+static inline const int CELL_SZ = sizeof(int);
+static inline const int DCELL_SZ = sizeof(dint);
+static inline const int PTR_SZ = sizeof(func_ptr_t);
 
 static_assert(CELL_SZ * 2 == DCELL_SZ, "DCELL should be double of CELL");
 static_assert(PTR_SZ <= DCELL_SZ, "PTR should fit in DCELL");
@@ -53,37 +53,12 @@ static inline const int STATE_COMPILE = 1;
 // file names
 static inline const string BLOCK_FILENAME = "forth.blk";
 
-// alignment and double cells
-int aligned(int x);
-int dcell_lo(dint x);
-int dcell_hi(dint x);
-int dcell(int hi, int lo);
-
-void push(int value);
-int pop();
-int peek(int depth = 0);
-
-void dpush(dint value);
-dint dpop();
-dint dpeek(int depth = 0);
-
-void rpush(int value);
-int rpop();
-int rpeek(int depth = 0);
-
 void fVOID();
-
-struct Header;
-Header* cFIND(const char* name, bool& is_immediate);
-Header* cFIND(const char* name, int size, bool& is_immediate);
-
-vector<string> cWORDS();
-
-bool case_insensitive_equal(const string& a, const string& b);
 
 //@@BEGIN: WordsXtDeclaration
 extern int xtBASE; // BASE
 extern int xtSTATE; // STATE
+extern int xtDPL; // DPL
 extern int xtSTORE; // !
 extern int xtFETCH; // @
 extern int xtC_STORE; // C!
@@ -126,6 +101,7 @@ extern int xtALIGN; // ALIGN
 //@@BEGIN: WordsDeclaration
 void fBASE(); // BASE
 void fSTATE(); // STATE
+void fDPL(); // DPL
 void fSTORE(); // !
 void fFETCH(); // @
 void fC_STORE(); // C!

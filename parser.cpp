@@ -15,9 +15,8 @@ static bool is_space(char c) {
     return c >= 0 && c <= BL;
 }
 
-#if 0
 // return digit value of character, or -1 if not a digit
-static int digit_value(char c) {
+static int char_digit(char c) {
     if (c >= '0' && c <= '9')
         return c - '0';
     else if (c >= 'A' && c <= 'Z')
@@ -27,12 +26,6 @@ static int digit_value(char c) {
     else
         return -1; // not a digit
 }
-
-static int digit_value(char c, int base) {
-    int value = digit_value(c);
-    return (value >= 0 && value < base) ? value : -1; // valid digit for the base
-}
-#endif 
 
 static void skip_blank() {
     const char* buffer = vm.input->buffer();
@@ -132,6 +125,96 @@ CountedString* parse_word(char delimiter) {
     return nullptr;		                        // no input at all
 }
 
+// parse number with optional sign (+-)
+// accept $ # as hex prefixes, % as binary prefix, 'a' as quoted character
+// skip punctuation ( , . + - / : )
+// if punctuation found, set DPL to number of digits after last punctuation, return double cell
+// return true if ok, false if error
+bool parse_number(const char* text, size_t size, bool& is_double, dint& value) {
+    return parse_number(text, static_cast<int>(size), is_double, value);
+}
+
+bool parse_number(const char* text, int size, bool& is_double, dint& value) {
+    // init output vars
+    int sign = 1;
+    int base = vm.user->BASE;
+    vm.user->DPL = 0;
+    const char* p = text;
+    const char* end = text + size;
+    is_double = false;
+    value = 0;
+
+    if (p >= end) return false;			// no number
+
+    // check sign
+    switch (*p) {
+    case '-':
+        sign = -1;
+        p++;
+        break;
+    case '+':
+        sign = 1;
+        p++;
+        break;
+    }
+
+    if (p >= end) return false;			// no number
+
+    // check base prefix
+    switch (*p) {
+    case '#':
+    case '$':
+        base = 16;
+        p++;
+        break;
+    case '%':
+        base = 2;
+        p++;
+        break;
+    case '\'':
+        if (end - p == 3 && p[2] == '\'') {
+            value = sign * static_cast<unsigned char>(p[1]);
+            is_double = false;
+            return true;
+        }
+        break;
+    }
+
+    if (p >= end) return false;			// no number
+
+    // collect digits
+    int num_digits = 0, digit = 0;
+    is_double = false;
+    while (p < end) {
+        char c = *p++;
+        switch (c) {
+        case ',':
+        case '.':
+        case '+':
+        case '-':
+        case '/':
+        case ':':
+            vm.user->DPL = 0;
+            is_double = true;
+            break;
+        default:
+            digit = char_digit(c);
+            if (digit < 0 || digit >= base)
+                return false;		// digit not in BASE
+
+            value = value * base + digit;
+            num_digits++;
+            if (is_double)
+                vm.user->DPL++;
+        }
+    }
+    if (num_digits == 0)
+        return false;               // no digits found
+
+    value *= sign;
+    return true;
+}
+
 CountedString* cWORD(char delimiter) {
     CountedString* word = parse_word(delimiter);
     if (word == nullptr)
@@ -143,6 +226,14 @@ CountedString* cWORD(char delimiter) {
 void fWORD() {
     char delimiter = pop();
     CountedString* word = cWORD(delimiter);
+    assert(word != nullptr);
+
+    push(vm.mem.addr(word->str));			// address of word
+    push(word->size);						// length of word
+}
+
+void fS_QUOTE() {
+    CountedString* word = cWORD('"');
     assert(word != nullptr);
 
     push(vm.mem.addr(word->str));			// address of word

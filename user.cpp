@@ -13,11 +13,18 @@ void User::init() {
 	//@@BEGIN: VarsInit
 	BASE = 10;
 	STATE = STATE_INTERPRET;
+	DPL = 0;
 	//@@END
+}
+
+void fPAD() {
+	char* pad = vm.pad->pad();
+	push(vm.mem.addr(pad));
 }
 
 //@@BEGIN: VarsImplementation
 void fBASE() { push(vm.mem.addr(&vm.user->BASE)); }
 void fSTATE() { push(vm.mem.addr(&vm.user->STATE)); }
+void fDPL() { push(vm.mem.addr(&vm.user->DPL)); }
 //@@END
 

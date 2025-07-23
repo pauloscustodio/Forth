@@ -18,6 +18,7 @@ using namespace std;
 //@@BEGIN: WordsXtDefinition
 int xtBASE = 0; // BASE
 int xtSTATE = 0; // STATE
+int xtDPL = 0; // DPL
 int xtSTORE = 0; // !
 int xtFETCH = 0; // @
 int xtC_STORE = 0; // C!
@@ -57,183 +58,7 @@ int xtC_COMMA = 0; // C,
 int xtALIGN = 0; // ALIGN
 //@@END
 
-// alignment and double cells
-int aligned(int x) {
-	return (x + CELL_SZ - 1) & ~(CELL_SZ - 1);
-}
-
-int dcell_lo(dint x) {
-	return x & 0xffffffffLL;
-}
-
-int dcell_hi(dint x) {
-	return (x >> 32) & 0xffffffffLL;
-}
-
-int dcell(int hi, int lo) {
-	return (static_cast<udint>(dcell_lo(hi)) << 32) |
-		static_cast<udint>(dcell_lo(lo));
-}
-
-void push(int value) { 
-	vm.stack->push(value); 
-}
-
-int peek(int depth) { 
-	return vm.stack->peek(depth);
-}
-
-int pop() { 
-	return vm.stack->pop();
-}
-
-void dpush(dint value) {
-	vm.stack->dpush(value);
-}
-
-dint dpop() {
-	return vm.stack->dpop();
-}
-
-dint dpeek(int depth) {
-	return vm.stack->dpeek(depth);
-}
-
-void rpush(int value) { 
-	vm.rstack->push(value); 
-}
-
-int rpop() { 
-	return vm.rstack->pop(); 
-}
-
-int rpeek(int depth) { 
-	return vm.rstack->peek(depth);
-}
-
 void fVOID() {	// do nothing
-}
-
-Header* cFIND(const char* name, bool& is_immediate) {
-	return cFIND(name, static_cast<int>(strlen(name)), is_immediate);
-}
-
-Header* cFIND(const char* name, int size, bool& is_immediate) {
-	string s_name{ name, name + size };
-	is_immediate = false;
-	int ptr = vm.dict->latest();
-	while (ptr != 0) {
-		Header* header = reinterpret_cast<Header*>(vm.mem.char_ptr(ptr));
-		if (size == header->name_size()) {
-			string s_found_name = header->name();
-			if (case_insensitive_equal(s_name, s_found_name)) {
-				is_immediate = (header->flags & F_IMMEDIATE) ? true : false;
-				return header;
-			}
-		}
-		ptr = header->prev_addr;
-	}
-	
-	return nullptr;
-}
-
-void fFIND() {
-	int addr = pop();
-	CountedString* word = reinterpret_cast<CountedString*>(vm.mem.char_ptr(addr));
-	bool is_immediate = F_FALSE;
-	Header* header = cFIND(word->str, word->size, is_immediate);
-	if (header == nullptr) {
-		push(addr);
-		push(0);
-	}
-	else {
-		int xt = header->xt();
-		if (is_immediate) {
-			push(xt);
-			push(1);
-		}
-		else {
-			push(xt);
-			push(-1);
-		}
-	}
-}
-
-vector<string> cWORDS() {
-	vector<string> words;
-	int ptr = vm.dict->latest();
-	while (ptr != 0) {
-		Header* header = reinterpret_cast<Header*>(vm.mem.char_ptr(ptr));
-		string s_found_name = header->name();
-		if ((header->flags & F_HIDDEN) == 0) {
-			words.push_back(s_found_name);
-		}
-		ptr = header->prev_addr;
-	}
-	return words;
-}
-
-void fWORDS() {
-	vector<string> words = cWORDS();
-	size_t col = 0;
-	for (auto& word : words) {
-		if (col + 1 + word.size() >= SCREEN_WIDTH) {
-			cout << endl << word;
-			col = word.size();
-		}
-		else if (col == 0) {
-			cout << word;
-			col += word.size();
-		}
-		else {
-			cout << BL << word;
-			col += 1 + word.size();
-		}
-	}
-	cout << endl;
-}
-
-bool case_insensitive_equal(const string& a, const string& b) {
-	return a.size() == b.size() &&
-		equal(a.begin(), a.end(), b.begin(), [](char c1, char c2) {
-		return tolower(static_cast<uchar>(c1)) ==
-			tolower(static_cast<uchar>(c2));
-			});
-}
-
-void fPAD() {
-	char* pad = vm.pad->pad();
-	push(vm.mem.addr(pad));
-}
-
-void fTHROW() {
-	int error_code = pop();
-	error(static_cast<Error>(error_code));
-}
-
-void fDROP() {
-	pop();
-}
-
-void fDUP() {
-	int value = peek(0);
-	push(value);
-}
-
-void fPICK() {
-	int depth = pop();
-	if (depth < 0) {
-		error(Error::InvalidMemoryAddress);
-		return;
-	}
-	int value = peek(depth);
-	push(value);
-}
-
-void fPLUS() {
-	int b = pop();
-	int a = pop();
-	push(a + b);
 }
 
 void fENVIRONMENT_Q() {
@@ -248,21 +73,5 @@ void fENVIRONMENT_Q() {
 	else {
 		push(F_FALSE);
 	}
-}
-
-void fCOUNT() {
-	int addr = pop(); 
-	int len = *vm.mem.char_ptr(addr++); 
-	push(addr); 
-	push(len);
-}
-
-void fS_QUOTE() {
-	push('"');
-	fWORD();
-}
-
-void fDOT_S() {
-	vm.stack->print();
 }
 

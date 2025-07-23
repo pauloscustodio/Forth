@@ -25,3 +25,16 @@ private:
 	int m_stack[STACK_SZ];
 	int m_ptr;
 };
+
+void push(int value);
+int pop();
+int peek(int depth = 0);
+
+void dpush(dint value);
+dint dpop();
+dint dpeek(int depth = 0);
+
+void rpush(int value);
+int rpop();
+int rpeek(int depth = 0);
+

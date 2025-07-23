@@ -23,6 +23,7 @@ struct User {
 	//@@BEGIN: Vars
 	int BASE;
 	int STATE;
+	int DPL;
 	//@@END
 
 	void init();

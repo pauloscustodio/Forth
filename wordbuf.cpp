@@ -14,13 +14,17 @@ string CountedString::to_string() const {
 }
 
 CountedString* Wordbuf::append(const string& str) {
-	return append(str.c_str(), static_cast<int>(str.size()));
+	return append(str.c_str(), str.size());
+}
+
+CountedString* Wordbuf::append(const char* str, size_t size) {
+	return append(str, static_cast<int>(size));
 }
 
 CountedString* Wordbuf::append(const char* str, int size) {
 	if (size > MAX_WORD_SZ) {
 		error(Error::ParsedStringOverflow);
-		return append("", 0);
+		return append("");
 	}
 	else {
 		if (m_ptr + 1 + size + 1 >= BUFFER_SZ)

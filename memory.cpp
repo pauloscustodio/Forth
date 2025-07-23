@@ -6,6 +6,7 @@
 
 #include "errors.h"
 #include "forth.h"
+#include "math.h"
 #include "memory.h"
 #include "vm.h"
 #include <cstring>
@@ -18,13 +19,12 @@ Mem::Mem() {
 }
 
 int Mem::addr(const char* ptr) const {
-	int addr = check_addr(static_cast<int>(ptr - m_mem));
+	int addr = check_addr(ptr - m_mem);
 	return addr;
 }
 
 int Mem::addr(const int* ptr) const {
-	int addr = check_addr(static_cast<int>(
-		reinterpret_cast<const char*>(ptr) - m_mem));
+	int addr = check_addr(reinterpret_cast<const char*>(ptr) - m_mem);
 	return addr;
 }
 
@@ -78,6 +78,10 @@ char* Mem::alloc_top(int size) {
 		error(Error::MemoryOverflow);
 	m_top -= aligned(size);
 	return char_ptr(m_top);
+}
+
+int Mem::check_addr(ptrdiff_t addr, int size) const {
+	return check_addr(static_cast<int>(addr), size);
 }
 
 int Mem::check_addr(int addr, int size) const {

@@ -8,6 +8,7 @@
 
 #include "forth.h"
 #include <string>
+#include <vector>
 using namespace std;
 
 struct Header {
@@ -27,6 +28,7 @@ class Dict {
 public:
 	void init(int lo_mem, int hi_mem);
 	int create(const char* name, int flags, func_ptr_t f_word); // return xt of word
+	int create(const char* name, size_t size, int flags, func_ptr_t f_word); // return xt of word
 	int create(const char* name, int size, int flags, func_ptr_t f_word); // return xt of word
 
 	int latest() const { return m_latest; }
@@ -45,3 +47,12 @@ private:
 
 	void check_free_space(int size = 0) const;
 };
+
+Header* cFIND(const char* name, bool& is_immediate);
+Header* cFIND(const char* name, size_t size, bool& is_immediate);
+Header* cFIND(const char* name, int size, bool& is_immediate);
+
+vector<string> cWORDS();
+
+bool case_insensitive_equal(const string& a, const string& b);
+

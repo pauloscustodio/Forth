@@ -56,10 +56,17 @@ void NumberOutput::add_sign(int sign) {
         add_char('-');
 }
 
-void NumberOutput::end(void) {
+void NumberOutput::end() const {
     dpop();     // drop number
     push(vm.mem.addr(m_buffer + m_ptr));
     push(PAD_SZ - m_ptr);
+}
+
+void fCOUNT() {
+    int addr = pop();
+    int len = *vm.mem.char_ptr(addr++);
+    push(addr);
+    push(len);
 }
 
 void fTYPE() {

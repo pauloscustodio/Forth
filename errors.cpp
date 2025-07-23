@@ -5,8 +5,10 @@
 //-----------------------------------------------------------------------------
 
 #include "errors.h"
-#include <string>
+#include "forth.h"
+#include "stack.h"
 #include <iostream>
+#include <string>
 using namespace std;
 
 static string lookup_error_msg(Error error_code) {
@@ -94,4 +96,9 @@ void error(Error error_code, const string& arg) {
 		cerr << endl;
 		exit(EXIT_FAILURE);
 	}
+}
+
+void fTHROW() {
+	int error_code = pop();
+	error(static_cast<Error>(error_code));
 }

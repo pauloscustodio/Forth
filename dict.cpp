@@ -7,6 +7,7 @@
 #include "dict.h"
 #include "errors.h"
 #include "forth.h"
+#include "math.h"
 #include "vm.h"
 #include <cstring>
 using namespace std;
@@ -39,6 +40,7 @@ void Dict::init(int lo_mem, int hi_mem) {
 	//@@BEGIN: WordsCreateDictionary
 	xtBASE = create("BASE", 0, fBASE);
 	xtSTATE = create("STATE", 0, fSTATE);
+	xtDPL = create("DPL", 0, fDPL);
 	xtSTORE = create("!", 0, fSTORE);
 	xtFETCH = create("@", 0, fFETCH);
 	xtC_STORE = create("C!", 0, fC_STORE);
@@ -80,7 +82,11 @@ void Dict::init(int lo_mem, int hi_mem) {
 }
 
 int Dict::create(const char* name, int flags, func_ptr_t f_word) {
-	return create(name, static_cast<int>(strlen(name)), flags, f_word);
+	return create(name, strlen(name), flags, f_word);
+}
+
+int Dict::create(const char* name, size_t size, int flags, func_ptr_t f_word) {
+	return create(name, static_cast<int>(size), flags, f_word);
 }
 
 int Dict::create(const char* name, int size, int flags, func_ptr_t f_word) {
@@ -148,3 +154,95 @@ void fC_COMMA() {
 void fALIGN() {
 	vm.dict->align();
 }
+
+Header* cFIND(const char* name, bool& is_immediate) {
+	return cFIND(name, strlen(name), is_immediate);
+}
+
+Header* cFIND(const char* name, size_t size, bool& is_immediate) {
+	return cFIND(name, static_cast<int>(size), is_immediate);
+}
+
+Header* cFIND(const char* name, int size, bool& is_immediate) {
+	string s_name{ name, name + size };
+	is_immediate = false;
+	int ptr = vm.dict->latest();
+	while (ptr != 0) {
+		Header* header = reinterpret_cast<Header*>(vm.mem.char_ptr(ptr));
+		if (size == header->name_size()) {
+			string s_found_name = header->name();
+			if (case_insensitive_equal(s_name, s_found_name)) {
+				is_immediate = (header->flags & F_IMMEDIATE) ? true : false;
+				return header;
+			}
+		}
+		ptr = header->prev_addr;
+	}
+
+	return nullptr;
+}
+
+void fFIND() {
+	int addr = pop();
+	CountedString* word = reinterpret_cast<CountedString*>(vm.mem.char_ptr(addr));
+	bool is_immediate = F_FALSE;
+	Header* header = cFIND(word->str, word->size, is_immediate);
+	if (header == nullptr) {
+		push(addr);
+		push(0);
+	}
+	else {
+		int xt = header->xt();
+		if (is_immediate) {
+			push(xt);
+			push(1);
+		}
+		else {
+			push(xt);
+			push(-1);
+		}
+	}
+}
+
+vector<string> cWORDS() {
+	vector<string> words;
+	int ptr = vm.dict->latest();
+	while (ptr != 0) {
+		Header* header = reinterpret_cast<Header*>(vm.mem.char_ptr(ptr));
+		string s_found_name = header->name();
+		if ((header->flags & F_HIDDEN) == 0) {
+			words.push_back(s_found_name);
+		}
+		ptr = header->prev_addr;
+	}
+	return words;
+}
+
+void fWORDS() {
+	vector<string> words = cWORDS();
+	size_t col = 0;
+	for (auto& word : words) {
+		if (col + 1 + word.size() >= SCREEN_WIDTH) {
+			cout << endl << word;
+			col = word.size();
+		}
+		else if (col == 0) {
+			cout << word;
+			col += word.size();
+		}
+		else {
+			cout << BL << word;
+			col += 1 + word.size();
+		}
+	}
+	cout << endl;
+}
+
+bool case_insensitive_equal(const string& a, const string& b) {
+	return a.size() == b.size() &&
+		equal(a.begin(), a.end(), b.begin(), [](char c1, char c2) {
+		return tolower(static_cast<uchar>(c1)) ==
+			tolower(static_cast<uchar>(c2));
+			});
+}
+

@@ -18,7 +18,7 @@ public:
     void add_digits();
     void add_char(char c);
     void add_sign(int sign);
-    void end(void);
+    void end() const;
 
 private:
     char m_buffer[PAD_SZ];

@@ -6,6 +6,7 @@
 
 #include "dict.h"
 #include "errors.h"
+#include "math.h"
 #include "parser.h"
 #include "vm.h"
 #include <fstream>
@@ -17,16 +18,17 @@ using namespace std;
 static void exec_word(const string& word) {
 	if (!word.empty()) {
 		bool is_immediate = false;
-		Header* header = cFIND(word.c_str(), static_cast<int>(word.size()), is_immediate);
+		bool is_double = false;
+		dint value = 0;
+		Header* header = cFIND(word.c_str(), word.size(), is_immediate);
 		if (header) {
 			header->f_word();
 		}
-		else if (isdigit(static_cast<uchar>(word[0])) ||
-			(word.size() >= 2 && word[0] == '-' && isdigit(static_cast<uchar>(word[1])))) {
-			push(stoi(word));
-		}
-		else if (word.size() == 3 && word[0] == '\'' && word[2] == '\'') {
-			push(word[1]);
+		else if (parse_number(word.c_str(), word.size(), is_double, value)) {
+			if (is_double)
+				dpush(value);
+			else
+				push(dcell_lo(value));
 		}
 		else {
 			error(Error::UndefinedWord, word);

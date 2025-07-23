@@ -41,6 +41,7 @@ private:
 
 	void check_error(int error_number);
 	void set_buffer(const string& text);
+	void set_buffer(const char* text, size_t size);
 	void set_buffer(const char* text, int size);
 
 	static string block_filename();
@@ -61,8 +62,10 @@ public:
 	void set_buffer_ptr(int ptr);
 
 	void push_text(const string& text);
+	void push_text(const char* text, size_t size);
 	void push_text(const char* text, int size);
 	void push_file(const string& filename);
+	void push_file(const char* filename, size_t size);
 	void push_file(const char* filename, int size);
     void push_block(int blk);
 	void push_cin();

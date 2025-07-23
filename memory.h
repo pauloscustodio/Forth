@@ -36,5 +36,6 @@ private:
 	int m_bot;
 	int m_top;
 
+	int check_addr(ptrdiff_t addr, int size = 0) const;
 	int check_addr(int addr, int size = 0) const;
 };

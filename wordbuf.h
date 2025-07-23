@@ -21,6 +21,7 @@ public:
 	void init() { m_ptr = 0; }
 
 	CountedString* append(const string& str);
+	CountedString* append(const char* str, size_t size);
 	CountedString* append(const char* str, int size);
 
 private:
