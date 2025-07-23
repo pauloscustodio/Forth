@@ -7,6 +7,7 @@
 #pragma once
 
 #include "forth.h"
+#include "wordbuf.h"
 #include <string>
 #include <vector>
 using namespace std;
@@ -14,11 +15,14 @@ using namespace std;
 struct Header {
 	int prev_addr;		// address of previous header
 	int name_addr;		// address of name
-	uchar flags;		// F_HIDDEN/F_IMMEDIATE/S_SMUDGE
-	func_ptr_t f_does;	// DOES> word
+	struct {
+		bool hidden : 1;
+		bool immediate : 1;
+		bool smudge : 1;
+	} flags;
 	func_ptr_t f_word;	// executable word
 
-	string name() const;
+	ForthString* name() const;
 	int name_size() const;
 	int xt() const;
 	Header* header(int xt);
@@ -38,21 +42,20 @@ public:
 	void dcomma(dint value);
 	void align();
 
+	Header* find_word(const string& name) const;
+    Header* find_word(const char* name, size_t size) const;
+    Header* find_word(const char* name, int size) const;
+
 private:
-	int m_lo_mem;
-	int m_hi_mem;
 	int m_latest;		// point to last defined word header
 	int m_here;			// point to next free position at bottom of memory
-	int m_names;		// point to last name created at top of memory
+	int m_names;			// point to last name created at top of memory
 
 	void check_free_space(int size = 0) const;
 };
 
-Header* cFIND(const char* name, bool& is_immediate);
-Header* cFIND(const char* name, size_t size, bool& is_immediate);
-Header* cFIND(const char* name, int size, bool& is_immediate);
-
 vector<string> cWORDS();
 
-bool case_insensitive_equal(const string& a, const string& b);
+bool case_insensitive_equal(const char* a_str, int a_size, const char* b_str, int b_size);
+
 

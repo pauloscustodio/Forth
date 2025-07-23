@@ -9,22 +9,50 @@
 #include "forth.h"
 using namespace std;
 
-struct CountedString {
-	uchar size;
-	char str[1];
-
+class CountedString {
+public:
 	string to_string() const;
+	int size() const { return m_size; }
+	const char* str() const { return m_str; }
+	void set_string(const char* str, int size);		// space must be allocated by user
+
+private:
+	uchar m_size;			// Forth COUNTed string starts here; max 255
+	char m_str[1];			// extended to length of string plus one blank
 };
+
+//-----------------------------------------------------------------------------
+
+class ForthString {
+public:
+	string to_string() const;
+	int size() const { return m_size; }
+	const char* str() const { return m_str; }
+	const CountedString* counted_string() const;
+	void set_string(const char* str, int size);		// space must be allocated by user
+
+	static int alloc_size(int str_size);	// return aligned size of structure + characters + BL
+
+private:
+	int m_size;				// Full size
+	uchar m_short_size;		// Forth COUNTed string starts here; max 255
+	char m_str[1];			// extended to length of string plus one blank
+
+	void set_size(size_t size);
+	void set_size(int size);
+};
+
+//-----------------------------------------------------------------------------
 
 class Wordbuf {
 public:
 	void init() { m_ptr = 0; }
 
-	CountedString* append(const string& str);
-	CountedString* append(const char* str, size_t size);
-	CountedString* append(const char* str, int size);
+	ForthString* append(const string& str);
+	ForthString* append(const char* str, size_t size);
+	ForthString* append(const char* str, int size);
 
 private:
-	char m_buffer[BUFFER_SZ];
+	char m_buffer[WORDBUF_SZ];
 	int m_ptr;
 };

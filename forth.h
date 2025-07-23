@@ -30,6 +30,7 @@ static_assert(PTR_SZ <= DCELL_SZ, "PTR should fit in DCELL");
 // VM size
 static inline const int MEM_SZ = 256 * 1024 * CELL_SZ;
 static inline const int BUFFER_SZ = 1024;
+static inline const int WORDBUF_SZ = 4 * BUFFER_SZ;     // hold strings with BUFFER_SZ length
 static inline const int PAD_SZ = 256;
 static inline const int STACK_SZ = 1024 * CELL_SZ;
 static inline const int MAX_FILES = 16;
@@ -52,8 +53,6 @@ static inline const int STATE_COMPILE = 1;
 
 // file names
 static inline const string BLOCK_FILENAME = "forth.blk";
-
-void fVOID();
 
 //@@BEGIN: WordsXtDeclaration
 extern int xtBASE; // BASE

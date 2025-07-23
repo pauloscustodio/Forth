@@ -17,10 +17,9 @@ using namespace std;
 
 static void exec_word(const string& word) {
 	if (!word.empty()) {
-		bool is_immediate = false;
 		bool is_double = false;
 		dint value = 0;
-		Header* header = cFIND(word.c_str(), word.size(), is_immediate);
+		Header* header = vm.dict->find_word(word.c_str(), word.size());
 		if (header) {
 			header->f_word();
 		}
@@ -38,7 +37,7 @@ static void exec_word(const string& word) {
 
 static void exec_buffers() {
 	while (true) {
-		CountedString* word = parse_word(BL);
+		const ForthString* word = parse_word(BL);
 		if (word == nullptr)
 			break;
 		exec_word(word->to_string());

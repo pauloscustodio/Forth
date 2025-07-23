@@ -28,10 +28,6 @@ VM::VM() {
 	user = reinterpret_cast<User*>(mem.alloc_bot(sizeof(User)));
 	user->init();
 
-	// user variables
-	user = reinterpret_cast<User*>(mem.alloc_bot(sizeof(User)));
-	user->init();
-
 	// top of memory
 	rstack = reinterpret_cast<Stack*>(mem.alloc_top(sizeof(Stack)));
 	rstack->init();

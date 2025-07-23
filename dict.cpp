@@ -12,10 +12,14 @@
 #include <cstring>
 using namespace std;
 
-string Header::name() const {
+static char to_lower(char c) {
+    return tolower(static_cast<unsigned char>(c));
+}
+
+ForthString* Header::name() const {
 	char* name_ptr = vm.mem.char_ptr(name_addr);
-	CountedString* name = reinterpret_cast<CountedString*>(name_ptr);
-	return name->to_string();
+	ForthString* name = reinterpret_cast<ForthString*>(name_ptr);
+	return name;
 }
 
 int Header::name_size() const {
@@ -31,9 +35,11 @@ Header* Header::header(int xt) {
 	return reinterpret_cast<Header*>(vm.mem.char_ptr(addr));
 }
 
+//-----------------------------------------------------------------------------
+
 void Dict::init(int lo_mem, int hi_mem) {
-	m_lo_mem = m_here = lo_mem;
-	m_hi_mem = m_names = hi_mem;
+	m_here = lo_mem;
+	m_names = hi_mem;
 	m_latest = 0;
 	check_free_space();
 
@@ -90,29 +96,32 @@ int Dict::create(const char* name, size_t size, int flags, func_ptr_t f_word) {
 }
 
 int Dict::create(const char* name, int size, int flags, func_ptr_t f_word) {
-	if (size > MAX_WORD_SZ)
-		error(Error::ParsedStringOverflow);
-
 	align();
-	check_free_space(sizeof(Header) + 1 + size + 1);
 
 	// store name
-	m_names -= 1 + size + 1;
-	char* name_dst = vm.mem.char_ptr(m_names);
-	*reinterpret_cast<uchar*>(name_dst) = size;
-	memcpy(name_dst + 1, name, size);
-	name_dst[1 + size] = BL;			// terminator
+    ForthString* name_str = vm.wordbuf->append(name, size);
+    int alloc_size = name_str->alloc_size(size);
+
+	check_free_space(sizeof(Header) + alloc_size);
+
+	m_names -= alloc_size;
+    memcpy(vm.mem.char_ptr(m_names), name_str, alloc_size);
 
 	// store header
 	Header* header = reinterpret_cast<Header*>(vm.mem.char_ptr(m_here));
-	header->prev_addr = m_latest; m_latest = m_here;
+	header->prev_addr = m_latest; 
+	m_latest = m_here;
+
 	header->name_addr = m_names;
-	header->flags = flags;
-	header->f_does = fVOID;
+
+    header->flags.smudge = (flags & F_SMUDGE) ? true : false;
+    header->flags.hidden = (flags & F_HIDDEN) ? true : false;
+    header->flags.immediate = (flags & F_IMMEDIATE) ? true : false;
+
 	header->f_word = f_word;
 
 	m_here += aligned(sizeof(Header));
-	return vm.mem.addr(reinterpret_cast<char*>(&header->f_word));
+    return header->xt(); // return xt of word
 }
 
 void Dict::ccomma(int value) {
@@ -136,6 +145,32 @@ void Dict::align() {
 	m_here = aligned(m_here);
 }
 
+Header* Dict::find_word(const string& name) const {
+    return find_word(name.c_str(), name.size());
+}
+
+Header* Dict::find_word(const char* name, size_t size) const {
+	return find_word(name, static_cast<int>(size));
+}
+
+Header* Dict::find_word(const char* name, int size) const {
+	int ptr = vm.dict->latest();
+	while (ptr != 0) {
+		Header* header = reinterpret_cast<Header*>(vm.mem.char_ptr(ptr));
+		ForthString* found_name = header->name();
+		if (header->flags.hidden || header->flags.smudge)
+			; // skip hidden or smudged words
+		else if (size != header->name_size())
+            ; // skip words with different name size
+		else if (case_insensitive_equal(name, size, found_name->str(), found_name->size())) {
+			return header;
+		}
+		ptr = header->prev_addr;
+	}
+
+	return nullptr;
+}
+
 void Dict::check_free_space(int size) const {
 	if (m_here + size >= m_names)
 		error(Error::DictionaryOverflow);
@@ -155,44 +190,17 @@ void fALIGN() {
 	vm.dict->align();
 }
 
-Header* cFIND(const char* name, bool& is_immediate) {
-	return cFIND(name, strlen(name), is_immediate);
-}
-
-Header* cFIND(const char* name, size_t size, bool& is_immediate) {
-	return cFIND(name, static_cast<int>(size), is_immediate);
-}
-
-Header* cFIND(const char* name, int size, bool& is_immediate) {
-	string s_name{ name, name + size };
-	is_immediate = false;
-	int ptr = vm.dict->latest();
-	while (ptr != 0) {
-		Header* header = reinterpret_cast<Header*>(vm.mem.char_ptr(ptr));
-		if (size == header->name_size()) {
-			string s_found_name = header->name();
-			if (case_insensitive_equal(s_name, s_found_name)) {
-				is_immediate = (header->flags & F_IMMEDIATE) ? true : false;
-				return header;
-			}
-		}
-		ptr = header->prev_addr;
-	}
-
-	return nullptr;
-}
-
 void fFIND() {
 	int addr = pop();
 	CountedString* word = reinterpret_cast<CountedString*>(vm.mem.char_ptr(addr));
-	bool is_immediate = F_FALSE;
-	Header* header = cFIND(word->str, word->size, is_immediate);
+	Header* header = vm.dict->find_word(word->str(), word->size());
 	if (header == nullptr) {
 		push(addr);
 		push(0);
 	}
 	else {
 		int xt = header->xt();
+		int is_immediate = header->flags.immediate ? F_TRUE : F_FALSE;
 		if (is_immediate) {
 			push(xt);
 			push(1);
@@ -209,13 +217,23 @@ vector<string> cWORDS() {
 	int ptr = vm.dict->latest();
 	while (ptr != 0) {
 		Header* header = reinterpret_cast<Header*>(vm.mem.char_ptr(ptr));
-		string s_found_name = header->name();
-		if ((header->flags & F_HIDDEN) == 0) {
-			words.push_back(s_found_name);
+		ForthString* found_name = header->name();
+        if (!header->flags.hidden && !header->flags.smudge) {
+			words.push_back(found_name->to_string());
 		}
 		ptr = header->prev_addr;
 	}
 	return words;
+}
+
+bool case_insensitive_equal(const char* a_str, int a_size, const char* b_str, int b_size) {
+	if (a_size != b_size)
+		return false;
+	for (int i = 0; i < a_size; ++i) {
+		if (to_lower(a_str[i]) != to_lower(b_str[i]))
+			return false;
+	}
+	return true;
 }
 
 void fWORDS() {
@@ -237,12 +255,3 @@ void fWORDS() {
 	}
 	cout << endl;
 }
-
-bool case_insensitive_equal(const string& a, const string& b) {
-	return a.size() == b.size() &&
-		equal(a.begin(), a.end(), b.begin(), [](char c1, char c2) {
-		return tolower(static_cast<uchar>(c1)) ==
-			tolower(static_cast<uchar>(c2));
-			});
-}
-

@@ -58,9 +58,6 @@ int xtC_COMMA = 0; // C,
 int xtALIGN = 0; // ALIGN
 //@@END
 
-void fVOID() {	// do nothing
-}
-
 void fENVIRONMENT_Q() {
 	int size = pop();
 	int addr = pop();

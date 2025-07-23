@@ -75,17 +75,17 @@ static int skip_to_delimiter(char delimiter = BL) {
 }
 
 // parse a word from the input buffer, delimited by the specified character
-static CountedString* parse_word_1(char delimiter) {
+static const ForthString* parse_word_1(char delimiter) {
     while (true) {
         const char* buffer = vm.input->buffer();
         int ptr = vm.input->buffer_ptr();
         int size = vm.input->buffer_size();
 
         if (ptr >= size) {		        // end of buffer
-            if (!vm.input->refill())		// try to read next line
-                return nullptr;		    // EOF
-            else
+            if (vm.input->refill())		// try to read next line
                 continue;			    // try again
+            else
+                return nullptr;		    // EOF
         }
 
         if (delimiter == BL)
@@ -93,7 +93,7 @@ static CountedString* parse_word_1(char delimiter) {
         else
             skip_blank();	// skip space after quote
 
-        ptr = vm.input->buffer_ptr();
+        ptr = vm.input->buffer_ptr();   // adjust after skip_...()
         int start = ptr;
         int end = skip_to_delimiter(delimiter);
 
@@ -103,15 +103,15 @@ static CountedString* parse_word_1(char delimiter) {
         }
         else {
             int size = end - start;
-            CountedString* ret = vm.wordbuf->append(buffer + start, size);
+            ForthString* ret = vm.wordbuf->append(buffer + start, size);
             return ret;
         }
     }
 }
 
-CountedString* parse_word(char delimiter) {
+const ForthString* parse_word(char delimiter) {
     while (vm.input->has_input()) {
-        CountedString* word = parse_word_1(delimiter);
+        const ForthString* word = parse_word_1(delimiter);
         if (word != nullptr) {		            // found a word
             return word;
         }
@@ -215,27 +215,23 @@ bool parse_number(const char* text, int size, bool& is_double, dint& value) {
     return true;
 }
 
-CountedString* cWORD(char delimiter) {
-    CountedString* word = parse_word(delimiter);
-    if (word == nullptr)
-        exit(EXIT_SUCCESS);		// no more input
-    else
-        return word;				// valid word
-}
-
 void fWORD() {
     char delimiter = pop();
-    CountedString* word = cWORD(delimiter);
-    assert(word != nullptr);
-
-    push(vm.mem.addr(word->str));			// address of word
-    push(word->size);						// length of word
+    const ForthString* word = parse_word(delimiter);
+    if (word == nullptr)
+        exit(EXIT_SUCCESS);		        // no more input
+    else {
+        push(vm.mem.addr(word->str()));	// address of word
+        push(word->size());				// length of word
+    }
 }
 
 void fS_QUOTE() {
-    CountedString* word = cWORD('"');
-    assert(word != nullptr);
-
-    push(vm.mem.addr(word->str));			// address of word
-    push(word->size);						// length of word
+    const ForthString* word = parse_word('"');
+    if (word == nullptr)
+        exit(EXIT_SUCCESS);		        // no more input
+    else {
+        push(vm.mem.addr(word->str()));	// address of word
+        push(word->size());				// length of word
+    }
 }
