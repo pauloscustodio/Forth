@@ -136,11 +136,37 @@ sub patch_file {
 			push @out, $_;
 			for my $var (@vars) {
 				push @out, $prefix."xt".$var->{id}." = create(".c_string($var->{name}).", 0, ".
-							"f".$var->{id}.");\n";
+							"id".$var->{id}.");\n";
 			}
 			for my $word (@words) {
 				push @out, $prefix."xt".$word->{id}." = create(".c_string($word->{name}).", ".
-							$word->{flags}.", f".$word->{id}.");\n";
+							$word->{flags}.", id".$word->{id}.");\n";
+			}
+			while (@in && $in[0] !~ /^\s*\/\/\@\@END/) {
+				shift @in;
+			}
+		}
+		elsif (/^(\s*)\/\/\@\@BEGIN:\s*WordsIdDeclaration\b/) {
+			my $prefix = $1;
+			push @out, $_;
+			for my $var (@vars) {
+				push @out, $prefix."id".$var->{id}.", // ".$var->{name}."\n";
+			}
+			for my $word (@words) {
+				push @out, $prefix."id".$word->{id}.", // ".$word->{name}."\n";
+			}
+			while (@in && $in[0] !~ /^\s*\/\/\@\@END/) {
+				shift @in;
+			}
+		}
+		elsif (/^(\s*)\/\/\@\@BEGIN:\s*WordsIdExecution\b/) {
+			my $prefix = $1;
+			push @out, $_;
+			for my $var (@vars) {
+				push @out, $prefix."case id".$var->{id}.": f".$var->{id}."(); break; // ".$var->{name}."\n";
+			}
+			for my $word (@words) {
+				push @out, $prefix."case id".$word->{id}.": f".$word->{id}."(); break; // ".$word->{name}."\n";
 			}
 			while (@in && $in[0] !~ /^\s*\/\/\@\@END/) {
 				shift @in;

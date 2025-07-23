@@ -82,6 +82,7 @@ static string lookup_error_msg(Error error_code) {
 	case Error::InvalidForthCode: return "invalid Forth code"; // -262
 	case Error::MemoryOverflow: return "memory overflow"; // -263
 	case Error::NumberOutputOverflow: return "number output overflow"; // -264
+	case Error::InvalidWordId: return "invalid word id"; // -265
 	//@@END
 	default: return to_string(static_cast<int>(error_code));
 	}

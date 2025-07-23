@@ -27,11 +27,11 @@ int Header::name_size() const {
 }
 
 int Header::xt() const {
-	return vm.mem.addr(reinterpret_cast<const char*>(&this->f_word));
+	return vm.mem.addr(reinterpret_cast<const char*>(&this->code));
 }
 
 Header* Header::header(int xt) {
-	int addr = xt - offsetof(Header, f_word);
+	int addr = xt - offsetof(Header, code);
 	return reinterpret_cast<Header*>(vm.mem.char_ptr(addr));
 }
 
@@ -44,58 +44,58 @@ void Dict::init(int lo_mem, int hi_mem) {
 	check_free_space();
 
 	//@@BEGIN: WordsCreateDictionary
-	xtBASE = create("BASE", 0, fBASE);
-	xtSTATE = create("STATE", 0, fSTATE);
-	xtDPL = create("DPL", 0, fDPL);
-	xtSTORE = create("!", 0, fSTORE);
-	xtFETCH = create("@", 0, fFETCH);
-	xtC_STORE = create("C!", 0, fC_STORE);
-	xtC_FETCH = create("C@", 0, fC_FETCH);
-	xtTYPE = create("TYPE", 0, fTYPE);
-	xtEMIT = create("EMIT", 0, fEMIT);
-	xtCR = create("CR", 0, fCR);
-	xtSPACE = create("SPACE", 0, fSPACE);
-	xtSPACES = create("SPACES", 0, fSPACES);
-	xtLESS_HASH = create("<#", 0, fLESS_HASH);
-	xtHASH = create("#", 0, fHASH);
-	xtHASH_S = create("#S", 0, fHASH_S);
-	xtHOLD = create("HOLD", 0, fHOLD);
-	xtSIGN = create("SIGN", 0, fSIGN);
-	xtHASH_GREATER = create("#>", 0, fHASH_GREATER);
-	xtDOT = create(".", 0, fDOT);
-	xtD_DOT = create("D.", 0, fD_DOT);
-	xtD_DOT_R = create("D.R", 0, fD_DOT_R);
-	xtU_DOT = create("U.", 0, fU_DOT);
-	xtDOT_R = create(".R", 0, fDOT_R);
-	xtU_DOT_R = create("U.R", 0, fU_DOT_R);
-	xtPAD = create("PAD", 0, fPAD);
-	xtTHROW = create("THROW", 0, fTHROW);
-	xtDROP = create("DROP", 0, fDROP);
-	xtDUP = create("DUP", 0, fDUP);
-	xtPICK = create("PICK", 0, fPICK);
-	xtPLUS = create("+", 0, fPLUS);
-	xtENVIRONMENT_Q = create("ENVIRONMENT?", 0, fENVIRONMENT_Q);
-	xtCOUNT = create("COUNT", 0, fCOUNT);
-	xtS_QUOTE = create("S\"", 0, fS_QUOTE);
-	xtDOT_S = create(".S", 0, fDOT_S);
-	xtWORD = create("WORD", 0, fWORD);
-	xtWORDS = create("WORDS", 0, fWORDS);
-	xtFIND = create("FIND", 0, fFIND);
-	xtCOMMA = create(",", 0, fCOMMA);
-	xtC_COMMA = create("C,", 0, fC_COMMA);
-	xtALIGN = create("ALIGN", 0, fALIGN);
+	xtBASE = create("BASE", 0, idBASE);
+	xtSTATE = create("STATE", 0, idSTATE);
+	xtDPL = create("DPL", 0, idDPL);
+	xtSTORE = create("!", 0, idSTORE);
+	xtFETCH = create("@", 0, idFETCH);
+	xtC_STORE = create("C!", 0, idC_STORE);
+	xtC_FETCH = create("C@", 0, idC_FETCH);
+	xtTYPE = create("TYPE", 0, idTYPE);
+	xtEMIT = create("EMIT", 0, idEMIT);
+	xtCR = create("CR", 0, idCR);
+	xtSPACE = create("SPACE", 0, idSPACE);
+	xtSPACES = create("SPACES", 0, idSPACES);
+	xtLESS_HASH = create("<#", 0, idLESS_HASH);
+	xtHASH = create("#", 0, idHASH);
+	xtHASH_S = create("#S", 0, idHASH_S);
+	xtHOLD = create("HOLD", 0, idHOLD);
+	xtSIGN = create("SIGN", 0, idSIGN);
+	xtHASH_GREATER = create("#>", 0, idHASH_GREATER);
+	xtDOT = create(".", 0, idDOT);
+	xtD_DOT = create("D.", 0, idD_DOT);
+	xtD_DOT_R = create("D.R", 0, idD_DOT_R);
+	xtU_DOT = create("U.", 0, idU_DOT);
+	xtDOT_R = create(".R", 0, idDOT_R);
+	xtU_DOT_R = create("U.R", 0, idU_DOT_R);
+	xtPAD = create("PAD", 0, idPAD);
+	xtTHROW = create("THROW", 0, idTHROW);
+	xtDROP = create("DROP", 0, idDROP);
+	xtDUP = create("DUP", 0, idDUP);
+	xtPICK = create("PICK", 0, idPICK);
+	xtPLUS = create("+", 0, idPLUS);
+	xtENVIRONMENT_Q = create("ENVIRONMENT?", 0, idENVIRONMENT_Q);
+	xtCOUNT = create("COUNT", 0, idCOUNT);
+	xtS_QUOTE = create("S\"", 0, idS_QUOTE);
+	xtDOT_S = create(".S", 0, idDOT_S);
+	xtWORD = create("WORD", 0, idWORD);
+	xtWORDS = create("WORDS", 0, idWORDS);
+	xtFIND = create("FIND", 0, idFIND);
+	xtCOMMA = create(",", 0, idCOMMA);
+	xtC_COMMA = create("C,", 0, idC_COMMA);
+	xtALIGN = create("ALIGN", 0, idALIGN);
 	//@@END
 }
 
-int Dict::create(const char* name, int flags, func_ptr_t f_word) {
-	return create(name, strlen(name), flags, f_word);
+int Dict::create(const char* name, int flags, int code) {
+	return create(name, strlen(name), flags, code);
 }
 
-int Dict::create(const char* name, size_t size, int flags, func_ptr_t f_word) {
-	return create(name, static_cast<int>(size), flags, f_word);
+int Dict::create(const char* name, size_t size, int flags, int code) {
+	return create(name, static_cast<int>(size), flags, code);
 }
 
-int Dict::create(const char* name, int size, int flags, func_ptr_t f_word) {
+int Dict::create(const char* name, int size, int flags, int code) {
 	align();
 
 	// store name
@@ -118,7 +118,7 @@ int Dict::create(const char* name, int size, int flags, func_ptr_t f_word) {
     header->flags.hidden = (flags & F_HIDDEN) ? true : false;
     header->flags.immediate = (flags & F_IMMEDIATE) ? true : false;
 
-	header->f_word = f_word;
+	header->code = code;
 
 	m_here += aligned(sizeof(Header));
     return header->xt(); // return xt of word
@@ -254,4 +254,69 @@ void fWORDS() {
 		}
 	}
 	cout << endl;
+}
+
+void execute(int xt) {
+	if (xt < 0) {
+		error(Error::InvalidWordId, std::to_string(xt));
+    }
+	else if (xt < MAX_WORD_ID) {
+		switch (xt) {
+		//@@BEGIN: WordsIdExecution
+		case idBASE: fBASE(); break; // BASE
+		case idSTATE: fSTATE(); break; // STATE
+		case idDPL: fDPL(); break; // DPL
+		case idSTORE: fSTORE(); break; // !
+		case idFETCH: fFETCH(); break; // @
+		case idC_STORE: fC_STORE(); break; // C!
+		case idC_FETCH: fC_FETCH(); break; // C@
+		case idTYPE: fTYPE(); break; // TYPE
+		case idEMIT: fEMIT(); break; // EMIT
+		case idCR: fCR(); break; // CR
+		case idSPACE: fSPACE(); break; // SPACE
+		case idSPACES: fSPACES(); break; // SPACES
+		case idLESS_HASH: fLESS_HASH(); break; // <#
+		case idHASH: fHASH(); break; // #
+		case idHASH_S: fHASH_S(); break; // #S
+		case idHOLD: fHOLD(); break; // HOLD
+		case idSIGN: fSIGN(); break; // SIGN
+		case idHASH_GREATER: fHASH_GREATER(); break; // #>
+		case idDOT: fDOT(); break; // .
+		case idD_DOT: fD_DOT(); break; // D.
+		case idD_DOT_R: fD_DOT_R(); break; // D.R
+		case idU_DOT: fU_DOT(); break; // U.
+		case idDOT_R: fDOT_R(); break; // .R
+		case idU_DOT_R: fU_DOT_R(); break; // U.R
+		case idPAD: fPAD(); break; // PAD
+		case idTHROW: fTHROW(); break; // THROW
+		case idDROP: fDROP(); break; // DROP
+		case idDUP: fDUP(); break; // DUP
+		case idPICK: fPICK(); break; // PICK
+		case idPLUS: fPLUS(); break; // +
+		case idENVIRONMENT_Q: fENVIRONMENT_Q(); break; // ENVIRONMENT?
+		case idCOUNT: fCOUNT(); break; // COUNT
+		case idS_QUOTE: fS_QUOTE(); break; // S"
+		case idDOT_S: fDOT_S(); break; // .S
+		case idWORD: fWORD(); break; // WORD
+		case idWORDS: fWORDS(); break; // WORDS
+		case idFIND: fFIND(); break; // FIND
+		case idCOMMA: fCOMMA(); break; // ,
+		case idC_COMMA: fC_COMMA(); break; // C,
+		case idALIGN: fALIGN(); break; // ALIGN
+		//@@END
+		default:
+			error(Error::InvalidWordId, std::to_string(xt));
+		}
+	}
+	else if (aligned(xt) != xt) {
+		error(Error::InvalidWordId, std::to_string(xt));
+	}
+	else if (xt > vm.dict->here()) {
+		error(Error::InvalidWordId, std::to_string(xt));
+	}
+	else {
+		// TODO: execute Forth word
+		//Header* header = Header::header(xt);
+        //ForthString* name = header->name();
+	}
 }

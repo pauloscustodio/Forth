@@ -20,22 +20,24 @@ struct Header {
 		bool immediate : 1;
 		bool smudge : 1;
 	} flags;
-	func_ptr_t f_word;	// executable word
+    int code;			// either primitive code or address of xt of word
 
 	ForthString* name() const;
 	int name_size() const;
 	int xt() const;
-	Header* header(int xt);
+	static Header* header(int xt);
 };
 
 class Dict {
 public:
 	void init(int lo_mem, int hi_mem);
-	int create(const char* name, int flags, func_ptr_t f_word); // return xt of word
-	int create(const char* name, size_t size, int flags, func_ptr_t f_word); // return xt of word
-	int create(const char* name, int size, int flags, func_ptr_t f_word); // return xt of word
+	int create(const char* name, int flags, int code); // return xt of word
+	int create(const char* name, size_t size, int flags, int code); // return xt of word
+	int create(const char* name, int size, int flags, int code); // return xt of word
 
 	int latest() const { return m_latest; }
+    int here() const { return m_here; }
+    int names() const { return m_names; }
 
 	void ccomma(int value);
 	void comma(int value);
@@ -58,4 +60,5 @@ vector<string> cWORDS();
 
 bool case_insensitive_equal(const char* a_str, int a_size, const char* b_str, int b_size);
 
-
+// execute a word
+void execute(int xt);

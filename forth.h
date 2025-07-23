@@ -54,6 +54,52 @@ static inline const int STATE_COMPILE = 1;
 // file names
 static inline const string BLOCK_FILENAME = "forth.blk";
 
+enum {
+    //@@BEGIN: WordsIdDeclaration
+    idBASE, // BASE
+    idSTATE, // STATE
+    idDPL, // DPL
+    idSTORE, // !
+    idFETCH, // @
+    idC_STORE, // C!
+    idC_FETCH, // C@
+    idTYPE, // TYPE
+    idEMIT, // EMIT
+    idCR, // CR
+    idSPACE, // SPACE
+    idSPACES, // SPACES
+    idLESS_HASH, // <#
+    idHASH, // #
+    idHASH_S, // #S
+    idHOLD, // HOLD
+    idSIGN, // SIGN
+    idHASH_GREATER, // #>
+    idDOT, // .
+    idD_DOT, // D.
+    idD_DOT_R, // D.R
+    idU_DOT, // U.
+    idDOT_R, // .R
+    idU_DOT_R, // U.R
+    idPAD, // PAD
+    idTHROW, // THROW
+    idDROP, // DROP
+    idDUP, // DUP
+    idPICK, // PICK
+    idPLUS, // +
+    idENVIRONMENT_Q, // ENVIRONMENT?
+    idCOUNT, // COUNT
+    idS_QUOTE, // S"
+    idDOT_S, // .S
+    idWORD, // WORD
+    idWORDS, // WORDS
+    idFIND, // FIND
+    idCOMMA, // ,
+    idC_COMMA, // C,
+    idALIGN, // ALIGN
+    //@@END
+    MAX_WORD_ID
+};
+
 //@@BEGIN: WordsXtDeclaration
 extern int xtBASE; // BASE
 extern int xtSTATE; // STATE

@@ -21,7 +21,7 @@ static void exec_word(const string& word) {
 		dint value = 0;
 		Header* header = vm.dict->find_word(word.c_str(), word.size());
 		if (header) {
-			header->f_word();
+			execute(header->code);
 		}
 		else if (parse_number(word.c_str(), word.size(), is_double, value)) {
 			if (is_double)

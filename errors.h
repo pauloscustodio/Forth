@@ -79,6 +79,7 @@ enum class Error {
 	InvalidForthCode = -262, // invalid Forth code
 	MemoryOverflow = -263, // memory overflow
 	NumberOutputOverflow = -264, // number output overflow
+	InvalidWordId = -265, // invalid word id
 	//@@END
 };
 
