@@ -14,7 +14,5 @@
 // Unsorted words
 //-----------------------------------------------------------------------------
 
-"BASE", BASE, 10
-"STATE", STATE, STATE_INTERPRET
-"DPL", DPL, 0
-"TRACE", TRACE, 0
+"TRUE", TRUE, F_TRUE
+"FALSE", FALSE, F_FALSE

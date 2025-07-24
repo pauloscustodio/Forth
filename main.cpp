@@ -19,18 +19,41 @@ static void exec_word(const string& word) {
 	if (!word.empty()) {
 		bool is_double = false;
 		dint value = 0;
+
 		Header* header = vm.dict->find_word(word.c_str(), word.size());
 		if (header) {
+			if (vm.user->TRACE) {
+				ForthString* name = header->name();
+				cout << ">>" << BL << name->to_string() << BL;
+			}
+
 			execute(header->xt());
 		}
 		else if (parse_number(word.c_str(), word.size(), is_double, value)) {
-			if (is_double)
+			if (is_double) {
+				if (vm.user->TRACE) {
+					cout << ">>" << BL;
+					cD_DOT(value);
+					cout << BL;
+				}
 				dpush(value);
-			else
+			}
+			else {
+				if (vm.user->TRACE) {
+					cout << ">>" << BL;
+					cDOT(dcell_lo(value));
+					cout << BL;
+				}
 				push(dcell_lo(value));
+			}
 		}
 		else {
 			error(Error::UndefinedWord, word);
+		}
+
+		if (vm.user->TRACE) {
+			vm.stack->print();
+			cout << endl;
 		}
 	}
 }

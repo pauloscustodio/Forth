@@ -56,9 +56,12 @@ static inline const string BLOCK_FILENAME = "forth.blk";
 
 enum {
     //@@BEGIN: WordsIdDeclaration
+    idTRUE, // TRUE
+    idFALSE, // FALSE
     idBASE, // BASE
     idSTATE, // STATE
     idDPL, // DPL
+    idTRACE, // TRACE
     idSTORE, // !
     idFETCH, // @
     idC_STORE, // C!
@@ -101,9 +104,12 @@ enum {
 };
 
 //@@BEGIN: WordsXtDeclaration
+extern int xtTRUE; // TRUE
+extern int xtFALSE; // FALSE
 extern int xtBASE; // BASE
 extern int xtSTATE; // STATE
 extern int xtDPL; // DPL
+extern int xtTRACE; // TRACE
 extern int xtSTORE; // !
 extern int xtFETCH; // @
 extern int xtC_STORE; // C!
@@ -143,10 +149,18 @@ extern int xtC_COMMA; // C,
 extern int xtALIGN; // ALIGN
 //@@END
 
+//@@BEGIN: Const
+static inline const int cTRUE = F_TRUE; // TRUE
+static inline const int cFALSE = F_FALSE; // FALSE
+//@@END
+
 //@@BEGIN: WordsDeclaration
+void fTRUE(); // TRUE
+void fFALSE(); // FALSE
 void fBASE(); // BASE
 void fSTATE(); // STATE
 void fDPL(); // DPL
+void fTRACE(); // TRACE
 void fSTORE(); // !
 void fFETCH(); // @
 void fC_STORE(); // C!

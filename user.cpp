@@ -14,6 +14,7 @@ void User::init() {
 	BASE = 10;
 	STATE = STATE_INTERPRET;
 	DPL = 0;
+	TRACE = 0;
 	//@@END
 }
 
@@ -23,8 +24,11 @@ void fPAD() {
 }
 
 //@@BEGIN: VarsImplementation
-void fBASE() { push(vm.mem.addr(&vm.user->BASE)); }
-void fSTATE() { push(vm.mem.addr(&vm.user->STATE)); }
-void fDPL() { push(vm.mem.addr(&vm.user->DPL)); }
+void fTRUE() { push(F_TRUE); } // TRUE
+void fFALSE() { push(F_FALSE); } // FALSE
+void fBASE() { push(vm.mem.addr(&vm.user->BASE)); } // BASE
+void fSTATE() { push(vm.mem.addr(&vm.user->STATE)); } // STATE
+void fDPL() { push(vm.mem.addr(&vm.user->DPL)); } // DPL
+void fTRACE() { push(vm.mem.addr(&vm.user->TRACE)); } // TRACE
 //@@END
 

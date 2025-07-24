@@ -21,6 +21,7 @@ use Data::Dump 'dump';
 my(@source_files) = @ARGV;
 
 my @errors = parse_errors("errors.def");
+my @const = parse_vars("const.def");
 my @vars = parse_vars("vars.def");
 my @words = parse_words("words.def");
 
@@ -84,9 +85,23 @@ sub patch_file {
 		elsif (/^(\s*)\/\/\@\@BEGIN:\s*VarsImplementation\b/) {
 			my $prefix = $1;
 			push @out, $_;
+			for my $const (@const) {
+				push @out, $prefix."void f".$const->{id}."() ".
+						"{ push(".$const->{value}."); } // ".$const->{name}."\n";
+			}
 			for my $var (@vars) {
 				push @out, $prefix."void f".$var->{id}."() ".
-						"{ push(vm.mem.addr(&vm.user->".$var->{id}.")); }\n";
+						"{ push(vm.mem.addr(&vm.user->".$var->{id}.")); } // ".$var->{name}."\n";
+			}
+			while (@in && $in[0] !~ /^\s*\/\/\@\@END/) {
+				shift @in;
+			}
+		}
+		elsif (/^(\s*)\/\/\@\@BEGIN:\s*Const\b/) {
+			my $prefix = $1;
+			push @out, $_;
+			for my $const (@const) {
+				push @out, $prefix."static inline const int c".$const->{id}." = ".$const->{value}."; // ".$const->{name}."\n";
 			}
 			while (@in && $in[0] !~ /^\s*\/\/\@\@END/) {
 				shift @in;
@@ -95,6 +110,9 @@ sub patch_file {
 		elsif (/^(\s*)\/\/\@\@BEGIN:\s*WordsXtDeclaration\b/) {
 			my $prefix = $1;
 			push @out, $_;
+			for my $const (@const) {
+				push @out, $prefix."extern int xt".$const->{id}."; // ".$const->{name}."\n";
+			}
 			for my $var (@vars) {
 				push @out, $prefix."extern int xt".$var->{id}."; // ".$var->{name}."\n";
 			}
@@ -108,6 +126,9 @@ sub patch_file {
 		elsif (/^(\s*)\/\/\@\@BEGIN:\s*WordsXtDefinition\b/) {
 			my $prefix = $1;
 			push @out, $_;
+			for my $const (@const) {
+				push @out, $prefix."int xt".$const->{id}." = 0; // ".$const->{name}."\n";
+			}
 			for my $var (@vars) {
 				push @out, $prefix."int xt".$var->{id}." = 0; // ".$var->{name}."\n";
 			}
@@ -121,6 +142,9 @@ sub patch_file {
 		elsif (/^(\s*)\/\/\@\@BEGIN:\s*WordsDeclaration\b/) {
 			my $prefix = $1;
 			push @out, $_;
+			for my $const (@const) {
+				push @out, $prefix."void f".$const->{id}."(); // ".$const->{name}."\n";
+			}
 			for my $var (@vars) {
 				push @out, $prefix."void f".$var->{id}."(); // ".$var->{name}."\n";
 			}
@@ -134,6 +158,10 @@ sub patch_file {
 		elsif (/^(\s*)\/\/\@\@BEGIN:\s*WordsCreateDictionary\b/) {
 			my $prefix = $1;
 			push @out, $_;
+			for my $const (@const) {
+				push @out, $prefix."xt".$const->{id}." = create(".c_string($const->{name}).", 0, ".
+							"id".$const->{id}.");\n";
+			}
 			for my $var (@vars) {
 				push @out, $prefix."xt".$var->{id}." = create(".c_string($var->{name}).", 0, ".
 							"id".$var->{id}.");\n";
@@ -149,6 +177,9 @@ sub patch_file {
 		elsif (/^(\s*)\/\/\@\@BEGIN:\s*WordsIdDeclaration\b/) {
 			my $prefix = $1;
 			push @out, $_;
+			for my $const (@const) {
+				push @out, $prefix."id".$const->{id}.", // ".$const->{name}."\n";
+			}
 			for my $var (@vars) {
 				push @out, $prefix."id".$var->{id}.", // ".$var->{name}."\n";
 			}
@@ -162,6 +193,9 @@ sub patch_file {
 		elsif (/^(\s*)\/\/\@\@BEGIN:\s*WordsIdExecution\b/) {
 			my $prefix = $1;
 			push @out, $_;
+			for my $const (@const) {
+				push @out, $prefix."case id".$const->{id}.": f".$const->{id}."(); break; // ".$const->{name}."\n";
+			}
 			for my $var (@vars) {
 				push @out, $prefix."case id".$var->{id}.": f".$var->{id}."(); break; // ".$var->{name}."\n";
 			}

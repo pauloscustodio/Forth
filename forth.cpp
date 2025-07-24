@@ -16,9 +16,12 @@
 using namespace std;
 
 //@@BEGIN: WordsXtDefinition
+int xtTRUE = 0; // TRUE
+int xtFALSE = 0; // FALSE
 int xtBASE = 0; // BASE
 int xtSTATE = 0; // STATE
 int xtDPL = 0; // DPL
+int xtTRACE = 0; // TRACE
 int xtSTORE = 0; // !
 int xtFETCH = 0; // @
 int xtC_STORE = 0; // C!

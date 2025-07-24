@@ -24,6 +24,7 @@ struct User {
 	int BASE;
 	int STATE;
 	int DPL;
+	int TRACE;
 	//@@END
 
 	void init();

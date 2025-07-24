@@ -63,9 +63,12 @@ void Dict::init(int lo_mem, int hi_mem) {
 	check_free_space();
 
 	//@@BEGIN: WordsCreateDictionary
+	xtTRUE = create("TRUE", 0, idTRUE);
+	xtFALSE = create("FALSE", 0, idFALSE);
 	xtBASE = create("BASE", 0, idBASE);
 	xtSTATE = create("STATE", 0, idSTATE);
 	xtDPL = create("DPL", 0, idDPL);
+	xtTRACE = create("TRACE", 0, idTRACE);
 	xtSTORE = create("!", 0, idSTORE);
 	xtFETCH = create("@", 0, idFETCH);
 	xtC_STORE = create("C!", 0, idC_STORE);
@@ -283,9 +286,12 @@ void execute(int xt) {
 	else if (code < MAX_WORD_ID) {
 		switch (code) {
 		//@@BEGIN: WordsIdExecution
+		case idTRUE: fTRUE(); break; // TRUE
+		case idFALSE: fFALSE(); break; // FALSE
 		case idBASE: fBASE(); break; // BASE
 		case idSTATE: fSTATE(); break; // STATE
 		case idDPL: fDPL(); break; // DPL
+		case idTRACE: fTRACE(); break; // TRACE
 		case idSTORE: fSTORE(); break; // !
 		case idFETCH: fFETCH(); break; // @
 		case idC_STORE: fC_STORE(); break; // C!
