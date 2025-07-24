@@ -89,6 +89,7 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <PreprocessorDefinitions>_MBCS;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_DEPRECATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -128,39 +129,17 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <None Include="..\..\errors.def" />
+    <None Include="..\..\mkcode.pl" />
     <None Include="..\..\words.def" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\block.h" />
-    <ClInclude Include="..\..\compiler.h" />
-    <ClInclude Include="..\..\dict.h" />
-    <ClInclude Include="..\..\double.h" />
     <ClInclude Include="..\..\errors.h" />
-    <ClInclude Include="..\..\file.h" />
-    <ClInclude Include="..\..\forth.h" />
-    <ClInclude Include="..\..\interp.h" />
-    <ClInclude Include="..\..\io.h" />
-    <ClInclude Include="..\..\math.h" />
-    <ClInclude Include="..\..\memory.h" />
-    <ClInclude Include="..\..\parser.h" />
-    <ClInclude Include="..\..\stack.h" />
-    <ClInclude Include="..\..\str.h" />
+    <ClInclude Include="..\..\vm.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\block.c" />
-    <ClCompile Include="..\..\compiler.c" />
-    <ClCompile Include="..\..\dict.c" />
-    <ClCompile Include="..\..\double.c" />
-    <ClCompile Include="..\..\errors.c" />
-    <ClCompile Include="..\..\file.c" />
-    <ClCompile Include="..\..\forth.c" />
-    <ClCompile Include="..\..\interp.c" />
-    <ClCompile Include="..\..\io.c" />
-    <ClCompile Include="..\..\math.c" />
-    <ClCompile Include="..\..\memory.c" />
-    <ClCompile Include="..\..\parser.c" />
-    <ClCompile Include="..\..\stack.c" />
-    <ClCompile Include="..\..\str.c" />
+    <ClCompile Include="..\..\errors.cpp" />
+    <ClCompile Include="..\..\main.cpp" />
+    <ClCompile Include="..\..\vm.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

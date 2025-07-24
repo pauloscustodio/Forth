@@ -1,35 +1,76 @@
 //-----------------------------------------------------------------------------
-// C implementation of a Forth interpreter
+// C++ implementation of a Forth interpreter
 // Copyright (c) Paulo Custodio, 2020-2025
 // License: GPL3 https://www.gnu.org/licenses/gpl-3.0.html
 //-----------------------------------------------------------------------------
 
-#ifndef X
-#define X(code, message)
-#endif
+// The THROW values {-255...-1} shall be used only as assigned by the Standard. 
+0, Ok, "OK"
+-1, Abort, "ABORT"
+-2, AbortQuote, "ABORTQuote"
+-3, StackOverflow, "stack overflow"
+-4, StackUnderflow, "stack underflow"
+-5, ReturnStackOverflow, "return stack overflow"
+-6, ReturnStackUnderflow, "return stack underflow"
+-7, DoLoopsNestedTooDeeplyDuringExecution, "do-loops nested too deeply during execution"
+-8, DictionaryOverflow, "dictionary overflow"
+-9, InvalidMemoryAddress, "invalid memory address"
+-10, DivisionByZero, "division by zero"
+-11, ResultOutOfRange, "result out of range"
+-12, ArgumentTypeMismatch, "argument type mismatch"
+-13, UndefinedWord, "undefined word"
+-14, InterpretingACompileTimeOnlyWord, "interpreting a compile-only word"
+-15, InvalidForget, "invalid FORGET"
+-16, AttemptToUseZeroLengthStringAsName, "attempt to use zero-length string as a name"
+-17, PicturedNumericOutputStringOverflow, "pictured numeric output string overflow"
+-18, ParsedStringOverflow, "parsed string overflow"
+-19, DefinitionNameTooLong, "definition name too long"
+-20, WriteToReadOnlyLocation, "write to a read-only location"
+-21, UnsupportedOperation, "unsupported operation"
+-22, ControlStructureMismatch, "control structure mismatch"
+-23, AddressAlignmentException, "address alignment exception"
+-24, InvalidNumericArgument, "invalid numeric argument"
+-25, ReturnStackImbalance, "return stack imbalance"
+-26, LoopParametersUnavailable, "loop parameters unavailable"
+-27, InvalidRecursion, "invalid recursion"
+-28, UserInterrupt, "user interrupt"
+-29, CompilerNesting, "compiler nesting"
+-30, ObsolescentFeature, "obsolescent feature"
+-31, ToBodyUsedOnNonCreatedDefinition, ">BODY used on non-CREATEd definition"
+-32, InvalidNameArgument, "invalid name argument (e.g., TO xxx)"
+-33, BlockReadException, "block read exception"
+-34, BlockWriteException, "block write exception"
+-35, InvalidBlockNumber, "invalid block number"
+-36, InvalidFilePosition, "invalid file position"
+-37, FileIOException, "file I/O exception"
+-38, NonExistentFile, "non-existent file"
+-39, UnexpectedEndOfFile, "unexpected end of file"
+-40, InvalidBaseForFloatingPointConversion, "invalid BASE for floating point conversion"
+-41, LossOfPrecision, "loss of precision"
+-42, FloatingPointDivideByZero, "floating-point divide by zero"
+-43, FloatingPointResultOutOfRange, "floating-point result out of range"
+-44, FloatingPointStackOverflow, "floating-point stack overflow"
+-45, FloatingPointStackUnderflow, "floating-point stack underflow"
+-46, FloatingPointInvalidArgument, "floating-point invalid argument"
+-47, CompilationWordListDeleted, "compilation word list deleted"
+-48, InvalidPostpone, "invalid POSTPONE"
+-49, SearchOrderOverflow, "search-order overflow"
+-50, SearchOrderUnderflow, "search-order underflow"
+-51, CompilationWordListChanged, "compilation word list changed"
+-52, ControlFlowStackOverflow, "control-flow stack overflow"
+-53, ExceptionStackOverflow, "exception stack overflow"
+-54, FloatingPointUnderflow, "floating-point underflow"
+-55, FloatingPointUnidentfiedFault, "floating-point unidentified fault"
+-56, Quit, "QUIT"
+-57, ExceptionInSendingOrReceivingACharacter, "exception in sending or receiving a character"
+-58, IfElseOrThenException, "[IF], [ELSE], or [THEN] exception"
 
-X(ErrorDataStackOveflow, "data stack overflow")
-X(ErrorDataStackUnderflow, "data stack underflow")
-X(ErrorDivisionByZero, "division by zero")
-X(ErrorInputBufferOverflow, "input buffer overflow")
-X(ErrorInvalidNumber, "invalid number")
-X(ErrorMemoryAddressRange, "memory address range")
-X(ErrorMemoryAlignment, "memory alignment")
-X(ErrorMemoryOverflow, "memory overflow")
-X(ErrorNameExpected, "name expected")
-X(ErrorNameTooLong, "name too long")
-X(ErrorNestedColonDefinition, "nested colon definition")
-X(ErrorNumberOutputOverflow, "number output overflow")
-X(ErrorOpenFile, "open file")
-X(ErrorOutOfMemory, "out of memory")
-X(ErrorReturnStackOveflow, "return stack overflow")
-X(ErrorReturnStackUnderflow, "return stack underflow")
-X(ErrorSemicolonWithoutColon, "; without :")
-X(ErrorStringTooLong, "string too long")
-X(ErrorStructStackOveflow, "struct stack overflow")
-X(ErrorStructStackUnderflow, "struct stack underflow")
-X(ErrorTooManyOpenFiles, "too many open files")
-X(ErrorWordNotDefined, "word not defined")
-X(ErrorInvalidForthCode, "invalid Forth code")
-
-#undef X
+// The values {-4095...-256} shall be used only as assigned by a system.
+-256, InputBufferOverflow, "input buffer overflow"
+-257, InvalidNumber, "invalid number"
+-258, OutOfMemory, "out of memory"
+-259, StringTooLong, "string too long"
+-260, ControlFlowStackUnderflow, "control-flow stack underflow"
+-261, TooManyOpenFiles, "too many open files"
+-262, InvalidForthCode, "invalid Forth code"
+-263, MemoryOverflow, "memory overflow"

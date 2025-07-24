@@ -1,0 +1,102 @@
+//-----------------------------------------------------------------------------
+// C++ implementation of a Forth interpreter
+// Copyright (c) Paulo Custodio, 2020-2025
+// License: GPL3 https://www.gnu.org/licenses/gpl-3.0.html
+//-----------------------------------------------------------------------------
+
+#include "errors.h"
+#include "vm.h"
+#include <algorithm>
+#include <cctype>
+#include <fstream>
+#include <iostream>
+#include <sstream>
+#include <string>
+using namespace std;
+
+static bool case_insensitive_equal(const string& a, const string& b) {
+	return a.size() == b.size() &&
+		equal(a.begin(), a.end(), b.begin(), [](char c1, char c2) {
+		return tolower(static_cast<unsigned char>(c1)) ==
+			tolower(static_cast<unsigned char>(c2));
+			});
+}
+
+static void exec_word() {
+	int len = vm.pop();
+	int addr = vm.pop();
+	const char* str = reinterpret_cast<char*>(&vm) + addr;
+	string word{ str, str + len };
+	if (!word.empty()) {
+		if (false) {}
+		//@@BEGIN: WordsImplementation
+		else if (case_insensitive_equal(word, ".")) { cout << vm.pop() << VM::BL; }
+		else if (case_insensitive_equal(word, "THROW")) { error(static_cast<Error>(vm.pop())); }
+		else if (case_insensitive_equal(word, "DROP")) { vm.pop(); }
+		else if (case_insensitive_equal(word, "DUP")) { vm.push(vm.peek(0)); }
+		else if (case_insensitive_equal(word, "PICK")) { vm.push(vm.peek(vm.pop())); }
+		else if (case_insensitive_equal(word, "+")) { vm.push(vm.pop()+vm.pop()); }
+		else if (case_insensitive_equal(word, ".S")) { vm.dot_stack(); }
+		else if (case_insensitive_equal(word, "WORDS")) { vm.words(); }
+		else if (case_insensitive_equal(word, "S\"")) { vm.f_s_quote(); }
+		else if (case_insensitive_equal(word, "TYPE")) { vm.f_type(); }
+		else if (case_insensitive_equal(word, "ENVIRONMENT?")) { vm.f_environment_q(); }
+		//@@END
+		else if (isdigit(static_cast<unsigned char>(word[0])) ||
+			(word.size() >= 2 && word[0] == '-' && isdigit(static_cast<unsigned char>(word[1])))) {
+			vm.push(stoi(word));
+		}
+		else {
+			error(Error::UndefinedWord, word);
+		}
+	}
+}
+
+static void exec_text(const string& text) {
+	vm.refill(text);
+	while (vm.parse_word())
+		exec_word();
+}
+
+static void exec_file(const string& filename) {
+	ifstream ifs(filename);
+	if (!ifs.is_open()) {
+		error(Error::NonExistentFile, filename);
+	}
+	else {
+		string line;
+		while (getline(ifs, line))
+			exec_text(line);
+	}
+}
+
+static void die_usage() {
+	cerr << "usage: forth file.fs args..." << endl;
+	exit(EXIT_FAILURE);
+}
+
+int main(int argc, char* argv[]) {
+	vm.init();
+
+	argc--; argv++;
+	while (argc > 0 && argv[0][0] == '-') {
+		switch (argv[0][1]) {
+		case 'e':
+			if (argc == 1)
+				die_usage();
+			else {
+				argc--; argv++;
+				exec_text(argv[0]);
+			}
+			break;
+		default:
+			die_usage();
+		}
+		argc--; argv++;
+	}
+
+	// get script, if any
+	if (argc > 0) 
+		exec_file(argv[0]);
+	return EXIT_SUCCESS;
+}
