@@ -85,23 +85,30 @@ sub patch_file {
 		elsif (/^(\s*)\/\/\@\@BEGIN:\s*VarsImplementation\b/) {
 			my $prefix = $1;
 			push @out, $_;
-			for my $const (@const) {
-				push @out, $prefix."void f".$const->{id}."() ".
-						"{ push(".$const->{value}."); } // ".$const->{name}."\n";
-			}
 			for my $var (@vars) {
 				push @out, $prefix."void f".$var->{id}."() ".
-						"{ push(vm.mem.addr(&vm.user->".$var->{id}.")); } // ".$var->{name}."\n";
+						"{ push(mem_addr(&vm.user->".$var->{id}.")); } // ".$var->{name}."\n";
 			}
 			while (@in && $in[0] !~ /^\s*\/\/\@\@END/) {
 				shift @in;
 			}
 		}
-		elsif (/^(\s*)\/\/\@\@BEGIN:\s*Const\b/) {
+		elsif (/^(\s*)\/\/\@\@BEGIN:\s*Constants\b/) {
 			my $prefix = $1;
 			push @out, $_;
 			for my $const (@const) {
 				push @out, $prefix."static inline const int c".$const->{id}." = ".$const->{value}."; // ".$const->{name}."\n";
+			}
+			while (@in && $in[0] !~ /^\s*\/\/\@\@END/) {
+				shift @in;
+			}
+		}
+		elsif (/^(\s*)\/\/\@\@BEGIN:\s*ConstImplementation\b/) {
+			my $prefix = $1;
+			push @out, $_;
+			for my $const (@const) {
+				push @out, $prefix."void f".$const->{id}."() ".
+						"{ push(".$const->{value}."); } // ".$const->{name}."\n";
 			}
 			while (@in && $in[0] !~ /^\s*\/\/\@\@END/) {
 				shift @in;
@@ -159,16 +166,13 @@ sub patch_file {
 			my $prefix = $1;
 			push @out, $_;
 			for my $const (@const) {
-				push @out, $prefix."xt".$const->{id}." = create(".c_string($const->{name}).", 0, ".
-							"id".$const->{id}.");\n";
+				push @out, $prefix."xt".$const->{id}." = vm.dict->create(".c_string($const->{name}).", 0, "."id".$const->{id}.");\n";
 			}
 			for my $var (@vars) {
-				push @out, $prefix."xt".$var->{id}." = create(".c_string($var->{name}).", 0, ".
-							"id".$var->{id}.");\n";
+				push @out, $prefix."xt".$var->{id}." = vm.dict->create(".c_string($var->{name}).", 0, "."id".$var->{id}.");\n";
 			}
 			for my $word (@words) {
-				push @out, $prefix."xt".$word->{id}." = create(".c_string($word->{name}).", ".
-							$word->{flags}.", id".$word->{id}.");\n";
+				push @out, $prefix."xt".$word->{id}." = vm.dict->create(".c_string($word->{name}).", ".$word->{flags}.", id".$word->{id}.");\n";
 			}
 			while (@in && $in[0] !~ /^\s*\/\/\@\@END/) {
 				shift @in;

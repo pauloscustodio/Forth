@@ -98,8 +98,3 @@ void error(Error error_code, const string& arg) {
 		exit(EXIT_FAILURE);
 	}
 }
-
-void fTHROW() {
-	int error_code = pop();
-	error(static_cast<Error>(error_code));
-}

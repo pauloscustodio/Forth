@@ -8,7 +8,6 @@
 
 #include <cstdint>
 #include <string>
-#include <vector>
 using namespace std;
 
 // types
@@ -34,6 +33,8 @@ static inline const int WORDBUF_SZ = 4 * BUFFER_SZ;     // hold strings with BUF
 static inline const int PAD_SZ = 256;
 static inline const int STACK_SZ = 1024 * CELL_SZ;
 static inline const int MAX_FILES = 16;
+static inline const int MAX_COUNTED_STRING_SZ = 0xff;
+static inline const int MAX_STRING_SZ = BUFFER_SZ;
 
 // constants
 static inline const char BL = ' ';
@@ -43,7 +44,6 @@ static inline const int SCREEN_WIDTH = 80;
 static inline const int F_TRUE = -1;
 static inline const int F_FALSE = 0;
 
-static inline const int MAX_WORD_SZ = 0xff;
 static inline const int F_SMUDGE = 0x1;
 static inline const int F_HIDDEN = 0x2;
 static inline const int F_IMMEDIATE = 0x4;
@@ -149,10 +149,22 @@ extern int xtC_COMMA; // C,
 extern int xtALIGN; // ALIGN
 //@@END
 
-//@@BEGIN: Const
+//@@BEGIN: Constants
 static inline const int cTRUE = F_TRUE; // TRUE
 static inline const int cFALSE = F_FALSE; // FALSE
 //@@END
+
+// user variables
+struct User {
+    //@@BEGIN: Vars
+    int BASE;
+    int STATE;
+    int DPL;
+    int TRACE;
+    //@@END
+
+    void init();
+};
 
 //@@BEGIN: WordsDeclaration
 void fTRUE(); // TRUE
@@ -199,3 +211,48 @@ void fCOMMA(); // ,
 void fC_COMMA(); // C,
 void fALIGN(); // ALIGN
 //@@END
+
+// alignment and double cells
+int aligned(int x);
+int dcell_lo(dint x);
+int dcell_hi(dint x);
+int dcell(int hi, int lo);
+
+// pointer - address conversion
+int mem_addr(const char* ptr);
+int mem_addr(const int* ptr);
+char* mem_char_ptr(int addr, int size = 0);
+int* mem_int_ptr(int addr, int size = 0);
+
+// access memory
+int fetch(int addr);
+void store(int addr, int value);
+dint dfetch(int addr);
+void dstore(int addr, dint value);
+int cfetch(int addr);
+void cstore(int addr, int value);
+
+// allot dictionary space
+void ccomma(int value);
+void comma(int value);
+void dcomma(dint value);
+void align();
+
+// stacks
+void push(int value);
+int pop();
+int peek(int depth = 0);
+
+void dpush(dint value);
+dint dpop();
+dint dpeek(int depth = 0);
+
+void rpush(int value);
+int rpop();
+int rpeek(int depth = 0);
+
+// create dictionary entries
+void create_dictionary();
+
+// execute a word given its xt
+void execute_word(int xt);

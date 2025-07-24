@@ -215,23 +215,3 @@ bool parse_number(const char* text, int size, bool& is_double, dint& value) {
     return true;
 }
 
-void fWORD() {
-    char delimiter = pop();
-    const ForthString* word = parse_word(delimiter);
-    if (word == nullptr)
-        exit(EXIT_SUCCESS);		        // no more input
-    else {
-        push(vm.mem.addr(word->str()));	// address of word
-        push(word->size());				// length of word
-    }
-}
-
-void fS_QUOTE() {
-    const ForthString* word = parse_word('"');
-    if (word == nullptr)
-        exit(EXIT_SUCCESS);		        // no more input
-    else {
-        push(vm.mem.addr(word->str()));	// address of word
-        push(word->size());				// length of word
-    }
-}

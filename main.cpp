@@ -27,13 +27,13 @@ static void exec_word(const string& word) {
 				cout << ">>" << BL << name->to_string() << BL;
 			}
 
-			execute(header->xt());
+			execute_word(header->xt());
 		}
 		else if (parse_number(word.c_str(), word.size(), is_double, value)) {
 			if (is_double) {
 				if (vm.user->TRACE) {
 					cout << ">>" << BL;
-					cD_DOT(value);
+					print_number(value);
 					cout << BL;
 				}
 				dpush(value);
@@ -41,7 +41,7 @@ static void exec_word(const string& word) {
 			else {
 				if (vm.user->TRACE) {
 					cout << ">>" << BL;
-					cDOT(dcell_lo(value));
+					print_number(dcell_lo(value));
 					cout << BL;
 				}
 				push(dcell_lo(value));

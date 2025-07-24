@@ -12,12 +12,6 @@
 #include <vector>
 using namespace std;
 
-// alignment and double cells
-int aligned(int x);
-int dcell_lo(dint x);
-int dcell_hi(dint x);
-int dcell(int hi, int lo);
-
 struct Header {
 	int prev_addr;		// address of previous header
 	int name_addr;		// address of name
@@ -41,6 +35,8 @@ public:
 	int create(const char* name, size_t size, int flags, int code); // return xt of word
 	int create(const char* name, int size, int flags, int code); // return xt of word
 
+	vector<string> get_words() const;
+
 	int latest() const { return m_latest; }
     int here() const { return m_here; }
     int names() const { return m_names; }
@@ -62,9 +58,4 @@ private:
 	void check_free_space(int size = 0) const;
 };
 
-vector<string> cWORDS();
-
 bool case_insensitive_equal(const char* a_str, int a_size, const char* b_str, int b_size);
-
-// execute a word
-void execute(int xt);

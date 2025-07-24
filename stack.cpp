@@ -73,66 +73,7 @@ dint Stack::dpeek(int depth) const {
 void Stack::print() const {
 	cout << "( ";
 	for (int i = STACK_SZ - 1; i >= m_ptr; i--)
-		cDOT(m_stack[i]);
+		print_number(m_stack[i]);
 	cout << ") ";
-}
-
-void push(int value) {
-	vm.stack->push(value);
-}
-
-int peek(int depth) {
-	return vm.stack->peek(depth);
-}
-
-int pop() {
-	return vm.stack->pop();
-}
-
-void dpush(dint value) {
-	vm.stack->dpush(value);
-}
-
-dint dpeek(int depth) {
-	return vm.stack->dpeek(depth);
-}
-
-dint dpop() {
-	return vm.stack->dpop();
-}
-
-void rpush(int value) {
-	vm.rstack->push(value);
-}
-
-int rpeek(int depth) {
-	return vm.rstack->peek(depth);
-}
-
-int rpop() {
-	return vm.rstack->pop();
-}
-
-void fDROP() {
-	pop();
-}
-
-void fDUP() {
-	int value = peek(0);
-	push(value);
-}
-
-void fPICK() {
-	int depth = pop();
-	if (depth < 0) {
-		error(Error::InvalidMemoryAddress);
-		return;
-	}
-	int value = peek(depth);
-	push(value);
-}
-
-void fDOT_S() {
-	vm.stack->print();
 }
 

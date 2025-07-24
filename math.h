@@ -9,4 +9,4 @@
 #include "forth.h"
 using namespace std;
 
-dint cDABS(dint a);
+dint dabs(dint a);

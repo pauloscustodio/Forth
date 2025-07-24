@@ -15,9 +15,9 @@ string CountedString::to_string() const {
 }
 
 void CountedString::set_string(const char* str, int size) {
-	if (size > MAX_WORD_SZ)
+	if (size > MAX_COUNTED_STRING_SZ)
 		error(Error::ParsedStringOverflow);
-	m_size = size > MAX_WORD_SZ ? MAX_WORD_SZ : size;
+	m_size = size > MAX_COUNTED_STRING_SZ ? MAX_COUNTED_STRING_SZ : size;
 	memcpy(m_str, str, m_size);
 	m_str[m_size] = BL;
 }
@@ -29,7 +29,7 @@ string ForthString::to_string() const {
 }
 
 const CountedString* ForthString::counted_string() const { 
-	if (m_size > MAX_WORD_SZ)
+	if (m_size > MAX_COUNTED_STRING_SZ)
 		error(Error::ParsedStringOverflow);
 	return reinterpret_cast<const CountedString*>(&m_short_size); 
 }
@@ -39,10 +39,10 @@ void ForthString::set_size(size_t size) {
 }
 
 void ForthString::set_size(int size) {
-	if (size > BUFFER_SZ)
+	if (size > MAX_STRING_SZ)
 		error(Error::StringTooLong);
 	m_size = size;
-	m_short_size = size > MAX_WORD_SZ ? MAX_WORD_SZ : size;
+	m_short_size = size > MAX_COUNTED_STRING_SZ ? MAX_COUNTED_STRING_SZ : size;
 }
 
 void ForthString::set_string(const char* str, int size) {
@@ -66,7 +66,7 @@ ForthString* Wordbuf::append(const char* str, size_t size) {
 }
 
 ForthString* Wordbuf::append(const char* str, int size) {
-	if (size > BUFFER_SZ)
+	if (size > MAX_STRING_SZ)
 		error(Error::StringTooLong);
 	int alloc_size = ForthString::alloc_size(size);
 	if (m_ptr + alloc_size > WORDBUF_SZ)

@@ -9,13 +9,7 @@
 #include "stack.h"
 using namespace std;
 
-dint cDABS(dint a) {
+dint dabs(dint a) {
     return a < 0 ? -a : a;
-}
-
-void fPLUS() {
-	int b = pop();
-	int a = pop();
-	push(a + b);
 }
 

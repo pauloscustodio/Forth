@@ -58,81 +58,27 @@ void NumberOutput::add_sign(int sign) {
 
 void NumberOutput::end() const {
     dpop();     // drop number
-    push(vm.mem.addr(m_buffer + m_ptr));
+    push(mem_addr(m_buffer + m_ptr));
     push(PAD_SZ - m_ptr);
 }
 
-void fCOUNT() {
-    int addr = pop();
-    int len = *vm.mem.char_ptr(addr++);
-    push(addr);
-    push(len);
-}
-
-void fTYPE() {
-    int len = pop();
-    int addr = pop();
-    const char* str = vm.mem.char_ptr(addr);
-    for (int i = 0; i < len; ++i)
-        cout << str[i];
-}
-
-void fEMIT() {
-    char c = static_cast<char>(pop());
-    cout << c;
-}
-
-void fCR() {
-    cout << endl;
-}
-
-void fSPACE() {
-    cout << BL;
-}
-
-void fSPACES() {
-    int size = pop();
-    for (int i = 0; i < size; ++i)
-        cout << BL;
-}
-
-void fLESS_HASH() {
-    vm.number_output->start();
-}
-
-void fHASH() {
-    vm.number_output->add_digit();
-}
-
-void fHASH_S() {
-    vm.number_output->add_digits();
-}
-
-void fHOLD() {
-    char c = static_cast<char>(pop());
-    vm.number_output->add_char(c);
-}
-
-void fSIGN() {
-    int sign = pop();
-    vm.number_output->add_sign(sign);
-}
-
-void fHASH_GREATER() {
-    vm.number_output->end();
+void NumberOutput::end_print() const {
+    dpop();     // drop number
+    const char* str = m_buffer + m_ptr;
+    int size = PAD_SZ - m_ptr;
+    print_string(str, size);
 }
 
 static void print_dint_uint(int sign) {
-    fLESS_HASH();
-    push(BL); fHOLD();
-    fHASH_S();
-    push(sign); fSIGN();
-    fHASH_GREATER();
-    fTYPE();
+    vm.number_output->start();
+    vm.number_output->add_char(BL);
+    vm.number_output->add_digits();
+    vm.number_output->add_sign(sign);
+    vm.number_output->end_print();
 }
 
 static void print_dint_uint_aligned(int width, int sign) {
-    fLESS_HASH();
+    vm.number_output->start();
 
     dint d;
     do {
@@ -142,80 +88,56 @@ static void print_dint_uint_aligned(int width, int sign) {
     } while (d != 0);
 
     if (sign < 0) {
-        push(sign); fSIGN();
+        vm.number_output->add_sign(sign);
         width--;
     }
 
     while (width-- > 0) {
-        push(BL); fHOLD();
+        vm.number_output->add_char(BL);
     }
 
-    fHASH_GREATER();
-    fTYPE();
+    vm.number_output->end_print();
 }
 
-void cDOT(int value) {
-    dpush(cDABS(value));
+void print_string(int addr, int size) {
+    print_string(mem_char_ptr(addr), size);
+}
+
+void print_string(const char* str, int size) {
+    for (int i = 0; i < size; ++i)
+        cout << str[i];
+}
+
+void print_number(int value) {
+    dpush(dabs(value));
     int sign = value;
     print_dint_uint(sign);
 }
 
-void fDOT() {
-    int value = pop();
-    cDOT(value);
-}
-
-void cD_DOT(dint value) {
-    dpush(cDABS(value));
+void print_number(dint value) {
+    dpush(dabs(value));
     print_dint_uint(value < 0 ? -1 : 1);
 }
 
-void fD_DOT() {
-    dint value = dpop();
-    cD_DOT(value);
-}
-
-void cD_DOT_R(dint value, int width) {
-    dpush(cDABS(value));
+void print_number(dint value, int width) {
+    dpush(dabs(value));
     print_dint_uint_aligned(width, value < 0 ? -1 : 1);
 }
 
-void fD_DOT_R() {
-    int width = pop();
-    dint value = dpop();
-    cD_DOT_R(value, width);
-}
-
-void cU_DOT(uint value) {
+void print_unsigned_number(uint value) {
     push(value);    // lo
     push(0);        // hi
     print_dint_uint(+1);
 }
 
-void fU_DOT() {
-    uint value = static_cast<uint>(pop());
-    cU_DOT(value);
-}
-
-void cDOT_R(int value, int width) {
-    dpush(cDABS(value));
+void print_number(int value, int width) {
+    dpush(dabs(value));
     print_dint_uint_aligned(width, value);
 }
 
-void fDOT_R() {
-    int width = pop();
-    int value = pop();
-    cDOT_R(value, width);
-}
-
-void cU_DOT_R(uint value, int width) {
+void print_unsigned_number(uint value, int width) {
     push(value);
     push(0);
     print_dint_uint_aligned(width, 1);
 }
 
-void fU_DOT_R() {
-    int width = pop();
-    uint value = static_cast<uint>(pop());
-    cU_DOT_R(value, width);
-}

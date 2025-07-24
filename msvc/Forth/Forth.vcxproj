@@ -140,22 +140,28 @@
     <ClInclude Include="..\..\dict.h" />
     <ClInclude Include="..\..\errors.h" />
     <ClInclude Include="..\..\forth.h" />
+    <ClInclude Include="..\..\input.h" />
+    <ClInclude Include="..\..\math.h" />
     <ClInclude Include="..\..\memory.h" />
-    <ClInclude Include="..\..\parse.h" />
+    <ClInclude Include="..\..\output.h" />
+    <ClInclude Include="..\..\parser.h" />
     <ClInclude Include="..\..\stack.h" />
-    <ClInclude Include="..\..\user.h" />
     <ClInclude Include="..\..\vm.h" />
+    <ClInclude Include="..\..\wordbuf.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\dict.cpp" />
     <ClCompile Include="..\..\errors.cpp" />
     <ClCompile Include="..\..\forth.cpp" />
+    <ClCompile Include="..\..\input.cpp" />
     <ClCompile Include="..\..\main.cpp" />
+    <ClCompile Include="..\..\math.cpp" />
     <ClCompile Include="..\..\memory.cpp" />
-    <ClCompile Include="..\..\parse.cpp" />
+    <ClCompile Include="..\..\output.cpp" />
+    <ClCompile Include="..\..\parser.cpp" />
     <ClCompile Include="..\..\stack.cpp" />
-    <ClCompile Include="..\..\user.cpp" />
     <ClCompile Include="..\..\vm.cpp" />
+    <ClCompile Include="..\..\wordbuf.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
