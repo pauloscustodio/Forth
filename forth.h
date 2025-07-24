@@ -247,6 +247,10 @@ void dpush(dint value);
 dint dpop();
 dint dpeek(int depth = 0);
 
+void spush(int value);
+int spop();
+int speek(int depth = 0);
+
 void rpush(int value);
 int rpop();
 int rpeek(int depth = 0);

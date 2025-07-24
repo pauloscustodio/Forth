@@ -144,36 +144,48 @@ void push(int value) {
 	vm.stack->push(value);
 }
 
-int peek(int depth) {
-	return vm.stack->peek(depth);
-}
-
 int pop() {
 	return vm.stack->pop();
+}
+
+int peek(int depth) {
+	return vm.stack->peek(depth);
 }
 
 void dpush(dint value) {
 	vm.stack->dpush(value);
 }
 
+dint dpop() {
+	return vm.stack->dpop();
+}
+
 dint dpeek(int depth) {
 	return vm.stack->dpeek(depth);
 }
 
-dint dpop() {
-	return vm.stack->dpop();
+void spush(int value) {
+	vm.sstack->push(value);
+}
+
+int spop() {
+	return vm.sstack->pop();
+}
+
+int speek(int depth) {
+	return vm.sstack->peek(depth);
 }
 
 void rpush(int value) {
 	vm.rstack->push(value);
 }
 
-int rpeek(int depth) {
-	return vm.rstack->peek(depth);
-}
-
 int rpop() {
 	return vm.rstack->pop();
+}
+
+int rpeek(int depth) {
+	return vm.rstack->peek(depth);
 }
 
 void create_dictionary() {

@@ -43,6 +43,7 @@ struct VM {
 
 	// stacks
 	Stack* rstack;			// return stack
+    Stack* sstack;			// struct stack
 	Stack* stack;			// data stack
 
 	// dictionary
