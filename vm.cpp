@@ -13,6 +13,14 @@ using namespace std;
 
 VM vm;
 
+//-----------------------------------------------------------------------------
+
+void Pad::init() {
+    memset(m_pad, BL, sizeof(m_pad));
+}
+
+//-----------------------------------------------------------------------------
+
 VM::VM() {
 	// bottom of memory
 	wordbuf = reinterpret_cast<Wordbuf*>(mem.alloc_bot(sizeof(Wordbuf)));
@@ -44,3 +52,4 @@ VM::VM() {
 VM::~VM() {
 	input->deinit();
 }
+

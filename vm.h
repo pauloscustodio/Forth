@@ -16,7 +16,7 @@ using namespace std;
 
 class Pad {
 public:
-	void init() {}
+	void init();
 
 	char* pad() { return m_pad; }
 

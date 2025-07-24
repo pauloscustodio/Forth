@@ -46,7 +46,7 @@ private:
 
 class Wordbuf {
 public:
-	void init() { m_ptr = 0; }
+	void init();
 
 	ForthString* append(const string& str);
 	ForthString* append(const char* str, size_t size);

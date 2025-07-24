@@ -13,9 +13,9 @@
 using namespace std;
 
 Mem::Mem() {
-	memset(m_mem, 0, MEM_SZ);
+	memset(m_mem, 0, sizeof(m_mem));
 	m_bot = 0;
-	m_top = MEM_SZ;
+	m_top = static_cast<int>(sizeof(m_mem));
 }
 
 int Mem::addr(const char* ptr) const {
@@ -85,7 +85,7 @@ int Mem::check_addr(ptrdiff_t addr, int size) const {
 }
 
 int Mem::check_addr(int addr, int size) const {
-	if (addr < 0 || addr + size > MEM_SZ) {
+	if (addr < 0 || addr + size > static_cast<int>(sizeof(m_mem))) {
 		error(Error::InvalidMemoryAddress);
 		return 0;
 	}

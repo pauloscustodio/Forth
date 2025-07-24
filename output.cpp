@@ -9,14 +9,16 @@
 #include "math.h"
 #include "output.h"
 #include "vm.h"
+#include <cstring>
 using namespace std;
 
 void NumberOutput::init() {
+    memset(m_buffer, BL, sizeof(m_buffer));
     start();
 }
 
 void NumberOutput::start() {
-    m_ptr = PAD_SZ;
+    m_ptr = static_cast<int>(sizeof(m_buffer));
 }
 
 void NumberOutput::add_digit() {
@@ -59,13 +61,13 @@ void NumberOutput::add_sign(int sign) {
 void NumberOutput::end() const {
     dpop();     // drop number
     push(mem_addr(m_buffer + m_ptr));
-    push(PAD_SZ - m_ptr);
+    push(static_cast<int>(sizeof(m_buffer)) - m_ptr);
 }
 
 void NumberOutput::end_print() const {
     dpop();     // drop number
     const char* str = m_buffer + m_ptr;
-    int size = PAD_SZ - m_ptr;
+    int size = static_cast<int>(sizeof(m_buffer)) - m_ptr;
     print_string(str, size);
 }
 

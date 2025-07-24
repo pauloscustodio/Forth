@@ -7,6 +7,7 @@
 #include "errors.h"
 #include "dict.h"
 #include "wordbuf.h"
+#include <cstring>
 #include <string>
 using namespace std;
 
@@ -57,6 +58,11 @@ int ForthString::alloc_size(int str_size) {
 
 //-----------------------------------------------------------------------------
 
+void Wordbuf::init() { 
+    memset(m_buffer, BL, sizeof(m_buffer));
+	m_ptr = 0; 
+}
+
 ForthString* Wordbuf::append(const string& str) {
 	return append(str.c_str(), str.size());
 }
@@ -69,7 +75,7 @@ ForthString* Wordbuf::append(const char* str, int size) {
 	if (size > MAX_STRING_SZ)
 		error(Error::StringTooLong);
 	int alloc_size = ForthString::alloc_size(size);
-	if (m_ptr + alloc_size > WORDBUF_SZ)
+	if (m_ptr + alloc_size > static_cast<int>(sizeof(m_buffer)))
 		m_ptr = 0;
 	ForthString* fstring = reinterpret_cast<ForthString*>(m_buffer + m_ptr);
 	

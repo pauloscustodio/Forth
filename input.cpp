@@ -19,6 +19,7 @@ void Buffer::init() {
 	m_source_id = 0;
 	m_size = 0;
 	m_ptr = 0;
+	memset(m_buffer, BL, sizeof(m_buffer));
 }
 
 void Buffer::set_buffer_ptr(int ptr) {
