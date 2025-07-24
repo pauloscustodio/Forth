@@ -49,6 +49,9 @@ VM::VM() {
 	int start_dict = mem.addr(mem.alloc_bot(0));
 	int end_dict = mem.addr(mem.alloc_top(0));
 	dict->init(start_dict, end_dict);
+
+	// reinit wordbuf to get predictable results in tests
+	wordbuf->init();
 }
 
 VM::~VM() {

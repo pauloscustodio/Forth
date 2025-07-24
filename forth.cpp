@@ -19,6 +19,9 @@ using namespace std;
 //@@BEGIN: WordsXtDefinition
 int xtTRUE = 0; // TRUE
 int xtFALSE = 0; // FALSE
+int xtS0 = 0; // S0
+int xtR0 = 0; // R0
+int xtSTRUCT0 = 0; // STRUCT0
 int xtBASE = 0; // BASE
 int xtSTATE = 0; // STATE
 int xtDPL = 0; // DPL
@@ -44,6 +47,9 @@ int xtD_DOT_R = 0; // D.R
 int xtU_DOT = 0; // U.
 int xtDOT_R = 0; // .R
 int xtU_DOT_R = 0; // U.R
+int xtDEPTH = 0; // DEPTH
+int xtRDEPTH = 0; // RDEPTH
+int xtSDEPTH = 0; // SDEPTH
 int xtPAD = 0; // PAD
 int xtTHROW = 0; // THROW
 int xtDROP = 0; // DROP
@@ -192,6 +198,9 @@ void create_dictionary() {
 	//@@BEGIN: WordsCreateDictionary
 	xtTRUE = vm.dict->create("TRUE", 0, idTRUE);
 	xtFALSE = vm.dict->create("FALSE", 0, idFALSE);
+	xtS0 = vm.dict->create("S0", 0, idS0);
+	xtR0 = vm.dict->create("R0", 0, idR0);
+	xtSTRUCT0 = vm.dict->create("STRUCT0", 0, idSTRUCT0);
 	xtBASE = vm.dict->create("BASE", 0, idBASE);
 	xtSTATE = vm.dict->create("STATE", 0, idSTATE);
 	xtDPL = vm.dict->create("DPL", 0, idDPL);
@@ -217,6 +226,9 @@ void create_dictionary() {
 	xtU_DOT = vm.dict->create("U.", 0, idU_DOT);
 	xtDOT_R = vm.dict->create(".R", 0, idDOT_R);
 	xtU_DOT_R = vm.dict->create("U.R", 0, idU_DOT_R);
+	xtDEPTH = vm.dict->create("DEPTH", 0, idDEPTH);
+	xtRDEPTH = vm.dict->create("RDEPTH", 0, idRDEPTH);
+	xtSDEPTH = vm.dict->create("SDEPTH", 0, idSDEPTH);
 	xtPAD = vm.dict->create("PAD", 0, idPAD);
 	xtTHROW = vm.dict->create("THROW", 0, idTHROW);
 	xtDROP = vm.dict->create("DROP", 0, idDROP);
@@ -246,6 +258,9 @@ void execute_word(int xt) {
 		//@@BEGIN: WordsIdExecution
 		case idTRUE: fTRUE(); break; // TRUE
 		case idFALSE: fFALSE(); break; // FALSE
+		case idS0: fS0(); break; // S0
+		case idR0: fR0(); break; // R0
+		case idSTRUCT0: fSTRUCT0(); break; // STRUCT0
 		case idBASE: fBASE(); break; // BASE
 		case idSTATE: fSTATE(); break; // STATE
 		case idDPL: fDPL(); break; // DPL
@@ -271,6 +286,9 @@ void execute_word(int xt) {
 		case idU_DOT: fU_DOT(); break; // U.
 		case idDOT_R: fDOT_R(); break; // .R
 		case idU_DOT_R: fU_DOT_R(); break; // U.R
+		case idDEPTH: fDEPTH(); break; // DEPTH
+		case idRDEPTH: fRDEPTH(); break; // RDEPTH
+		case idSDEPTH: fSDEPTH(); break; // SDEPTH
 		case idPAD: fPAD(); break; // PAD
 		case idTHROW: fTHROW(); break; // THROW
 		case idDROP: fDROP(); break; // DROP
@@ -315,6 +333,9 @@ void User::init() {
 //@@BEGIN: ConstImplementation
 void fTRUE() { push(F_TRUE); } // TRUE
 void fFALSE() { push(F_FALSE); } // FALSE
+void fS0() { push(STACK_SZ); } // S0
+void fR0() { push(STACK_SZ); } // R0
+void fSTRUCT0() { push(STACK_SZ); } // STRUCT0
 //@@END
 
 //@@BEGIN: VarsImplementation
@@ -332,6 +353,136 @@ void fTRACE() { push(mem_addr(&vm.user->TRACE)); } // TRACE
 //-----------------------------------------------------------------------------
 // Unsorted words
 //-----------------------------------------------------------------------------
+
+// memory access
+void fSTORE() {
+	int addr = pop();
+	int value = pop();
+	store(addr, value);
+}
+
+void fFETCH() {
+	int addr = pop();
+	int value = fetch(addr);
+	push(value);
+}
+
+void fC_STORE() {
+	int addr = pop();
+	int value = pop();
+	cstore(addr, value);
+}
+
+void fC_FETCH() {
+	int addr = pop();
+	int value = cfetch(addr);
+	push(value);
+}
+
+// string output
+void fTYPE() {
+	int size = pop();
+	int addr = pop();
+	print_string(addr, size);
+}
+
+void fEMIT() {
+	char c = static_cast<char>(pop());
+	cout << c;
+}
+
+void fCR() {
+	cout << endl;
+}
+
+void fSPACE() {
+	cout << BL;
+}
+
+void fSPACES() {
+	int size = pop();
+	for (int i = 0; i < size; ++i)
+		cout << BL;
+}
+
+// formatted number output
+void fLESS_HASH() {
+	vm.number_output->start();
+}
+
+void fHASH() {
+	vm.number_output->add_digit();
+}
+
+void fHASH_S() {
+	vm.number_output->add_digits();
+}
+
+void fHOLD() {
+	char c = static_cast<char>(pop());
+	vm.number_output->add_char(c);
+}
+
+void fSIGN() {
+	int sign = pop();
+	vm.number_output->add_sign(sign);
+}
+
+void fHASH_GREATER() {
+	vm.number_output->end();
+}
+
+// number output
+void fDOT() {
+	int value = pop();
+	print_number(value);
+}
+
+void fD_DOT() {
+	dint value = dpop();
+	print_number(value);
+}
+
+void fD_DOT_R() {
+	int width = pop();
+	dint value = dpop();
+	print_number(value, width);
+}
+
+void fU_DOT() {
+	uint value = static_cast<uint>(pop());
+	print_unsigned_number(value);
+}
+
+void fDOT_R() {
+	int width = pop();
+	int value = pop();
+	print_number(value, width);
+}
+
+void fU_DOT_R() {
+	int width = pop();
+	uint value = static_cast<uint>(pop());
+	print_unsigned_number(value, width);
+}
+
+void fDEPTH() {
+	int depth = vm.stack->depth();
+    push(depth);	
+}
+
+void fRDEPTH() {
+	int depth = vm.rstack->depth();
+	push(depth);
+}
+
+void fSDEPTH() {
+	int depth = vm.sstack->depth();
+	push(depth);
+}
+
+
+
 
 
 void fENVIRONMENT_Q() {
@@ -420,86 +571,11 @@ void fPLUS() {
 	push(a + b);
 }
 
-void fSTORE() {
-	int addr = pop();
-	int value = pop();
-	store(addr, value);
-}
-
-void fFETCH() {
-	int addr = pop();
-	int value = fetch(addr);
-	push(value);
-}
-
-void fC_STORE() {
-	int addr = pop();
-	int value = pop();
-	cstore(addr, value);
-}
-
-void fC_FETCH() {
-	int addr = pop();
-	int value = cfetch(addr);
-	push(value);
-}
-
 void fCOUNT() {
 	int addr = pop();
 	int len = cfetch(addr++);
 	push(addr);
 	push(len);
-}
-
-void fTYPE() {
-	int size = pop();
-	int addr = pop();
-	print_string(addr, size);
-}
-
-void fEMIT() {
-	char c = static_cast<char>(pop());
-	cout << c;
-}
-
-void fCR() {
-	cout << endl;
-}
-
-void fSPACE() {
-	cout << BL;
-}
-
-void fSPACES() {
-	int size = pop();
-	for (int i = 0; i < size; ++i)
-		cout << BL;
-}
-
-void fLESS_HASH() {
-	vm.number_output->start();
-}
-
-void fHASH() {
-	vm.number_output->add_digit();
-}
-
-void fHASH_S() {
-	vm.number_output->add_digits();
-}
-
-void fHOLD() {
-	char c = static_cast<char>(pop());
-	vm.number_output->add_char(c);
-}
-
-void fSIGN() {
-	int sign = pop();
-	vm.number_output->add_sign(sign);
-}
-
-void fHASH_GREATER() {
-	vm.number_output->end();
 }
 
 void fWORD() {
@@ -544,38 +620,5 @@ void fPICK() {
 
 void fDOT_S() {
 	vm.stack->print();
-}
-
-void fDOT() {
-	int value = pop();
-	print_number(value);
-}
-
-void fD_DOT() {
-	dint value = dpop();
-	print_number(value);
-}
-
-void fD_DOT_R() {
-	int width = pop();
-	dint value = dpop();
-	print_number(value, width);
-}
-
-void fU_DOT() {
-	uint value = static_cast<uint>(pop());
-	print_unsigned_number(value);
-}
-
-void fDOT_R() {
-	int width = pop();
-	int value = pop();
-	print_number(value, width);
-}
-
-void fU_DOT_R() {
-	int width = pop();
-	uint value = static_cast<uint>(pop());
-	print_unsigned_number(value, width);
 }
 

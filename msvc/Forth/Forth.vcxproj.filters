@@ -27,6 +27,9 @@
     <None Include="..\..\vars.def">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="..\..\const.def">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\errors.h">
@@ -41,16 +44,25 @@
     <ClInclude Include="..\..\memory.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\parse.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\stack.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\dict.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\user.h">
+    <ClInclude Include="..\..\input.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\math.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\output.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\parser.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\wordbuf.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -70,16 +82,25 @@
     <ClCompile Include="..\..\memory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\parse.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\stack.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\dict.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\user.cpp">
+    <ClCompile Include="..\..\input.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\math.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\output.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\parser.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\wordbuf.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

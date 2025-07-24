@@ -58,6 +58,9 @@ enum {
     //@@BEGIN: WordsIdDeclaration
     idTRUE, // TRUE
     idFALSE, // FALSE
+    idS0, // S0
+    idR0, // R0
+    idSTRUCT0, // STRUCT0
     idBASE, // BASE
     idSTATE, // STATE
     idDPL, // DPL
@@ -83,6 +86,9 @@ enum {
     idU_DOT, // U.
     idDOT_R, // .R
     idU_DOT_R, // U.R
+    idDEPTH, // DEPTH
+    idRDEPTH, // RDEPTH
+    idSDEPTH, // SDEPTH
     idPAD, // PAD
     idTHROW, // THROW
     idDROP, // DROP
@@ -106,6 +112,9 @@ enum {
 //@@BEGIN: WordsXtDeclaration
 extern int xtTRUE; // TRUE
 extern int xtFALSE; // FALSE
+extern int xtS0; // S0
+extern int xtR0; // R0
+extern int xtSTRUCT0; // STRUCT0
 extern int xtBASE; // BASE
 extern int xtSTATE; // STATE
 extern int xtDPL; // DPL
@@ -131,6 +140,9 @@ extern int xtD_DOT_R; // D.R
 extern int xtU_DOT; // U.
 extern int xtDOT_R; // .R
 extern int xtU_DOT_R; // U.R
+extern int xtDEPTH; // DEPTH
+extern int xtRDEPTH; // RDEPTH
+extern int xtSDEPTH; // SDEPTH
 extern int xtPAD; // PAD
 extern int xtTHROW; // THROW
 extern int xtDROP; // DROP
@@ -152,6 +164,9 @@ extern int xtALIGN; // ALIGN
 //@@BEGIN: Constants
 static inline const int cTRUE = F_TRUE; // TRUE
 static inline const int cFALSE = F_FALSE; // FALSE
+static inline const int cS0 = STACK_SZ; // S0
+static inline const int cR0 = STACK_SZ; // R0
+static inline const int cSTRUCT0 = STACK_SZ; // STRUCT0
 //@@END
 
 // user variables
@@ -169,6 +184,9 @@ struct User {
 //@@BEGIN: WordsDeclaration
 void fTRUE(); // TRUE
 void fFALSE(); // FALSE
+void fS0(); // S0
+void fR0(); // R0
+void fSTRUCT0(); // STRUCT0
 void fBASE(); // BASE
 void fSTATE(); // STATE
 void fDPL(); // DPL
@@ -194,6 +212,9 @@ void fD_DOT_R(); // D.R
 void fU_DOT(); // U.
 void fDOT_R(); // .R
 void fU_DOT_R(); // U.R
+void fDEPTH(); // DEPTH
+void fRDEPTH(); // RDEPTH
+void fSDEPTH(); // SDEPTH
 void fPAD(); // PAD
 void fTHROW(); // THROW
 void fDROP(); // DROP

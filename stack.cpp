@@ -77,3 +77,9 @@ void Stack::print() const {
 	cout << ") ";
 }
 
+void Stack::set_ptr(int ptr) {
+	if (ptr < 0 || ptr > STACK_SZ)
+		error(Error::InvalidMemoryAddress);
+	m_ptr = ptr;
+}
+

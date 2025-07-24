@@ -131,6 +131,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <None Include="..\..\const.def" />
     <None Include="..\..\errors.def" />
     <None Include="..\..\mkcode.pl" />
     <None Include="..\..\vars.def" />
