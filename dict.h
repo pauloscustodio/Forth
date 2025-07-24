@@ -12,6 +12,12 @@
 #include <vector>
 using namespace std;
 
+// alignment and double cells
+int aligned(int x);
+int dcell_lo(dint x);
+int dcell_hi(dint x);
+int dcell(int hi, int lo);
+
 struct Header {
 	int prev_addr;		// address of previous header
 	int name_addr;		// address of name

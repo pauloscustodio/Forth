@@ -9,24 +9,6 @@
 #include "stack.h"
 using namespace std;
 
-// alignment and double cells
-int aligned(int x) {
-	return (x + CELL_SZ - 1) & ~(CELL_SZ - 1);
-}
-
-int dcell_lo(dint x) {
-	return x & 0xffffffffLL;
-}
-
-int dcell_hi(dint x) {
-	return (x >> 32) & 0xffffffffLL;
-}
-
-int dcell(int hi, int lo) {
-	return (static_cast<udint>(dcell_lo(hi)) << 32) |
-		static_cast<udint>(dcell_lo(lo));
-}
-
 dint cDABS(dint a) {
     return a < 0 ? -a : a;
 }

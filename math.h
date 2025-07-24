@@ -9,10 +9,4 @@
 #include "forth.h"
 using namespace std;
 
-// alignment and double cells
-int aligned(int x);
-int dcell_lo(dint x);
-int dcell_hi(dint x);
-int dcell(int hi, int lo);
-
 dint cDABS(dint a);

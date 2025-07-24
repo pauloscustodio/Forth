@@ -5,7 +5,7 @@
 //-----------------------------------------------------------------------------
 
 #include "errors.h"
-#include "math.h"
+#include "dict.h"
 #include "wordbuf.h"
 #include <string>
 using namespace std;

@@ -9,8 +9,27 @@
 #include "forth.h"
 #include "math.h"
 #include "vm.h"
+#include <cassert>
 #include <cstring>
 using namespace std;
+
+// alignment and double cells
+int aligned(int x) {
+	return (x + CELL_SZ - 1) & ~(CELL_SZ - 1);
+}
+
+int dcell_lo(dint x) {
+	return x & 0xffffffffLL;
+}
+
+int dcell_hi(dint x) {
+	return (x >> 32) & 0xffffffffLL;
+}
+
+int dcell(int hi, int lo) {
+	return (static_cast<udint>(dcell_lo(hi)) << 32) |
+		static_cast<udint>(dcell_lo(lo));
+}
 
 static char to_lower(char c) {
     return tolower(static_cast<unsigned char>(c));
@@ -257,11 +276,12 @@ void fWORDS() {
 }
 
 void execute(int xt) {
-	if (xt < 0) {
+	int code = vm.mem.fetch(xt);
+	if (code < 0) {
 		error(Error::InvalidWordId, std::to_string(xt));
     }
-	else if (xt < MAX_WORD_ID) {
-		switch (xt) {
+	else if (code < MAX_WORD_ID) {
+		switch (code) {
 		//@@BEGIN: WordsIdExecution
 		case idBASE: fBASE(); break; // BASE
 		case idSTATE: fSTATE(); break; // STATE
@@ -305,17 +325,14 @@ void execute(int xt) {
 		case idALIGN: fALIGN(); break; // ALIGN
 		//@@END
 		default:
-			error(Error::InvalidWordId, std::to_string(xt));
+			assert(0); // not reached
 		}
-	}
-	else if (aligned(xt) != xt) {
-		error(Error::InvalidWordId, std::to_string(xt));
 	}
 	else if (xt > vm.dict->here()) {
 		error(Error::InvalidWordId, std::to_string(xt));
 	}
 	else {
-		// TODO: execute Forth word
+		// TODO: execute Forth word at code
 		//Header* header = Header::header(xt);
         //ForthString* name = header->name();
 	}
