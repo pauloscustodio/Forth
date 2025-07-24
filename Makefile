@@ -51,6 +51,6 @@ astyle:
 	$(ASTYLE) *.c *.h
 
 cloc:
-	perl -S cloc *.c *.h *.def t/*.t t/*.pl
+	perl -S cloc *.cpp *.h *.def *.pl t/*.t t/*.pl
 
 -include $(DEPENDS)
