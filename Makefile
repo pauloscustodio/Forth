@@ -35,4 +35,7 @@ test: forth$(EXE)
 astyle:
 	$(ASTYLE) *.c *.h
 
+cloc:
+	perl -S cloc *.c *.h *.def t/*.t t/*.pl
+
 -include $(DEPENDS)
