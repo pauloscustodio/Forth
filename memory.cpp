@@ -65,6 +65,18 @@ void Mem::cstore(int addr, int value) {
 	m_mem[check_addr(addr, CHAR_SZ)] = value;
 }
 
+void Mem::fill(int addr, int size, char c) {
+	memset(char_ptr(addr), c, size);
+}
+
+void Mem::erase(int addr, int size) {
+	fill(addr, size, 0);
+}
+
+void Mem::move(int src, int dst, int size) {
+	memmove(char_ptr(dst), char_ptr(src), size);
+}
+
 char* Mem::alloc_bot(int size) {
 	if (m_bot + size >= m_top)
 		error(Error::MemoryOverflow);

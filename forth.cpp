@@ -80,8 +80,14 @@ int xtZERO_GREATER = 0; // 0>
 int xtZERO_GREATER_EQUAL = 0; // 0>=
 int xtSTORE = 0; // !
 int xtFETCH = 0; // @
+int xtPLUS_STORE = 0; // +!
 int xtC_STORE = 0; // C!
 int xtC_FETCH = 0; // C@
+int xtTWO_STORE = 0; // 2!
+int xtTWO_FETCH = 0; // 2@
+int xtFILL = 0; // FILL
+int xtERASE = 0; // ERASE
+int xtMOVE = 0; // MOVE
 int xtDROP = 0; // DROP
 int xtSWAP = 0; // SWAP
 int xtDUP = 0; // DUP
@@ -361,8 +367,14 @@ void create_dictionary() {
 	xtZERO_GREATER_EQUAL = vm.dict->create("0>=", 0, idZERO_GREATER_EQUAL);
 	xtSTORE = vm.dict->create("!", 0, idSTORE);
 	xtFETCH = vm.dict->create("@", 0, idFETCH);
+	xtPLUS_STORE = vm.dict->create("+!", 0, idPLUS_STORE);
 	xtC_STORE = vm.dict->create("C!", 0, idC_STORE);
 	xtC_FETCH = vm.dict->create("C@", 0, idC_FETCH);
+	xtTWO_STORE = vm.dict->create("2!", 0, idTWO_STORE);
+	xtTWO_FETCH = vm.dict->create("2@", 0, idTWO_FETCH);
+	xtFILL = vm.dict->create("FILL", 0, idFILL);
+	xtERASE = vm.dict->create("ERASE", 0, idERASE);
+	xtMOVE = vm.dict->create("MOVE", 0, idMOVE);
 	xtDROP = vm.dict->create("DROP", 0, idDROP);
 	xtSWAP = vm.dict->create("SWAP", 0, idSWAP);
 	xtDUP = vm.dict->create("DUP", 0, idDUP);
@@ -489,8 +501,14 @@ void execute_word(int xt) {
 		case idZERO_GREATER_EQUAL: fZERO_GREATER_EQUAL(); break; // 0>=
 		case idSTORE: fSTORE(); break; // !
 		case idFETCH: fFETCH(); break; // @
+		case idPLUS_STORE: fPLUS_STORE(); break; // +!
 		case idC_STORE: fC_STORE(); break; // C!
 		case idC_FETCH: fC_FETCH(); break; // C@
+		case idTWO_STORE: fTWO_STORE(); break; // 2!
+		case idTWO_FETCH: fTWO_FETCH(); break; // 2@
+		case idFILL: fFILL(); break; // FILL
+		case idERASE: fERASE(); break; // ERASE
+		case idMOVE: fMOVE(); break; // MOVE
 		case idDROP: fDROP(); break; // DROP
 		case idSWAP: fSWAP(); break; // SWAP
 		case idDUP: fDUP(); break; // DUP
@@ -878,22 +896,52 @@ void fZERO_GREATER_EQUAL() {
 
 // !
 void fSTORE() {
-	int addr = pop(); int value = pop(); store(addr, value);
+	int a = pop(), v = pop(); store(a, v);
 }
 
 // @
 void fFETCH() {
-	int addr = pop(); int value = fetch(addr); push(value);
+	push(fetch(pop()));
+}
+
+// +!
+void fPLUS_STORE() {
+	int a = pop(), v = pop(); store(a, fetch(a) + v);
 }
 
 // C!
 void fC_STORE() {
-	int addr = pop(); int value = pop(); cstore(addr, value);
+	int a = pop(), v = pop(); cstore(a, v);
 }
 
 // C@
 void fC_FETCH() {
-	int addr = pop(); int value = cfetch(addr); push(value);
+	push(cfetch(pop()));
+}
+
+// 2!
+void fTWO_STORE() {
+	int a = pop(); dstore(a, dpop());
+}
+
+// 2@
+void fTWO_FETCH() {
+	dpush(dfetch(pop()));
+}
+
+// FILL
+void fFILL() {
+	int c = pop(), n = pop(), a = pop(); vm.mem.fill(a, n, c);
+}
+
+// ERASE
+void fERASE() {
+	int n = pop(), a = pop(); vm.mem.erase(a, n);
+}
+
+// MOVE
+void fMOVE() {
+	int n = pop(), dst = pop(), src = pop(); vm.mem.move(src, dst, n);
 }
 
 // DROP
@@ -903,7 +951,7 @@ void fDROP() {
 
 // SWAP
 void fSWAP() {
-	int a = pop(); int b = pop(); push(a); push(b);
+	int a = pop(), b = pop(); push(a); push(b);
 }
 
 // DUP
@@ -923,12 +971,12 @@ void fOVER() {
 
 // ROT
 void fROT() {
-	int c = pop(); int b = pop(); int a = pop(); push(b); push(c); push(a);
+	int c = pop(), b = pop(), a = pop(); push(b); push(c); push(a);
 }
 
 // -ROT
 void fMINUS_ROT() {
-	int c = pop(); int b = pop(); int a = pop(); push(c); push(a); push(b);
+	int c = pop(), b = pop(), a = pop(); push(c); push(a); push(b);
 }
 
 // NIP
@@ -948,7 +996,7 @@ void fROLL() {
 
 // TUCK
 void fTUCK() {
-	int a = pop(); int b = pop(); push(a); push(b); push(a);
+	int a = pop(), b = pop(); push(a); push(b); push(a);
 }
 
 // 2DROP
@@ -958,7 +1006,7 @@ void fTWO_DROP() {
 
 // 2SWAP
 void fTWO_SWAP() {
-	dint a = dpop(); dint b = dpop(); dpush(a); dpush(b);
+	dint a = dpop(), b = dpop(); dpush(a); dpush(b);
 }
 
 // 2DUP
@@ -973,12 +1021,12 @@ void fTWO_OVER() {
 
 // 2ROT
 void fTWO_ROT() {
-	dint c = dpop(); dint b = dpop(); dint a = dpop(); dpush(b); dpush(c); dpush(a);
+	dint c = dpop(), b = dpop(), a = dpop(); dpush(b); dpush(c); dpush(a);
 }
 
 // -2ROT
 void fMINUS_2ROT() {
-	dint c = dpop(); dint b = dpop(); dint a = dpop(); dpush(c); dpush(a); dpush(b);
+	dint c = dpop(), b = dpop(), a = dpop(); dpush(c); dpush(a); dpush(b);
 }
 
 // DEPTH
@@ -998,7 +1046,7 @@ void fSP_STORE() {
 
 // TYPE
 void fTYPE() {
-	int size = pop(); int addr = pop(); print_string(addr, size);
+	int size = pop(), a = pop(); print_string(a, size);
 }
 
 // EMIT
@@ -1063,7 +1111,7 @@ void fD_DOT() {
 
 // D.R
 void fD_DOT_R() {
-	int width = pop(); dint value = dpop(); print_number(value, width);
+	int w = pop(); dint v = dpop(); print_number(v, w);
 }
 
 // U.
@@ -1073,12 +1121,12 @@ void fU_DOT() {
 
 // .R
 void fDOT_R() {
-	int width = pop(); int value = pop(); print_number(value, width);
+	int w = pop(), v = pop(); print_number(v, w);
 }
 
 // U.R
 void fU_DOT_R() {
-	int width = pop(); uint value = pop(); print_unsigned_number(value, width);
+	int w = pop(); uint v = pop(); print_unsigned_number(v, w);
 }
 
 // RDEPTH
@@ -1196,8 +1244,8 @@ void fWORD() {
 	if (word == nullptr)
 		exit(EXIT_SUCCESS);		        // no more input
 	else {
-		push(mem_addr(word->str()));	// address of word
-		push(word->size());				// length of word
+		const CountedString* addr = word->counted_string();
+		push(mem_addr(reinterpret_cast<const char*>(addr)));	// address counted string
 	}
 }
 

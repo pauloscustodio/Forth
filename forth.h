@@ -118,8 +118,14 @@ enum {
     idZERO_GREATER_EQUAL, // 0>=
     idSTORE, // !
     idFETCH, // @
+    idPLUS_STORE, // +!
     idC_STORE, // C!
     idC_FETCH, // C@
+    idTWO_STORE, // 2!
+    idTWO_FETCH, // 2@
+    idFILL, // FILL
+    idERASE, // ERASE
+    idMOVE, // MOVE
     idDROP, // DROP
     idSWAP, // SWAP
     idDUP, // DUP
@@ -240,8 +246,14 @@ extern int xtZERO_GREATER; // 0>
 extern int xtZERO_GREATER_EQUAL; // 0>=
 extern int xtSTORE; // !
 extern int xtFETCH; // @
+extern int xtPLUS_STORE; // +!
 extern int xtC_STORE; // C!
 extern int xtC_FETCH; // C@
+extern int xtTWO_STORE; // 2!
+extern int xtTWO_FETCH; // 2@
+extern int xtFILL; // FILL
+extern int xtERASE; // ERASE
+extern int xtMOVE; // MOVE
 extern int xtDROP; // DROP
 extern int xtSWAP; // SWAP
 extern int xtDUP; // DUP
@@ -381,8 +393,14 @@ void fZERO_GREATER(); // 0>
 void fZERO_GREATER_EQUAL(); // 0>=
 void fSTORE(); // !
 void fFETCH(); // @
+void fPLUS_STORE(); // +!
 void fC_STORE(); // C!
 void fC_FETCH(); // C@
+void fTWO_STORE(); // 2!
+void fTWO_FETCH(); // 2@
+void fFILL(); // FILL
+void fERASE(); // ERASE
+void fMOVE(); // MOVE
 void fDROP(); // DROP
 void fSWAP(); // SWAP
 void fDUP(); // DUP

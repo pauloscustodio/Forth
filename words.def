@@ -64,35 +64,44 @@
 "0>", ZERO_GREATER, 0, "push(f_bool(pop() > 0));"
 "0>=", ZERO_GREATER_EQUAL, 0, "push(f_bool(pop() >= 0));"
 
-
-
 // memory access
-"!", STORE, 0, "int addr = pop(); int value = pop(); store(addr, value);"
-"@", FETCH, 0, "int addr = pop(); int value = fetch(addr); push(value);"
-"C!", C_STORE, 0, "int addr = pop(); int value = pop(); cstore(addr, value);"
-"C@", C_FETCH, 0, "int addr = pop(); int value = cfetch(addr); push(value);"
+"!", STORE, 0, "int a = pop(), v = pop(); store(a, v);"
+"@", FETCH, 0, "push(fetch(pop()));"
+"+!", PLUS_STORE, 0, "int a = pop(), v = pop(); store(a, fetch(a) + v);"
+"C!", C_STORE, 0, "int a = pop(), v = pop(); cstore(a, v);"
+"C@", C_FETCH, 0, "push(cfetch(pop()));"
+"2!", TWO_STORE, 0, "int a = pop(); dstore(a, dpop());"
+"2@", TWO_FETCH, 0, "dpush(dfetch(pop()));"
+"FILL", FILL, 0, "int c = pop(), n = pop(), a = pop(); vm.mem.fill(a, n, c);"
+"ERASE", ERASE, 0, "int n = pop(), a = pop(); vm.mem.erase(a, n);"
+"MOVE", MOVE, 0, "int n = pop(), dst = pop(), src = pop(); vm.mem.move(src, dst, n);"
+
+
+
+
+
 
 // dictionary
 
 // parameter stack
 "DROP", DROP, 0, "pop();"
-"SWAP", SWAP, 0, "int a = pop(); int b = pop(); push(a); push(b);"
+"SWAP", SWAP, 0, "int a = pop(), b = pop(); push(a); push(b);"
 "DUP", DUP, 0, "push(peek(0));"
 "?DUP", Q_DUP, 0, "int a = peek(); if (a) push(a);"
 "OVER", OVER, 0, "push(peek(1));"
-"ROT", ROT, 0, "int c = pop(); int b = pop(); int a = pop(); push(b); push(c); push(a);"
-"-ROT", MINUS_ROT, 0, "int c = pop(); int b = pop(); int a = pop(); push(c); push(a); push(b);"
+"ROT", ROT, 0, "int c = pop(), b = pop(), a = pop(); push(b); push(c); push(a);"
+"-ROT", MINUS_ROT, 0, "int c = pop(), b = pop(), a = pop(); push(c); push(a); push(b);"
 "NIP", NIP, 0, "int a = pop(); pop(); push(a);"
 "PICK", PICK, 0, "push(peek(pop()));"
 "ROLL", ROLL, 0, "roll(pop());"
-"TUCK", TUCK, 0, "int a = pop(); int b = pop(); push(a); push(b); push(a);"
+"TUCK", TUCK, 0, "int a = pop(), b = pop(); push(a); push(b); push(a);"
 
 "2DROP", TWO_DROP, 0, "dpop();"
-"2SWAP", TWO_SWAP, 0, "dint a = dpop(); dint b = dpop(); dpush(a); dpush(b);"
+"2SWAP", TWO_SWAP, 0, "dint a = dpop(), b = dpop(); dpush(a); dpush(b);"
 "2DUP", TWO_DUP, 0, "push(peek(1)); push(peek(1));"
 "2OVER", TWO_OVER, 0, "push(peek(3)); push(peek(3));"
-"2ROT", TWO_ROT, 0, "dint c = dpop(); dint b = dpop(); dint a = dpop(); dpush(b); dpush(c); dpush(a);"
-"-2ROT", MINUS_2ROT, 0, "dint c = dpop(); dint b = dpop(); dint a = dpop(); dpush(c); dpush(a); dpush(b);"
+"2ROT", TWO_ROT, 0, "dint c = dpop(), b = dpop(), a = dpop(); dpush(b); dpush(c); dpush(a);"
+"-2ROT", MINUS_2ROT, 0, "dint c = dpop(), b = dpop(), a = dpop(); dpush(c); dpush(a); dpush(b);"
 
 "DEPTH", DEPTH, 0, "push(vm.stack->depth());"
 
@@ -105,7 +114,7 @@
 
 
 // string output
-"TYPE", TYPE, 0, "int size = pop(); int addr = pop(); print_string(addr, size);"
+"TYPE", TYPE, 0, "int size = pop(), a = pop(); print_string(a, size);"
 "EMIT", EMIT, 0, "print_char(pop());"
 "CR", CR, 0, "print_char(CR);"
 "SPACE", SPACE, 0, "print_char(BL);"
@@ -122,10 +131,10 @@
 // number output
 ".", DOT, 0, "print_number(pop());"
 "D.", D_DOT, 0, "print_number(dpop());"
-"D.R", D_DOT_R, 0, "int width = pop(); dint value = dpop(); print_number(value, width);"
+"D.R", D_DOT_R, 0, "int w = pop(); dint v = dpop(); print_number(v, w);"
 "U.", U_DOT, 0, "print_unsigned_number(pop());"
-".R", DOT_R, 0, "int width = pop(); int value = pop(); print_number(value, width);"
-"U.R", U_DOT_R, 0, "int width = pop(); uint value = pop(); print_unsigned_number(value, width);"
+".R", DOT_R, 0, "int w = pop(), v = pop(); print_number(v, w);"
+"U.R", U_DOT_R, 0, "int w = pop(); uint v = pop(); print_unsigned_number(v, w);"
 
 
 

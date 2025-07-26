@@ -27,6 +27,11 @@ public:
 	int cfetch(int addr);
 	void cstore(int addr, int value);
 
+	// block operations
+	void fill(int addr, int size, char c);
+	void erase(int addr, int size);
+	void move(int src, int dst, int size);
+
 	// allocate memory for data structures
 	char* alloc_bot(int size);
 	char* alloc_top(int size);
