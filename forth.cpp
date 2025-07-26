@@ -24,11 +24,38 @@ int xtFALSE = 0; // FALSE
 int xtS0 = 0; // S0
 int xtR0 = 0; // R0
 int xtCS0 = 0; // CS0
-int xtBASE = 0; // BASE
 int xtSTATE = 0; // STATE
+int xtBASE = 0; // BASE
 int xtDPL = 0; // DPL
 int xtTRACE = 0; // TRACE
 int xtPAD = 0; // PAD
+int xtPLUS = 0; // +
+int xtMULT = 0; // *
+int xtMINUS = 0; // -
+int xtDIV = 0; // /
+int xtMOD = 0; // MOD
+int xtDIV_MOD = 0; // /MOD
+int xtMULT_DIV = 0; // */
+int xtMULT_DIV_MOD = 0; // */MOD
+int xtFM_DIV_MOD = 0; // FM/MOD
+int xtUM_DIV_MOD = 0; // UM/MOD
+int xtSM_DIV_REM = 0; // SM/REM
+int xtM_STAR = 0; // M*
+int xtONE_PLUS = 0; // 1+
+int xtONE_MINUS = 0; // 1-
+int xtTWO_MULT = 0; // 2*
+int xtTWO_DIV = 0; // 2/
+int xtNEGATE = 0; // NEGATE
+int xtS_TO_D = 0; // S>D
+int xtUM_MULT = 0; // UM*
+int xtABS = 0; // ABS
+int xtFMAX = 0; // MAX
+int xtFMIN = 0; // MIN
+int xtCHAR_PLUS = 0; // CHAR+
+int xtCHARS = 0; // CHARS
+int xtCELL_PLUS = 0; // CELL+
+int xtCELLS = 0; // CELLS
+int xtWITHIN = 0; // WITHIN
 int xtSTORE = 0; // !
 int xtFETCH = 0; // @
 int xtC_STORE = 0; // C!
@@ -73,7 +100,6 @@ int xtU_DOT_R = 0; // U.R
 int xtRDEPTH = 0; // RDEPTH
 int xtCS_DEPTH = 0; // CS_DEPTH
 int xtTHROW = 0; // THROW
-int xtPLUS = 0; // +
 int xtENVIRONMENT_Q = 0; // ENVIRONMENT?
 int xtCOUNT = 0; // COUNT
 int xtS_QUOTE = 0; // S"
@@ -88,6 +114,11 @@ int xtDABS = 0; // DABS
 int xtDECIMAL = 0; // DECIMAL
 int xtHEX = 0; // HEX
 //@@END
+
+// bool
+int f_bool(bool f) {
+	return f ? F_TRUE : F_FALSE;
+}
 
 // alignment and double cells
 int aligned(int x) {
@@ -252,11 +283,38 @@ void create_dictionary() {
 	xtS0 = vm.dict->create("S0", 0, idS0);
 	xtR0 = vm.dict->create("R0", 0, idR0);
 	xtCS0 = vm.dict->create("CS0", 0, idCS0);
-	xtBASE = vm.dict->create("BASE", 0, idBASE);
 	xtSTATE = vm.dict->create("STATE", 0, idSTATE);
+	xtBASE = vm.dict->create("BASE", 0, idBASE);
 	xtDPL = vm.dict->create("DPL", 0, idDPL);
 	xtTRACE = vm.dict->create("TRACE", 0, idTRACE);
 	xtPAD = vm.dict->create("PAD", 0, idPAD);
+	xtPLUS = vm.dict->create("+", 0, idPLUS);
+	xtMULT = vm.dict->create("*", 0, idMULT);
+	xtMINUS = vm.dict->create("-", 0, idMINUS);
+	xtDIV = vm.dict->create("/", 0, idDIV);
+	xtMOD = vm.dict->create("MOD", 0, idMOD);
+	xtDIV_MOD = vm.dict->create("/MOD", 0, idDIV_MOD);
+	xtMULT_DIV = vm.dict->create("*/", 0, idMULT_DIV);
+	xtMULT_DIV_MOD = vm.dict->create("*/MOD", 0, idMULT_DIV_MOD);
+	xtFM_DIV_MOD = vm.dict->create("FM/MOD", 0, idFM_DIV_MOD);
+	xtUM_DIV_MOD = vm.dict->create("UM/MOD", 0, idUM_DIV_MOD);
+	xtSM_DIV_REM = vm.dict->create("SM/REM", 0, idSM_DIV_REM);
+	xtM_STAR = vm.dict->create("M*", 0, idM_STAR);
+	xtONE_PLUS = vm.dict->create("1+", 0, idONE_PLUS);
+	xtONE_MINUS = vm.dict->create("1-", 0, idONE_MINUS);
+	xtTWO_MULT = vm.dict->create("2*", 0, idTWO_MULT);
+	xtTWO_DIV = vm.dict->create("2/", 0, idTWO_DIV);
+	xtNEGATE = vm.dict->create("NEGATE", 0, idNEGATE);
+	xtS_TO_D = vm.dict->create("S>D", 0, idS_TO_D);
+	xtUM_MULT = vm.dict->create("UM*", 0, idUM_MULT);
+	xtABS = vm.dict->create("ABS", 0, idABS);
+	xtFMAX = vm.dict->create("MAX", 0, idFMAX);
+	xtFMIN = vm.dict->create("MIN", 0, idFMIN);
+	xtCHAR_PLUS = vm.dict->create("CHAR+", 0, idCHAR_PLUS);
+	xtCHARS = vm.dict->create("CHARS", 0, idCHARS);
+	xtCELL_PLUS = vm.dict->create("CELL+", 0, idCELL_PLUS);
+	xtCELLS = vm.dict->create("CELLS", 0, idCELLS);
+	xtWITHIN = vm.dict->create("WITHIN", 0, idWITHIN);
 	xtSTORE = vm.dict->create("!", 0, idSTORE);
 	xtFETCH = vm.dict->create("@", 0, idFETCH);
 	xtC_STORE = vm.dict->create("C!", 0, idC_STORE);
@@ -301,7 +359,6 @@ void create_dictionary() {
 	xtRDEPTH = vm.dict->create("RDEPTH", 0, idRDEPTH);
 	xtCS_DEPTH = vm.dict->create("CS_DEPTH", 0, idCS_DEPTH);
 	xtTHROW = vm.dict->create("THROW", 0, idTHROW);
-	xtPLUS = vm.dict->create("+", 0, idPLUS);
 	xtENVIRONMENT_Q = vm.dict->create("ENVIRONMENT?", 0, idENVIRONMENT_Q);
 	xtCOUNT = vm.dict->create("COUNT", 0, idCOUNT);
 	xtS_QUOTE = vm.dict->create("S\"", 0, idS_QUOTE);
@@ -332,11 +389,38 @@ void execute_word(int xt) {
 		case idS0: fS0(); break; // S0
 		case idR0: fR0(); break; // R0
 		case idCS0: fCS0(); break; // CS0
-		case idBASE: fBASE(); break; // BASE
 		case idSTATE: fSTATE(); break; // STATE
+		case idBASE: fBASE(); break; // BASE
 		case idDPL: fDPL(); break; // DPL
 		case idTRACE: fTRACE(); break; // TRACE
 		case idPAD: fPAD(); break; // PAD
+		case idPLUS: fPLUS(); break; // +
+		case idMULT: fMULT(); break; // *
+		case idMINUS: fMINUS(); break; // -
+		case idDIV: fDIV(); break; // /
+		case idMOD: fMOD(); break; // MOD
+		case idDIV_MOD: fDIV_MOD(); break; // /MOD
+		case idMULT_DIV: fMULT_DIV(); break; // */
+		case idMULT_DIV_MOD: fMULT_DIV_MOD(); break; // */MOD
+		case idFM_DIV_MOD: fFM_DIV_MOD(); break; // FM/MOD
+		case idUM_DIV_MOD: fUM_DIV_MOD(); break; // UM/MOD
+		case idSM_DIV_REM: fSM_DIV_REM(); break; // SM/REM
+		case idM_STAR: fM_STAR(); break; // M*
+		case idONE_PLUS: fONE_PLUS(); break; // 1+
+		case idONE_MINUS: fONE_MINUS(); break; // 1-
+		case idTWO_MULT: fTWO_MULT(); break; // 2*
+		case idTWO_DIV: fTWO_DIV(); break; // 2/
+		case idNEGATE: fNEGATE(); break; // NEGATE
+		case idS_TO_D: fS_TO_D(); break; // S>D
+		case idUM_MULT: fUM_MULT(); break; // UM*
+		case idABS: fABS(); break; // ABS
+		case idFMAX: fFMAX(); break; // MAX
+		case idFMIN: fFMIN(); break; // MIN
+		case idCHAR_PLUS: fCHAR_PLUS(); break; // CHAR+
+		case idCHARS: fCHARS(); break; // CHARS
+		case idCELL_PLUS: fCELL_PLUS(); break; // CELL+
+		case idCELLS: fCELLS(); break; // CELLS
+		case idWITHIN: fWITHIN(); break; // WITHIN
 		case idSTORE: fSTORE(); break; // !
 		case idFETCH: fFETCH(); break; // @
 		case idC_STORE: fC_STORE(); break; // C!
@@ -381,7 +465,6 @@ void execute_word(int xt) {
 		case idRDEPTH: fRDEPTH(); break; // RDEPTH
 		case idCS_DEPTH: fCS_DEPTH(); break; // CS_DEPTH
 		case idTHROW: fTHROW(); break; // THROW
-		case idPLUS: fPLUS(); break; // +
 		case idENVIRONMENT_Q: fENVIRONMENT_Q(); break; // ENVIRONMENT?
 		case idCOUNT: fCOUNT(); break; // COUNT
 		case idS_QUOTE: fS_QUOTE(); break; // S"
@@ -413,8 +496,8 @@ void execute_word(int xt) {
 // user variables
 void User::init() {
 	//@@BEGIN: VarsInit
-	BASE = 10;
 	STATE = STATE_INTERPRET;
+	BASE = 10;
 	DPL = 0;
 	TRACE = 0;
 	//@@END
@@ -454,14 +537,14 @@ void fCS0() {
 //@@END
 
 //@@BEGIN: VarsImplementation
-// BASE
-void fBASE() {
-	push(mem_addr(&vm.user->BASE));
-}
-
 // STATE
 void fSTATE() {
 	push(mem_addr(&vm.user->STATE));
+}
+
+// BASE
+void fBASE() {
+	push(mem_addr(&vm.user->BASE));
 }
 
 // DPL
@@ -480,6 +563,141 @@ void fTRACE() {
 // PAD
 void fPAD() {
 	push(mem_addr(vm.pad->pad()));
+}
+
+// +
+void fPLUS() {
+	push(pop() + pop());
+}
+
+// *
+void fMULT() {
+	push(pop() * pop());
+}
+
+// -
+void fMINUS() {
+	int b = pop(), a = pop(); push(a - b);
+}
+
+// /
+void fDIV() {
+	int b = pop(), a = pop(); push(f_div(a, b));
+}
+
+// MOD
+void fMOD() {
+	int b = pop(), a = pop(); push(f_mod(a, b));
+}
+
+// /MOD
+void fDIV_MOD() {
+	f_div_mod();
+}
+
+// */
+void fMULT_DIV() {
+	f_mul_div();
+}
+
+// */MOD
+void fMULT_DIV_MOD() {
+	f_mul_div_mod();
+}
+
+// FM/MOD
+void fFM_DIV_MOD() {
+	f_fm_div_mod();
+}
+
+// UM/MOD
+void fUM_DIV_MOD() {
+	f_um_div_mod();
+}
+
+// SM/REM
+void fSM_DIV_REM() {
+	f_sm_div_rem();
+}
+
+// M*
+void fM_STAR() {
+	dint b = pop(), a = pop(); dpush(a * b);
+}
+
+// 1+
+void fONE_PLUS() {
+	push(pop() + 1);
+}
+
+// 1-
+void fONE_MINUS() {
+	push(pop() - 1);
+}
+
+// 2*
+void fTWO_MULT() {
+	push(pop() * 2);
+}
+
+// 2/
+void fTWO_DIV() {
+	push(f_div(pop(), 2));
+}
+
+// NEGATE
+void fNEGATE() {
+	push(-pop());
+}
+
+// S>D
+void fS_TO_D() {
+	dpush(pop());
+}
+
+// UM*
+void fUM_MULT() {
+	udint b = static_cast<uint>(pop()), a = static_cast<uint>(pop()); dpush(a * b);
+}
+
+// ABS
+void fABS() {
+	push(f_abs(pop()));
+}
+
+// MAX
+void fFMAX() {
+	push(f_max(pop(), pop()));
+}
+
+// MIN
+void fFMIN() {
+	push(f_min(pop(), pop()));
+}
+
+// CHAR+
+void fCHAR_PLUS() {
+	push(pop() + 1);
+}
+
+// CHARS
+void fCHARS() {
+	push(pop() * 1);
+}
+
+// CELL+
+void fCELL_PLUS() {
+	push(pop() + CELL_SZ);
+}
+
+// CELLS
+void fCELLS() {
+	push(pop() * CELL_SZ);
+}
+
+// WITHIN
+void fWITHIN() {
+	f_within();
 }
 
 // !
@@ -738,7 +956,7 @@ void fALIGN() {
 }
 
 void fDABS() {
-	dint a = dabs(dpop());
+	dint a = f_dabs(dpop());
 	dpush(a);
 }
 
@@ -787,12 +1005,6 @@ void fWORDS() {
 void fTHROW() {
 	int error_code = pop();
 	error(static_cast<Error>(error_code));
-}
-
-void fPLUS() {
-	int b = pop();
-	int a = pop();
-	push(a + b);
 }
 
 void fCOUNT() {

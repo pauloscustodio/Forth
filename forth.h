@@ -62,11 +62,38 @@ enum {
     idS0, // S0
     idR0, // R0
     idCS0, // CS0
-    idBASE, // BASE
     idSTATE, // STATE
+    idBASE, // BASE
     idDPL, // DPL
     idTRACE, // TRACE
     idPAD, // PAD
+    idPLUS, // +
+    idMULT, // *
+    idMINUS, // -
+    idDIV, // /
+    idMOD, // MOD
+    idDIV_MOD, // /MOD
+    idMULT_DIV, // */
+    idMULT_DIV_MOD, // */MOD
+    idFM_DIV_MOD, // FM/MOD
+    idUM_DIV_MOD, // UM/MOD
+    idSM_DIV_REM, // SM/REM
+    idM_STAR, // M*
+    idONE_PLUS, // 1+
+    idONE_MINUS, // 1-
+    idTWO_MULT, // 2*
+    idTWO_DIV, // 2/
+    idNEGATE, // NEGATE
+    idS_TO_D, // S>D
+    idUM_MULT, // UM*
+    idABS, // ABS
+    idFMAX, // MAX
+    idFMIN, // MIN
+    idCHAR_PLUS, // CHAR+
+    idCHARS, // CHARS
+    idCELL_PLUS, // CELL+
+    idCELLS, // CELLS
+    idWITHIN, // WITHIN
     idSTORE, // !
     idFETCH, // @
     idC_STORE, // C!
@@ -111,7 +138,6 @@ enum {
     idRDEPTH, // RDEPTH
     idCS_DEPTH, // CS_DEPTH
     idTHROW, // THROW
-    idPLUS, // +
     idENVIRONMENT_Q, // ENVIRONMENT?
     idCOUNT, // COUNT
     idS_QUOTE, // S"
@@ -136,11 +162,38 @@ extern int xtFALSE; // FALSE
 extern int xtS0; // S0
 extern int xtR0; // R0
 extern int xtCS0; // CS0
-extern int xtBASE; // BASE
 extern int xtSTATE; // STATE
+extern int xtBASE; // BASE
 extern int xtDPL; // DPL
 extern int xtTRACE; // TRACE
 extern int xtPAD; // PAD
+extern int xtPLUS; // +
+extern int xtMULT; // *
+extern int xtMINUS; // -
+extern int xtDIV; // /
+extern int xtMOD; // MOD
+extern int xtDIV_MOD; // /MOD
+extern int xtMULT_DIV; // */
+extern int xtMULT_DIV_MOD; // */MOD
+extern int xtFM_DIV_MOD; // FM/MOD
+extern int xtUM_DIV_MOD; // UM/MOD
+extern int xtSM_DIV_REM; // SM/REM
+extern int xtM_STAR; // M*
+extern int xtONE_PLUS; // 1+
+extern int xtONE_MINUS; // 1-
+extern int xtTWO_MULT; // 2*
+extern int xtTWO_DIV; // 2/
+extern int xtNEGATE; // NEGATE
+extern int xtS_TO_D; // S>D
+extern int xtUM_MULT; // UM*
+extern int xtABS; // ABS
+extern int xtFMAX; // MAX
+extern int xtFMIN; // MIN
+extern int xtCHAR_PLUS; // CHAR+
+extern int xtCHARS; // CHARS
+extern int xtCELL_PLUS; // CELL+
+extern int xtCELLS; // CELLS
+extern int xtWITHIN; // WITHIN
 extern int xtSTORE; // !
 extern int xtFETCH; // @
 extern int xtC_STORE; // C!
@@ -185,7 +238,6 @@ extern int xtU_DOT_R; // U.R
 extern int xtRDEPTH; // RDEPTH
 extern int xtCS_DEPTH; // CS_DEPTH
 extern int xtTHROW; // THROW
-extern int xtPLUS; // +
 extern int xtENVIRONMENT_Q; // ENVIRONMENT?
 extern int xtCOUNT; // COUNT
 extern int xtS_QUOTE; // S"
@@ -213,8 +265,8 @@ static inline const int cCS0 = STACK_SZ; // CS0
 // user variables
 struct User {
     //@@BEGIN: Vars
-    int BASE;
     int STATE;
+    int BASE;
     int DPL;
     int TRACE;
     //@@END
@@ -229,11 +281,38 @@ void fFALSE(); // FALSE
 void fS0(); // S0
 void fR0(); // R0
 void fCS0(); // CS0
-void fBASE(); // BASE
 void fSTATE(); // STATE
+void fBASE(); // BASE
 void fDPL(); // DPL
 void fTRACE(); // TRACE
 void fPAD(); // PAD
+void fPLUS(); // +
+void fMULT(); // *
+void fMINUS(); // -
+void fDIV(); // /
+void fMOD(); // MOD
+void fDIV_MOD(); // /MOD
+void fMULT_DIV(); // */
+void fMULT_DIV_MOD(); // */MOD
+void fFM_DIV_MOD(); // FM/MOD
+void fUM_DIV_MOD(); // UM/MOD
+void fSM_DIV_REM(); // SM/REM
+void fM_STAR(); // M*
+void fONE_PLUS(); // 1+
+void fONE_MINUS(); // 1-
+void fTWO_MULT(); // 2*
+void fTWO_DIV(); // 2/
+void fNEGATE(); // NEGATE
+void fS_TO_D(); // S>D
+void fUM_MULT(); // UM*
+void fABS(); // ABS
+void fFMAX(); // MAX
+void fFMIN(); // MIN
+void fCHAR_PLUS(); // CHAR+
+void fCHARS(); // CHARS
+void fCELL_PLUS(); // CELL+
+void fCELLS(); // CELLS
+void fWITHIN(); // WITHIN
 void fSTORE(); // !
 void fFETCH(); // @
 void fC_STORE(); // C!
@@ -278,7 +357,6 @@ void fU_DOT_R(); // U.R
 void fRDEPTH(); // RDEPTH
 void fCS_DEPTH(); // CS_DEPTH
 void fTHROW(); // THROW
-void fPLUS(); // +
 void fENVIRONMENT_Q(); // ENVIRONMENT?
 void fCOUNT(); // COUNT
 void fS_QUOTE(); // S"
@@ -293,6 +371,9 @@ void fDABS(); // DABS
 void fDECIMAL(); // DECIMAL
 void fHEX(); // HEX
 //@@END
+
+// bool
+int f_bool(bool f);
 
 // alignment and double cells
 int aligned(int x);

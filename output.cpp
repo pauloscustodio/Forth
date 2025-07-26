@@ -120,18 +120,18 @@ void print_string(const char* str, int size) {
 }
 
 void print_number(int value) {
-    dpush(dabs(value));
+    dpush(f_dabs(value));
     int sign = value;
     print_dint_uint(sign);
 }
 
 void print_number(dint value) {
-    dpush(dabs(value));
+    dpush(f_dabs(value));
     print_dint_uint(value < 0 ? -1 : 1);
 }
 
 void print_number(dint value, int width) {
-    dpush(dabs(value));
+    dpush(f_dabs(value));
     print_dint_uint_aligned(width, value < 0 ? -1 : 1);
 }
 
@@ -142,7 +142,7 @@ void print_unsigned_number(uint value) {
 }
 
 void print_number(int value, int width) {
-    dpush(dabs(value));
+    dpush(f_dabs(value));
     print_dint_uint_aligned(width, value);
 }
 

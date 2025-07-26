@@ -4,16 +4,37 @@
 // License: GPL3 https://www.gnu.org/licenses/gpl-3.0.html
 //-----------------------------------------------------------------------------
 
-//-----------------------------------------------------------------------------
-// CORE
-//-----------------------------------------------------------------------------
-
-//-----------------------------------------------------------------------------
-// Unsorted words
-//-----------------------------------------------------------------------------
-
 // PAD
 "PAD", PAD, 0, "push(mem_addr(vm.pad->pad()));"
+
+// arithmetic
+"+", PLUS, 0, "push(pop() + pop());"
+"*", MULT, 0, "push(pop() * pop());"
+"-", MINUS, 0, "int b = pop(), a = pop(); push(a - b);"
+"/", DIV, 0, "int b = pop(), a = pop(); push(f_div(a, b));"
+"MOD", MOD, 0, "int b = pop(), a = pop(); push(f_mod(a, b));"
+"/MOD", DIV_MOD, 0, "f_div_mod();"
+"*/", MULT_DIV, 0, "f_mul_div();"
+"*/MOD", MULT_DIV_MOD, 0, "f_mul_div_mod();"
+"FM/MOD", FM_DIV_MOD, 0, "f_fm_div_mod();"
+"UM/MOD", UM_DIV_MOD, 0, "f_um_div_mod();"
+"SM/REM", SM_DIV_REM, 0, "f_sm_div_rem();"
+"M*", M_STAR, 0, "dint b = pop(), a = pop(); dpush(a * b);"
+"1+", ONE_PLUS, 0, "push(pop() + 1);"
+"1-", ONE_MINUS, 0, "push(pop() - 1);"
+"2*", TWO_MULT, 0, "push(pop() * 2);"
+"2/", TWO_DIV, 0, "push(f_div(pop(), 2));"
+"NEGATE", NEGATE, 0, "push(-pop());"
+"S>D", S_TO_D, 0, "dpush(pop());"
+"UM*", UM_MULT, 0, "udint b = static_cast<uint>(pop()), a = static_cast<uint>(pop()); dpush(a * b);"
+"ABS", ABS, 0, "push(f_abs(pop()));"
+"MAX", FMAX, 0, "push(f_max(pop(), pop()));"
+"MIN", FMIN, 0, "push(f_min(pop(), pop()));"
+"CHAR+", CHAR_PLUS, 0, "push(pop() + 1);"
+"CHARS", CHARS, 0, "push(pop() * 1);"
+"CELL+", CELL_PLUS, 0, "push(pop() + CELL_SZ);"
+"CELLS", CELLS, 0, "push(pop() * CELL_SZ);"
+"WITHIN", WITHIN, 0, "f_within();"
 
 // memory access
 "!", STORE, 0, "int addr = pop(); int value = pop(); store(addr, value);"
@@ -50,6 +71,9 @@
 
 
 
+
+
+
 // string output
 "TYPE", TYPE, 0, "int size = pop(); int addr = pop(); print_string(addr, size);"
 "EMIT", EMIT, 0, "print_char(pop());"
@@ -78,16 +102,7 @@
 "RDEPTH", RDEPTH, 0, "push(vm.rstack->depth());"
 "CS_DEPTH", CS_DEPTH, 0, "push(vm.cs_stack->depth());"
 
-//-----------------------------------------------------------------------------
-// STRINGS
-//-----------------------------------------------------------------------------
-
-//-----------------------------------------------------------------------------
-// TOOLS
-//-----------------------------------------------------------------------------
-
 "THROW", THROW, 0
-"+", PLUS, 0
 "ENVIRONMENT?", ENVIRONMENT_Q, 0
 
 "COUNT", COUNT, 0
