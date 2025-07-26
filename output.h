@@ -26,6 +26,8 @@ private:
     int m_ptr;
 };
 
+void print_char(char c);
+void print_spaces(int size);
 void print_string(int addr, int size);
 void print_string(const char* str, int size);
 

@@ -39,8 +39,8 @@ VM::VM() {
 	// top of memory
 	rstack = reinterpret_cast<Stack*>(mem.alloc_top(sizeof(Stack)));
 	rstack->init();
-	sstack = reinterpret_cast<Stack*>(mem.alloc_top(sizeof(Stack)));
-	sstack->init();
+	cs_stack = reinterpret_cast<Stack*>(mem.alloc_top(sizeof(Stack)));
+	cs_stack->init();
 	stack = reinterpret_cast<Stack*>(mem.alloc_top(sizeof(Stack)));
 	stack->init();
 

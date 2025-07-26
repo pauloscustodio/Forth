@@ -56,19 +56,41 @@ static inline const string BLOCK_FILENAME = "forth.blk";
 
 enum {
     //@@BEGIN: WordsIdDeclaration
+    idBL, // BL
     idTRUE, // TRUE
     idFALSE, // FALSE
     idS0, // S0
     idR0, // R0
-    idSTRUCT0, // STRUCT0
+    idCS0, // CS0
     idBASE, // BASE
     idSTATE, // STATE
     idDPL, // DPL
     idTRACE, // TRACE
+    idPAD, // PAD
     idSTORE, // !
     idFETCH, // @
     idC_STORE, // C!
     idC_FETCH, // C@
+    idDROP, // DROP
+    idSWAP, // SWAP
+    idDUP, // DUP
+    idQ_DUP, // ?DUP
+    idOVER, // OVER
+    idROT, // ROT
+    idMINUS_ROT, // -ROT
+    idNIP, // NIP
+    idPICK, // PICK
+    idROLL, // ROLL
+    idTUCK, // TUCK
+    idTWO_DROP, // 2DROP
+    idTWO_SWAP, // 2SWAP
+    idTWO_DUP, // 2DUP
+    idTWO_OVER, // 2OVER
+    idTWO_ROT, // 2ROT
+    idMINUS_2ROT, // -2ROT
+    idDEPTH, // DEPTH
+    idSP_FETCH, // SP@
+    idSP_STORE, // SP!
     idTYPE, // TYPE
     idEMIT, // EMIT
     idCR, // CR
@@ -86,14 +108,9 @@ enum {
     idU_DOT, // U.
     idDOT_R, // .R
     idU_DOT_R, // U.R
-    idDEPTH, // DEPTH
     idRDEPTH, // RDEPTH
-    idSDEPTH, // SDEPTH
-    idPAD, // PAD
+    idCS_DEPTH, // CS_DEPTH
     idTHROW, // THROW
-    idDROP, // DROP
-    idDUP, // DUP
-    idPICK, // PICK
     idPLUS, // +
     idENVIRONMENT_Q, // ENVIRONMENT?
     idCOUNT, // COUNT
@@ -105,24 +122,49 @@ enum {
     idCOMMA, // ,
     idC_COMMA, // C,
     idALIGN, // ALIGN
+    idDABS, // DABS
+    idDECIMAL, // DECIMAL
+    idHEX, // HEX
     //@@END
     MAX_WORD_ID
 };
 
 //@@BEGIN: WordsXtDeclaration
+extern int xtBL; // BL
 extern int xtTRUE; // TRUE
 extern int xtFALSE; // FALSE
 extern int xtS0; // S0
 extern int xtR0; // R0
-extern int xtSTRUCT0; // STRUCT0
+extern int xtCS0; // CS0
 extern int xtBASE; // BASE
 extern int xtSTATE; // STATE
 extern int xtDPL; // DPL
 extern int xtTRACE; // TRACE
+extern int xtPAD; // PAD
 extern int xtSTORE; // !
 extern int xtFETCH; // @
 extern int xtC_STORE; // C!
 extern int xtC_FETCH; // C@
+extern int xtDROP; // DROP
+extern int xtSWAP; // SWAP
+extern int xtDUP; // DUP
+extern int xtQ_DUP; // ?DUP
+extern int xtOVER; // OVER
+extern int xtROT; // ROT
+extern int xtMINUS_ROT; // -ROT
+extern int xtNIP; // NIP
+extern int xtPICK; // PICK
+extern int xtROLL; // ROLL
+extern int xtTUCK; // TUCK
+extern int xtTWO_DROP; // 2DROP
+extern int xtTWO_SWAP; // 2SWAP
+extern int xtTWO_DUP; // 2DUP
+extern int xtTWO_OVER; // 2OVER
+extern int xtTWO_ROT; // 2ROT
+extern int xtMINUS_2ROT; // -2ROT
+extern int xtDEPTH; // DEPTH
+extern int xtSP_FETCH; // SP@
+extern int xtSP_STORE; // SP!
 extern int xtTYPE; // TYPE
 extern int xtEMIT; // EMIT
 extern int xtCR; // CR
@@ -140,14 +182,9 @@ extern int xtD_DOT_R; // D.R
 extern int xtU_DOT; // U.
 extern int xtDOT_R; // .R
 extern int xtU_DOT_R; // U.R
-extern int xtDEPTH; // DEPTH
 extern int xtRDEPTH; // RDEPTH
-extern int xtSDEPTH; // SDEPTH
-extern int xtPAD; // PAD
+extern int xtCS_DEPTH; // CS_DEPTH
 extern int xtTHROW; // THROW
-extern int xtDROP; // DROP
-extern int xtDUP; // DUP
-extern int xtPICK; // PICK
 extern int xtPLUS; // +
 extern int xtENVIRONMENT_Q; // ENVIRONMENT?
 extern int xtCOUNT; // COUNT
@@ -159,14 +196,18 @@ extern int xtFIND; // FIND
 extern int xtCOMMA; // ,
 extern int xtC_COMMA; // C,
 extern int xtALIGN; // ALIGN
+extern int xtDABS; // DABS
+extern int xtDECIMAL; // DECIMAL
+extern int xtHEX; // HEX
 //@@END
 
 //@@BEGIN: Constants
+static inline const int cBL = BL; // BL
 static inline const int cTRUE = F_TRUE; // TRUE
 static inline const int cFALSE = F_FALSE; // FALSE
 static inline const int cS0 = STACK_SZ; // S0
 static inline const int cR0 = STACK_SZ; // R0
-static inline const int cSTRUCT0 = STACK_SZ; // STRUCT0
+static inline const int cCS0 = STACK_SZ; // CS0
 //@@END
 
 // user variables
@@ -182,19 +223,41 @@ struct User {
 };
 
 //@@BEGIN: WordsDeclaration
+void fBL(); // BL
 void fTRUE(); // TRUE
 void fFALSE(); // FALSE
 void fS0(); // S0
 void fR0(); // R0
-void fSTRUCT0(); // STRUCT0
+void fCS0(); // CS0
 void fBASE(); // BASE
 void fSTATE(); // STATE
 void fDPL(); // DPL
 void fTRACE(); // TRACE
+void fPAD(); // PAD
 void fSTORE(); // !
 void fFETCH(); // @
 void fC_STORE(); // C!
 void fC_FETCH(); // C@
+void fDROP(); // DROP
+void fSWAP(); // SWAP
+void fDUP(); // DUP
+void fQ_DUP(); // ?DUP
+void fOVER(); // OVER
+void fROT(); // ROT
+void fMINUS_ROT(); // -ROT
+void fNIP(); // NIP
+void fPICK(); // PICK
+void fROLL(); // ROLL
+void fTUCK(); // TUCK
+void fTWO_DROP(); // 2DROP
+void fTWO_SWAP(); // 2SWAP
+void fTWO_DUP(); // 2DUP
+void fTWO_OVER(); // 2OVER
+void fTWO_ROT(); // 2ROT
+void fMINUS_2ROT(); // -2ROT
+void fDEPTH(); // DEPTH
+void fSP_FETCH(); // SP@
+void fSP_STORE(); // SP!
 void fTYPE(); // TYPE
 void fEMIT(); // EMIT
 void fCR(); // CR
@@ -212,14 +275,9 @@ void fD_DOT_R(); // D.R
 void fU_DOT(); // U.
 void fDOT_R(); // .R
 void fU_DOT_R(); // U.R
-void fDEPTH(); // DEPTH
 void fRDEPTH(); // RDEPTH
-void fSDEPTH(); // SDEPTH
-void fPAD(); // PAD
+void fCS_DEPTH(); // CS_DEPTH
 void fTHROW(); // THROW
-void fDROP(); // DROP
-void fDUP(); // DUP
-void fPICK(); // PICK
 void fPLUS(); // +
 void fENVIRONMENT_Q(); // ENVIRONMENT?
 void fCOUNT(); // COUNT
@@ -231,13 +289,16 @@ void fFIND(); // FIND
 void fCOMMA(); // ,
 void fC_COMMA(); // C,
 void fALIGN(); // ALIGN
+void fDABS(); // DABS
+void fDECIMAL(); // DECIMAL
+void fHEX(); // HEX
 //@@END
 
 // alignment and double cells
 int aligned(int x);
 int dcell_lo(dint x);
 int dcell_hi(dint x);
-int dcell(int hi, int lo);
+dint dcell(int hi, int lo);
 
 // pointer - address conversion
 int mem_addr(const char* ptr);
@@ -263,18 +324,26 @@ void align();
 void push(int value);
 int pop();
 int peek(int depth = 0);
+int depth();
+void roll(int depth);
 
 void dpush(dint value);
 dint dpop();
 dint dpeek(int depth = 0);
 
-void spush(int value);
-int spop();
-int speek(int depth = 0);
+void cs_push(int value);
+int cs_pop();
+int cs_peek(int depth = 0);
+int cs_depth();
 
-void rpush(int value);
-int rpop();
-int rpeek(int depth = 0);
+void r_push(int value);
+int r_pop();
+int r_peek(int depth = 0);
+int r_depth();
+
+void r_dpush(dint value);
+dint r_dpop();
+dint r_dpeek(int depth = 0);
 
 // create dictionary entries
 void create_dictionary();

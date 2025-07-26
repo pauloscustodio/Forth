@@ -19,11 +19,13 @@ public:
 	void dpush(dint value);
 	dint dpop();
 	dint dpeek(int depth = 0) const;
-	void print() const;
+    int depth() const { return STACK_SZ - m_ptr; }
+	void roll(int depth);
 
     int ptr() const { return m_ptr; }
-    int depth() const { return STACK_SZ - m_ptr; }
 	void set_ptr(int ptr);
+
+	void print() const;
 
 private:
 	int m_stack[STACK_SZ];

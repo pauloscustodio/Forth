@@ -2,7 +2,7 @@
 
 BEGIN { use lib 't'; require 'testlib.pl'; }
 
-note "Test PAD";
-forth_ok("PAD .S", "( 4100 )");
+note "Test EMIT";
+forth_ok("33 EMIT", "!");
 
 end_test;

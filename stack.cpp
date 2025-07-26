@@ -70,6 +70,26 @@ dint Stack::dpeek(int depth) const {
 	return dcell(hi, lo);
 }
 
+// e.g. roll(1)
+// | 1 | 2 |    --> | 2 | 1 |
+// ^sp ^bot
+void Stack::roll(int depth) {
+	if (depth < 0)
+		error(Error::InvalidMemoryAddress);
+	else if (depth == 0)
+		; // ignore
+	else {
+		int bot = m_ptr + depth;
+		if (bot >= STACK_SZ)
+			error(Error::StackUnderflow);
+		else {
+			int bot_value = m_stack[bot];
+			memmove(&m_stack[m_ptr + 1], &m_stack[m_ptr], depth * CELL_SZ);
+			m_stack[m_ptr] = bot_value;
+		}
+	}
+}
+
 void Stack::print() const {
 	cout << "( ";
 	for (int i = STACK_SZ - 1; i >= m_ptr; i--)

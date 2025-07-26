@@ -14,6 +14,9 @@
 // Unsorted words
 //-----------------------------------------------------------------------------
 
+// characters
+"BL", BL, BL
+
 // boolean constants
 "TRUE", TRUE, F_TRUE
 "FALSE", FALSE, F_FALSE
@@ -21,4 +24,5 @@
 // stack sizes
 "S0", S0, STACK_SZ
 "R0", R0, STACK_SZ
-"STRUCT0", STRUCT0, STACK_SZ
+"CS0", CS0, STACK_SZ
+

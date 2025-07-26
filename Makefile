@@ -19,8 +19,7 @@ DEFS	= $(wildcard *.def)
 OBJS 	= $(SRCS:.cpp=.o)
 DEPENDS	= $(SRCS:.cpp=.d)
 
-TEMPLATE_CPP= errors.cpp forth.cpp
-TEMPLATE_H	= errors.h   forth.h  
+TEMPLATE= errors.cpp errors.h forth.cpp forth.h
 
 ASTYLE	= astyle --style=attach --pad-oper --align-pointer=type \
 		  --break-closing-braces --remove-braces --attach-return-type \
@@ -34,11 +33,10 @@ $(PROJ)$(EXE): $(OBJS) $(DEFS)
 	$(CXX) $(CXXFLAGS) -o $(PROJ)$(EXE) $(OBJS)
 
 # preprocess
-$(patsubst %.cpp,%.o,$(TEMPLATE_CPP)):	$(PROJ).pp
-$(patsubst %.h,%.o,$(TEMPLATE_H)):		$(PROJ).pp
+$(OBJS): $(PROJ).pp
 
-$(PROJ).pp: $(TEMPLATE_CPP) $(TEMPLATE_H) $(DEFS) mkcode.pl Makefile
-	perl mkcode.pl $(TEMPLATE_CPP) $(TEMPLATE_H)
+$(PROJ).pp: $(TEMPLATE) $(DEFS) mkcode.pl Makefile
+	perl mkcode.pl $(TEMPLATE)
 	touch $(PROJ).pp
 
 clean:

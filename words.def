@@ -12,39 +12,71 @@
 // Unsorted words
 //-----------------------------------------------------------------------------
 
+// PAD
+"PAD", PAD, 0, "push(mem_addr(vm.pad->pad()));"
+
 // memory access
-"!", STORE, 0
-"@", FETCH, 0
-"C!", C_STORE, 0
-"C@", C_FETCH, 0
+"!", STORE, 0, "int addr = pop(); int value = pop(); store(addr, value);"
+"@", FETCH, 0, "int addr = pop(); int value = fetch(addr); push(value);"
+"C!", C_STORE, 0, "int addr = pop(); int value = pop(); cstore(addr, value);"
+"C@", C_FETCH, 0, "int addr = pop(); int value = cfetch(addr); push(value);"
+
+// dictionary
+
+// parameter stack
+"DROP", DROP, 0, "pop();"
+"SWAP", SWAP, 0, "int a = pop(); int b = pop(); push(a); push(b);"
+"DUP", DUP, 0, "push(peek(0));"
+"?DUP", Q_DUP, 0, "int a = peek(); if (a) push(a);"
+"OVER", OVER, 0, "push(peek(1));"
+"ROT", ROT, 0, "int c = pop(); int b = pop(); int a = pop(); push(b); push(c); push(a);"
+"-ROT", MINUS_ROT, 0, "int c = pop(); int b = pop(); int a = pop(); push(c); push(a); push(b);"
+"NIP", NIP, 0, "int a = pop(); pop(); push(a);"
+"PICK", PICK, 0, "push(peek(pop()));"
+"ROLL", ROLL, 0, "roll(pop());"
+"TUCK", TUCK, 0, "int a = pop(); int b = pop(); push(a); push(b); push(a);"
+
+"2DROP", TWO_DROP, 0, "dpop();"
+"2SWAP", TWO_SWAP, 0, "dint a = dpop(); dint b = dpop(); dpush(a); dpush(b);"
+"2DUP", TWO_DUP, 0, "push(peek(1)); push(peek(1));"
+"2OVER", TWO_OVER, 0, "push(peek(3)); push(peek(3));"
+"2ROT", TWO_ROT, 0, "dint c = dpop(); dint b = dpop(); dint a = dpop(); dpush(b); dpush(c); dpush(a);"
+"-2ROT", MINUS_2ROT, 0, "dint c = dpop(); dint b = dpop(); dint a = dpop(); dpush(c); dpush(a); dpush(b);"
+
+"DEPTH", DEPTH, 0, "push(vm.stack->depth());"
+
+"SP@", SP_FETCH, 0, "push(vm.stack->ptr());"
+"SP!", SP_STORE, 0, "vm.stack->set_ptr(pop());"
+
+
 
 // string output
-"TYPE", TYPE, 0
-"EMIT", EMIT, 0
-"CR", CR, 0
-"SPACE", SPACE, 0
-"SPACES", SPACES, 0
+"TYPE", TYPE, 0, "int size = pop(); int addr = pop(); print_string(addr, size);"
+"EMIT", EMIT, 0, "print_char(pop());"
+"CR", CR, 0, "print_char(CR);"
+"SPACE", SPACE, 0, "print_char(BL);"
+"SPACES", SPACES, 0, "print_spaces(pop());"
 
 // formatted number output
-"<#", LESS_HASH, 0
-"#", HASH, 0
-"#S", HASH_S, 0
-"HOLD", HOLD, 0
-"SIGN", SIGN, 0
-"#>", HASH_GREATER, 0
+"<#", LESS_HASH, 0, "vm.number_output->start();"
+"#", HASH, 0, "vm.number_output->add_digit();"
+"#S", HASH_S, 0, "vm.number_output->add_digits();"
+"HOLD", HOLD, 0, "vm.number_output->add_char(pop());"
+"SIGN", SIGN, 0, "vm.number_output->add_sign(pop());"
+"#>", HASH_GREATER, 0, "vm.number_output->end();"
 
 // number output
-".", DOT, 0
-"D.", D_DOT, 0
-"D.R", D_DOT_R, 0
-"U.", U_DOT, 0
-".R", DOT_R, 0
-"U.R", U_DOT_R, 0
+".", DOT, 0, "print_number(pop());"
+"D.", D_DOT, 0, "print_number(dpop());"
+"D.R", D_DOT_R, 0, "int width = pop(); dint value = dpop(); print_number(value, width);"
+"U.", U_DOT, 0, "print_unsigned_number(pop());"
+".R", DOT_R, 0, "int width = pop(); int value = pop(); print_number(value, width);"
+"U.R", U_DOT_R, 0, "int width = pop(); uint value = pop(); print_unsigned_number(value, width);"
 
-// stack manipulation
-"DEPTH", DEPTH, 0
-"RDEPTH", RDEPTH, 0
-"SDEPTH", SDEPTH, 0
+
+
+"RDEPTH", RDEPTH, 0, "push(vm.rstack->depth());"
+"CS_DEPTH", CS_DEPTH, 0, "push(vm.cs_stack->depth());"
 
 //-----------------------------------------------------------------------------
 // STRINGS
@@ -54,18 +86,7 @@
 // TOOLS
 //-----------------------------------------------------------------------------
 
-// Variables
-"PAD", PAD, 0
-
-// Memory access
-
-// Stack manipulation
-
-
 "THROW", THROW, 0
-"DROP", DROP, 0
-"DUP", DUP, 0
-"PICK", PICK, 0
 "+", PLUS, 0
 "ENVIRONMENT?", ENVIRONMENT_Q, 0
 
@@ -81,3 +102,7 @@
 ",", COMMA, 0
 "C,", C_COMMA, 0
 "ALIGN", ALIGN, 0
+"DABS", DABS, 0
+
+"DECIMAL", DECIMAL, 0, "vm.user->BASE = 10;"
+"HEX", HEX, 0, "vm.user->BASE = 16;"

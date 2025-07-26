@@ -101,13 +101,22 @@ static void print_dint_uint_aligned(int width, int sign) {
     vm.number_output->end_print();
 }
 
+void print_char(char c) {
+    cout << c;
+}
+
+void print_spaces(int size) {
+    for (int i = 0; i < size; ++i)
+        print_char(BL);
+}
+
 void print_string(int addr, int size) {
     print_string(mem_char_ptr(addr), size);
 }
 
 void print_string(const char* str, int size) {
     for (int i = 0; i < size; ++i)
-        cout << str[i];
+        print_char(str[i]);
 }
 
 void print_number(int value) {

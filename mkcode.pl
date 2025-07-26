@@ -86,8 +86,7 @@ sub patch_file {
 			my $prefix = $1;
 			push @out, $_;
 			for my $var (@vars) {
-				push @out, $prefix."void f".$var->{id}."() ".
-						"{ push(mem_addr(&vm.user->".$var->{id}.")); } // ".$var->{name}."\n";
+				push @out, $prefix."// ".$var->{name}."\n".$prefix."void f".$var->{id}."() {\n".$prefix."\tpush(mem_addr(&vm.user->".$var->{id}."));\n".$prefix."}\n\n";
 			}
 			while (@in && $in[0] !~ /^\s*\/\/\@\@END/) {
 				shift @in;
@@ -107,8 +106,7 @@ sub patch_file {
 			my $prefix = $1;
 			push @out, $_;
 			for my $const (@const) {
-				push @out, $prefix."void f".$const->{id}."() ".
-						"{ push(".$const->{value}."); } // ".$const->{name}."\n";
+				push @out, $prefix."// ".$const->{name}."\n".$prefix."void f".$const->{id}."() {\n".$prefix."\tpush(".$const->{value}.");\n".$prefix."}\n\n";
 			}
 			while (@in && $in[0] !~ /^\s*\/\/\@\@END/) {
 				shift @in;
@@ -157,6 +155,18 @@ sub patch_file {
 			}
 			for my $word (@words) {
 				push @out, $prefix."void f".$word->{id}."(); // ".$word->{name}."\n";
+			}
+			while (@in && $in[0] !~ /^\s*\/\/\@\@END/) {
+				shift @in;
+			}
+		}
+		elsif (/^(\s*)\/\/\@\@BEGIN:\s*WordsImplementation\b/) {
+			my $prefix = $1;
+			push @out, $_;
+			for my $word (@words) {
+				if ($word->{code}) {
+					push @out, $prefix."// ".$word->{name}."\n".$prefix."void f".$word->{id}."() {\n".$prefix."\t".$word->{code}."\n".$prefix."}\n\n";
+				}
 			}
 			while (@in && $in[0] !~ /^\s*\/\/\@\@END/) {
 				shift @in;
@@ -289,8 +299,8 @@ sub parse_words {
 	open my $fh, "<", $filename or die "$filename: $!";
 	while (my $row = $csv->getline($fh)) {
 		next if $row->[0] =~ /^\/\//;
-		my ($name, $id, $flags) = @$row;
-		push @words, {name=>$name, id=>$id, flags=>$flags};
+		my ($name, $id, $flags, $code) = @$row;
+		push @words, {name=>$name, id=>$id, flags=>$flags, code=>$code};
 	}
 	close $fh;
 	

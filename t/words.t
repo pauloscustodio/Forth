@@ -5,9 +5,11 @@ BEGIN { use lib 't'; require 'testlib.pl'; }
 note "Test WORDS";
 
 forth_ok("words", <<'END');
-ALIGN C, , FIND WORDS WORD .S S" COUNT ENVIRONMENT? + PICK DUP DROP THROW PAD
-U.R .R U. D.R D. . #> SIGN HOLD #S # <# SPACES SPACE CR EMIT TYPE C@ C! @ !
-STATE BASE
+HEX DECIMAL DABS ALIGN C, , FIND WORDS WORD .S S" COUNT ENVIRONMENT? + THROW
+CS_DEPTH RDEPTH U.R .R U. D.R D. . #> SIGN HOLD #S # <# SPACES SPACE CR EMIT
+TYPE SP! SP@ DEPTH -2ROT 2ROT 2OVER 2DUP 2SWAP 2DROP TUCK ROLL PICK NIP -ROT
+ROT OVER ?DUP DUP SWAP DROP C@ C! @ ! PAD TRACE DPL STATE BASE CS0 R0 S0 FALSE
+TRUE BL
 END
 die if !Test::More->builder->is_passing;
 
@@ -21,7 +23,7 @@ while (<>) {
 	next unless /^note ['"]Test (.*)['"];/;
 	my $word = $1;
 	$word = '\\' if $word eq '\\\\';
-	ok exists $words{$word}, "$word exists";
+	ok exists $words{$word}, "$word tested";
 	delete $untested{$word};
 }
 

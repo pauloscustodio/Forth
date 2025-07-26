@@ -7,6 +7,7 @@
 #include "dict.h"
 #include "errors.h"
 #include "forth.h"
+#include "math.h"
 #include "parser.h"
 #include "vm.h"
 #include <algorithm>
@@ -17,19 +18,41 @@
 using namespace std;
 
 //@@BEGIN: WordsXtDefinition
+int xtBL = 0; // BL
 int xtTRUE = 0; // TRUE
 int xtFALSE = 0; // FALSE
 int xtS0 = 0; // S0
 int xtR0 = 0; // R0
-int xtSTRUCT0 = 0; // STRUCT0
+int xtCS0 = 0; // CS0
 int xtBASE = 0; // BASE
 int xtSTATE = 0; // STATE
 int xtDPL = 0; // DPL
 int xtTRACE = 0; // TRACE
+int xtPAD = 0; // PAD
 int xtSTORE = 0; // !
 int xtFETCH = 0; // @
 int xtC_STORE = 0; // C!
 int xtC_FETCH = 0; // C@
+int xtDROP = 0; // DROP
+int xtSWAP = 0; // SWAP
+int xtDUP = 0; // DUP
+int xtQ_DUP = 0; // ?DUP
+int xtOVER = 0; // OVER
+int xtROT = 0; // ROT
+int xtMINUS_ROT = 0; // -ROT
+int xtNIP = 0; // NIP
+int xtPICK = 0; // PICK
+int xtROLL = 0; // ROLL
+int xtTUCK = 0; // TUCK
+int xtTWO_DROP = 0; // 2DROP
+int xtTWO_SWAP = 0; // 2SWAP
+int xtTWO_DUP = 0; // 2DUP
+int xtTWO_OVER = 0; // 2OVER
+int xtTWO_ROT = 0; // 2ROT
+int xtMINUS_2ROT = 0; // -2ROT
+int xtDEPTH = 0; // DEPTH
+int xtSP_FETCH = 0; // SP@
+int xtSP_STORE = 0; // SP!
 int xtTYPE = 0; // TYPE
 int xtEMIT = 0; // EMIT
 int xtCR = 0; // CR
@@ -47,14 +70,9 @@ int xtD_DOT_R = 0; // D.R
 int xtU_DOT = 0; // U.
 int xtDOT_R = 0; // .R
 int xtU_DOT_R = 0; // U.R
-int xtDEPTH = 0; // DEPTH
 int xtRDEPTH = 0; // RDEPTH
-int xtSDEPTH = 0; // SDEPTH
-int xtPAD = 0; // PAD
+int xtCS_DEPTH = 0; // CS_DEPTH
 int xtTHROW = 0; // THROW
-int xtDROP = 0; // DROP
-int xtDUP = 0; // DUP
-int xtPICK = 0; // PICK
 int xtPLUS = 0; // +
 int xtENVIRONMENT_Q = 0; // ENVIRONMENT?
 int xtCOUNT = 0; // COUNT
@@ -66,6 +84,9 @@ int xtFIND = 0; // FIND
 int xtCOMMA = 0; // ,
 int xtC_COMMA = 0; // C,
 int xtALIGN = 0; // ALIGN
+int xtDABS = 0; // DABS
+int xtDECIMAL = 0; // DECIMAL
+int xtHEX = 0; // HEX
 //@@END
 
 // alignment and double cells
@@ -81,9 +102,10 @@ int dcell_hi(dint x) {
 	return (x >> 32) & 0xffffffffLL;
 }
 
-int dcell(int hi, int lo) {
-	return (static_cast<udint>(dcell_lo(hi)) << 32) |
-		static_cast<udint>(dcell_lo(lo));
+dint dcell(int hi, int lo) {
+	return
+		((static_cast<udint>(hi) & 0xffffffffLL) << 32) |
+		(static_cast<udint>(lo) & 0xffffffffLL);
 }
 
 // pointer - address conversion
@@ -158,6 +180,14 @@ int peek(int depth) {
 	return vm.stack->peek(depth);
 }
 
+int depth() {
+	return vm.stack->depth();
+}
+
+void roll(int depth) {
+	vm.stack->roll(depth);
+}
+
 void dpush(dint value) {
 	vm.stack->dpush(value);
 }
@@ -170,45 +200,87 @@ dint dpeek(int depth) {
 	return vm.stack->dpeek(depth);
 }
 
-void spush(int value) {
-	vm.sstack->push(value);
+void cs_push(int value) {
+	vm.cs_stack->push(value);
 }
 
-int spop() {
-	return vm.sstack->pop();
+int cs_pop() {
+	return vm.cs_stack->pop();
 }
 
-int speek(int depth) {
-	return vm.sstack->peek(depth);
+int cs_peek(int depth) {
+	return vm.cs_stack->peek(depth);
 }
 
-void rpush(int value) {
+int cs_depth() {
+	return vm.cs_stack->depth();
+}
+
+void r_push(int value) {
 	vm.rstack->push(value);
 }
 
-int rpop() {
+int r_pop() {
 	return vm.rstack->pop();
 }
 
-int rpeek(int depth) {
+int r_peek(int depth) {
 	return vm.rstack->peek(depth);
+}
+
+int r_depth() {
+	return vm.rstack->depth();
+}
+
+void r_dpush(dint value) {
+	vm.rstack->dpush(value);
+}
+
+dint r_dpop() {
+	return vm.rstack->dpop();
+}
+
+dint r_dpeek(int depth) {
+	return vm.rstack->dpeek(depth);
 }
 
 void create_dictionary() {
 	//@@BEGIN: WordsCreateDictionary
+	xtBL = vm.dict->create("BL", 0, idBL);
 	xtTRUE = vm.dict->create("TRUE", 0, idTRUE);
 	xtFALSE = vm.dict->create("FALSE", 0, idFALSE);
 	xtS0 = vm.dict->create("S0", 0, idS0);
 	xtR0 = vm.dict->create("R0", 0, idR0);
-	xtSTRUCT0 = vm.dict->create("STRUCT0", 0, idSTRUCT0);
+	xtCS0 = vm.dict->create("CS0", 0, idCS0);
 	xtBASE = vm.dict->create("BASE", 0, idBASE);
 	xtSTATE = vm.dict->create("STATE", 0, idSTATE);
 	xtDPL = vm.dict->create("DPL", 0, idDPL);
 	xtTRACE = vm.dict->create("TRACE", 0, idTRACE);
+	xtPAD = vm.dict->create("PAD", 0, idPAD);
 	xtSTORE = vm.dict->create("!", 0, idSTORE);
 	xtFETCH = vm.dict->create("@", 0, idFETCH);
 	xtC_STORE = vm.dict->create("C!", 0, idC_STORE);
 	xtC_FETCH = vm.dict->create("C@", 0, idC_FETCH);
+	xtDROP = vm.dict->create("DROP", 0, idDROP);
+	xtSWAP = vm.dict->create("SWAP", 0, idSWAP);
+	xtDUP = vm.dict->create("DUP", 0, idDUP);
+	xtQ_DUP = vm.dict->create("?DUP", 0, idQ_DUP);
+	xtOVER = vm.dict->create("OVER", 0, idOVER);
+	xtROT = vm.dict->create("ROT", 0, idROT);
+	xtMINUS_ROT = vm.dict->create("-ROT", 0, idMINUS_ROT);
+	xtNIP = vm.dict->create("NIP", 0, idNIP);
+	xtPICK = vm.dict->create("PICK", 0, idPICK);
+	xtROLL = vm.dict->create("ROLL", 0, idROLL);
+	xtTUCK = vm.dict->create("TUCK", 0, idTUCK);
+	xtTWO_DROP = vm.dict->create("2DROP", 0, idTWO_DROP);
+	xtTWO_SWAP = vm.dict->create("2SWAP", 0, idTWO_SWAP);
+	xtTWO_DUP = vm.dict->create("2DUP", 0, idTWO_DUP);
+	xtTWO_OVER = vm.dict->create("2OVER", 0, idTWO_OVER);
+	xtTWO_ROT = vm.dict->create("2ROT", 0, idTWO_ROT);
+	xtMINUS_2ROT = vm.dict->create("-2ROT", 0, idMINUS_2ROT);
+	xtDEPTH = vm.dict->create("DEPTH", 0, idDEPTH);
+	xtSP_FETCH = vm.dict->create("SP@", 0, idSP_FETCH);
+	xtSP_STORE = vm.dict->create("SP!", 0, idSP_STORE);
 	xtTYPE = vm.dict->create("TYPE", 0, idTYPE);
 	xtEMIT = vm.dict->create("EMIT", 0, idEMIT);
 	xtCR = vm.dict->create("CR", 0, idCR);
@@ -226,14 +298,9 @@ void create_dictionary() {
 	xtU_DOT = vm.dict->create("U.", 0, idU_DOT);
 	xtDOT_R = vm.dict->create(".R", 0, idDOT_R);
 	xtU_DOT_R = vm.dict->create("U.R", 0, idU_DOT_R);
-	xtDEPTH = vm.dict->create("DEPTH", 0, idDEPTH);
 	xtRDEPTH = vm.dict->create("RDEPTH", 0, idRDEPTH);
-	xtSDEPTH = vm.dict->create("SDEPTH", 0, idSDEPTH);
-	xtPAD = vm.dict->create("PAD", 0, idPAD);
+	xtCS_DEPTH = vm.dict->create("CS_DEPTH", 0, idCS_DEPTH);
 	xtTHROW = vm.dict->create("THROW", 0, idTHROW);
-	xtDROP = vm.dict->create("DROP", 0, idDROP);
-	xtDUP = vm.dict->create("DUP", 0, idDUP);
-	xtPICK = vm.dict->create("PICK", 0, idPICK);
 	xtPLUS = vm.dict->create("+", 0, idPLUS);
 	xtENVIRONMENT_Q = vm.dict->create("ENVIRONMENT?", 0, idENVIRONMENT_Q);
 	xtCOUNT = vm.dict->create("COUNT", 0, idCOUNT);
@@ -245,6 +312,9 @@ void create_dictionary() {
 	xtCOMMA = vm.dict->create(",", 0, idCOMMA);
 	xtC_COMMA = vm.dict->create("C,", 0, idC_COMMA);
 	xtALIGN = vm.dict->create("ALIGN", 0, idALIGN);
+	xtDABS = vm.dict->create("DABS", 0, idDABS);
+	xtDECIMAL = vm.dict->create("DECIMAL", 0, idDECIMAL);
+	xtHEX = vm.dict->create("HEX", 0, idHEX);
 	//@@END
 }
 
@@ -256,19 +326,41 @@ void execute_word(int xt) {
 	else if (code < MAX_WORD_ID) {
 		switch (code) {
 		//@@BEGIN: WordsIdExecution
+		case idBL: fBL(); break; // BL
 		case idTRUE: fTRUE(); break; // TRUE
 		case idFALSE: fFALSE(); break; // FALSE
 		case idS0: fS0(); break; // S0
 		case idR0: fR0(); break; // R0
-		case idSTRUCT0: fSTRUCT0(); break; // STRUCT0
+		case idCS0: fCS0(); break; // CS0
 		case idBASE: fBASE(); break; // BASE
 		case idSTATE: fSTATE(); break; // STATE
 		case idDPL: fDPL(); break; // DPL
 		case idTRACE: fTRACE(); break; // TRACE
+		case idPAD: fPAD(); break; // PAD
 		case idSTORE: fSTORE(); break; // !
 		case idFETCH: fFETCH(); break; // @
 		case idC_STORE: fC_STORE(); break; // C!
 		case idC_FETCH: fC_FETCH(); break; // C@
+		case idDROP: fDROP(); break; // DROP
+		case idSWAP: fSWAP(); break; // SWAP
+		case idDUP: fDUP(); break; // DUP
+		case idQ_DUP: fQ_DUP(); break; // ?DUP
+		case idOVER: fOVER(); break; // OVER
+		case idROT: fROT(); break; // ROT
+		case idMINUS_ROT: fMINUS_ROT(); break; // -ROT
+		case idNIP: fNIP(); break; // NIP
+		case idPICK: fPICK(); break; // PICK
+		case idROLL: fROLL(); break; // ROLL
+		case idTUCK: fTUCK(); break; // TUCK
+		case idTWO_DROP: fTWO_DROP(); break; // 2DROP
+		case idTWO_SWAP: fTWO_SWAP(); break; // 2SWAP
+		case idTWO_DUP: fTWO_DUP(); break; // 2DUP
+		case idTWO_OVER: fTWO_OVER(); break; // 2OVER
+		case idTWO_ROT: fTWO_ROT(); break; // 2ROT
+		case idMINUS_2ROT: fMINUS_2ROT(); break; // -2ROT
+		case idDEPTH: fDEPTH(); break; // DEPTH
+		case idSP_FETCH: fSP_FETCH(); break; // SP@
+		case idSP_STORE: fSP_STORE(); break; // SP!
 		case idTYPE: fTYPE(); break; // TYPE
 		case idEMIT: fEMIT(); break; // EMIT
 		case idCR: fCR(); break; // CR
@@ -286,14 +378,9 @@ void execute_word(int xt) {
 		case idU_DOT: fU_DOT(); break; // U.
 		case idDOT_R: fDOT_R(); break; // .R
 		case idU_DOT_R: fU_DOT_R(); break; // U.R
-		case idDEPTH: fDEPTH(); break; // DEPTH
 		case idRDEPTH: fRDEPTH(); break; // RDEPTH
-		case idSDEPTH: fSDEPTH(); break; // SDEPTH
-		case idPAD: fPAD(); break; // PAD
+		case idCS_DEPTH: fCS_DEPTH(); break; // CS_DEPTH
 		case idTHROW: fTHROW(); break; // THROW
-		case idDROP: fDROP(); break; // DROP
-		case idDUP: fDUP(); break; // DUP
-		case idPICK: fPICK(); break; // PICK
 		case idPLUS: fPLUS(); break; // +
 		case idENVIRONMENT_Q: fENVIRONMENT_Q(); break; // ENVIRONMENT?
 		case idCOUNT: fCOUNT(); break; // COUNT
@@ -305,6 +392,9 @@ void execute_word(int xt) {
 		case idCOMMA: fCOMMA(); break; // ,
 		case idC_COMMA: fC_COMMA(); break; // C,
 		case idALIGN: fALIGN(); break; // ALIGN
+		case idDABS: fDABS(); break; // DABS
+		case idDECIMAL: fDECIMAL(); break; // DECIMAL
+		case idHEX: fHEX(); break; // HEX
 		//@@END
 		default:
 			assert(0); // not reached
@@ -331,159 +421,293 @@ void User::init() {
 }
 
 //@@BEGIN: ConstImplementation
-void fTRUE() { push(F_TRUE); } // TRUE
-void fFALSE() { push(F_FALSE); } // FALSE
-void fS0() { push(STACK_SZ); } // S0
-void fR0() { push(STACK_SZ); } // R0
-void fSTRUCT0() { push(STACK_SZ); } // STRUCT0
+// BL
+void fBL() {
+	push(BL);
+}
+
+// TRUE
+void fTRUE() {
+	push(F_TRUE);
+}
+
+// FALSE
+void fFALSE() {
+	push(F_FALSE);
+}
+
+// S0
+void fS0() {
+	push(STACK_SZ);
+}
+
+// R0
+void fR0() {
+	push(STACK_SZ);
+}
+
+// CS0
+void fCS0() {
+	push(STACK_SZ);
+}
+
 //@@END
 
 //@@BEGIN: VarsImplementation
-void fBASE() { push(mem_addr(&vm.user->BASE)); } // BASE
-void fSTATE() { push(mem_addr(&vm.user->STATE)); } // STATE
-void fDPL() { push(mem_addr(&vm.user->DPL)); } // DPL
-void fTRACE() { push(mem_addr(&vm.user->TRACE)); } // TRACE
+// BASE
+void fBASE() {
+	push(mem_addr(&vm.user->BASE));
+}
+
+// STATE
+void fSTATE() {
+	push(mem_addr(&vm.user->STATE));
+}
+
+// DPL
+void fDPL() {
+	push(mem_addr(&vm.user->DPL));
+}
+
+// TRACE
+void fTRACE() {
+	push(mem_addr(&vm.user->TRACE));
+}
+
 //@@END
 
-//-----------------------------------------------------------------------------
-// CORE set
-//-----------------------------------------------------------------------------
+//@@BEGIN: WordsImplementation
+// PAD
+void fPAD() {
+	push(mem_addr(vm.pad->pad()));
+}
 
-
-//-----------------------------------------------------------------------------
-// Unsorted words
-//-----------------------------------------------------------------------------
-
-// memory access
+// !
 void fSTORE() {
-	int addr = pop();
-	int value = pop();
-	store(addr, value);
+	int addr = pop(); int value = pop(); store(addr, value);
 }
 
+// @
 void fFETCH() {
-	int addr = pop();
-	int value = fetch(addr);
-	push(value);
+	int addr = pop(); int value = fetch(addr); push(value);
 }
 
+// C!
 void fC_STORE() {
-	int addr = pop();
-	int value = pop();
-	cstore(addr, value);
+	int addr = pop(); int value = pop(); cstore(addr, value);
 }
 
+// C@
 void fC_FETCH() {
-	int addr = pop();
-	int value = cfetch(addr);
-	push(value);
+	int addr = pop(); int value = cfetch(addr); push(value);
 }
 
-// string output
+// DROP
+void fDROP() {
+	pop();
+}
+
+// SWAP
+void fSWAP() {
+	int a = pop(); int b = pop(); push(a); push(b);
+}
+
+// DUP
+void fDUP() {
+	push(peek(0));
+}
+
+// ?DUP
+void fQ_DUP() {
+	int a = peek(); if (a) push(a);
+}
+
+// OVER
+void fOVER() {
+	push(peek(1));
+}
+
+// ROT
+void fROT() {
+	int c = pop(); int b = pop(); int a = pop(); push(b); push(c); push(a);
+}
+
+// -ROT
+void fMINUS_ROT() {
+	int c = pop(); int b = pop(); int a = pop(); push(c); push(a); push(b);
+}
+
+// NIP
+void fNIP() {
+	int a = pop(); pop(); push(a);
+}
+
+// PICK
+void fPICK() {
+	push(peek(pop()));
+}
+
+// ROLL
+void fROLL() {
+	roll(pop());
+}
+
+// TUCK
+void fTUCK() {
+	int a = pop(); int b = pop(); push(a); push(b); push(a);
+}
+
+// 2DROP
+void fTWO_DROP() {
+	dpop();
+}
+
+// 2SWAP
+void fTWO_SWAP() {
+	dint a = dpop(); dint b = dpop(); dpush(a); dpush(b);
+}
+
+// 2DUP
+void fTWO_DUP() {
+	push(peek(1)); push(peek(1));
+}
+
+// 2OVER
+void fTWO_OVER() {
+	push(peek(3)); push(peek(3));
+}
+
+// 2ROT
+void fTWO_ROT() {
+	dint c = dpop(); dint b = dpop(); dint a = dpop(); dpush(b); dpush(c); dpush(a);
+}
+
+// -2ROT
+void fMINUS_2ROT() {
+	dint c = dpop(); dint b = dpop(); dint a = dpop(); dpush(c); dpush(a); dpush(b);
+}
+
+// DEPTH
+void fDEPTH() {
+	push(vm.stack->depth());
+}
+
+// SP@
+void fSP_FETCH() {
+	push(vm.stack->ptr());
+}
+
+// SP!
+void fSP_STORE() {
+	vm.stack->set_ptr(pop());
+}
+
+// TYPE
 void fTYPE() {
-	int size = pop();
-	int addr = pop();
-	print_string(addr, size);
+	int size = pop(); int addr = pop(); print_string(addr, size);
 }
 
+// EMIT
 void fEMIT() {
-	char c = static_cast<char>(pop());
-	cout << c;
+	print_char(pop());
 }
 
+// CR
 void fCR() {
-	cout << endl;
+	print_char(CR);
 }
 
+// SPACE
 void fSPACE() {
-	cout << BL;
+	print_char(BL);
 }
 
+// SPACES
 void fSPACES() {
-	int size = pop();
-	for (int i = 0; i < size; ++i)
-		cout << BL;
+	print_spaces(pop());
 }
 
-// formatted number output
+// <#
 void fLESS_HASH() {
 	vm.number_output->start();
 }
 
+// #
 void fHASH() {
 	vm.number_output->add_digit();
 }
 
+// #S
 void fHASH_S() {
 	vm.number_output->add_digits();
 }
 
+// HOLD
 void fHOLD() {
-	char c = static_cast<char>(pop());
-	vm.number_output->add_char(c);
+	vm.number_output->add_char(pop());
 }
 
+// SIGN
 void fSIGN() {
-	int sign = pop();
-	vm.number_output->add_sign(sign);
+	vm.number_output->add_sign(pop());
 }
 
+// #>
 void fHASH_GREATER() {
 	vm.number_output->end();
 }
 
-// number output
+// .
 void fDOT() {
-	int value = pop();
-	print_number(value);
+	print_number(pop());
 }
 
+// D.
 void fD_DOT() {
-	dint value = dpop();
-	print_number(value);
+	print_number(dpop());
 }
 
+// D.R
 void fD_DOT_R() {
-	int width = pop();
-	dint value = dpop();
-	print_number(value, width);
+	int width = pop(); dint value = dpop(); print_number(value, width);
 }
 
+// U.
 void fU_DOT() {
-	uint value = static_cast<uint>(pop());
-	print_unsigned_number(value);
+	print_unsigned_number(pop());
 }
 
+// .R
 void fDOT_R() {
-	int width = pop();
-	int value = pop();
-	print_number(value, width);
+	int width = pop(); int value = pop(); print_number(value, width);
 }
 
+// U.R
 void fU_DOT_R() {
-	int width = pop();
-	uint value = static_cast<uint>(pop());
-	print_unsigned_number(value, width);
+	int width = pop(); uint value = pop(); print_unsigned_number(value, width);
 }
 
-void fDEPTH() {
-	int depth = vm.stack->depth();
-    push(depth);	
-}
-
+// RDEPTH
 void fRDEPTH() {
-	int depth = vm.rstack->depth();
-	push(depth);
+	push(vm.rstack->depth());
 }
 
-void fSDEPTH() {
-	int depth = vm.sstack->depth();
-	push(depth);
+// CS_DEPTH
+void fCS_DEPTH() {
+	push(vm.cs_stack->depth());
 }
 
+// DECIMAL
+void fDECIMAL() {
+	vm.user->BASE = 10;
+}
 
+// HEX
+void fHEX() {
+	vm.user->BASE = 16;
+}
 
-
+//@@END
 
 void fENVIRONMENT_Q() {
 	int size = pop();
@@ -499,11 +723,6 @@ void fENVIRONMENT_Q() {
 	}
 }
 
-void fPAD() {
-	char* pad = vm.pad->pad();
-	push(mem_addr(pad));
-}
-
 void fCOMMA() {
 	int value = pop();
 	comma(value);
@@ -516,6 +735,11 @@ void fC_COMMA() {
 
 void fALIGN() {
 	align();
+}
+
+void fDABS() {
+	dint a = dabs(dpop());
+	dpush(a);
 }
 
 void fFIND() {
@@ -597,25 +821,6 @@ void fS_QUOTE() {
 		push(mem_addr(word->str()));	// address of word
 		push(word->size());				// length of word
 	}
-}
-
-void fDROP() {
-	pop();
-}
-
-void fDUP() {
-	int value = peek(0);
-	push(value);
-}
-
-void fPICK() {
-	int depth = pop();
-	if (depth < 0) {
-		error(Error::InvalidMemoryAddress);
-		return;
-	}
-	int value = peek(depth);
-	push(value);
 }
 
 void fDOT_S() {
