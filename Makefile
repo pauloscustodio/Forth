@@ -29,8 +29,10 @@ TASKS	?= 9
 
 all: $(PROJ)$(EXE)
 
-$(PROJ)$(EXE): $(OBJS) $(DEFS)
+$(PROJ)$(EXE): $(OBJS) $(DEFS) Makefile
 	$(CXX) $(CXXFLAGS) -o $(PROJ)$(EXE) $(OBJS)
+	perl -e update_readme.pl
+	dos2unix README.md
 
 # preprocess
 $(OBJS): $(PROJ).pp
