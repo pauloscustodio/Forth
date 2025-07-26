@@ -56,6 +56,28 @@ int xtCHARS = 0; // CHARS
 int xtCELL_PLUS = 0; // CELL+
 int xtCELLS = 0; // CELLS
 int xtWITHIN = 0; // WITHIN
+int xtAND = 0; // AND
+int xtOR = 0; // OR
+int xtXOR = 0; // XOR
+int xtINVERT = 0; // INVERT
+int xtLSHIFT = 0; // LSHIFT
+int xtRSHIFT = 0; // RSHIFT
+int xtEQUAL = 0; // =
+int xtDIFFERENT = 0; // <>
+int xtLESS = 0; // <
+int xtLESS_EQUAL = 0; // <=
+int xtGREATER = 0; // >
+int xtGREATER_EQUAL = 0; // >=
+int xtU_LESS = 0; // U<
+int xtU_LESS_EQUAL = 0; // U<=
+int xtU_GREATER = 0; // U>
+int xtU_GREATER_EQUAL = 0; // U>=
+int xtZERO_EQUAL = 0; // 0=
+int xtZERO_DIFFERENT = 0; // 0<>
+int xtZERO_LESS = 0; // 0<
+int xtZERO_LESS_EQUAL = 0; // 0<=
+int xtZERO_GREATER = 0; // 0>
+int xtZERO_GREATER_EQUAL = 0; // 0>=
 int xtSTORE = 0; // !
 int xtFETCH = 0; // @
 int xtC_STORE = 0; // C!
@@ -315,6 +337,28 @@ void create_dictionary() {
 	xtCELL_PLUS = vm.dict->create("CELL+", 0, idCELL_PLUS);
 	xtCELLS = vm.dict->create("CELLS", 0, idCELLS);
 	xtWITHIN = vm.dict->create("WITHIN", 0, idWITHIN);
+	xtAND = vm.dict->create("AND", 0, idAND);
+	xtOR = vm.dict->create("OR", 0, idOR);
+	xtXOR = vm.dict->create("XOR", 0, idXOR);
+	xtINVERT = vm.dict->create("INVERT", 0, idINVERT);
+	xtLSHIFT = vm.dict->create("LSHIFT", 0, idLSHIFT);
+	xtRSHIFT = vm.dict->create("RSHIFT", 0, idRSHIFT);
+	xtEQUAL = vm.dict->create("=", 0, idEQUAL);
+	xtDIFFERENT = vm.dict->create("<>", 0, idDIFFERENT);
+	xtLESS = vm.dict->create("<", 0, idLESS);
+	xtLESS_EQUAL = vm.dict->create("<=", 0, idLESS_EQUAL);
+	xtGREATER = vm.dict->create(">", 0, idGREATER);
+	xtGREATER_EQUAL = vm.dict->create(">=", 0, idGREATER_EQUAL);
+	xtU_LESS = vm.dict->create("U<", 0, idU_LESS);
+	xtU_LESS_EQUAL = vm.dict->create("U<=", 0, idU_LESS_EQUAL);
+	xtU_GREATER = vm.dict->create("U>", 0, idU_GREATER);
+	xtU_GREATER_EQUAL = vm.dict->create("U>=", 0, idU_GREATER_EQUAL);
+	xtZERO_EQUAL = vm.dict->create("0=", 0, idZERO_EQUAL);
+	xtZERO_DIFFERENT = vm.dict->create("0<>", 0, idZERO_DIFFERENT);
+	xtZERO_LESS = vm.dict->create("0<", 0, idZERO_LESS);
+	xtZERO_LESS_EQUAL = vm.dict->create("0<=", 0, idZERO_LESS_EQUAL);
+	xtZERO_GREATER = vm.dict->create("0>", 0, idZERO_GREATER);
+	xtZERO_GREATER_EQUAL = vm.dict->create("0>=", 0, idZERO_GREATER_EQUAL);
 	xtSTORE = vm.dict->create("!", 0, idSTORE);
 	xtFETCH = vm.dict->create("@", 0, idFETCH);
 	xtC_STORE = vm.dict->create("C!", 0, idC_STORE);
@@ -421,6 +465,28 @@ void execute_word(int xt) {
 		case idCELL_PLUS: fCELL_PLUS(); break; // CELL+
 		case idCELLS: fCELLS(); break; // CELLS
 		case idWITHIN: fWITHIN(); break; // WITHIN
+		case idAND: fAND(); break; // AND
+		case idOR: fOR(); break; // OR
+		case idXOR: fXOR(); break; // XOR
+		case idINVERT: fINVERT(); break; // INVERT
+		case idLSHIFT: fLSHIFT(); break; // LSHIFT
+		case idRSHIFT: fRSHIFT(); break; // RSHIFT
+		case idEQUAL: fEQUAL(); break; // =
+		case idDIFFERENT: fDIFFERENT(); break; // <>
+		case idLESS: fLESS(); break; // <
+		case idLESS_EQUAL: fLESS_EQUAL(); break; // <=
+		case idGREATER: fGREATER(); break; // >
+		case idGREATER_EQUAL: fGREATER_EQUAL(); break; // >=
+		case idU_LESS: fU_LESS(); break; // U<
+		case idU_LESS_EQUAL: fU_LESS_EQUAL(); break; // U<=
+		case idU_GREATER: fU_GREATER(); break; // U>
+		case idU_GREATER_EQUAL: fU_GREATER_EQUAL(); break; // U>=
+		case idZERO_EQUAL: fZERO_EQUAL(); break; // 0=
+		case idZERO_DIFFERENT: fZERO_DIFFERENT(); break; // 0<>
+		case idZERO_LESS: fZERO_LESS(); break; // 0<
+		case idZERO_LESS_EQUAL: fZERO_LESS_EQUAL(); break; // 0<=
+		case idZERO_GREATER: fZERO_GREATER(); break; // 0>
+		case idZERO_GREATER_EQUAL: fZERO_GREATER_EQUAL(); break; // 0>=
 		case idSTORE: fSTORE(); break; // !
 		case idFETCH: fFETCH(); break; // @
 		case idC_STORE: fC_STORE(); break; // C!
@@ -698,6 +764,116 @@ void fCELLS() {
 // WITHIN
 void fWITHIN() {
 	f_within();
+}
+
+// AND
+void fAND() {
+	push(pop() & pop());
+}
+
+// OR
+void fOR() {
+	push(pop() | pop());
+}
+
+// XOR
+void fXOR() {
+	push(pop() ^ pop());
+}
+
+// INVERT
+void fINVERT() {
+	push(~pop());
+}
+
+// LSHIFT
+void fLSHIFT() {
+	int n = pop(), a = pop(); push(a << n);
+}
+
+// RSHIFT
+void fRSHIFT() {
+	int n = pop(), a = pop(); push(a >> n);
+}
+
+// =
+void fEQUAL() {
+	push(f_bool(pop() == pop()));
+}
+
+// <>
+void fDIFFERENT() {
+	push(f_bool(pop() != pop()));
+}
+
+// <
+void fLESS() {
+	int b = pop(), a = pop(); push(f_bool(a < b));
+}
+
+// <=
+void fLESS_EQUAL() {
+	int b = pop(), a = pop(); push(f_bool(a <= b));
+}
+
+// >
+void fGREATER() {
+	int b = pop(), a = pop(); push(f_bool(a > b));
+}
+
+// >=
+void fGREATER_EQUAL() {
+	int b = pop(), a = pop(); push(f_bool(a >= b));
+}
+
+// U<
+void fU_LESS() {
+	uint b = pop(), a = pop(); push(f_bool(a < b));
+}
+
+// U<=
+void fU_LESS_EQUAL() {
+	uint b = pop(), a = pop(); push(f_bool(a <= b));
+}
+
+// U>
+void fU_GREATER() {
+	uint b = pop(), a = pop(); push(f_bool(a > b));
+}
+
+// U>=
+void fU_GREATER_EQUAL() {
+	uint b = pop(), a = pop(); push(f_bool(a >= b));
+}
+
+// 0=
+void fZERO_EQUAL() {
+	push(f_bool(pop() == 0));
+}
+
+// 0<>
+void fZERO_DIFFERENT() {
+	push(f_bool(pop() != 0));
+}
+
+// 0<
+void fZERO_LESS() {
+	push(f_bool(pop() < 0));
+}
+
+// 0<=
+void fZERO_LESS_EQUAL() {
+	push(f_bool(pop() <= 0));
+}
+
+// 0>
+void fZERO_GREATER() {
+	push(f_bool(pop() > 0));
+}
+
+// 0>=
+void fZERO_GREATER_EQUAL() {
+	push(f_bool(pop() >= 0));
 }
 
 // !

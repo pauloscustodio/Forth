@@ -94,6 +94,28 @@ enum {
     idCELL_PLUS, // CELL+
     idCELLS, // CELLS
     idWITHIN, // WITHIN
+    idAND, // AND
+    idOR, // OR
+    idXOR, // XOR
+    idINVERT, // INVERT
+    idLSHIFT, // LSHIFT
+    idRSHIFT, // RSHIFT
+    idEQUAL, // =
+    idDIFFERENT, // <>
+    idLESS, // <
+    idLESS_EQUAL, // <=
+    idGREATER, // >
+    idGREATER_EQUAL, // >=
+    idU_LESS, // U<
+    idU_LESS_EQUAL, // U<=
+    idU_GREATER, // U>
+    idU_GREATER_EQUAL, // U>=
+    idZERO_EQUAL, // 0=
+    idZERO_DIFFERENT, // 0<>
+    idZERO_LESS, // 0<
+    idZERO_LESS_EQUAL, // 0<=
+    idZERO_GREATER, // 0>
+    idZERO_GREATER_EQUAL, // 0>=
     idSTORE, // !
     idFETCH, // @
     idC_STORE, // C!
@@ -194,6 +216,28 @@ extern int xtCHARS; // CHARS
 extern int xtCELL_PLUS; // CELL+
 extern int xtCELLS; // CELLS
 extern int xtWITHIN; // WITHIN
+extern int xtAND; // AND
+extern int xtOR; // OR
+extern int xtXOR; // XOR
+extern int xtINVERT; // INVERT
+extern int xtLSHIFT; // LSHIFT
+extern int xtRSHIFT; // RSHIFT
+extern int xtEQUAL; // =
+extern int xtDIFFERENT; // <>
+extern int xtLESS; // <
+extern int xtLESS_EQUAL; // <=
+extern int xtGREATER; // >
+extern int xtGREATER_EQUAL; // >=
+extern int xtU_LESS; // U<
+extern int xtU_LESS_EQUAL; // U<=
+extern int xtU_GREATER; // U>
+extern int xtU_GREATER_EQUAL; // U>=
+extern int xtZERO_EQUAL; // 0=
+extern int xtZERO_DIFFERENT; // 0<>
+extern int xtZERO_LESS; // 0<
+extern int xtZERO_LESS_EQUAL; // 0<=
+extern int xtZERO_GREATER; // 0>
+extern int xtZERO_GREATER_EQUAL; // 0>=
 extern int xtSTORE; // !
 extern int xtFETCH; // @
 extern int xtC_STORE; // C!
@@ -313,6 +357,28 @@ void fCHARS(); // CHARS
 void fCELL_PLUS(); // CELL+
 void fCELLS(); // CELLS
 void fWITHIN(); // WITHIN
+void fAND(); // AND
+void fOR(); // OR
+void fXOR(); // XOR
+void fINVERT(); // INVERT
+void fLSHIFT(); // LSHIFT
+void fRSHIFT(); // RSHIFT
+void fEQUAL(); // =
+void fDIFFERENT(); // <>
+void fLESS(); // <
+void fLESS_EQUAL(); // <=
+void fGREATER(); // >
+void fGREATER_EQUAL(); // >=
+void fU_LESS(); // U<
+void fU_LESS_EQUAL(); // U<=
+void fU_GREATER(); // U>
+void fU_GREATER_EQUAL(); // U>=
+void fZERO_EQUAL(); // 0=
+void fZERO_DIFFERENT(); // 0<>
+void fZERO_LESS(); // 0<
+void fZERO_LESS_EQUAL(); // 0<=
+void fZERO_GREATER(); // 0>
+void fZERO_GREATER_EQUAL(); // 0>=
 void fSTORE(); // !
 void fFETCH(); // @
 void fC_STORE(); // C!

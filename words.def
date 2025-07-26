@@ -36,6 +36,36 @@
 "CELLS", CELLS, 0, "push(pop() * CELL_SZ);"
 "WITHIN", WITHIN, 0, "f_within();"
 
+// logical
+"AND", AND, 0, "push(pop() & pop());"
+"OR", OR, 0, "push(pop() | pop());"
+"XOR", XOR, 0, "push(pop() ^ pop());"
+"INVERT", INVERT, 0, "push(~pop());"
+"LSHIFT", LSHIFT, 0, "int n = pop(), a = pop(); push(a << n);"
+"RSHIFT", RSHIFT, 0, "int n = pop(), a = pop(); push(a >> n);"
+
+// comparison
+"=", EQUAL, 0, "push(f_bool(pop() == pop()));"
+"<>", DIFFERENT, 0, "push(f_bool(pop() != pop()));"
+"<", LESS, 0, "int b = pop(), a = pop(); push(f_bool(a < b));"
+"<=", LESS_EQUAL, 0, "int b = pop(), a = pop(); push(f_bool(a <= b));"
+">", GREATER, 0, "int b = pop(), a = pop(); push(f_bool(a > b));"
+">=", GREATER_EQUAL, 0, "int b = pop(), a = pop(); push(f_bool(a >= b));"
+
+"U<", U_LESS, 0, "uint b = pop(), a = pop(); push(f_bool(a < b));"
+"U<=", U_LESS_EQUAL, 0, "uint b = pop(), a = pop(); push(f_bool(a <= b));"
+"U>", U_GREATER, 0, "uint b = pop(), a = pop(); push(f_bool(a > b));"
+"U>=", U_GREATER_EQUAL, 0, "uint b = pop(), a = pop(); push(f_bool(a >= b));"
+
+"0=", ZERO_EQUAL, 0, "push(f_bool(pop() == 0));"
+"0<>", ZERO_DIFFERENT, 0, "push(f_bool(pop() != 0));"
+"0<", ZERO_LESS, 0, "push(f_bool(pop() < 0));"
+"0<=", ZERO_LESS_EQUAL, 0, "push(f_bool(pop() <= 0));"
+"0>", ZERO_GREATER, 0, "push(f_bool(pop() > 0));"
+"0>=", ZERO_GREATER_EQUAL, 0, "push(f_bool(pop() >= 0));"
+
+
+
 // memory access
 "!", STORE, 0, "int addr = pop(); int value = pop(); store(addr, value);"
 "@", FETCH, 0, "int addr = pop(); int value = fetch(addr); push(value);"
