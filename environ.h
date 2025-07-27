@@ -6,11 +6,8 @@
 
 #pragma once
 
-#include "forth.h"
-#include "input.h"
-#include "wordbuf.h"
 using namespace std;
 
-const ForthString* f_parse_word(char delimiter = BL);
-bool f_parse_number(const char* text, size_t size, bool& is_double, dint& value);
-bool f_parse_number(const char* text, int size, bool& is_double, dint& value);
+extern int g_argc;
+extern char** g_argv;
+extern bool g_interactive;

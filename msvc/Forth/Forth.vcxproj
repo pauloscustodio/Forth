@@ -139,9 +139,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\dict.h" />
+    <ClInclude Include="..\..\environ.h" />
     <ClInclude Include="..\..\errors.h" />
     <ClInclude Include="..\..\forth.h" />
     <ClInclude Include="..\..\input.h" />
+    <ClInclude Include="..\..\interp.h" />
     <ClInclude Include="..\..\math.h" />
     <ClInclude Include="..\..\memory.h" />
     <ClInclude Include="..\..\output.h" />
@@ -152,9 +154,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\dict.cpp" />
+    <ClCompile Include="..\..\environ.cpp" />
     <ClCompile Include="..\..\errors.cpp" />
     <ClCompile Include="..\..\forth.cpp" />
     <ClCompile Include="..\..\input.cpp" />
+    <ClCompile Include="..\..\interp.cpp" />
     <ClCompile Include="..\..\main.cpp" />
     <ClCompile Include="..\..\math.cpp" />
     <ClCompile Include="..\..\memory.cpp" />

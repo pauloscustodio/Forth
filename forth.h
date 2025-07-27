@@ -201,6 +201,10 @@ enum {
     idDECIMAL, // DECIMAL
     idHEX, // HEX
     idBYE, // BYE
+    idXDOVAR, // (DOVAR)
+    idLITERAL, // LITERAL
+    idXLITERAL, // (LITERAL)
+    idINTERPRET, // INTERPRET
     //@@END
     MAX_WORD_ID
 };
@@ -351,6 +355,10 @@ extern int xtDABS; // DABS
 extern int xtDECIMAL; // DECIMAL
 extern int xtHEX; // HEX
 extern int xtBYE; // BYE
+extern int xtXDOVAR; // (DOVAR)
+extern int xtLITERAL; // LITERAL
+extern int xtXLITERAL; // (LITERAL)
+extern int xtINTERPRET; // INTERPRET
 //@@END
 
 //@@BEGIN: Constants
@@ -364,8 +372,6 @@ static inline const int cCS0 = STACK_SZ; // CS0
 
 // user variables
 struct User {
-    int ip, body;       // used by inner interpreter
-
     //@@BEGIN: Vars
     int STATE;
     int BASE;
@@ -522,6 +528,10 @@ void fDABS(); // DABS
 void fDECIMAL(); // DECIMAL
 void fHEX(); // HEX
 void fBYE(); // BYE
+void fXDOVAR(); // (DOVAR)
+void fLITERAL(); // LITERAL
+void fXLITERAL(); // (LITERAL)
+void fINTERPRET(); // INTERPRET
 //@@END
 
 // bool
@@ -582,4 +592,4 @@ dint r_dpeek(int depth = 0);
 void create_dictionary();
 
 // execute a word given its xt
-void execute_word(int xt);
+void f_execute(int xt);

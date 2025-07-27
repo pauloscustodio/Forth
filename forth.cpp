@@ -7,6 +7,7 @@
 #include "dict.h"
 #include "errors.h"
 #include "forth.h"
+#include "interp.h"
 #include "math.h"
 #include "parser.h"
 #include "vm.h"
@@ -16,6 +17,8 @@
 #include <iostream>
 #include <vector>
 using namespace std;
+
+static int body = 0; // TODO: remove this
 
 //@@BEGIN: WordsXtDefinition
 int xtBL = 0; // BL
@@ -163,6 +166,10 @@ int xtDABS = 0; // DABS
 int xtDECIMAL = 0; // DECIMAL
 int xtHEX = 0; // HEX
 int xtBYE = 0; // BYE
+int xtXDOVAR = 0; // (DOVAR)
+int xtLITERAL = 0; // LITERAL
+int xtXLITERAL = 0; // (LITERAL)
+int xtINTERPRET = 0; // INTERPRET
 //@@END
 
 // bool
@@ -472,10 +479,14 @@ void create_dictionary() {
 	xtDECIMAL = vm.dict->create("DECIMAL", 0, idDECIMAL);
 	xtHEX = vm.dict->create("HEX", 0, idHEX);
 	xtBYE = vm.dict->create("BYE", 0, idBYE);
+	xtXDOVAR = vm.dict->create("(DOVAR)", F_HIDDEN, idXDOVAR);
+	xtLITERAL = vm.dict->create("LITERAL", F_IMMEDIATE, idLITERAL);
+	xtXLITERAL = vm.dict->create("(LITERAL)", F_HIDDEN, idXLITERAL);
+	xtINTERPRET = vm.dict->create("INTERPRET", 0, idINTERPRET);
 	//@@END
 }
 
-void execute_word(int xt) {
+void f_execute(int xt) {
 	int code = fetch(xt);
 	if (code < 0) {
 		error(Error::InvalidWordId, std::to_string(xt));
@@ -628,6 +639,10 @@ void execute_word(int xt) {
 		case idDECIMAL: fDECIMAL(); break; // DECIMAL
 		case idHEX: fHEX(); break; // HEX
 		case idBYE: fBYE(); break; // BYE
+		case idXDOVAR: fXDOVAR(); break; // (DOVAR)
+		case idLITERAL: fLITERAL(); break; // LITERAL
+		case idXLITERAL: fXLITERAL(); break; // (LITERAL)
+		case idINTERPRET: fINTERPRET(); break; // INTERPRET
 		//@@END
 		default:
 			assert(0); // not reached
@@ -645,8 +660,6 @@ void execute_word(int xt) {
 
 // user variables
 void User::init() {
-	ip = body = 0;
-
 	//@@BEGIN: VarsInit
 	STATE = STATE_INTERPRET;
 	BASE = 10;
@@ -1239,7 +1252,7 @@ void fMARKER() {
 
 // (MARKER)
 void fXMARKER() {
-	f_xmarker(vm.user->body);
+	f_xmarker(body);
 }
 
 // TYPE
@@ -1352,6 +1365,26 @@ void fBYE() {
 	exit(EXIT_SUCCESS);
 }
 
+// (DOVAR)
+void fXDOVAR() {
+	;
+}
+
+// LITERAL
+void fLITERAL() {
+	;
+}
+
+// (LITERAL)
+void fXLITERAL() {
+	;
+}
+
+// INTERPRET
+void fINTERPRET() {
+	f_interpret();
+}
+
 //@@END
 
 void fENVIRONMENT_Q() {
@@ -1407,7 +1440,7 @@ void fCOUNT() {
 
 void fWORD() {
 	char delimiter = pop();
-	const ForthString* word = parse_word(delimiter);
+	const ForthString* word = f_parse_word(delimiter);
 	if (word == nullptr)
 		exit(EXIT_SUCCESS);		        // no more input
 	else {
@@ -1417,7 +1450,7 @@ void fWORD() {
 }
 
 void fS_QUOTE() {
-	const ForthString* word = parse_word('"');
+	const ForthString* word = f_parse_word('"');
 	if (word == nullptr)
 		exit(EXIT_SUCCESS);		        // no more input
 	else {

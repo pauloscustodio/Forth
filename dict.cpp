@@ -69,7 +69,7 @@ int Dict::create(const ForthString* name, int flags, int code) {
 }
 
 int Dict::parse_create(int code) {
-	const ForthString* name = parse_word(BL);
+	const ForthString* name = f_parse_word(BL);
 	if (name->size() == 0)
 		error(Error::AttemptToUseZeroLengthStringAsName);
 	return create(name, 0, code);
@@ -214,7 +214,7 @@ void f_find(int addr) {
 }
 
 void f_create() {
-	vm.dict->parse_create(0 /* TODO: idXDOVAR */);
+	vm.dict->parse_create(idXDOVAR);
 }
 
 void f_marker() {

@@ -132,7 +132,7 @@
 "UNUSED", UNUSED, 0, "push(vm.dict->unused());"
 
 "MARKER", MARKER, 0, "f_marker();"
-"(MARKER)", XMARKER, F_HIDDEN, "f_xmarker(vm.user->body);"
+"(MARKER)", XMARKER, F_HIDDEN, "f_xmarker(body);"
 
 
 
@@ -187,3 +187,7 @@
 "DECIMAL", DECIMAL, 0, "vm.user->BASE = 10;"
 "HEX", HEX, 0, "vm.user->BASE = 16;"
 "BYE", BYE, 0, "exit(EXIT_SUCCESS);"
+"(DOVAR)", XDOVAR, F_HIDDEN, ";"
+"LITERAL", LITERAL, F_IMMEDIATE, ";"
+"(LITERAL)", XLITERAL, F_HIDDEN, ";"
+"INTERPRET", INTERPRET, 0, "f_interpret();"

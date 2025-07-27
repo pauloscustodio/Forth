@@ -4,13 +4,9 @@
 // License: GPL3 https://www.gnu.org/licenses/gpl-3.0.html
 //-----------------------------------------------------------------------------
 
-#pragma once
-
-#include "forth.h"
-#include "input.h"
-#include "wordbuf.h"
+#include "environ.h"
 using namespace std;
 
-const ForthString* f_parse_word(char delimiter = BL);
-bool f_parse_number(const char* text, size_t size, bool& is_double, dint& value);
-bool f_parse_number(const char* text, int size, bool& is_double, dint& value);
+int g_argc = 0;
+char** g_argv = nullptr;
+bool g_interactive = false;

@@ -4,68 +4,11 @@
 // License: GPL3 https://www.gnu.org/licenses/gpl-3.0.html
 //-----------------------------------------------------------------------------
 
-#include "dict.h"
-#include "errors.h"
-#include "math.h"
-#include "parser.h"
+#include "environ.h"
+#include "interp.h"
 #include "vm.h"
-#include <fstream>
 #include <iostream>
-#include <sstream>
-#include <string>
 using namespace std;
-
-static void exec_word(const string& word) {
-	if (!word.empty()) {
-		bool is_double = false;
-		dint value = 0;
-
-		Header* header = vm.dict->find_word(word.c_str(), word.size());
-		if (header) {
-			if (vm.user->TRACE) {
-				ForthString* name = header->name();
-				cout << ">>" << BL << name->to_string() << BL;
-			}
-
-			execute_word(header->xt());
-		}
-		else if (parse_number(word.c_str(), word.size(), is_double, value)) {
-			if (is_double) {
-				if (vm.user->TRACE) {
-					cout << ">>" << BL;
-					print_number(value);
-					cout << BL;
-				}
-				dpush(value);
-			}
-			else {
-				if (vm.user->TRACE) {
-					cout << ">>" << BL;
-					print_number(dcell_lo(value));
-					cout << BL;
-				}
-				push(dcell_lo(value));
-			}
-		}
-		else {
-			error(Error::UndefinedWord, word);
-		}
-
-		if (vm.user->TRACE) {
-			vm.stack->print();
-			cout << endl;
-		}
-	}
-}
-
-static void exec_buffers() {
-	while (true) {
-		const ForthString* word = parse_word(BL);
-		if (word == nullptr)
-			break;
-		exec_word(word->to_string());
-	}
-}
 
 static void die_usage() {
 	cerr << "Usage: forth [-e forth] [source [args...]]" << endl;
@@ -73,40 +16,41 @@ static void die_usage() {
 }
 
 int main(int argc, char* argv[]) {
+	g_argc = argc; g_argv = argv; 
+	g_interactive = false;
 	bool did_forth = false;
-	argc--; argv++;
-	while (argc > 0 && argv[0][0] == '-') {
-		switch (argv[0][1]) {
+	g_argc--; g_argv++;
+	while (g_argc > 0 && g_argv[0][0] == '-') {
+		switch (g_argv[0][1]) {
 		case 'e':
-			if (argc == 1)
+			if (g_argc == 1)
 				die_usage();
 			else {
-				argc--; argv++;
-				vm.input->push_text(argv[0]);
-				exec_buffers();
-				vm.input->pop_input();
+				g_argc--; g_argv++;
+				f_evaluate(g_argv[0]);
 				did_forth = true;
 			}
 			break;
 		default:
 			die_usage();
 		}
-		argc--; argv++;
+		g_argc--; g_argv++;
 	}
 
 	// get script, if any
-	if (argc == 0) {
+	if (g_argc == 0) {
 		if (!did_forth) {
 			vm.input->push_cin();
-			exec_buffers();
+			g_interactive = true;
+			f_execute(xtINTERPRET);
 		}
 	}
 	else {
-		const char* source = argv[0];
-		argc--; argv++;
+		const char* source = g_argv[0];
+		g_argc--; g_argv++;
 
 		vm.input->push_file(source);
-		exec_buffers();
+		f_execute(xtINTERPRET);
 	}
 
 	return EXIT_SUCCESS;

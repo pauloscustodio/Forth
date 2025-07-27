@@ -109,7 +109,7 @@ static const ForthString* parse_word_1(char delimiter) {
     }
 }
 
-const ForthString* parse_word(char delimiter) {
+const ForthString* f_parse_word(char delimiter) {
     while (vm.input->has_input()) {
         const ForthString* word = parse_word_1(delimiter);
         if (word != nullptr) {		            // found a word
@@ -130,11 +130,11 @@ const ForthString* parse_word(char delimiter) {
 // skip punctuation ( , . + - / : )
 // if punctuation found, set DPL to number of digits after last punctuation, return double cell
 // return true if ok, false if error
-bool parse_number(const char* text, size_t size, bool& is_double, dint& value) {
-    return parse_number(text, static_cast<int>(size), is_double, value);
+bool f_parse_number(const char* text, size_t size, bool& is_double, dint& value) {
+    return f_parse_number(text, static_cast<int>(size), is_double, value);
 }
 
-bool parse_number(const char* text, int size, bool& is_double, dint& value) {
+bool f_parse_number(const char* text, int size, bool& is_double, dint& value) {
     // init output vars
     int sign = 1;
     int base = vm.user->BASE;
