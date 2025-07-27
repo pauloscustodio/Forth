@@ -13,7 +13,7 @@
 using namespace std;
 
 struct Header {
-	int prev_addr;		// address of previous header
+	int link;			// address of previous header
 	int name_addr;		// address of name
 	struct {
 		bool hidden : 1;
@@ -34,12 +34,26 @@ public:
 	int create(const char* name, int flags, int code); // return xt of word
 	int create(const char* name, size_t size, int flags, int code); // return xt of word
 	int create(const char* name, int size, int flags, int code); // return xt of word
+	int create(const ForthString* name, int flags, int code); // return xt of word
+
+	int parse_create(int code); // return xt of word
+
+	void allot(int size);
+	int unused() const;
+
+	int alloc_name(const char* name);
+	int alloc_name(const char* name, size_t size);
+	int alloc_name(const char* name, int size);
+	int alloc_name(const ForthString* name);
 
 	vector<string> get_words() const;
 
 	int latest() const { return m_latest; }
+	void set_latest(int latest) { m_latest = latest; }
     int here() const { return m_here; }
+	void set_here(int here) { m_here = here; }
     int names() const { return m_names; }
+	void set_names(int names) { m_names = names; }
 
 	void ccomma(int value);
 	void comma(int value);
@@ -53,9 +67,15 @@ public:
 private:
 	int m_latest;		// point to last defined word header
 	int m_here;			// point to next free position at bottom of memory
-	int m_names;			// point to last name created at top of memory
+	int m_names;		// point to last name created at top of memory
 
 	void check_free_space(int size = 0) const;
+	int create_cont(int name_addr, int flags, int code);
 };
+
+void f_find(int addr);	// search dictionary, word max size 255
+void f_create();
+void f_marker();
+void f_xmarker(int body);
 
 bool case_insensitive_equal(const char* a_str, int a_size, const char* b_str, int b_size);

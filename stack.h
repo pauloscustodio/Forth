@@ -25,7 +25,7 @@ public:
     int ptr() const { return m_ptr; }
 	void set_ptr(int ptr);
 
-	void print() const;
+	void print(const string& prefix = "") const;
 
 private:
 	int m_stack[STACK_SZ];

@@ -81,8 +81,8 @@ int xtZERO_GREATER_EQUAL = 0; // 0>=
 int xtSTORE = 0; // !
 int xtFETCH = 0; // @
 int xtPLUS_STORE = 0; // +!
-int xtC_STORE = 0; // C!
-int xtC_FETCH = 0; // C@
+int xtCSTORE = 0; // C!
+int xtCFETCH = 0; // C@
 int xtTWO_STORE = 0; // 2!
 int xtTWO_FETCH = 0; // 2@
 int xtFILL = 0; // FILL
@@ -108,6 +108,32 @@ int xtMINUS_2ROT = 0; // -2ROT
 int xtDEPTH = 0; // DEPTH
 int xtSP_FETCH = 0; // SP@
 int xtSP_STORE = 0; // SP!
+int xtDOT_S = 0; // .S
+int xtTO_R = 0; // >R
+int xtFROM_R = 0; // R>
+int xtR_DROP = 0; // RDROP
+int xtR_FETCH = 0; // R@
+int xtI = 0; // I
+int xtJ = 0; // J
+int xtTWO_TO_R = 0; // 2>R
+int xtTWO_R_TO = 0; // 2R>
+int xtTWO_R_FETCH = 0; // 2R@
+int xtR_DEPTH = 0; // RDEPTH
+int xtRSP_FETCH = 0; // RSP@
+int xtRSP_STORE = 0; // RSP!
+int xtDOT_RS = 0; // .RS
+int xtCOMMA = 0; // ,
+int xtCCOMMA = 0; // C,
+int xtHERE = 0; // HERE
+int xtLATEST = 0; // LATEST
+int xtFIND = 0; // FIND
+int xtTO_BODY = 0; // >BODY
+int xtALIGN = 0; // ALIGN
+int xtALIGNED = 0; // ALIGNED
+int xtALLOT = 0; // ALLOT
+int xtUNUSED = 0; // UNUSED
+int xtMARKER = 0; // MARKER
+int xtXMARKER = 0; // (MARKER)
 int xtTYPE = 0; // TYPE
 int xtEMIT = 0; // EMIT
 int xtCR = 0; // CR
@@ -131,16 +157,12 @@ int xtTHROW = 0; // THROW
 int xtENVIRONMENT_Q = 0; // ENVIRONMENT?
 int xtCOUNT = 0; // COUNT
 int xtS_QUOTE = 0; // S"
-int xtDOT_S = 0; // .S
 int xtWORD = 0; // WORD
 int xtWORDS = 0; // WORDS
-int xtFIND = 0; // FIND
-int xtCOMMA = 0; // ,
-int xtC_COMMA = 0; // C,
-int xtALIGN = 0; // ALIGN
 int xtDABS = 0; // DABS
 int xtDECIMAL = 0; // DECIMAL
 int xtHEX = 0; // HEX
+int xtBYE = 0; // BYE
 //@@END
 
 // bool
@@ -368,8 +390,8 @@ void create_dictionary() {
 	xtSTORE = vm.dict->create("!", 0, idSTORE);
 	xtFETCH = vm.dict->create("@", 0, idFETCH);
 	xtPLUS_STORE = vm.dict->create("+!", 0, idPLUS_STORE);
-	xtC_STORE = vm.dict->create("C!", 0, idC_STORE);
-	xtC_FETCH = vm.dict->create("C@", 0, idC_FETCH);
+	xtCSTORE = vm.dict->create("C!", 0, idCSTORE);
+	xtCFETCH = vm.dict->create("C@", 0, idCFETCH);
 	xtTWO_STORE = vm.dict->create("2!", 0, idTWO_STORE);
 	xtTWO_FETCH = vm.dict->create("2@", 0, idTWO_FETCH);
 	xtFILL = vm.dict->create("FILL", 0, idFILL);
@@ -395,6 +417,32 @@ void create_dictionary() {
 	xtDEPTH = vm.dict->create("DEPTH", 0, idDEPTH);
 	xtSP_FETCH = vm.dict->create("SP@", 0, idSP_FETCH);
 	xtSP_STORE = vm.dict->create("SP!", 0, idSP_STORE);
+	xtDOT_S = vm.dict->create(".S", 0, idDOT_S);
+	xtTO_R = vm.dict->create(">R", 0, idTO_R);
+	xtFROM_R = vm.dict->create("R>", 0, idFROM_R);
+	xtR_DROP = vm.dict->create("RDROP", 0, idR_DROP);
+	xtR_FETCH = vm.dict->create("R@", 0, idR_FETCH);
+	xtI = vm.dict->create("I", 0, idI);
+	xtJ = vm.dict->create("J", 0, idJ);
+	xtTWO_TO_R = vm.dict->create("2>R", 0, idTWO_TO_R);
+	xtTWO_R_TO = vm.dict->create("2R>", 0, idTWO_R_TO);
+	xtTWO_R_FETCH = vm.dict->create("2R@", 0, idTWO_R_FETCH);
+	xtR_DEPTH = vm.dict->create("RDEPTH", 0, idR_DEPTH);
+	xtRSP_FETCH = vm.dict->create("RSP@", 0, idRSP_FETCH);
+	xtRSP_STORE = vm.dict->create("RSP!", 0, idRSP_STORE);
+	xtDOT_RS = vm.dict->create(".RS", 0, idDOT_RS);
+	xtCOMMA = vm.dict->create(",", 0, idCOMMA);
+	xtCCOMMA = vm.dict->create("C,", 0, idCCOMMA);
+	xtHERE = vm.dict->create("HERE", 0, idHERE);
+	xtLATEST = vm.dict->create("LATEST", 0, idLATEST);
+	xtFIND = vm.dict->create("FIND", 0, idFIND);
+	xtTO_BODY = vm.dict->create(">BODY", 0, idTO_BODY);
+	xtALIGN = vm.dict->create("ALIGN", 0, idALIGN);
+	xtALIGNED = vm.dict->create("ALIGNED", 0, idALIGNED);
+	xtALLOT = vm.dict->create("ALLOT", 0, idALLOT);
+	xtUNUSED = vm.dict->create("UNUSED", 0, idUNUSED);
+	xtMARKER = vm.dict->create("MARKER", 0, idMARKER);
+	xtXMARKER = vm.dict->create("(MARKER)", F_HIDDEN, idXMARKER);
 	xtTYPE = vm.dict->create("TYPE", 0, idTYPE);
 	xtEMIT = vm.dict->create("EMIT", 0, idEMIT);
 	xtCR = vm.dict->create("CR", 0, idCR);
@@ -418,16 +466,12 @@ void create_dictionary() {
 	xtENVIRONMENT_Q = vm.dict->create("ENVIRONMENT?", 0, idENVIRONMENT_Q);
 	xtCOUNT = vm.dict->create("COUNT", 0, idCOUNT);
 	xtS_QUOTE = vm.dict->create("S\"", 0, idS_QUOTE);
-	xtDOT_S = vm.dict->create(".S", 0, idDOT_S);
 	xtWORD = vm.dict->create("WORD", 0, idWORD);
 	xtWORDS = vm.dict->create("WORDS", 0, idWORDS);
-	xtFIND = vm.dict->create("FIND", 0, idFIND);
-	xtCOMMA = vm.dict->create(",", 0, idCOMMA);
-	xtC_COMMA = vm.dict->create("C,", 0, idC_COMMA);
-	xtALIGN = vm.dict->create("ALIGN", 0, idALIGN);
 	xtDABS = vm.dict->create("DABS", 0, idDABS);
 	xtDECIMAL = vm.dict->create("DECIMAL", 0, idDECIMAL);
 	xtHEX = vm.dict->create("HEX", 0, idHEX);
+	xtBYE = vm.dict->create("BYE", 0, idBYE);
 	//@@END
 }
 
@@ -502,8 +546,8 @@ void execute_word(int xt) {
 		case idSTORE: fSTORE(); break; // !
 		case idFETCH: fFETCH(); break; // @
 		case idPLUS_STORE: fPLUS_STORE(); break; // +!
-		case idC_STORE: fC_STORE(); break; // C!
-		case idC_FETCH: fC_FETCH(); break; // C@
+		case idCSTORE: fCSTORE(); break; // C!
+		case idCFETCH: fCFETCH(); break; // C@
 		case idTWO_STORE: fTWO_STORE(); break; // 2!
 		case idTWO_FETCH: fTWO_FETCH(); break; // 2@
 		case idFILL: fFILL(); break; // FILL
@@ -529,6 +573,32 @@ void execute_word(int xt) {
 		case idDEPTH: fDEPTH(); break; // DEPTH
 		case idSP_FETCH: fSP_FETCH(); break; // SP@
 		case idSP_STORE: fSP_STORE(); break; // SP!
+		case idDOT_S: fDOT_S(); break; // .S
+		case idTO_R: fTO_R(); break; // >R
+		case idFROM_R: fFROM_R(); break; // R>
+		case idR_DROP: fR_DROP(); break; // RDROP
+		case idR_FETCH: fR_FETCH(); break; // R@
+		case idI: fI(); break; // I
+		case idJ: fJ(); break; // J
+		case idTWO_TO_R: fTWO_TO_R(); break; // 2>R
+		case idTWO_R_TO: fTWO_R_TO(); break; // 2R>
+		case idTWO_R_FETCH: fTWO_R_FETCH(); break; // 2R@
+		case idR_DEPTH: fR_DEPTH(); break; // RDEPTH
+		case idRSP_FETCH: fRSP_FETCH(); break; // RSP@
+		case idRSP_STORE: fRSP_STORE(); break; // RSP!
+		case idDOT_RS: fDOT_RS(); break; // .RS
+		case idCOMMA: fCOMMA(); break; // ,
+		case idCCOMMA: fCCOMMA(); break; // C,
+		case idHERE: fHERE(); break; // HERE
+		case idLATEST: fLATEST(); break; // LATEST
+		case idFIND: fFIND(); break; // FIND
+		case idTO_BODY: fTO_BODY(); break; // >BODY
+		case idALIGN: fALIGN(); break; // ALIGN
+		case idALIGNED: fALIGNED(); break; // ALIGNED
+		case idALLOT: fALLOT(); break; // ALLOT
+		case idUNUSED: fUNUSED(); break; // UNUSED
+		case idMARKER: fMARKER(); break; // MARKER
+		case idXMARKER: fXMARKER(); break; // (MARKER)
 		case idTYPE: fTYPE(); break; // TYPE
 		case idEMIT: fEMIT(); break; // EMIT
 		case idCR: fCR(); break; // CR
@@ -552,16 +622,12 @@ void execute_word(int xt) {
 		case idENVIRONMENT_Q: fENVIRONMENT_Q(); break; // ENVIRONMENT?
 		case idCOUNT: fCOUNT(); break; // COUNT
 		case idS_QUOTE: fS_QUOTE(); break; // S"
-		case idDOT_S: fDOT_S(); break; // .S
 		case idWORD: fWORD(); break; // WORD
 		case idWORDS: fWORDS(); break; // WORDS
-		case idFIND: fFIND(); break; // FIND
-		case idCOMMA: fCOMMA(); break; // ,
-		case idC_COMMA: fC_COMMA(); break; // C,
-		case idALIGN: fALIGN(); break; // ALIGN
 		case idDABS: fDABS(); break; // DABS
 		case idDECIMAL: fDECIMAL(); break; // DECIMAL
 		case idHEX: fHEX(); break; // HEX
+		case idBYE: fBYE(); break; // BYE
 		//@@END
 		default:
 			assert(0); // not reached
@@ -579,6 +645,8 @@ void execute_word(int xt) {
 
 // user variables
 void User::init() {
+	ip = body = 0;
+
 	//@@BEGIN: VarsInit
 	STATE = STATE_INTERPRET;
 	BASE = 10;
@@ -910,12 +978,12 @@ void fPLUS_STORE() {
 }
 
 // C!
-void fC_STORE() {
+void fCSTORE() {
 	int a = pop(), v = pop(); cstore(a, v);
 }
 
 // C@
-void fC_FETCH() {
+void fCFETCH() {
 	push(cfetch(pop()));
 }
 
@@ -1044,6 +1112,136 @@ void fSP_STORE() {
 	vm.stack->set_ptr(pop());
 }
 
+// .S
+void fDOT_S() {
+	vm.stack->print();
+}
+
+// >R
+void fTO_R() {
+	r_push(pop());
+}
+
+// R>
+void fFROM_R() {
+	push(r_pop());
+}
+
+// RDROP
+void fR_DROP() {
+	r_pop();
+}
+
+// R@
+void fR_FETCH() {
+	push(r_peek(0));
+}
+
+// I
+void fI() {
+	push(r_peek(0));
+}
+
+// J
+void fJ() {
+	push(r_peek(2));
+}
+
+// 2>R
+void fTWO_TO_R() {
+	r_dpush(dpop());
+}
+
+// 2R>
+void fTWO_R_TO() {
+	dpush(r_dpop());
+}
+
+// 2R@
+void fTWO_R_FETCH() {
+	dpush(r_dpeek(0));
+}
+
+// RDEPTH
+void fR_DEPTH() {
+	push(vm.rstack->depth());
+}
+
+// RSP@
+void fRSP_FETCH() {
+	push(vm.rstack->ptr());
+}
+
+// RSP!
+void fRSP_STORE() {
+	vm.rstack->set_ptr(pop());
+}
+
+// .RS
+void fDOT_RS() {
+	vm.rstack->print("R");
+}
+
+// ,
+void fCOMMA() {
+	comma(pop());
+}
+
+// C,
+void fCCOMMA() {
+	ccomma(pop());
+}
+
+// HERE
+void fHERE() {
+	push(vm.dict->here());
+}
+
+// LATEST
+void fLATEST() {
+	push(vm.dict->latest());
+}
+
+// FIND
+void fFIND() {
+	f_find(pop());
+}
+
+// >BODY
+void fTO_BODY() {
+	push(pop() + CELL_SZ);
+}
+
+// ALIGN
+void fALIGN() {
+	align();
+}
+
+// ALIGNED
+void fALIGNED() {
+	push(aligned(pop()));
+}
+
+// ALLOT
+void fALLOT() {
+	vm.dict->allot(pop());
+}
+
+// UNUSED
+void fUNUSED() {
+	push(vm.dict->unused());
+}
+
+// MARKER
+void fMARKER() {
+	f_marker();
+}
+
+// (MARKER)
+void fXMARKER() {
+	f_xmarker(vm.user->body);
+}
+
 // TYPE
 void fTYPE() {
 	int size = pop(), a = pop(); print_string(a, size);
@@ -1149,6 +1347,11 @@ void fHEX() {
 	vm.user->BASE = 16;
 }
 
+// BYE
+void fBYE() {
+	exit(EXIT_SUCCESS);
+}
+
 //@@END
 
 void fENVIRONMENT_Q() {
@@ -1165,45 +1368,9 @@ void fENVIRONMENT_Q() {
 	}
 }
 
-void fCOMMA() {
-	int value = pop();
-	comma(value);
-}
-
-void fC_COMMA() {
-	int value = pop();
-	ccomma(value);
-}
-
-void fALIGN() {
-	align();
-}
-
 void fDABS() {
 	dint a = f_dabs(dpop());
 	dpush(a);
-}
-
-void fFIND() {
-	int addr = pop();
-	CountedString* word = reinterpret_cast<CountedString*>(mem_char_ptr(addr));
-	Header* header = vm.dict->find_word(word->str(), word->size());
-	if (header == nullptr) {
-		push(addr);
-		push(0);
-	}
-	else {
-		int xt = header->xt();
-		int is_immediate = header->flags.immediate ? F_TRUE : F_FALSE;
-		if (is_immediate) {
-			push(xt);
-			push(1);
-		}
-		else {
-			push(xt);
-			push(-1);
-		}
-	}
 }
 
 void fWORDS() {
@@ -1258,8 +1425,3 @@ void fS_QUOTE() {
 		push(word->size());				// length of word
 	}
 }
-
-void fDOT_S() {
-	vm.stack->print();
-}
-

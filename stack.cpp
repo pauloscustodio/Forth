@@ -90,8 +90,11 @@ void Stack::roll(int depth) {
 	}
 }
 
-void Stack::print() const {
-	cout << "( ";
+void Stack::print(const string& prefix) const {
+	cout << "(";
+	if (!prefix.empty())
+		cout << prefix << ":";
+	cout << " ";
 	for (int i = STACK_SZ - 1; i >= m_ptr; i--)
 		print_number(m_stack[i]);
 	cout << ") ";

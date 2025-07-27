@@ -119,8 +119,8 @@ enum {
     idSTORE, // !
     idFETCH, // @
     idPLUS_STORE, // +!
-    idC_STORE, // C!
-    idC_FETCH, // C@
+    idCSTORE, // C!
+    idCFETCH, // C@
     idTWO_STORE, // 2!
     idTWO_FETCH, // 2@
     idFILL, // FILL
@@ -146,6 +146,32 @@ enum {
     idDEPTH, // DEPTH
     idSP_FETCH, // SP@
     idSP_STORE, // SP!
+    idDOT_S, // .S
+    idTO_R, // >R
+    idFROM_R, // R>
+    idR_DROP, // RDROP
+    idR_FETCH, // R@
+    idI, // I
+    idJ, // J
+    idTWO_TO_R, // 2>R
+    idTWO_R_TO, // 2R>
+    idTWO_R_FETCH, // 2R@
+    idR_DEPTH, // RDEPTH
+    idRSP_FETCH, // RSP@
+    idRSP_STORE, // RSP!
+    idDOT_RS, // .RS
+    idCOMMA, // ,
+    idCCOMMA, // C,
+    idHERE, // HERE
+    idLATEST, // LATEST
+    idFIND, // FIND
+    idTO_BODY, // >BODY
+    idALIGN, // ALIGN
+    idALIGNED, // ALIGNED
+    idALLOT, // ALLOT
+    idUNUSED, // UNUSED
+    idMARKER, // MARKER
+    idXMARKER, // (MARKER)
     idTYPE, // TYPE
     idEMIT, // EMIT
     idCR, // CR
@@ -169,16 +195,12 @@ enum {
     idENVIRONMENT_Q, // ENVIRONMENT?
     idCOUNT, // COUNT
     idS_QUOTE, // S"
-    idDOT_S, // .S
     idWORD, // WORD
     idWORDS, // WORDS
-    idFIND, // FIND
-    idCOMMA, // ,
-    idC_COMMA, // C,
-    idALIGN, // ALIGN
     idDABS, // DABS
     idDECIMAL, // DECIMAL
     idHEX, // HEX
+    idBYE, // BYE
     //@@END
     MAX_WORD_ID
 };
@@ -247,8 +269,8 @@ extern int xtZERO_GREATER_EQUAL; // 0>=
 extern int xtSTORE; // !
 extern int xtFETCH; // @
 extern int xtPLUS_STORE; // +!
-extern int xtC_STORE; // C!
-extern int xtC_FETCH; // C@
+extern int xtCSTORE; // C!
+extern int xtCFETCH; // C@
 extern int xtTWO_STORE; // 2!
 extern int xtTWO_FETCH; // 2@
 extern int xtFILL; // FILL
@@ -274,6 +296,32 @@ extern int xtMINUS_2ROT; // -2ROT
 extern int xtDEPTH; // DEPTH
 extern int xtSP_FETCH; // SP@
 extern int xtSP_STORE; // SP!
+extern int xtDOT_S; // .S
+extern int xtTO_R; // >R
+extern int xtFROM_R; // R>
+extern int xtR_DROP; // RDROP
+extern int xtR_FETCH; // R@
+extern int xtI; // I
+extern int xtJ; // J
+extern int xtTWO_TO_R; // 2>R
+extern int xtTWO_R_TO; // 2R>
+extern int xtTWO_R_FETCH; // 2R@
+extern int xtR_DEPTH; // RDEPTH
+extern int xtRSP_FETCH; // RSP@
+extern int xtRSP_STORE; // RSP!
+extern int xtDOT_RS; // .RS
+extern int xtCOMMA; // ,
+extern int xtCCOMMA; // C,
+extern int xtHERE; // HERE
+extern int xtLATEST; // LATEST
+extern int xtFIND; // FIND
+extern int xtTO_BODY; // >BODY
+extern int xtALIGN; // ALIGN
+extern int xtALIGNED; // ALIGNED
+extern int xtALLOT; // ALLOT
+extern int xtUNUSED; // UNUSED
+extern int xtMARKER; // MARKER
+extern int xtXMARKER; // (MARKER)
 extern int xtTYPE; // TYPE
 extern int xtEMIT; // EMIT
 extern int xtCR; // CR
@@ -297,16 +345,12 @@ extern int xtTHROW; // THROW
 extern int xtENVIRONMENT_Q; // ENVIRONMENT?
 extern int xtCOUNT; // COUNT
 extern int xtS_QUOTE; // S"
-extern int xtDOT_S; // .S
 extern int xtWORD; // WORD
 extern int xtWORDS; // WORDS
-extern int xtFIND; // FIND
-extern int xtCOMMA; // ,
-extern int xtC_COMMA; // C,
-extern int xtALIGN; // ALIGN
 extern int xtDABS; // DABS
 extern int xtDECIMAL; // DECIMAL
 extern int xtHEX; // HEX
+extern int xtBYE; // BYE
 //@@END
 
 //@@BEGIN: Constants
@@ -320,6 +364,8 @@ static inline const int cCS0 = STACK_SZ; // CS0
 
 // user variables
 struct User {
+    int ip, body;       // used by inner interpreter
+
     //@@BEGIN: Vars
     int STATE;
     int BASE;
@@ -394,8 +440,8 @@ void fZERO_GREATER_EQUAL(); // 0>=
 void fSTORE(); // !
 void fFETCH(); // @
 void fPLUS_STORE(); // +!
-void fC_STORE(); // C!
-void fC_FETCH(); // C@
+void fCSTORE(); // C!
+void fCFETCH(); // C@
 void fTWO_STORE(); // 2!
 void fTWO_FETCH(); // 2@
 void fFILL(); // FILL
@@ -421,6 +467,32 @@ void fMINUS_2ROT(); // -2ROT
 void fDEPTH(); // DEPTH
 void fSP_FETCH(); // SP@
 void fSP_STORE(); // SP!
+void fDOT_S(); // .S
+void fTO_R(); // >R
+void fFROM_R(); // R>
+void fR_DROP(); // RDROP
+void fR_FETCH(); // R@
+void fI(); // I
+void fJ(); // J
+void fTWO_TO_R(); // 2>R
+void fTWO_R_TO(); // 2R>
+void fTWO_R_FETCH(); // 2R@
+void fR_DEPTH(); // RDEPTH
+void fRSP_FETCH(); // RSP@
+void fRSP_STORE(); // RSP!
+void fDOT_RS(); // .RS
+void fCOMMA(); // ,
+void fCCOMMA(); // C,
+void fHERE(); // HERE
+void fLATEST(); // LATEST
+void fFIND(); // FIND
+void fTO_BODY(); // >BODY
+void fALIGN(); // ALIGN
+void fALIGNED(); // ALIGNED
+void fALLOT(); // ALLOT
+void fUNUSED(); // UNUSED
+void fMARKER(); // MARKER
+void fXMARKER(); // (MARKER)
 void fTYPE(); // TYPE
 void fEMIT(); // EMIT
 void fCR(); // CR
@@ -444,16 +516,12 @@ void fTHROW(); // THROW
 void fENVIRONMENT_Q(); // ENVIRONMENT?
 void fCOUNT(); // COUNT
 void fS_QUOTE(); // S"
-void fDOT_S(); // .S
 void fWORD(); // WORD
 void fWORDS(); // WORDS
-void fFIND(); // FIND
-void fCOMMA(); // ,
-void fC_COMMA(); // C,
-void fALIGN(); // ALIGN
 void fDABS(); // DABS
 void fDECIMAL(); // DECIMAL
 void fHEX(); // HEX
+void fBYE(); // BYE
 //@@END
 
 // bool
