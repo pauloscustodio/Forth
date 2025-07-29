@@ -8,3 +8,9 @@
 "BASE", BASE, 10
 "DPL", DPL, 0
 "TRACE", TRACE, 0
+
+// input
+">IN", TO_IN, 0
+"#IN", NR_IN, 0
+"BLK", BLK, 0
+"SOURCE_ID", SOURCE_ID, -1

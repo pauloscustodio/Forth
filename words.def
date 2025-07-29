@@ -191,3 +191,4 @@
 "LITERAL", LITERAL, F_IMMEDIATE, ";"
 "(LITERAL)", XLITERAL, F_HIDDEN, ";"
 "INTERPRET", INTERPRET, 0, "f_interpret();"
+"QUIT", QUIT, 0, "f_quit();"

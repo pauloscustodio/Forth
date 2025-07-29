@@ -106,3 +106,7 @@ void Stack::set_ptr(int ptr) {
 	m_ptr = ptr;
 }
 
+void Stack::clear() {
+	m_ptr = STACK_SZ;
+}
+

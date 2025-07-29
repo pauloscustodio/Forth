@@ -42,7 +42,7 @@ int main(int argc, char* argv[]) {
 		if (!did_forth) {
 			vm.input->push_cin();
 			g_interactive = true;
-			f_execute(xtINTERPRET);
+			f_execute(xtQUIT);
 		}
 	}
 	else {
@@ -50,7 +50,7 @@ int main(int argc, char* argv[]) {
 		g_argc--; g_argv++;
 
 		vm.input->push_file(source);
-		f_execute(xtINTERPRET);
+		f_execute(xtQUIT);
 	}
 
 	return EXIT_SUCCESS;

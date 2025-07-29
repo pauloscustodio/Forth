@@ -29,7 +29,7 @@ static_assert(PTR_SZ <= DCELL_SZ, "PTR should fit in DCELL");
 // VM size
 static inline const int MEM_SZ = 256 * 1024 * CELL_SZ;
 static inline const int BUFFER_SZ = 1024;
-static inline const int WORDBUF_SZ = 4 * BUFFER_SZ;     // hold strings with BUFFER_SZ length
+static inline const int WORDBUF_SZ = 2 * BUFFER_SZ;     // hold string with BUFFER_SZ length
 static inline const int PAD_SZ = 256;
 static inline const int STACK_SZ = 1024 * CELL_SZ;
 static inline const int MAX_FILES = 16;
@@ -66,6 +66,10 @@ enum {
     idBASE, // BASE
     idDPL, // DPL
     idTRACE, // TRACE
+    idTO_IN, // >IN
+    idNR_IN, // #IN
+    idBLK, // BLK
+    idSOURCE_ID, // SOURCE_ID
     idPAD, // PAD
     idPLUS, // +
     idMULT, // *
@@ -205,6 +209,7 @@ enum {
     idLITERAL, // LITERAL
     idXLITERAL, // (LITERAL)
     idINTERPRET, // INTERPRET
+    idQUIT, // QUIT
     //@@END
     MAX_WORD_ID
 };
@@ -220,6 +225,10 @@ extern int xtSTATE; // STATE
 extern int xtBASE; // BASE
 extern int xtDPL; // DPL
 extern int xtTRACE; // TRACE
+extern int xtTO_IN; // >IN
+extern int xtNR_IN; // #IN
+extern int xtBLK; // BLK
+extern int xtSOURCE_ID; // SOURCE_ID
 extern int xtPAD; // PAD
 extern int xtPLUS; // +
 extern int xtMULT; // *
@@ -359,6 +368,7 @@ extern int xtXDOVAR; // (DOVAR)
 extern int xtLITERAL; // LITERAL
 extern int xtXLITERAL; // (LITERAL)
 extern int xtINTERPRET; // INTERPRET
+extern int xtQUIT; // QUIT
 //@@END
 
 //@@BEGIN: Constants
@@ -377,6 +387,10 @@ struct User {
     int BASE;
     int DPL;
     int TRACE;
+    int TO_IN;
+    int NR_IN;
+    int BLK;
+    int SOURCE_ID;
     //@@END
 
     void init();
@@ -393,6 +407,10 @@ void fSTATE(); // STATE
 void fBASE(); // BASE
 void fDPL(); // DPL
 void fTRACE(); // TRACE
+void fTO_IN(); // >IN
+void fNR_IN(); // #IN
+void fBLK(); // BLK
+void fSOURCE_ID(); // SOURCE_ID
 void fPAD(); // PAD
 void fPLUS(); // +
 void fMULT(); // *
@@ -532,6 +550,7 @@ void fXDOVAR(); // (DOVAR)
 void fLITERAL(); // LITERAL
 void fXLITERAL(); // (LITERAL)
 void fINTERPRET(); // INTERPRET
+void fQUIT(); // QUIT
 //@@END
 
 // bool

@@ -24,3 +24,6 @@ void f_evaluate();
 void f_evaluate(const string& text);
 void f_evaluate(const char* text, size_t size);
 void f_evaluate(const char* text, int size);
+
+// main loop
+void f_quit();

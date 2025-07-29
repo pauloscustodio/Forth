@@ -13,84 +13,9 @@
 #include <cstring>
 using namespace std;
 
-void Buffer::init() {
-	m_ifs = nullptr;
-	m_blk = 0;
-	m_source_id = 0;
-	m_size = 0;
-	m_ptr = 0;
-	memset(m_buffer, BL, sizeof(m_buffer));
-}
-
-void Buffer::set_buffer_ptr(int ptr) {
-	if (ptr < 0)
-		m_ptr = 0;
-	else if (ptr > m_size)
-		m_ptr = m_size;
-	else
-		m_ptr = ptr;
-}
-
-void Buffer::read_text(const char* text, int size) {
-	close_file();
-	init();
-	m_source_id = -1;
-	set_buffer(text, size);
-}
-
-void Buffer::read_file(int source_id, const char* filename_, int size) {
-	assert(source_id > 0);
-
-	string filename(filename_, filename_ + size);
-	close_file();
-	init();
-
-	m_source_id = source_id;
-
-	errno = 0;
-	m_ifs = new ifstream(filename);
-	int error_number = errno;
-	if (!m_ifs->is_open()) {
-		delete m_ifs; m_ifs = nullptr;
-		check_error(error_number);
-	}
-}
-
-void Buffer::read_block(int blk) {
-	close_file();
-	init();
-	if (blk < 1)
-		error(Error::InvalidBlockNumber);
-	m_blk = blk;
-
-	errno = 0;
-	ifstream ifs(BLOCK_FILENAME, ios::binary);
-	int error_number = errno;
-	if (!ifs.is_open())
-		check_error(error_number);
-	else {
-		ifs.seekg(blk * BUFFER_SZ);
-		ifs.read(m_buffer, BUFFER_SZ);
-		m_size = static_cast<int>(ifs.gcount());
-	}
-}
-
-void Buffer::read_cin() {
-	close_file();
-	init();
-	m_source_id = 0;
-}
-
-void Buffer::close_file() {
-	if (m_ifs != nullptr)
-		delete m_ifs;
-	m_ifs = nullptr;
-}
-
-void Buffer::check_error(int error_number) {
-	if (error_number == 0)
-		return;
-	else if (error_number == ENOENT)
+static void check_error(int error_number) {
+	assert(error_number != 0);
+	if (error_number == ENOENT)
 		error(Error::NonExistentFile);
 	else if (error_number == EMFILE || error_number == ENFILE)
 		error(Error::TooManyOpenFiles);
@@ -98,116 +23,89 @@ void Buffer::check_error(int error_number) {
 		error(Error::FileIOException);
 }
 
-bool Buffer::refill() {
-	if (m_source_id < 0)				// input from string
-		return false;
-	else if (m_blk > 0)				// input from block
-		return false;
-	else {							// input from stream
-		string line;
-		bool ok = true;
-		if (m_source_id == 0) {		// input from stdin
-			if (!std::getline(cin, line))
-				ok = false;
-		}
-		else {						// input from file
-			if (!std::getline(*m_ifs, line))
-				ok = false;
-		}
+//-----------------------------------------------------------------------------
 
-		if (line.size() > BUFFER_SZ)
-			error(Error::InputBufferOverflow);
-
-		if (ok)
-			set_buffer(line);
-		else
-			set_buffer("");
-
-		return ok;
-	}
-}
-
-void Buffer::set_buffer(const string& text) {
-	set_buffer(text.c_str(), text.size());
-}
-
-void Buffer::set_buffer(const char* text, size_t size) {
-	set_buffer(text, static_cast<int>(size));
-}
-
-void Buffer::set_buffer(const char* text, int size) {
-	if (size > BUFFER_SZ) {
-		error(Error::InputBufferOverflow);
-        m_ptr = m_size = 0;	// reset buffer
-	}
-	else {
-		memcpy(m_buffer, text, size);
-		m_ptr = 0;
-		m_size = size;
-	}
-}
-	
-string Buffer::block_filename() {
-	return BLOCK_FILENAME;
+void Pad::init() {
+	memset(m_pad, BL, sizeof(m_pad));
 }
 
 //-----------------------------------------------------------------------------
 
-void Input::init() {
-	for (int i = 0; i < MAX_FILES; ++i) {
-		m_buffers[i].init();
-    }
-    m_size = 0;
+void Tib::init() {
+	memset(m_tib, BL, sizeof(m_tib));
 }
 
-void Input::deinit() {
-	for (int i = 0; i < MAX_FILES; ++i) {
-		m_buffers[i].close_file();
+//-----------------------------------------------------------------------------
+
+InputFiles::InputFiles() {
+	m_files.push_back(nullptr);		// source_id 0 is for cin
+}
+
+InputFiles::~InputFiles() {
+	for (auto& file : m_files)
+		delete file;
+}
+
+int InputFiles::open_file(const string& filename) {
+	int source_id = static_cast<int>(m_files.size());
+	errno = 0;
+	ifstream* ifs = new ifstream(filename);
+	int error_number = errno;
+	if (!ifs->is_open()) {
+		delete ifs;
+		ifs = nullptr;
+		check_error(error_number);
 	}
+
+	m_files.push_back(ifs);
+	return source_id;
 }
 
-int Input::blk() const { 
-	if (m_size > 0)
-		return m_buffers[m_size - 1].blk();
-	else
-		return 0;
+int InputFiles::open_file(const char* text, size_t size) {
+	return open_file(string(text, text + size));
 }
 
-int Input::source_id() const { 
-	if (m_size > 0)
-		return m_buffers[m_size - 1].source_id();
-	else
-		return -1;
+int InputFiles::open_file(const char* text, int size) {
+	return open_file(string(text, text + size));
 }
 
-const char* Input::buffer() const { 
-	if (m_size > 0)
-		return m_buffers[m_size - 1].buffer();
-	else
-        return m_buffers[0].buffer(); // reuse first buffer if no input
+bool InputFiles::refill() {
+	string line;
+	bool ok = false;
+	vm.user->TO_IN = vm.user->NR_IN = 0;
+
+	int source_id = vm.user->SOURCE_ID;
+	if (source_id < 0)
+		return false;
+	else if (source_id == 0)
+		ok = static_cast<bool>(std::getline(cin, line));
+	else if (source_id < static_cast<int>(m_files.size()) && m_files[source_id] != nullptr)
+		ok = static_cast<bool>(std::getline(*m_files[source_id], line));
+	else 
+		error(Error::FileIOException);
+
+	if (ok) {
+		if (static_cast<int>(line.size()) > vm.tib->size()) {
+			error(Error::InputBufferOverflow);
+		}
+		else {
+			memcpy(vm.tib->tib(), line.c_str(), line.size());
+			vm.user->TO_IN = 0;
+			vm.user->NR_IN = static_cast<int>(line.size());
+		}
+	}
+	else {
+		delete m_files[source_id]; // release open file
+		m_files[source_id] = nullptr;
+	}
+
+	return ok;
 }
 
-int Input::buffer_ptr() const { 
-	if (m_size > 0)
-		return m_buffers[m_size - 1].buffer_ptr();
-	else
-        return 0; // no input, pointer at start
-}
-
-int Input::buffer_size() const { 
-	if (m_size > 0)
-		return m_buffers[m_size - 1].buffer_size();
-	else
-        return 0; // no input, size is zero
-}
-
-void Input::set_buffer_ptr(int ptr) {
-	if (m_size > 0)
-		m_buffers[m_size - 1].set_buffer_ptr(ptr);
-}
+//-----------------------------------------------------------------------------
 
 void Input::push_text(const string& text) {
-    push_text(text.c_str(), text.size());
+	push_text(text.c_str(), text.size());
 }
 
 void Input::push_text(const char* text, size_t size) {
@@ -215,72 +113,109 @@ void Input::push_text(const char* text, size_t size) {
 }
 
 void Input::push_text(const char* text, int size) {
-	if (m_size >= MAX_FILES) {
-		error(Error::TooManyOpenFiles);
-    }
-	else {
-		m_buffers[m_size].read_text(text, size);
-		++m_size;
-	}
-}
-
-void Input::push_file(const string& filename) {
-	push_file(filename.c_str(), filename.size());
-}
-
-void Input::push_file(const char* filename, size_t size) {
-	push_file(filename, static_cast<int>(size));
-}
-
-void Input::push_file(const char* filename, int size) {
-	if (m_size >= MAX_FILES) {
-		error(Error::TooManyOpenFiles);
-	}
-	else {
-        int source_id = m_size + 1;	// source_id starts at 1
-		m_buffers[m_size].read_file(source_id, filename, size);
-		++m_size;
-	}
+	push_remaining_buffer();
+	if (size > BUFFER_SZ)
+		error(Error::InputBufferOverflow);
+	memcpy(vm.tib->tib(), text, size);
+	vm.user->NR_IN = size;
+	vm.user->SOURCE_ID = -1;
 }
 
 void Input::push_block(int blk) {
-	if (m_size >= MAX_FILES) {
-		error(Error::TooManyOpenFiles);
-	}
+	push_remaining_buffer();
+	if (blk < 1)
+		error(Error::InvalidBlockNumber);
 	else {
-		m_buffers[m_size].read_block(blk);
-		++m_size;
+		errno = 0;
+		ifstream ifs(BLOCK_FILENAME, ios::binary);
+		int error_number = errno;
+		if (!ifs.is_open())
+			check_error(error_number);
+		else {
+			ifs.seekg(blk * BUFFER_SZ);
+			ifs.read(vm.tib->tib(), BUFFER_SZ);
+			vm.user->TO_IN = 0;
+			vm.user->NR_IN = static_cast<int>(ifs.gcount());
+			vm.user->BLK = blk;
+		}
 	}
 }
 
 void Input::push_cin() {
-	if (m_size >= MAX_FILES) {
-		error(Error::TooManyOpenFiles);
-	}
-	else {
-		m_buffers[m_size].read_cin();
-		++m_size;
-	}
+	push_remaining_buffer();
+	vm.user->SOURCE_ID = 0;
 }
 
-bool Input::has_input() const { 
-	return m_size > 0; 
+void Input::push_file(const string& filename) {
+	push_remaining_buffer();
+	vm.user->SOURCE_ID = vm.input_files->open_file(filename);
 }
 
-bool Input::refill() {
-	if (m_size > 0)
-		return m_buffers[m_size - 1].refill();
-	else
-		return false;		// no input to refill
+void Input::push_file(const char* filename, size_t size) {
+	push_file(string(filename, filename + size));
+}
+
+void Input::push_file(const char* filename, int size) {
+	push_file(string(filename, filename + size));
 }
 
 void Input::pop_input() {
-	if (m_size > 0) {
-		m_buffers[m_size - 1].close_file();
-		m_buffers[m_size - 1].init();
-		--m_size;		// remove last buffer
+	if (!m_buffers.empty()) {
+		Buffer buffer = m_buffers.back();
+		m_buffers.pop_back();
+
+		memcpy(vm.tib->tib(), buffer.text.c_str(), buffer.text.size());
+		vm.user->TO_IN = buffer.to_in;
+		vm.user->NR_IN = buffer.nr_in;
+		vm.user->BLK = buffer.blk;
+		vm.user->SOURCE_ID = buffer.source_id;
+	}
+	else {
+		vm.user->TO_IN = vm.user->NR_IN = 0;
+		vm.user->BLK = 0;
+		vm.user->SOURCE_ID = 0;
 	}
 }
 
-//-----------------------------------------------------------------------------
+bool Input::refill() {
+	push_remaining_buffer();
+	while (true) {
+		int source_id = vm.user->SOURCE_ID;
+		int blk = vm.user->BLK;
 
+		if (source_id < 0)				// input from string
+			return false;
+		else if (blk > 0)				// input from block
+			return false;
+		else {							// input from stream
+			if (vm.input_files->refill())
+				return true;			// read a new line
+			else {
+				if (m_buffers.empty())
+					return false;		// no more input
+				else
+					pop_input();		// get last buffer from stack and continue
+			}
+		}
+	}
+}
+
+void Input::push_remaining_buffer() {
+	if (vm.user->TO_IN < vm.user->NR_IN) {
+		Buffer buffer;
+		buffer.text = string(vm.tib->tib(), vm.tib->tib() + vm.user->NR_IN);
+		buffer.to_in = vm.user->TO_IN;
+		buffer.nr_in = vm.user->NR_IN;
+		buffer.blk = vm.user->BLK;
+		buffer.source_id = vm.user->SOURCE_ID;
+		m_buffers.push_back(buffer);
+
+		vm.user->TO_IN = vm.user->NR_IN = 0;
+		vm.user->BLK = 0;
+		vm.user->SOURCE_ID = 0;
+	}
+}
+
+bool f_refill() {
+	return vm.input->refill();
+}

@@ -28,101 +28,60 @@ static int char_digit(char c) {
 }
 
 static void skip_blank() {
-    const char* buffer = vm.input->buffer();
-    int ptr = vm.input->buffer_ptr();
-    int size = vm.input->buffer_size();
+    const char* tib = vm.tib->tib();
 
-    if (ptr < size && is_space(buffer[ptr])) {
-        ++ptr; // skip spaces
+    if (vm.user->TO_IN < vm.user->NR_IN && is_space(tib[vm.user->TO_IN])) {
+        ++vm.user->TO_IN; // skip spaces
     }
-
-    vm.input->set_buffer_ptr(ptr); // update buffer pointer
 }
 
 static void skip_blanks() {
-    const char* buffer = vm.input->buffer();
-    int ptr = vm.input->buffer_ptr();
-    int size = vm.input->buffer_size();
+    const char* tib = vm.tib->tib();
 
-    while (ptr < size && is_space(buffer[ptr])) {
-        ++ptr; // skip spaces
+    while (vm.user->TO_IN < vm.user->NR_IN && is_space(tib[vm.user->TO_IN])) {
+        ++vm.user->TO_IN; // skip spaces
     }
-
-    vm.input->set_buffer_ptr(ptr); // update buffer pointer
 }
 
 static int skip_to_delimiter(char delimiter = BL) {
-    const char* buffer = vm.input->buffer();
-    int ptr = vm.input->buffer_ptr();
-    int size = vm.input->buffer_size();
+    const char* tib = vm.tib->tib();
 
-    int end = size;
+    int end = vm.user->TO_IN;
     if (delimiter == BL) {
-        while (ptr < size && !is_space(buffer[ptr]))
-            ++ptr;
-        end = ptr;
+        while (vm.user->TO_IN < vm.user->NR_IN && !is_space(tib[vm.user->TO_IN]))
+            ++vm.user->TO_IN;
+        end = vm.user->TO_IN;
     }
     else {
-        while (ptr < size && buffer[ptr] != delimiter)
-            ++ptr;
-        end = ptr;
-        if (ptr < size && buffer[ptr] == delimiter)
-            ++ptr;		// skip delimiter
+        while (vm.user->TO_IN < vm.user->NR_IN && tib[vm.user->TO_IN] != delimiter)
+            ++vm.user->TO_IN;
+        end = vm.user->TO_IN;
+        if (vm.user->TO_IN < vm.user->NR_IN && tib[vm.user->TO_IN] == delimiter)
+            ++vm.user->TO_IN;		// skip delimiter
     }
 
-    vm.input->set_buffer_ptr(ptr); // update buffer pointer
     return end;	// end of word, char before delimiter
 }
 
 // parse a word from the input buffer, delimited by the specified character
-static const ForthString* parse_word_1(char delimiter) {
-    while (true) {
-        const char* buffer = vm.input->buffer();
-        int ptr = vm.input->buffer_ptr();
-        int size = vm.input->buffer_size();
-
-        if (ptr >= size) {		        // end of buffer
-            if (vm.input->refill())		// try to read next line
-                continue;			    // try again
-            else
-                return nullptr;		    // EOF
-        }
-
-        if (delimiter == BL)
-            skip_blanks();	// skip blanks before word
-        else
-            skip_blank();	// skip space after quote
-
-        ptr = vm.input->buffer_ptr();   // adjust after skip_...()
-        int start = ptr;
-        int end = skip_to_delimiter(delimiter);
-
-        if (delimiter == BL && start == end) {
-            // no word found, continue to next line
-            continue;
-        }
-        else {
-            int size = end - start;
-            ForthString* ret = vm.wordbuf->append(buffer + start, size);
-            return ret;
-        }
-    }
-}
-
 const ForthString* f_parse_word(char delimiter) {
-    while (vm.input->has_input()) {
-        const ForthString* word = parse_word_1(delimiter);
-        if (word != nullptr) {		            // found a word
-            return word;
-        }
-        else if (vm.input->source_id() < 0) {   // input from string
-            return nullptr;		                // no more words
-        }
-        else { 
-            vm.input->pop_input();	            // remove last buffer
-        }
+    if (delimiter == BL)
+        skip_blanks();	// skip blanks before word
+    else
+        skip_blank();	// skip space after quote
+
+    const char* tib = vm.tib->tib();
+    int start = vm.user->TO_IN;
+    int end = skip_to_delimiter(delimiter);
+
+    if (start == end) {
+        return nullptr; // no word found
     }
-    return nullptr;		                        // no input at all
+    else {
+        int size = end - start;
+        ForthString* ret = vm.wordbuf->append(tib + start, size);
+        return ret;
+    }
 }
 
 // parse number with optional sign (+-)

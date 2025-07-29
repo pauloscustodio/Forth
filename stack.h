@@ -24,6 +24,7 @@ public:
 
     int ptr() const { return m_ptr; }
 	void set_ptr(int ptr);
+	void clear();
 
 	void print(const string& prefix = "") const;
 

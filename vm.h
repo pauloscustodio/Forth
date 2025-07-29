@@ -14,29 +14,22 @@
 #include "stack.h"
 using namespace std;
 
-class Pad {
-public:
-	void init();
-
-	char* pad() { return m_pad; }
-
-private:
-	char m_pad[PAD_SZ];
-};
-
-
 struct VM {
 	VM();
 	virtual ~VM();
+
+	// input
+	InputFiles* input_files;
+	Input* input;
 
 	// memory
 	Mem mem;
 
 	// input
 	Wordbuf* wordbuf;
+	Tib* tib;
 	Pad* pad;
 	NumberOutput* number_output;
-	Input* input;
 
 	// user variables
 	User* user;

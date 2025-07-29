@@ -123,3 +123,11 @@ void f_evaluate(const char* text, int size) {
     f_execute(xtINTERPRET);
     vm.input->pop_input();
 }
+
+void f_quit() {
+    vm.rstack->clear();
+    vm.user->STATE = STATE_INTERPRET;
+    while (f_refill())
+        f_interpret();
+    exit(EXIT_SUCCESS);
+}

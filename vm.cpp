@@ -15,22 +15,19 @@ VM vm;
 
 //-----------------------------------------------------------------------------
 
-void Pad::init() {
-    memset(m_pad, BL, sizeof(m_pad));
-}
-
-//-----------------------------------------------------------------------------
-
 VM::VM() {
+	input_files = new InputFiles;
+	input = new Input;
+
 	// bottom of memory
 	wordbuf = reinterpret_cast<Wordbuf*>(mem.alloc_bot(sizeof(Wordbuf)));
 	wordbuf->init();
+	tib = reinterpret_cast<Tib*>(mem.alloc_bot(sizeof(Tib)));
+	tib->init();
 	pad = reinterpret_cast<Pad*>(mem.alloc_bot(sizeof(Pad)));
 	pad->init();
 	number_output = reinterpret_cast<NumberOutput*>(mem.alloc_bot(sizeof(NumberOutput)));
 	number_output->init();
-	input = reinterpret_cast<Input*>(mem.alloc_bot(sizeof(Input)));
-	input->init();
 
 	// user variables
 	user = reinterpret_cast<User*>(mem.alloc_bot(sizeof(User)));
@@ -55,6 +52,6 @@ VM::VM() {
 }
 
 VM::~VM() {
-	input->deinit();
+	delete input;
+	delete input_files;
 }
-

@@ -31,6 +31,10 @@ int xtSTATE = 0; // STATE
 int xtBASE = 0; // BASE
 int xtDPL = 0; // DPL
 int xtTRACE = 0; // TRACE
+int xtTO_IN = 0; // >IN
+int xtNR_IN = 0; // #IN
+int xtBLK = 0; // BLK
+int xtSOURCE_ID = 0; // SOURCE_ID
 int xtPAD = 0; // PAD
 int xtPLUS = 0; // +
 int xtMULT = 0; // *
@@ -170,6 +174,7 @@ int xtXDOVAR = 0; // (DOVAR)
 int xtLITERAL = 0; // LITERAL
 int xtXLITERAL = 0; // (LITERAL)
 int xtINTERPRET = 0; // INTERPRET
+int xtQUIT = 0; // QUIT
 //@@END
 
 // bool
@@ -344,6 +349,10 @@ void create_dictionary() {
 	xtBASE = vm.dict->create("BASE", 0, idBASE);
 	xtDPL = vm.dict->create("DPL", 0, idDPL);
 	xtTRACE = vm.dict->create("TRACE", 0, idTRACE);
+	xtTO_IN = vm.dict->create(">IN", 0, idTO_IN);
+	xtNR_IN = vm.dict->create("#IN", 0, idNR_IN);
+	xtBLK = vm.dict->create("BLK", 0, idBLK);
+	xtSOURCE_ID = vm.dict->create("SOURCE_ID", 0, idSOURCE_ID);
 	xtPAD = vm.dict->create("PAD", 0, idPAD);
 	xtPLUS = vm.dict->create("+", 0, idPLUS);
 	xtMULT = vm.dict->create("*", 0, idMULT);
@@ -483,6 +492,7 @@ void create_dictionary() {
 	xtLITERAL = vm.dict->create("LITERAL", F_IMMEDIATE, idLITERAL);
 	xtXLITERAL = vm.dict->create("(LITERAL)", F_HIDDEN, idXLITERAL);
 	xtINTERPRET = vm.dict->create("INTERPRET", 0, idINTERPRET);
+	xtQUIT = vm.dict->create("QUIT", 0, idQUIT);
 	//@@END
 }
 
@@ -504,6 +514,10 @@ void f_execute(int xt) {
 		case idBASE: fBASE(); break; // BASE
 		case idDPL: fDPL(); break; // DPL
 		case idTRACE: fTRACE(); break; // TRACE
+		case idTO_IN: fTO_IN(); break; // >IN
+		case idNR_IN: fNR_IN(); break; // #IN
+		case idBLK: fBLK(); break; // BLK
+		case idSOURCE_ID: fSOURCE_ID(); break; // SOURCE_ID
 		case idPAD: fPAD(); break; // PAD
 		case idPLUS: fPLUS(); break; // +
 		case idMULT: fMULT(); break; // *
@@ -643,6 +657,7 @@ void f_execute(int xt) {
 		case idLITERAL: fLITERAL(); break; // LITERAL
 		case idXLITERAL: fXLITERAL(); break; // (LITERAL)
 		case idINTERPRET: fINTERPRET(); break; // INTERPRET
+		case idQUIT: fQUIT(); break; // QUIT
 		//@@END
 		default:
 			assert(0); // not reached
@@ -665,6 +680,10 @@ void User::init() {
 	BASE = 10;
 	DPL = 0;
 	TRACE = 0;
+	TO_IN = 0;
+	NR_IN = 0;
+	BLK = 0;
+	SOURCE_ID = -1;
 	//@@END
 }
 
@@ -720,6 +739,26 @@ void fDPL() {
 // TRACE
 void fTRACE() {
 	push(mem_addr(&vm.user->TRACE));
+}
+
+// >IN
+void fTO_IN() {
+	push(mem_addr(&vm.user->TO_IN));
+}
+
+// #IN
+void fNR_IN() {
+	push(mem_addr(&vm.user->NR_IN));
+}
+
+// BLK
+void fBLK() {
+	push(mem_addr(&vm.user->BLK));
+}
+
+// SOURCE_ID
+void fSOURCE_ID() {
+	push(mem_addr(&vm.user->SOURCE_ID));
 }
 
 //@@END
@@ -1383,6 +1422,11 @@ void fXLITERAL() {
 // INTERPRET
 void fINTERPRET() {
 	f_interpret();
+}
+
+// QUIT
+void fQUIT() {
+	f_quit();
 }
 
 //@@END
