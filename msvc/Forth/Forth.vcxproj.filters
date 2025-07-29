@@ -71,6 +71,9 @@
     <ClInclude Include="..\..\environ.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\str.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\errors.cpp">
@@ -113,6 +116,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\environ.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\str.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

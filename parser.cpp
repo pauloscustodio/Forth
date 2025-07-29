@@ -84,6 +84,16 @@ const ForthString* f_parse_word(char delimiter) {
     }
 }
 
+void f_word() {
+    char delimiter = pop();
+    const ForthString* word = f_parse_word(delimiter);
+    if (word == nullptr)
+        word = vm.wordbuf->append("");
+
+    const CountedString* addr = word->counted_string();
+    push(mem_addr(reinterpret_cast<const char*>(addr)));	// address counted string
+}
+
 // parse number with optional sign (+-)
 // accept $ # as hex prefixes, % as binary prefix, 'a' as quoted character
 // skip punctuation ( , . + - / : )

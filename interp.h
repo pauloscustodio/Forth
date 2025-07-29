@@ -10,9 +10,6 @@
 #include <string>
 using namespace std;
 
-// interpreter pointer
-extern int ip;
-
 // outer interpreter
 void f_interpret_word(const string& word);
 void f_interpret_word(const char* word, size_t size);

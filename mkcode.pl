@@ -82,36 +82,6 @@ sub patch_file {
 				shift @in;
 			}
 		}
-		elsif (/^(\s*)\/\/\@\@BEGIN:\s*VarsImplementation\b/) {
-			my $prefix = $1;
-			push @out, $_;
-			for my $var (@vars) {
-				push @out, $prefix."// ".$var->{name}."\n".$prefix."void f".$var->{id}."() {\n".$prefix."\tpush(mem_addr(&vm.user->".$var->{id}."));\n".$prefix."}\n\n";
-			}
-			while (@in && $in[0] !~ /^\s*\/\/\@\@END/) {
-				shift @in;
-			}
-		}
-		elsif (/^(\s*)\/\/\@\@BEGIN:\s*Constants\b/) {
-			my $prefix = $1;
-			push @out, $_;
-			for my $const (@const) {
-				push @out, $prefix."static inline const int c".$const->{id}." = ".$const->{value}."; // ".$const->{name}."\n";
-			}
-			while (@in && $in[0] !~ /^\s*\/\/\@\@END/) {
-				shift @in;
-			}
-		}
-		elsif (/^(\s*)\/\/\@\@BEGIN:\s*ConstImplementation\b/) {
-			my $prefix = $1;
-			push @out, $_;
-			for my $const (@const) {
-				push @out, $prefix."// ".$const->{name}."\n".$prefix."void f".$const->{id}."() {\n".$prefix."\tpush(".$const->{value}.");\n".$prefix."}\n\n";
-			}
-			while (@in && $in[0] !~ /^\s*\/\/\@\@END/) {
-				shift @in;
-			}
-		}
 		elsif (/^(\s*)\/\/\@\@BEGIN:\s*WordsXtDeclaration\b/) {
 			my $prefix = $1;
 			push @out, $_;
@@ -139,34 +109,6 @@ sub patch_file {
 			}
 			for my $word (@words) {
 				push @out, $prefix."int xt".$word->{id}." = 0; // ".$word->{name}."\n";
-			}
-			while (@in && $in[0] !~ /^\s*\/\/\@\@END/) {
-				shift @in;
-			}
-		}
-		elsif (/^(\s*)\/\/\@\@BEGIN:\s*WordsDeclaration\b/) {
-			my $prefix = $1;
-			push @out, $_;
-			for my $const (@const) {
-				push @out, $prefix."void f".$const->{id}."(); // ".$const->{name}."\n";
-			}
-			for my $var (@vars) {
-				push @out, $prefix."void f".$var->{id}."(); // ".$var->{name}."\n";
-			}
-			for my $word (@words) {
-				push @out, $prefix."void f".$word->{id}."(); // ".$word->{name}."\n";
-			}
-			while (@in && $in[0] !~ /^\s*\/\/\@\@END/) {
-				shift @in;
-			}
-		}
-		elsif (/^(\s*)\/\/\@\@BEGIN:\s*WordsImplementation\b/) {
-			my $prefix = $1;
-			push @out, $_;
-			for my $word (@words) {
-				if ($word->{code}) {
-					push @out, $prefix."// ".$word->{name}."\n".$prefix."void f".$word->{id}."() {\n".$prefix."\t".$word->{code}."\n".$prefix."}\n\n";
-				}
 			}
 			while (@in && $in[0] !~ /^\s*\/\/\@\@END/) {
 				shift @in;
@@ -208,13 +150,13 @@ sub patch_file {
 			my $prefix = $1;
 			push @out, $_;
 			for my $const (@const) {
-				push @out, $prefix."case id".$const->{id}.": f".$const->{id}."(); break; // ".$const->{name}."\n";
+				push @out, $prefix."case id".$const->{id}.": push(".$const->{value}."); break; // ".$const->{name}."\n";
 			}
 			for my $var (@vars) {
-				push @out, $prefix."case id".$var->{id}.": f".$var->{id}."(); break; // ".$var->{name}."\n";
+				push @out, $prefix."case id".$var->{id}.": push(mem_addr(&vm.user->".$var->{id}.")); break; // ".$var->{name}."\n";
 			}
 			for my $word (@words) {
-				push @out, $prefix."case id".$word->{id}.": f".$word->{id}."(); break; // ".$word->{name}."\n";
+				push @out, $prefix."case id".$word->{id}.": { ".$word->{code}." }; break; // ".$word->{name}."\n";
 			}
 			while (@in && $in[0] !~ /^\s*\/\/\@\@END/) {
 				shift @in;

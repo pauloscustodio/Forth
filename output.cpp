@@ -84,7 +84,7 @@ static void print_dint_uint_aligned(int width, int sign) {
 
     dint d;
     do {
-        fHASH();
+        vm.number_output->add_digit();
         width--;
         d = dpeek();
     } while (d != 0);

@@ -9,14 +9,11 @@
 #include "forth.h"
 #include "math.h"
 #include "parser.h"
+#include "str.h"
 #include "vm.h"
 #include <cassert>
 #include <cstring>
 using namespace std;
-
-static char to_lower(char c) {
-    return tolower(static_cast<unsigned char>(c));
-}
 
 ForthString* Header::name() const {
 	char* name_ptr = mem_char_ptr(name_addr);
@@ -239,13 +236,24 @@ void f_xmarker(int body) {
 	vm.dict->set_names(save_names);
 }
 
-bool case_insensitive_equal(const char* a_str, int a_size, const char* b_str, int b_size) {
-	if (a_size != b_size)
-		return false;
-	for (int i = 0; i < a_size; ++i) {
-		if (to_lower(a_str[i]) != to_lower(b_str[i]))
-			return false;
+void f_words() {
+	vector<string> words = vm.dict->get_words();
+	size_t col = 0;
+	for (auto& word : words) {
+		if (col + 1 + word.size() >= SCREEN_WIDTH) {
+			cout << endl << word;
+			col = word.size();
+		}
+		else if (col == 0) {
+			cout << word;
+			col += word.size();
+		}
+		else {
+			cout << BL << word;
+			col += 1 + word.size();
+		}
 	}
-	return true;
+	cout << endl;
 }
+
 

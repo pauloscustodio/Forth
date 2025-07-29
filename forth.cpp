@@ -5,11 +5,13 @@
 //-----------------------------------------------------------------------------
 
 #include "dict.h"
+#include "environ.h"
 #include "errors.h"
 #include "forth.h"
 #include "interp.h"
 #include "math.h"
 #include "parser.h"
+#include "str.h"
 #include "vm.h"
 #include <algorithm>
 #include <cassert>
@@ -18,7 +20,8 @@
 #include <vector>
 using namespace std;
 
-static int body = 0; // TODO: remove this
+// interpreter pointer
+int ip = 0;
 
 //@@BEGIN: WordsXtDefinition
 int xtBL = 0; // BL
@@ -497,180 +500,181 @@ void create_dictionary() {
 }
 
 void f_execute(int xt) {
-	int code = fetch(xt);
-	if (code < 0) {
-		error(Error::InvalidWordId, std::to_string(xt));
-	}
-	else if (code < MAX_WORD_ID) {
+	bool do_exit = false;
+	int old_ip = ip;
+	ip = 0;
+	while (true) {
+		int code = fetch(xt);
+		int body = xt + CELL_SZ;			// point to data area, if any
+
 		switch (code) {
 		//@@BEGIN: WordsIdExecution
-		case idBL: fBL(); break; // BL
-		case idTRUE: fTRUE(); break; // TRUE
-		case idFALSE: fFALSE(); break; // FALSE
-		case idS0: fS0(); break; // S0
-		case idR0: fR0(); break; // R0
-		case idCS0: fCS0(); break; // CS0
-		case idSTATE: fSTATE(); break; // STATE
-		case idBASE: fBASE(); break; // BASE
-		case idDPL: fDPL(); break; // DPL
-		case idTRACE: fTRACE(); break; // TRACE
-		case idTO_IN: fTO_IN(); break; // >IN
-		case idNR_IN: fNR_IN(); break; // #IN
-		case idBLK: fBLK(); break; // BLK
-		case idSOURCE_ID: fSOURCE_ID(); break; // SOURCE_ID
-		case idPAD: fPAD(); break; // PAD
-		case idPLUS: fPLUS(); break; // +
-		case idMULT: fMULT(); break; // *
-		case idMINUS: fMINUS(); break; // -
-		case idDIV: fDIV(); break; // /
-		case idMOD: fMOD(); break; // MOD
-		case idDIV_MOD: fDIV_MOD(); break; // /MOD
-		case idMULT_DIV: fMULT_DIV(); break; // */
-		case idMULT_DIV_MOD: fMULT_DIV_MOD(); break; // */MOD
-		case idFM_DIV_MOD: fFM_DIV_MOD(); break; // FM/MOD
-		case idUM_DIV_MOD: fUM_DIV_MOD(); break; // UM/MOD
-		case idSM_DIV_REM: fSM_DIV_REM(); break; // SM/REM
-		case idM_STAR: fM_STAR(); break; // M*
-		case idONE_PLUS: fONE_PLUS(); break; // 1+
-		case idONE_MINUS: fONE_MINUS(); break; // 1-
-		case idTWO_MULT: fTWO_MULT(); break; // 2*
-		case idTWO_DIV: fTWO_DIV(); break; // 2/
-		case idNEGATE: fNEGATE(); break; // NEGATE
-		case idS_TO_D: fS_TO_D(); break; // S>D
-		case idUM_MULT: fUM_MULT(); break; // UM*
-		case idABS: fABS(); break; // ABS
-		case idFMAX: fFMAX(); break; // MAX
-		case idFMIN: fFMIN(); break; // MIN
-		case idCHAR_PLUS: fCHAR_PLUS(); break; // CHAR+
-		case idCHARS: fCHARS(); break; // CHARS
-		case idCELL_PLUS: fCELL_PLUS(); break; // CELL+
-		case idCELLS: fCELLS(); break; // CELLS
-		case idWITHIN: fWITHIN(); break; // WITHIN
-		case idAND: fAND(); break; // AND
-		case idOR: fOR(); break; // OR
-		case idXOR: fXOR(); break; // XOR
-		case idINVERT: fINVERT(); break; // INVERT
-		case idLSHIFT: fLSHIFT(); break; // LSHIFT
-		case idRSHIFT: fRSHIFT(); break; // RSHIFT
-		case idEQUAL: fEQUAL(); break; // =
-		case idDIFFERENT: fDIFFERENT(); break; // <>
-		case idLESS: fLESS(); break; // <
-		case idLESS_EQUAL: fLESS_EQUAL(); break; // <=
-		case idGREATER: fGREATER(); break; // >
-		case idGREATER_EQUAL: fGREATER_EQUAL(); break; // >=
-		case idU_LESS: fU_LESS(); break; // U<
-		case idU_LESS_EQUAL: fU_LESS_EQUAL(); break; // U<=
-		case idU_GREATER: fU_GREATER(); break; // U>
-		case idU_GREATER_EQUAL: fU_GREATER_EQUAL(); break; // U>=
-		case idZERO_EQUAL: fZERO_EQUAL(); break; // 0=
-		case idZERO_DIFFERENT: fZERO_DIFFERENT(); break; // 0<>
-		case idZERO_LESS: fZERO_LESS(); break; // 0<
-		case idZERO_LESS_EQUAL: fZERO_LESS_EQUAL(); break; // 0<=
-		case idZERO_GREATER: fZERO_GREATER(); break; // 0>
-		case idZERO_GREATER_EQUAL: fZERO_GREATER_EQUAL(); break; // 0>=
-		case idSTORE: fSTORE(); break; // !
-		case idFETCH: fFETCH(); break; // @
-		case idPLUS_STORE: fPLUS_STORE(); break; // +!
-		case idCSTORE: fCSTORE(); break; // C!
-		case idCFETCH: fCFETCH(); break; // C@
-		case idTWO_STORE: fTWO_STORE(); break; // 2!
-		case idTWO_FETCH: fTWO_FETCH(); break; // 2@
-		case idFILL: fFILL(); break; // FILL
-		case idERASE: fERASE(); break; // ERASE
-		case idMOVE: fMOVE(); break; // MOVE
-		case idDROP: fDROP(); break; // DROP
-		case idSWAP: fSWAP(); break; // SWAP
-		case idDUP: fDUP(); break; // DUP
-		case idQ_DUP: fQ_DUP(); break; // ?DUP
-		case idOVER: fOVER(); break; // OVER
-		case idROT: fROT(); break; // ROT
-		case idMINUS_ROT: fMINUS_ROT(); break; // -ROT
-		case idNIP: fNIP(); break; // NIP
-		case idPICK: fPICK(); break; // PICK
-		case idROLL: fROLL(); break; // ROLL
-		case idTUCK: fTUCK(); break; // TUCK
-		case idTWO_DROP: fTWO_DROP(); break; // 2DROP
-		case idTWO_SWAP: fTWO_SWAP(); break; // 2SWAP
-		case idTWO_DUP: fTWO_DUP(); break; // 2DUP
-		case idTWO_OVER: fTWO_OVER(); break; // 2OVER
-		case idTWO_ROT: fTWO_ROT(); break; // 2ROT
-		case idMINUS_2ROT: fMINUS_2ROT(); break; // -2ROT
-		case idDEPTH: fDEPTH(); break; // DEPTH
-		case idSP_FETCH: fSP_FETCH(); break; // SP@
-		case idSP_STORE: fSP_STORE(); break; // SP!
-		case idDOT_S: fDOT_S(); break; // .S
-		case idTO_R: fTO_R(); break; // >R
-		case idFROM_R: fFROM_R(); break; // R>
-		case idR_DROP: fR_DROP(); break; // RDROP
-		case idR_FETCH: fR_FETCH(); break; // R@
-		case idI: fI(); break; // I
-		case idJ: fJ(); break; // J
-		case idTWO_TO_R: fTWO_TO_R(); break; // 2>R
-		case idTWO_R_TO: fTWO_R_TO(); break; // 2R>
-		case idTWO_R_FETCH: fTWO_R_FETCH(); break; // 2R@
-		case idR_DEPTH: fR_DEPTH(); break; // RDEPTH
-		case idRSP_FETCH: fRSP_FETCH(); break; // RSP@
-		case idRSP_STORE: fRSP_STORE(); break; // RSP!
-		case idDOT_RS: fDOT_RS(); break; // .RS
-		case idCOMMA: fCOMMA(); break; // ,
-		case idCCOMMA: fCCOMMA(); break; // C,
-		case idHERE: fHERE(); break; // HERE
-		case idLATEST: fLATEST(); break; // LATEST
-		case idFIND: fFIND(); break; // FIND
-		case idTO_BODY: fTO_BODY(); break; // >BODY
-		case idALIGN: fALIGN(); break; // ALIGN
-		case idALIGNED: fALIGNED(); break; // ALIGNED
-		case idALLOT: fALLOT(); break; // ALLOT
-		case idUNUSED: fUNUSED(); break; // UNUSED
-		case idMARKER: fMARKER(); break; // MARKER
-		case idXMARKER: fXMARKER(); break; // (MARKER)
-		case idTYPE: fTYPE(); break; // TYPE
-		case idEMIT: fEMIT(); break; // EMIT
-		case idCR: fCR(); break; // CR
-		case idSPACE: fSPACE(); break; // SPACE
-		case idSPACES: fSPACES(); break; // SPACES
-		case idLESS_HASH: fLESS_HASH(); break; // <#
-		case idHASH: fHASH(); break; // #
-		case idHASH_S: fHASH_S(); break; // #S
-		case idHOLD: fHOLD(); break; // HOLD
-		case idSIGN: fSIGN(); break; // SIGN
-		case idHASH_GREATER: fHASH_GREATER(); break; // #>
-		case idDOT: fDOT(); break; // .
-		case idD_DOT: fD_DOT(); break; // D.
-		case idD_DOT_R: fD_DOT_R(); break; // D.R
-		case idU_DOT: fU_DOT(); break; // U.
-		case idDOT_R: fDOT_R(); break; // .R
-		case idU_DOT_R: fU_DOT_R(); break; // U.R
-		case idRDEPTH: fRDEPTH(); break; // RDEPTH
-		case idCS_DEPTH: fCS_DEPTH(); break; // CS_DEPTH
-		case idTHROW: fTHROW(); break; // THROW
-		case idENVIRONMENT_Q: fENVIRONMENT_Q(); break; // ENVIRONMENT?
-		case idCOUNT: fCOUNT(); break; // COUNT
-		case idS_QUOTE: fS_QUOTE(); break; // S"
-		case idWORD: fWORD(); break; // WORD
-		case idWORDS: fWORDS(); break; // WORDS
-		case idDABS: fDABS(); break; // DABS
-		case idDECIMAL: fDECIMAL(); break; // DECIMAL
-		case idHEX: fHEX(); break; // HEX
-		case idBYE: fBYE(); break; // BYE
-		case idXDOVAR: fXDOVAR(); break; // (DOVAR)
-		case idLITERAL: fLITERAL(); break; // LITERAL
-		case idXLITERAL: fXLITERAL(); break; // (LITERAL)
-		case idINTERPRET: fINTERPRET(); break; // INTERPRET
-		case idQUIT: fQUIT(); break; // QUIT
+		case idBL: push(BL); break; // BL
+		case idTRUE: push(F_TRUE); break; // TRUE
+		case idFALSE: push(F_FALSE); break; // FALSE
+		case idS0: push(STACK_SZ); break; // S0
+		case idR0: push(STACK_SZ); break; // R0
+		case idCS0: push(STACK_SZ); break; // CS0
+		case idSTATE: push(mem_addr(&vm.user->STATE)); break; // STATE
+		case idBASE: push(mem_addr(&vm.user->BASE)); break; // BASE
+		case idDPL: push(mem_addr(&vm.user->DPL)); break; // DPL
+		case idTRACE: push(mem_addr(&vm.user->TRACE)); break; // TRACE
+		case idTO_IN: push(mem_addr(&vm.user->TO_IN)); break; // >IN
+		case idNR_IN: push(mem_addr(&vm.user->NR_IN)); break; // #IN
+		case idBLK: push(mem_addr(&vm.user->BLK)); break; // BLK
+		case idSOURCE_ID: push(mem_addr(&vm.user->SOURCE_ID)); break; // SOURCE_ID
+		case idPAD: { push(mem_addr(vm.pad->pad())); }; break; // PAD
+		case idPLUS: { push(pop() + pop()); }; break; // +
+		case idMULT: { push(pop() * pop()); }; break; // *
+		case idMINUS: { int b = pop(), a = pop(); push(a - b); }; break; // -
+		case idDIV: { int b = pop(), a = pop(); push(f_div(a, b)); }; break; // /
+		case idMOD: { int b = pop(), a = pop(); push(f_mod(a, b)); }; break; // MOD
+		case idDIV_MOD: { f_div_mod(); }; break; // /MOD
+		case idMULT_DIV: { f_mul_div(); }; break; // */
+		case idMULT_DIV_MOD: { f_mul_div_mod(); }; break; // */MOD
+		case idFM_DIV_MOD: { f_fm_div_mod(); }; break; // FM/MOD
+		case idUM_DIV_MOD: { f_um_div_mod(); }; break; // UM/MOD
+		case idSM_DIV_REM: { f_sm_div_rem(); }; break; // SM/REM
+		case idM_STAR: { dint b = pop(), a = pop(); dpush(a * b); }; break; // M*
+		case idONE_PLUS: { push(pop() + 1); }; break; // 1+
+		case idONE_MINUS: { push(pop() - 1); }; break; // 1-
+		case idTWO_MULT: { push(pop() * 2); }; break; // 2*
+		case idTWO_DIV: { push(f_div(pop(), 2)); }; break; // 2/
+		case idNEGATE: { push(-pop()); }; break; // NEGATE
+		case idS_TO_D: { dpush(pop()); }; break; // S>D
+		case idUM_MULT: { udint b = static_cast<uint>(pop()), a = static_cast<uint>(pop()); dpush(a * b); }; break; // UM*
+		case idABS: { push(f_abs(pop())); }; break; // ABS
+		case idFMAX: { push(f_max(pop(), pop())); }; break; // MAX
+		case idFMIN: { push(f_min(pop(), pop())); }; break; // MIN
+		case idCHAR_PLUS: { push(pop() + 1); }; break; // CHAR+
+		case idCHARS: { push(pop() * 1); }; break; // CHARS
+		case idCELL_PLUS: { push(pop() + CELL_SZ); }; break; // CELL+
+		case idCELLS: { push(pop() * CELL_SZ); }; break; // CELLS
+		case idWITHIN: { f_within(); }; break; // WITHIN
+		case idAND: { push(pop() & pop()); }; break; // AND
+		case idOR: { push(pop() | pop()); }; break; // OR
+		case idXOR: { push(pop() ^ pop()); }; break; // XOR
+		case idINVERT: { push(~pop()); }; break; // INVERT
+		case idLSHIFT: { int n = pop(), a = pop(); push(a << n); }; break; // LSHIFT
+		case idRSHIFT: { int n = pop(), a = pop(); push(a >> n); }; break; // RSHIFT
+		case idEQUAL: { push(f_bool(pop() == pop())); }; break; // =
+		case idDIFFERENT: { push(f_bool(pop() != pop())); }; break; // <>
+		case idLESS: { int b = pop(), a = pop(); push(f_bool(a < b)); }; break; // <
+		case idLESS_EQUAL: { int b = pop(), a = pop(); push(f_bool(a <= b)); }; break; // <=
+		case idGREATER: { int b = pop(), a = pop(); push(f_bool(a > b)); }; break; // >
+		case idGREATER_EQUAL: { int b = pop(), a = pop(); push(f_bool(a >= b)); }; break; // >=
+		case idU_LESS: { uint b = pop(), a = pop(); push(f_bool(a < b)); }; break; // U<
+		case idU_LESS_EQUAL: { uint b = pop(), a = pop(); push(f_bool(a <= b)); }; break; // U<=
+		case idU_GREATER: { uint b = pop(), a = pop(); push(f_bool(a > b)); }; break; // U>
+		case idU_GREATER_EQUAL: { uint b = pop(), a = pop(); push(f_bool(a >= b)); }; break; // U>=
+		case idZERO_EQUAL: { push(f_bool(pop() == 0)); }; break; // 0=
+		case idZERO_DIFFERENT: { push(f_bool(pop() != 0)); }; break; // 0<>
+		case idZERO_LESS: { push(f_bool(pop() < 0)); }; break; // 0<
+		case idZERO_LESS_EQUAL: { push(f_bool(pop() <= 0)); }; break; // 0<=
+		case idZERO_GREATER: { push(f_bool(pop() > 0)); }; break; // 0>
+		case idZERO_GREATER_EQUAL: { push(f_bool(pop() >= 0)); }; break; // 0>=
+		case idSTORE: { int a = pop(), v = pop(); store(a, v); }; break; // !
+		case idFETCH: { push(fetch(pop())); }; break; // @
+		case idPLUS_STORE: { int a = pop(), v = pop(); store(a, fetch(a) + v); }; break; // +!
+		case idCSTORE: { int a = pop(), v = pop(); cstore(a, v); }; break; // C!
+		case idCFETCH: { push(cfetch(pop())); }; break; // C@
+		case idTWO_STORE: { int a = pop(); dstore(a, dpop()); }; break; // 2!
+		case idTWO_FETCH: { dpush(dfetch(pop())); }; break; // 2@
+		case idFILL: { int c = pop(), n = pop(), a = pop(); vm.mem.fill(a, n, c); }; break; // FILL
+		case idERASE: { int n = pop(), a = pop(); vm.mem.erase(a, n); }; break; // ERASE
+		case idMOVE: { int n = pop(), dst = pop(), src = pop(); vm.mem.move(src, dst, n); }; break; // MOVE
+		case idDROP: { pop(); }; break; // DROP
+		case idSWAP: { int a = pop(), b = pop(); push(a); push(b); }; break; // SWAP
+		case idDUP: { push(peek(0)); }; break; // DUP
+		case idQ_DUP: { int a = peek(); if (a) push(a); }; break; // ?DUP
+		case idOVER: { push(peek(1)); }; break; // OVER
+		case idROT: { int c = pop(), b = pop(), a = pop(); push(b); push(c); push(a); }; break; // ROT
+		case idMINUS_ROT: { int c = pop(), b = pop(), a = pop(); push(c); push(a); push(b); }; break; // -ROT
+		case idNIP: { int a = pop(); pop(); push(a); }; break; // NIP
+		case idPICK: { push(peek(pop())); }; break; // PICK
+		case idROLL: { roll(pop()); }; break; // ROLL
+		case idTUCK: { int a = pop(), b = pop(); push(a); push(b); push(a); }; break; // TUCK
+		case idTWO_DROP: { dpop(); }; break; // 2DROP
+		case idTWO_SWAP: { dint a = dpop(), b = dpop(); dpush(a); dpush(b); }; break; // 2SWAP
+		case idTWO_DUP: { push(peek(1)); push(peek(1)); }; break; // 2DUP
+		case idTWO_OVER: { push(peek(3)); push(peek(3)); }; break; // 2OVER
+		case idTWO_ROT: { dint c = dpop(), b = dpop(), a = dpop(); dpush(b); dpush(c); dpush(a); }; break; // 2ROT
+		case idMINUS_2ROT: { dint c = dpop(), b = dpop(), a = dpop(); dpush(c); dpush(a); dpush(b); }; break; // -2ROT
+		case idDEPTH: { push(vm.stack->depth()); }; break; // DEPTH
+		case idSP_FETCH: { push(vm.stack->ptr()); }; break; // SP@
+		case idSP_STORE: { vm.stack->set_ptr(pop()); }; break; // SP!
+		case idDOT_S: { vm.stack->print(); }; break; // .S
+		case idTO_R: { r_push(pop()); }; break; // >R
+		case idFROM_R: { push(r_pop()); }; break; // R>
+		case idR_DROP: { r_pop(); }; break; // RDROP
+		case idR_FETCH: { push(r_peek(0)); }; break; // R@
+		case idI: { push(r_peek(0)); }; break; // I
+		case idJ: { push(r_peek(2)); }; break; // J
+		case idTWO_TO_R: { r_dpush(dpop()); }; break; // 2>R
+		case idTWO_R_TO: { dpush(r_dpop()); }; break; // 2R>
+		case idTWO_R_FETCH: { dpush(r_dpeek(0)); }; break; // 2R@
+		case idR_DEPTH: { push(vm.rstack->depth()); }; break; // RDEPTH
+		case idRSP_FETCH: { push(vm.rstack->ptr()); }; break; // RSP@
+		case idRSP_STORE: { vm.rstack->set_ptr(pop()); }; break; // RSP!
+		case idDOT_RS: { vm.rstack->print("R"); }; break; // .RS
+		case idCOMMA: { comma(pop()); }; break; // ,
+		case idCCOMMA: { ccomma(pop()); }; break; // C,
+		case idHERE: { push(vm.dict->here()); }; break; // HERE
+		case idLATEST: { push(vm.dict->latest()); }; break; // LATEST
+		case idFIND: { f_find(pop()); }; break; // FIND
+		case idTO_BODY: { push(pop() + CELL_SZ); }; break; // >BODY
+		case idALIGN: { align(); }; break; // ALIGN
+		case idALIGNED: { push(aligned(pop())); }; break; // ALIGNED
+		case idALLOT: { vm.dict->allot(pop()); }; break; // ALLOT
+		case idUNUSED: { push(vm.dict->unused()); }; break; // UNUSED
+		case idMARKER: { f_marker(); }; break; // MARKER
+		case idXMARKER: { f_xmarker(body); }; break; // (MARKER)
+		case idTYPE: { int size = pop(), a = pop(); print_string(a, size); }; break; // TYPE
+		case idEMIT: { print_char(pop()); }; break; // EMIT
+		case idCR: { print_char(CR); }; break; // CR
+		case idSPACE: { print_char(BL); }; break; // SPACE
+		case idSPACES: { print_spaces(pop()); }; break; // SPACES
+		case idLESS_HASH: { vm.number_output->start(); }; break; // <#
+		case idHASH: { vm.number_output->add_digit(); }; break; // #
+		case idHASH_S: { vm.number_output->add_digits(); }; break; // #S
+		case idHOLD: { vm.number_output->add_char(pop()); }; break; // HOLD
+		case idSIGN: { vm.number_output->add_sign(pop()); }; break; // SIGN
+		case idHASH_GREATER: { vm.number_output->end(); }; break; // #>
+		case idDOT: { print_number(pop()); }; break; // .
+		case idD_DOT: { print_number(dpop()); }; break; // D.
+		case idD_DOT_R: { int w = pop(); dint v = dpop(); print_number(v, w); }; break; // D.R
+		case idU_DOT: { print_unsigned_number(pop()); }; break; // U.
+		case idDOT_R: { int w = pop(), v = pop(); print_number(v, w); }; break; // .R
+		case idU_DOT_R: { int w = pop(); uint v = pop(); print_unsigned_number(v, w); }; break; // U.R
+		case idRDEPTH: { push(vm.rstack->depth()); }; break; // RDEPTH
+		case idCS_DEPTH: { push(vm.cs_stack->depth()); }; break; // CS_DEPTH
+		case idTHROW: { f_throw(); }; break; // THROW
+		case idENVIRONMENT_Q: { int size = pop(), addr = pop(); f_environment_q(mem_char_ptr(addr), size); }; break; // ENVIRONMENT?
+		case idCOUNT: { f_count(); }; break; // COUNT
+		case idS_QUOTE: { f_s_quote(); }; break; // S"
+		case idWORD: { f_word(); }; break; // WORD
+		case idWORDS: { f_words(); }; break; // WORDS
+		case idDABS: { dpush(f_dabs(dpop())); }; break; // DABS
+		case idDECIMAL: { vm.user->BASE = 10; }; break; // DECIMAL
+		case idHEX: { vm.user->BASE = 16; }; break; // HEX
+		case idBYE: { exit(EXIT_SUCCESS); }; break; // BYE
+		case idXDOVAR: { ; }; break; // (DOVAR)
+		case idLITERAL: { ; }; break; // LITERAL
+		case idXLITERAL: { ; }; break; // (LITERAL)
+		case idINTERPRET: { f_interpret(); }; break; // INTERPRET
+		case idQUIT: { f_quit(); }; break; // QUIT
 		//@@END
 		default:
-			assert(0); // not reached
+			error(Error::InvalidWordXT, std::to_string(xt));
 		}
+
+		if (ip == 0 || do_exit)				// ip did not change, exit
+			break;
+
+		xt = fetch(ip);
+		ip += CELL_SZ;	    // else fetch next xt from ip
 	}
-	else if (xt > vm.dict->here()) {
-		error(Error::InvalidWordId, std::to_string(xt));
-	}
-	else {
-		// TODO: execute Forth word at code
-		//Header* header = Header::header(xt);
-		//ForthString* name = header->name();
-	}
+	ip = old_ip;
 }
 
 // user variables
@@ -687,818 +691,3 @@ void User::init() {
 	//@@END
 }
 
-//@@BEGIN: ConstImplementation
-// BL
-void fBL() {
-	push(BL);
-}
-
-// TRUE
-void fTRUE() {
-	push(F_TRUE);
-}
-
-// FALSE
-void fFALSE() {
-	push(F_FALSE);
-}
-
-// S0
-void fS0() {
-	push(STACK_SZ);
-}
-
-// R0
-void fR0() {
-	push(STACK_SZ);
-}
-
-// CS0
-void fCS0() {
-	push(STACK_SZ);
-}
-
-//@@END
-
-//@@BEGIN: VarsImplementation
-// STATE
-void fSTATE() {
-	push(mem_addr(&vm.user->STATE));
-}
-
-// BASE
-void fBASE() {
-	push(mem_addr(&vm.user->BASE));
-}
-
-// DPL
-void fDPL() {
-	push(mem_addr(&vm.user->DPL));
-}
-
-// TRACE
-void fTRACE() {
-	push(mem_addr(&vm.user->TRACE));
-}
-
-// >IN
-void fTO_IN() {
-	push(mem_addr(&vm.user->TO_IN));
-}
-
-// #IN
-void fNR_IN() {
-	push(mem_addr(&vm.user->NR_IN));
-}
-
-// BLK
-void fBLK() {
-	push(mem_addr(&vm.user->BLK));
-}
-
-// SOURCE_ID
-void fSOURCE_ID() {
-	push(mem_addr(&vm.user->SOURCE_ID));
-}
-
-//@@END
-
-//@@BEGIN: WordsImplementation
-// PAD
-void fPAD() {
-	push(mem_addr(vm.pad->pad()));
-}
-
-// +
-void fPLUS() {
-	push(pop() + pop());
-}
-
-// *
-void fMULT() {
-	push(pop() * pop());
-}
-
-// -
-void fMINUS() {
-	int b = pop(), a = pop(); push(a - b);
-}
-
-// /
-void fDIV() {
-	int b = pop(), a = pop(); push(f_div(a, b));
-}
-
-// MOD
-void fMOD() {
-	int b = pop(), a = pop(); push(f_mod(a, b));
-}
-
-// /MOD
-void fDIV_MOD() {
-	f_div_mod();
-}
-
-// */
-void fMULT_DIV() {
-	f_mul_div();
-}
-
-// */MOD
-void fMULT_DIV_MOD() {
-	f_mul_div_mod();
-}
-
-// FM/MOD
-void fFM_DIV_MOD() {
-	f_fm_div_mod();
-}
-
-// UM/MOD
-void fUM_DIV_MOD() {
-	f_um_div_mod();
-}
-
-// SM/REM
-void fSM_DIV_REM() {
-	f_sm_div_rem();
-}
-
-// M*
-void fM_STAR() {
-	dint b = pop(), a = pop(); dpush(a * b);
-}
-
-// 1+
-void fONE_PLUS() {
-	push(pop() + 1);
-}
-
-// 1-
-void fONE_MINUS() {
-	push(pop() - 1);
-}
-
-// 2*
-void fTWO_MULT() {
-	push(pop() * 2);
-}
-
-// 2/
-void fTWO_DIV() {
-	push(f_div(pop(), 2));
-}
-
-// NEGATE
-void fNEGATE() {
-	push(-pop());
-}
-
-// S>D
-void fS_TO_D() {
-	dpush(pop());
-}
-
-// UM*
-void fUM_MULT() {
-	udint b = static_cast<uint>(pop()), a = static_cast<uint>(pop()); dpush(a * b);
-}
-
-// ABS
-void fABS() {
-	push(f_abs(pop()));
-}
-
-// MAX
-void fFMAX() {
-	push(f_max(pop(), pop()));
-}
-
-// MIN
-void fFMIN() {
-	push(f_min(pop(), pop()));
-}
-
-// CHAR+
-void fCHAR_PLUS() {
-	push(pop() + 1);
-}
-
-// CHARS
-void fCHARS() {
-	push(pop() * 1);
-}
-
-// CELL+
-void fCELL_PLUS() {
-	push(pop() + CELL_SZ);
-}
-
-// CELLS
-void fCELLS() {
-	push(pop() * CELL_SZ);
-}
-
-// WITHIN
-void fWITHIN() {
-	f_within();
-}
-
-// AND
-void fAND() {
-	push(pop() & pop());
-}
-
-// OR
-void fOR() {
-	push(pop() | pop());
-}
-
-// XOR
-void fXOR() {
-	push(pop() ^ pop());
-}
-
-// INVERT
-void fINVERT() {
-	push(~pop());
-}
-
-// LSHIFT
-void fLSHIFT() {
-	int n = pop(), a = pop(); push(a << n);
-}
-
-// RSHIFT
-void fRSHIFT() {
-	int n = pop(), a = pop(); push(a >> n);
-}
-
-// =
-void fEQUAL() {
-	push(f_bool(pop() == pop()));
-}
-
-// <>
-void fDIFFERENT() {
-	push(f_bool(pop() != pop()));
-}
-
-// <
-void fLESS() {
-	int b = pop(), a = pop(); push(f_bool(a < b));
-}
-
-// <=
-void fLESS_EQUAL() {
-	int b = pop(), a = pop(); push(f_bool(a <= b));
-}
-
-// >
-void fGREATER() {
-	int b = pop(), a = pop(); push(f_bool(a > b));
-}
-
-// >=
-void fGREATER_EQUAL() {
-	int b = pop(), a = pop(); push(f_bool(a >= b));
-}
-
-// U<
-void fU_LESS() {
-	uint b = pop(), a = pop(); push(f_bool(a < b));
-}
-
-// U<=
-void fU_LESS_EQUAL() {
-	uint b = pop(), a = pop(); push(f_bool(a <= b));
-}
-
-// U>
-void fU_GREATER() {
-	uint b = pop(), a = pop(); push(f_bool(a > b));
-}
-
-// U>=
-void fU_GREATER_EQUAL() {
-	uint b = pop(), a = pop(); push(f_bool(a >= b));
-}
-
-// 0=
-void fZERO_EQUAL() {
-	push(f_bool(pop() == 0));
-}
-
-// 0<>
-void fZERO_DIFFERENT() {
-	push(f_bool(pop() != 0));
-}
-
-// 0<
-void fZERO_LESS() {
-	push(f_bool(pop() < 0));
-}
-
-// 0<=
-void fZERO_LESS_EQUAL() {
-	push(f_bool(pop() <= 0));
-}
-
-// 0>
-void fZERO_GREATER() {
-	push(f_bool(pop() > 0));
-}
-
-// 0>=
-void fZERO_GREATER_EQUAL() {
-	push(f_bool(pop() >= 0));
-}
-
-// !
-void fSTORE() {
-	int a = pop(), v = pop(); store(a, v);
-}
-
-// @
-void fFETCH() {
-	push(fetch(pop()));
-}
-
-// +!
-void fPLUS_STORE() {
-	int a = pop(), v = pop(); store(a, fetch(a) + v);
-}
-
-// C!
-void fCSTORE() {
-	int a = pop(), v = pop(); cstore(a, v);
-}
-
-// C@
-void fCFETCH() {
-	push(cfetch(pop()));
-}
-
-// 2!
-void fTWO_STORE() {
-	int a = pop(); dstore(a, dpop());
-}
-
-// 2@
-void fTWO_FETCH() {
-	dpush(dfetch(pop()));
-}
-
-// FILL
-void fFILL() {
-	int c = pop(), n = pop(), a = pop(); vm.mem.fill(a, n, c);
-}
-
-// ERASE
-void fERASE() {
-	int n = pop(), a = pop(); vm.mem.erase(a, n);
-}
-
-// MOVE
-void fMOVE() {
-	int n = pop(), dst = pop(), src = pop(); vm.mem.move(src, dst, n);
-}
-
-// DROP
-void fDROP() {
-	pop();
-}
-
-// SWAP
-void fSWAP() {
-	int a = pop(), b = pop(); push(a); push(b);
-}
-
-// DUP
-void fDUP() {
-	push(peek(0));
-}
-
-// ?DUP
-void fQ_DUP() {
-	int a = peek(); if (a) push(a);
-}
-
-// OVER
-void fOVER() {
-	push(peek(1));
-}
-
-// ROT
-void fROT() {
-	int c = pop(), b = pop(), a = pop(); push(b); push(c); push(a);
-}
-
-// -ROT
-void fMINUS_ROT() {
-	int c = pop(), b = pop(), a = pop(); push(c); push(a); push(b);
-}
-
-// NIP
-void fNIP() {
-	int a = pop(); pop(); push(a);
-}
-
-// PICK
-void fPICK() {
-	push(peek(pop()));
-}
-
-// ROLL
-void fROLL() {
-	roll(pop());
-}
-
-// TUCK
-void fTUCK() {
-	int a = pop(), b = pop(); push(a); push(b); push(a);
-}
-
-// 2DROP
-void fTWO_DROP() {
-	dpop();
-}
-
-// 2SWAP
-void fTWO_SWAP() {
-	dint a = dpop(), b = dpop(); dpush(a); dpush(b);
-}
-
-// 2DUP
-void fTWO_DUP() {
-	push(peek(1)); push(peek(1));
-}
-
-// 2OVER
-void fTWO_OVER() {
-	push(peek(3)); push(peek(3));
-}
-
-// 2ROT
-void fTWO_ROT() {
-	dint c = dpop(), b = dpop(), a = dpop(); dpush(b); dpush(c); dpush(a);
-}
-
-// -2ROT
-void fMINUS_2ROT() {
-	dint c = dpop(), b = dpop(), a = dpop(); dpush(c); dpush(a); dpush(b);
-}
-
-// DEPTH
-void fDEPTH() {
-	push(vm.stack->depth());
-}
-
-// SP@
-void fSP_FETCH() {
-	push(vm.stack->ptr());
-}
-
-// SP!
-void fSP_STORE() {
-	vm.stack->set_ptr(pop());
-}
-
-// .S
-void fDOT_S() {
-	vm.stack->print();
-}
-
-// >R
-void fTO_R() {
-	r_push(pop());
-}
-
-// R>
-void fFROM_R() {
-	push(r_pop());
-}
-
-// RDROP
-void fR_DROP() {
-	r_pop();
-}
-
-// R@
-void fR_FETCH() {
-	push(r_peek(0));
-}
-
-// I
-void fI() {
-	push(r_peek(0));
-}
-
-// J
-void fJ() {
-	push(r_peek(2));
-}
-
-// 2>R
-void fTWO_TO_R() {
-	r_dpush(dpop());
-}
-
-// 2R>
-void fTWO_R_TO() {
-	dpush(r_dpop());
-}
-
-// 2R@
-void fTWO_R_FETCH() {
-	dpush(r_dpeek(0));
-}
-
-// RDEPTH
-void fR_DEPTH() {
-	push(vm.rstack->depth());
-}
-
-// RSP@
-void fRSP_FETCH() {
-	push(vm.rstack->ptr());
-}
-
-// RSP!
-void fRSP_STORE() {
-	vm.rstack->set_ptr(pop());
-}
-
-// .RS
-void fDOT_RS() {
-	vm.rstack->print("R");
-}
-
-// ,
-void fCOMMA() {
-	comma(pop());
-}
-
-// C,
-void fCCOMMA() {
-	ccomma(pop());
-}
-
-// HERE
-void fHERE() {
-	push(vm.dict->here());
-}
-
-// LATEST
-void fLATEST() {
-	push(vm.dict->latest());
-}
-
-// FIND
-void fFIND() {
-	f_find(pop());
-}
-
-// >BODY
-void fTO_BODY() {
-	push(pop() + CELL_SZ);
-}
-
-// ALIGN
-void fALIGN() {
-	align();
-}
-
-// ALIGNED
-void fALIGNED() {
-	push(aligned(pop()));
-}
-
-// ALLOT
-void fALLOT() {
-	vm.dict->allot(pop());
-}
-
-// UNUSED
-void fUNUSED() {
-	push(vm.dict->unused());
-}
-
-// MARKER
-void fMARKER() {
-	f_marker();
-}
-
-// (MARKER)
-void fXMARKER() {
-	f_xmarker(body);
-}
-
-// TYPE
-void fTYPE() {
-	int size = pop(), a = pop(); print_string(a, size);
-}
-
-// EMIT
-void fEMIT() {
-	print_char(pop());
-}
-
-// CR
-void fCR() {
-	print_char(CR);
-}
-
-// SPACE
-void fSPACE() {
-	print_char(BL);
-}
-
-// SPACES
-void fSPACES() {
-	print_spaces(pop());
-}
-
-// <#
-void fLESS_HASH() {
-	vm.number_output->start();
-}
-
-// #
-void fHASH() {
-	vm.number_output->add_digit();
-}
-
-// #S
-void fHASH_S() {
-	vm.number_output->add_digits();
-}
-
-// HOLD
-void fHOLD() {
-	vm.number_output->add_char(pop());
-}
-
-// SIGN
-void fSIGN() {
-	vm.number_output->add_sign(pop());
-}
-
-// #>
-void fHASH_GREATER() {
-	vm.number_output->end();
-}
-
-// .
-void fDOT() {
-	print_number(pop());
-}
-
-// D.
-void fD_DOT() {
-	print_number(dpop());
-}
-
-// D.R
-void fD_DOT_R() {
-	int w = pop(); dint v = dpop(); print_number(v, w);
-}
-
-// U.
-void fU_DOT() {
-	print_unsigned_number(pop());
-}
-
-// .R
-void fDOT_R() {
-	int w = pop(), v = pop(); print_number(v, w);
-}
-
-// U.R
-void fU_DOT_R() {
-	int w = pop(); uint v = pop(); print_unsigned_number(v, w);
-}
-
-// RDEPTH
-void fRDEPTH() {
-	push(vm.rstack->depth());
-}
-
-// CS_DEPTH
-void fCS_DEPTH() {
-	push(vm.cs_stack->depth());
-}
-
-// DECIMAL
-void fDECIMAL() {
-	vm.user->BASE = 10;
-}
-
-// HEX
-void fHEX() {
-	vm.user->BASE = 16;
-}
-
-// BYE
-void fBYE() {
-	exit(EXIT_SUCCESS);
-}
-
-// (DOVAR)
-void fXDOVAR() {
-	;
-}
-
-// LITERAL
-void fLITERAL() {
-	;
-}
-
-// (LITERAL)
-void fXLITERAL() {
-	;
-}
-
-// INTERPRET
-void fINTERPRET() {
-	f_interpret();
-}
-
-// QUIT
-void fQUIT() {
-	f_quit();
-}
-
-//@@END
-
-void fENVIRONMENT_Q() {
-	int size = pop();
-	int addr = pop();
-	const char* str = mem_char_ptr(addr);
-	string query{ str, str + size };
-	if (query == "CORE") {
-		push(F_TRUE);
-		push(F_TRUE);
-	}
-	else {
-		push(F_FALSE);
-	}
-}
-
-void fDABS() {
-	dint a = f_dabs(dpop());
-	dpush(a);
-}
-
-void fWORDS() {
-	vector<string> words = vm.dict->get_words();
-	size_t col = 0;
-	for (auto& word : words) {
-		if (col + 1 + word.size() >= SCREEN_WIDTH) {
-			cout << endl << word;
-			col = word.size();
-		}
-		else if (col == 0) {
-			cout << word;
-			col += word.size();
-		}
-		else {
-			cout << BL << word;
-			col += 1 + word.size();
-		}
-	}
-	cout << endl;
-}
-
-void fTHROW() {
-	int error_code = pop();
-	error(static_cast<Error>(error_code));
-}
-
-void fCOUNT() {
-	int addr = pop();
-	int len = cfetch(addr++);
-	push(addr);
-	push(len);
-}
-
-void fWORD() {
-	char delimiter = pop();
-	const ForthString* word = f_parse_word(delimiter);
-	if (word == nullptr)
-		exit(EXIT_SUCCESS);		        // no more input
-	else {
-		const CountedString* addr = word->counted_string();
-		push(mem_addr(reinterpret_cast<const char*>(addr)));	// address counted string
-	}
-}
-
-void fS_QUOTE() {
-	const ForthString* word = f_parse_word('"');
-	if (word == nullptr)
-		exit(EXIT_SUCCESS);		        // no more input
-	else {
-		push(mem_addr(word->str()));	// address of word
-		push(word->size());				// length of word
-	}
-}

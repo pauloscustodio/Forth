@@ -371,15 +371,6 @@ extern int xtINTERPRET; // INTERPRET
 extern int xtQUIT; // QUIT
 //@@END
 
-//@@BEGIN: Constants
-static inline const int cBL = BL; // BL
-static inline const int cTRUE = F_TRUE; // TRUE
-static inline const int cFALSE = F_FALSE; // FALSE
-static inline const int cS0 = STACK_SZ; // S0
-static inline const int cR0 = STACK_SZ; // R0
-static inline const int cCS0 = STACK_SZ; // CS0
-//@@END
-
 // user variables
 struct User {
     //@@BEGIN: Vars
@@ -396,162 +387,8 @@ struct User {
     void init();
 };
 
-//@@BEGIN: WordsDeclaration
-void fBL(); // BL
-void fTRUE(); // TRUE
-void fFALSE(); // FALSE
-void fS0(); // S0
-void fR0(); // R0
-void fCS0(); // CS0
-void fSTATE(); // STATE
-void fBASE(); // BASE
-void fDPL(); // DPL
-void fTRACE(); // TRACE
-void fTO_IN(); // >IN
-void fNR_IN(); // #IN
-void fBLK(); // BLK
-void fSOURCE_ID(); // SOURCE_ID
-void fPAD(); // PAD
-void fPLUS(); // +
-void fMULT(); // *
-void fMINUS(); // -
-void fDIV(); // /
-void fMOD(); // MOD
-void fDIV_MOD(); // /MOD
-void fMULT_DIV(); // */
-void fMULT_DIV_MOD(); // */MOD
-void fFM_DIV_MOD(); // FM/MOD
-void fUM_DIV_MOD(); // UM/MOD
-void fSM_DIV_REM(); // SM/REM
-void fM_STAR(); // M*
-void fONE_PLUS(); // 1+
-void fONE_MINUS(); // 1-
-void fTWO_MULT(); // 2*
-void fTWO_DIV(); // 2/
-void fNEGATE(); // NEGATE
-void fS_TO_D(); // S>D
-void fUM_MULT(); // UM*
-void fABS(); // ABS
-void fFMAX(); // MAX
-void fFMIN(); // MIN
-void fCHAR_PLUS(); // CHAR+
-void fCHARS(); // CHARS
-void fCELL_PLUS(); // CELL+
-void fCELLS(); // CELLS
-void fWITHIN(); // WITHIN
-void fAND(); // AND
-void fOR(); // OR
-void fXOR(); // XOR
-void fINVERT(); // INVERT
-void fLSHIFT(); // LSHIFT
-void fRSHIFT(); // RSHIFT
-void fEQUAL(); // =
-void fDIFFERENT(); // <>
-void fLESS(); // <
-void fLESS_EQUAL(); // <=
-void fGREATER(); // >
-void fGREATER_EQUAL(); // >=
-void fU_LESS(); // U<
-void fU_LESS_EQUAL(); // U<=
-void fU_GREATER(); // U>
-void fU_GREATER_EQUAL(); // U>=
-void fZERO_EQUAL(); // 0=
-void fZERO_DIFFERENT(); // 0<>
-void fZERO_LESS(); // 0<
-void fZERO_LESS_EQUAL(); // 0<=
-void fZERO_GREATER(); // 0>
-void fZERO_GREATER_EQUAL(); // 0>=
-void fSTORE(); // !
-void fFETCH(); // @
-void fPLUS_STORE(); // +!
-void fCSTORE(); // C!
-void fCFETCH(); // C@
-void fTWO_STORE(); // 2!
-void fTWO_FETCH(); // 2@
-void fFILL(); // FILL
-void fERASE(); // ERASE
-void fMOVE(); // MOVE
-void fDROP(); // DROP
-void fSWAP(); // SWAP
-void fDUP(); // DUP
-void fQ_DUP(); // ?DUP
-void fOVER(); // OVER
-void fROT(); // ROT
-void fMINUS_ROT(); // -ROT
-void fNIP(); // NIP
-void fPICK(); // PICK
-void fROLL(); // ROLL
-void fTUCK(); // TUCK
-void fTWO_DROP(); // 2DROP
-void fTWO_SWAP(); // 2SWAP
-void fTWO_DUP(); // 2DUP
-void fTWO_OVER(); // 2OVER
-void fTWO_ROT(); // 2ROT
-void fMINUS_2ROT(); // -2ROT
-void fDEPTH(); // DEPTH
-void fSP_FETCH(); // SP@
-void fSP_STORE(); // SP!
-void fDOT_S(); // .S
-void fTO_R(); // >R
-void fFROM_R(); // R>
-void fR_DROP(); // RDROP
-void fR_FETCH(); // R@
-void fI(); // I
-void fJ(); // J
-void fTWO_TO_R(); // 2>R
-void fTWO_R_TO(); // 2R>
-void fTWO_R_FETCH(); // 2R@
-void fR_DEPTH(); // RDEPTH
-void fRSP_FETCH(); // RSP@
-void fRSP_STORE(); // RSP!
-void fDOT_RS(); // .RS
-void fCOMMA(); // ,
-void fCCOMMA(); // C,
-void fHERE(); // HERE
-void fLATEST(); // LATEST
-void fFIND(); // FIND
-void fTO_BODY(); // >BODY
-void fALIGN(); // ALIGN
-void fALIGNED(); // ALIGNED
-void fALLOT(); // ALLOT
-void fUNUSED(); // UNUSED
-void fMARKER(); // MARKER
-void fXMARKER(); // (MARKER)
-void fTYPE(); // TYPE
-void fEMIT(); // EMIT
-void fCR(); // CR
-void fSPACE(); // SPACE
-void fSPACES(); // SPACES
-void fLESS_HASH(); // <#
-void fHASH(); // #
-void fHASH_S(); // #S
-void fHOLD(); // HOLD
-void fSIGN(); // SIGN
-void fHASH_GREATER(); // #>
-void fDOT(); // .
-void fD_DOT(); // D.
-void fD_DOT_R(); // D.R
-void fU_DOT(); // U.
-void fDOT_R(); // .R
-void fU_DOT_R(); // U.R
-void fRDEPTH(); // RDEPTH
-void fCS_DEPTH(); // CS_DEPTH
-void fTHROW(); // THROW
-void fENVIRONMENT_Q(); // ENVIRONMENT?
-void fCOUNT(); // COUNT
-void fS_QUOTE(); // S"
-void fWORD(); // WORD
-void fWORDS(); // WORDS
-void fDABS(); // DABS
-void fDECIMAL(); // DECIMAL
-void fHEX(); // HEX
-void fBYE(); // BYE
-void fXDOVAR(); // (DOVAR)
-void fLITERAL(); // LITERAL
-void fXLITERAL(); // (LITERAL)
-void fINTERPRET(); // INTERPRET
-void fQUIT(); // QUIT
-//@@END
+// interpreter pointer
+extern int ip;
 
 // bool
 int f_bool(bool f);
@@ -610,5 +447,6 @@ dint r_dpeek(int depth = 0);
 // create dictionary entries
 void create_dictionary();
 
-// execute a word given its xt
+// inner interpreter
 void f_execute(int xt);
+

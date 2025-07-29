@@ -172,17 +172,17 @@
 "RDEPTH", RDEPTH, 0, "push(vm.rstack->depth());"
 "CS_DEPTH", CS_DEPTH, 0, "push(vm.cs_stack->depth());"
 
-"THROW", THROW, 0
-"ENVIRONMENT?", ENVIRONMENT_Q, 0
+"THROW", THROW, 0, "f_throw();"
+"ENVIRONMENT?", ENVIRONMENT_Q, 0, "int size = pop(), addr = pop(); f_environment_q(mem_char_ptr(addr), size);"
 
-"COUNT", COUNT, 0
-"S""", S_QUOTE, 0
+"COUNT", COUNT, 0, "f_count();"
+"S""", S_QUOTE, 0, "f_s_quote();"
 
 
-"WORD", WORD, 0
-"WORDS", WORDS, 0
+"WORD", WORD, 0, "f_word();"
+"WORDS", WORDS, 0, "f_words();"
 
-"DABS", DABS, 0
+"DABS", DABS, 0, "dpush(f_dabs(dpop()));"
 
 "DECIMAL", DECIMAL, 0, "vm.user->BASE = 10;"
 "HEX", HEX, 0, "vm.user->BASE = 16;"

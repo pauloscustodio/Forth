@@ -149,6 +149,7 @@
     <ClInclude Include="..\..\output.h" />
     <ClInclude Include="..\..\parser.h" />
     <ClInclude Include="..\..\stack.h" />
+    <ClInclude Include="..\..\str.h" />
     <ClInclude Include="..\..\vm.h" />
     <ClInclude Include="..\..\wordbuf.h" />
   </ItemGroup>
@@ -165,6 +166,7 @@
     <ClCompile Include="..\..\output.cpp" />
     <ClCompile Include="..\..\parser.cpp" />
     <ClCompile Include="..\..\stack.cpp" />
+    <ClCompile Include="..\..\str.cpp" />
     <ClCompile Include="..\..\vm.cpp" />
     <ClCompile Include="..\..\wordbuf.cpp" />
   </ItemGroup>

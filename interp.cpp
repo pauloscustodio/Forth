@@ -12,9 +12,6 @@
 #include "vm.h"
 using namespace std;
 
-// interpreter pointer
-int ip = 0;
-
 void f_interpret_word(const string& word) {
     f_interpret_word(word.c_str(), word.size());
 }

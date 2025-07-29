@@ -75,4 +75,4 @@
 -262, InvalidForthCode, "invalid Forth code"
 -263, MemoryOverflow, "memory overflow"
 -264, NumberOutputOverflow, "number output overflow"
--265, InvalidWordId, "invalid word id"
+-265, InvalidWordXT, "invalid word xt"

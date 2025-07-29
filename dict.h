@@ -77,5 +77,4 @@ void f_find(int addr);	// search dictionary, word max size 255
 void f_create();
 void f_marker();
 void f_xmarker(int body);
-
-bool case_insensitive_equal(const char* a_str, int a_size, const char* b_str, int b_size);
+void f_words();

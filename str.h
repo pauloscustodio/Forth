@@ -6,13 +6,11 @@
 
 #pragma once
 
-#include "forth.h"
-#include "input.h"
-#include "wordbuf.h"
 using namespace std;
 
-const ForthString* f_parse_word(char delimiter = BL); // nullptr if no more words in TIB
-void f_word();
+bool case_insensitive_equal(const string& a, const string& b);
+bool case_insensitive_equal(const char* a_str, int a_size, const char* b_str, int b_size);
+bool case_insensitive_equal(const char* a_str, size_t a_size, const char* b_str, size_t b_size);
 
-bool f_parse_number(const char* text, size_t size, bool& is_double, dint& value);
-bool f_parse_number(const char* text, int size, bool& is_double, dint& value);
+void f_count();
+void f_s_quote();
