@@ -29,7 +29,7 @@ static_assert(PTR_SZ <= DCELL_SZ, "PTR should fit in DCELL");
 // VM size
 static inline const int MEM_SZ = 256 * 1024 * CELL_SZ;
 static inline const int BUFFER_SZ = 1024;
-static inline const int WORDBUF_SZ = 2 * BUFFER_SZ;     // hold string with BUFFER_SZ length
+static inline const int WORDBUF_SZ = 2 * BUFFER_SZ;
 static inline const int PAD_SZ = 256;
 static inline const int STACK_SZ = 1024 * CELL_SZ;
 static inline const int MAX_FILES = 16;
@@ -62,10 +62,6 @@ enum {
     idCS0, // CS0
     idTRUE, // TRUE
     idFALSE, // FALSE
-    idTO_IN, // >IN
-    idNR_IN, // #IN
-    idBLK, // BLK
-    idSOURCE_ID, // SOURCE-ID
     idSPAN, // SPAN
     idSTATE, // STATE
     idDPL, // DPL
@@ -196,6 +192,10 @@ enum {
     idC_QUOTE, // C"
     idXC_QUOTE, // (C")
     idDOT_PAREN, // .(
+    idTO_IN, // >IN
+    idNR_IN, // #IN
+    idBLK, // BLK
+    idSOURCE_ID, // SOURCE-ID
     idTIB, // TIB
     idNR_TIB, // #TIB
     idSOURCE, // SOURCE
@@ -246,10 +246,6 @@ extern int xtR0; // R0
 extern int xtCS0; // CS0
 extern int xtTRUE; // TRUE
 extern int xtFALSE; // FALSE
-extern int xtTO_IN; // >IN
-extern int xtNR_IN; // #IN
-extern int xtBLK; // BLK
-extern int xtSOURCE_ID; // SOURCE-ID
 extern int xtSPAN; // SPAN
 extern int xtSTATE; // STATE
 extern int xtDPL; // DPL
@@ -380,6 +376,10 @@ extern int xtXS_QUOTE; // (S")
 extern int xtC_QUOTE; // C"
 extern int xtXC_QUOTE; // (C")
 extern int xtDOT_PAREN; // .(
+extern int xtTO_IN; // >IN
+extern int xtNR_IN; // #IN
+extern int xtBLK; // BLK
+extern int xtSOURCE_ID; // SOURCE-ID
 extern int xtTIB; // TIB
 extern int xtNR_TIB; // #TIB
 extern int xtSOURCE; // SOURCE
@@ -424,10 +424,6 @@ extern int xtQUIT; // QUIT
 // user variables
 struct User {
     //@@BEGIN: Vars
-    int TO_IN;
-    int NR_IN;
-    int BLK;
-    int SOURCE_ID;
     int SPAN;
     int STATE;
     int DPL;

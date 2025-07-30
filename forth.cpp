@@ -30,10 +30,6 @@ int xtR0 = 0; // R0
 int xtCS0 = 0; // CS0
 int xtTRUE = 0; // TRUE
 int xtFALSE = 0; // FALSE
-int xtTO_IN = 0; // >IN
-int xtNR_IN = 0; // #IN
-int xtBLK = 0; // BLK
-int xtSOURCE_ID = 0; // SOURCE-ID
 int xtSPAN = 0; // SPAN
 int xtSTATE = 0; // STATE
 int xtDPL = 0; // DPL
@@ -164,6 +160,10 @@ int xtXS_QUOTE = 0; // (S")
 int xtC_QUOTE = 0; // C"
 int xtXC_QUOTE = 0; // (C")
 int xtDOT_PAREN = 0; // .(
+int xtTO_IN = 0; // >IN
+int xtNR_IN = 0; // #IN
+int xtBLK = 0; // BLK
+int xtSOURCE_ID = 0; // SOURCE-ID
 int xtTIB = 0; // TIB
 int xtNR_TIB = 0; // #TIB
 int xtSOURCE = 0; // SOURCE
@@ -377,10 +377,6 @@ void create_dictionary() {
 	xtCS0 = vm.dict->create("CS0", 0, idCS0);
 	xtTRUE = vm.dict->create("TRUE", 0, idTRUE);
 	xtFALSE = vm.dict->create("FALSE", 0, idFALSE);
-	xtTO_IN = vm.dict->create(">IN", 0, idTO_IN);
-	xtNR_IN = vm.dict->create("#IN", 0, idNR_IN);
-	xtBLK = vm.dict->create("BLK", 0, idBLK);
-	xtSOURCE_ID = vm.dict->create("SOURCE-ID", 0, idSOURCE_ID);
 	xtSPAN = vm.dict->create("SPAN", 0, idSPAN);
 	xtSTATE = vm.dict->create("STATE", 0, idSTATE);
 	xtDPL = vm.dict->create("DPL", 0, idDPL);
@@ -511,6 +507,10 @@ void create_dictionary() {
 	xtC_QUOTE = vm.dict->create("C\"", F_IMMEDIATE, idC_QUOTE);
 	xtXC_QUOTE = vm.dict->create("(C\")", F_HIDDEN, idXC_QUOTE);
 	xtDOT_PAREN = vm.dict->create(".(", F_IMMEDIATE, idDOT_PAREN);
+	xtTO_IN = vm.dict->create(">IN", 0, idTO_IN);
+	xtNR_IN = vm.dict->create("#IN", 0, idNR_IN);
+	xtBLK = vm.dict->create("BLK", 0, idBLK);
+	xtSOURCE_ID = vm.dict->create("SOURCE-ID", 0, idSOURCE_ID);
 	xtTIB = vm.dict->create("TIB", 0, idTIB);
 	xtNR_TIB = vm.dict->create("#TIB", 0, idNR_TIB);
 	xtSOURCE = vm.dict->create("SOURCE", 0, idSOURCE);
@@ -569,10 +569,6 @@ void f_execute(int xt) {
 		case idCS0: push(STACK_SZ); break; // CS0
 		case idTRUE: push(F_TRUE); break; // TRUE
 		case idFALSE: push(F_FALSE); break; // FALSE
-		case idTO_IN: push(mem_addr(&vm.user->TO_IN)); break; // >IN
-		case idNR_IN: push(mem_addr(&vm.user->NR_IN)); break; // #IN
-		case idBLK: push(mem_addr(&vm.user->BLK)); break; // BLK
-		case idSOURCE_ID: push(mem_addr(&vm.user->SOURCE_ID)); break; // SOURCE-ID
 		case idSPAN: push(mem_addr(&vm.user->SPAN)); break; // SPAN
 		case idSTATE: push(mem_addr(&vm.user->STATE)); break; // STATE
 		case idDPL: push(mem_addr(&vm.user->DPL)); break; // DPL
@@ -703,9 +699,13 @@ void f_execute(int xt) {
 		case idC_QUOTE: { f_c_quote(); }; break; // C"
 		case idXC_QUOTE: { f_xc_quote(); }; break; // (C")
 		case idDOT_PAREN: { f_dot_paren(); }; break; // .(
-		case idTIB: { push(mem_addr(vm.tib->tib())); }; break; // TIB
-		case idNR_TIB: { push(mem_addr(&vm.user->NR_IN)); }; break; // #TIB
-		case idSOURCE: { push(mem_addr(vm.tib->tib())); push(vm.user->NR_IN); }; break; // SOURCE
+		case idTO_IN: { f_to_in(); }; break; // >IN
+		case idNR_IN: { f_nr_in(); }; break; // #IN
+		case idBLK: { f_blk(); }; break; // BLK
+		case idSOURCE_ID: { f_source_id(); }; break; // SOURCE-ID
+		case idTIB: { f_tib(); }; break; // TIB
+		case idNR_TIB: { f_nr_tib(); }; break; // #TIB
+		case idSOURCE: { f_source(); }; break; // SOURCE
 		case idREFILL: { push(f_bool(f_refill())); }; break; // REFILL
 		case idACCEPT: { f_accept(); }; break; // ACCEPT
 		case idEXPECT: { f_expect(); }; break; // EXPECT
@@ -759,10 +759,6 @@ void f_execute(int xt) {
 // user variables
 void User::init() {
 	//@@BEGIN: VarsInit
-	TO_IN = 0;
-	NR_IN = 0;
-	BLK = 0;
-	SOURCE_ID = -1;
 	SPAN = 0;
 	STATE = STATE_INTERPRET;
 	DPL = 0;

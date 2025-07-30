@@ -3,7 +3,7 @@
 BEGIN { use lib 't'; require 'testlib.pl'; }
 
 note "Test PAD";
-forth_ok("PAD .S", "( 3076 )");
+forth_ok("PAD .S", "( 2052 )");
 
 note "Test BL";
 forth_ok("BL .S", "( 32 )");
@@ -25,6 +25,6 @@ forth_ok("CS0 .S", "( 4096 )");
 
 note "Test TIB";
 forth_ok("TIB 11 TYPE", "TIB 11 TYPE");
-forth_ok("TIB .S", "( 2052 )");
+forth_ok("TIB .S", "( 2568 )");
 
 end_test;

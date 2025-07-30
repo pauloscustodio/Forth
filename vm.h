@@ -27,7 +27,6 @@ struct VM {
 
 	// input
 	Wordbuf* wordbuf;
-	Tib* tib;
 	Pad* pad;
 	NumberOutput* number_output;
 

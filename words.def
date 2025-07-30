@@ -186,9 +186,13 @@
 //-----------------------------------------------------------------------------
 // input
 //-----------------------------------------------------------------------------
-"TIB", TIB, 0, "push(mem_addr(vm.tib->tib()));"
-"#TIB", NR_TIB, 0, "push(mem_addr(&vm.user->NR_IN));"
-"SOURCE", SOURCE, 0, "push(mem_addr(vm.tib->tib())); push(vm.user->NR_IN);"
+">IN", TO_IN, 0, "f_to_in();"
+"#IN", NR_IN, 0, "f_nr_in();"
+"BLK", BLK, 0, "f_blk();"
+"SOURCE-ID", SOURCE_ID, 0, "f_source_id();"
+"TIB", TIB, 0, "f_tib();"
+"#TIB", NR_TIB, 0, "f_nr_tib();"
+"SOURCE", SOURCE, 0, "f_source();"
 "REFILL", REFILL, 0, "push(f_bool(f_refill()));"
 "ACCEPT", ACCEPT, 0, "f_accept();"
 "EXPECT", EXPECT, 0, "f_expect();"

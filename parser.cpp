@@ -11,11 +11,6 @@
 #include <cassert>
 using namespace std;
 
-// ignore all control characters as spaces
-static bool is_space(char c) {
-    return c >= 0 && c <= BL;
-}
-
 // return digit value of character, or -1 if not a digit
 static int char_digit(char c) {
     if (c >= '0' && c <= '9')
@@ -28,37 +23,51 @@ static int char_digit(char c) {
         return -1; // not a digit
 }
 
-static void skip_blank() {
-    const char* tib = vm.tib->tib();
+// ignore all control characters as spaces
+static bool is_space(char c) {
+    return c >= 0 && c <= BL;
+}
 
-    if (vm.user->TO_IN < vm.user->NR_IN && is_space(tib[vm.user->TO_IN])) {
-        ++vm.user->TO_IN; // skip spaces
+static void skip_blank() {
+    char* tib = vm.input->source_ptr();
+    int nr_in = vm.input->nr_in();
+    int* to_in = vm.input->to_in_ptr();
+
+    if (*to_in < nr_in && is_space(tib[*to_in])) {
+        ++*to_in;
     }
 }
 
 static void skip_blanks() {
-    const char* tib = vm.tib->tib();
+    char* tib = vm.input->source_ptr();
+    int nr_in = vm.input->nr_in();
+    int* to_in = vm.input->to_in_ptr();
 
-    while (vm.user->TO_IN < vm.user->NR_IN && is_space(tib[vm.user->TO_IN])) {
-        ++vm.user->TO_IN; // skip spaces
+    while (*to_in < nr_in && is_space(tib[*to_in])) {
+        ++*to_in;
     }
 }
 
-static int skip_to_delimiter(char delimiter = BL) {
-    const char* tib = vm.tib->tib();
+static int skip_to_delimiter(char delimiter) {
+    char* tib = vm.input->source_ptr();
+    int nr_in = vm.input->nr_in();
+    int* to_in = vm.input->to_in_ptr();
 
-    int end = vm.user->TO_IN;
+    int end = *to_in;
     if (delimiter == BL) {
-        while (vm.user->TO_IN < vm.user->NR_IN && !is_space(tib[vm.user->TO_IN]))
-            ++vm.user->TO_IN;
-        end = vm.user->TO_IN;
+        while (*to_in < nr_in && !is_space(tib[*to_in])) {
+            ++*to_in;
+        }
+        end = *to_in;
     }
     else {
-        while (vm.user->TO_IN < vm.user->NR_IN && tib[vm.user->TO_IN] != delimiter)
-            ++vm.user->TO_IN;
-        end = vm.user->TO_IN;
-        if (vm.user->TO_IN < vm.user->NR_IN && tib[vm.user->TO_IN] == delimiter)
-            ++vm.user->TO_IN;		// skip delimiter
+        while (*to_in < nr_in && tib[*to_in] != delimiter) {
+            ++*to_in;
+        }
+        end = *to_in;
+        if (*to_in < nr_in && tib[*to_in] == delimiter) {
+            ++*to_in;		// skip delimiter
+        }
     }
 
     return end;	// end of word, char before delimiter
@@ -71,8 +80,8 @@ const ForthString* parse_word(char delimiter) {
     else
         skip_blank();	// skip space after quote
 
-    const char* tib = vm.tib->tib();
-    int start = vm.user->TO_IN;
+    char* tib = vm.input->source_ptr();
+    int start = vm.input->to_in();
     int end = skip_to_delimiter(delimiter);
 
     int size = end - start;

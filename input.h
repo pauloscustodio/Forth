@@ -28,41 +28,37 @@ private:
 
 //-----------------------------------------------------------------------------
 
-class Tib {
-public:
-	void init();
-	char* tib() { return m_tib; }
-	int size() const { return BUFFER_SZ; }
-private:
-	char m_tib[BUFFER_SZ];
-};
-
-//-----------------------------------------------------------------------------
-
 class InputFiles {
 public:
 	InputFiles();
 	virtual ~InputFiles();
 
-	// return SOURCE_ID
+	// return source_id
 	int open_file(const string& filename); 
 	int open_file(const char* text, size_t size);
 	int open_file(const char* text, int size);
 
-	// read from SOURCE_ID into TIB
-	bool refill();
+	void close_file(int source_id);
 
-	int tell();
-	void seek(int fpos);
+	// read text
+	bool getline(int source_id, string& line);
+	int get_buffer(int source_id, int size, string& line);
+
+	int tellg(int source_id);
+	void seekg(int source_id, int fpos);
 
 private:
 	vector<ifstream*> m_files; // indexed by SOURCE_ID
+
+	static void check_error(int error_number);
 };
 
 //-----------------------------------------------------------------------------
 
 class Input {
 public:
+	void init();
+
 	void push_text(const string& text);
 	void push_text(const char* text, size_t size);
 	void push_text(const char* text, int size);
@@ -75,25 +71,44 @@ public:
 	void push_file(const char* filename, size_t size);
 	void push_file(const char* filename, int size);
 
-	void push_remaining_buffer();
-
 	void pop_input();
 
+	bool refill_current_buffer();
 	bool refill();
+
+	char* source_ptr();
+	int* to_in_ptr();
+	int to_in() const;
+	int* nr_in_ptr();
+	int nr_in() const;
+	int* blk_ptr();
+	int blk() const;
+	int source_id() const;
 
 private:
 	struct Buffer {
-		string text;
-		int to_in{ 0 };
-		int nr_in{ 0 };
-		int blk{ 0 };
-		int source_id{ 0 };
+		char buffer[BUFFER_SZ];
+		int to_in;
+		int nr_in;
+		int blk;
+		int source_id;
 	};
 
-	vector<Buffer> m_buffers;
-
+	Buffer m_buffers[MAX_FILES];
+	int m_ptr;
+	char m_empty[1];
+	int m_empty_to_in;
+	int m_empty_nr_in;
+	int m_empty_blk;
 };
 
+void f_to_in();
+void f_nr_in();
+void f_blk();
+void f_source_id();
+void f_tib();
+void f_nr_tib();
+void f_source();
 bool f_refill();
 void f_accept();
 void f_expect();
