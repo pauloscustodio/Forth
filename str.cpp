@@ -41,10 +41,7 @@ void f_count() {
 }
 
 void f_s_quote() {
-	const ForthString* word = f_parse_word('"');
-	if (word == nullptr)
-		word = vm.wordbuf->append("");
-
+	const ForthString* word = parse_word('"');
 	push(mem_addr(word->str()));	// address of word
 	push(word->size());				// length of word
 }

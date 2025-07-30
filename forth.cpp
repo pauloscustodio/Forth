@@ -25,20 +25,22 @@ int ip = 0;
 
 //@@BEGIN: WordsXtDefinition
 int xtBL = 0; // BL
-int xtTRUE = 0; // TRUE
-int xtFALSE = 0; // FALSE
 int xtS0 = 0; // S0
 int xtR0 = 0; // R0
 int xtCS0 = 0; // CS0
-int xtSTATE = 0; // STATE
-int xtBASE = 0; // BASE
-int xtDPL = 0; // DPL
-int xtTRACE = 0; // TRACE
+int xtTRUE = 0; // TRUE
+int xtFALSE = 0; // FALSE
 int xtTO_IN = 0; // >IN
 int xtNR_IN = 0; // #IN
 int xtBLK = 0; // BLK
 int xtSOURCE_ID = 0; // SOURCE_ID
+int xtSTATE = 0; // STATE
+int xtDPL = 0; // DPL
+int xtTRACE = 0; // TRACE
+int xtBASE = 0; // BASE
 int xtPAD = 0; // PAD
+int xtDECIMAL = 0; // DECIMAL
+int xtHEX = 0; // HEX
 int xtPLUS = 0; // +
 int xtMULT = 0; // *
 int xtMINUS = 0; // -
@@ -144,6 +146,15 @@ int xtALLOT = 0; // ALLOT
 int xtUNUSED = 0; // UNUSED
 int xtMARKER = 0; // MARKER
 int xtXMARKER = 0; // (MARKER)
+int xtPARSE = 0; // PARSE
+int xtPARSE_WORD = 0; // PARSE-WORD
+int xtWORD = 0; // WORD
+int xtCHAR = 0; // CHAR
+int xtBRACKET_CHAR = 0; // [CHAR]
+int xtNUMBER_Q = 0; // NUMBER?
+int xtNUMBER = 0; // NUMBER
+int xtTO_NUMBER = 0; // >NUMBER
+int xtCONVERT = 0; // CONVERT
 int xtTYPE = 0; // TYPE
 int xtEMIT = 0; // EMIT
 int xtCR = 0; // CR
@@ -167,11 +178,8 @@ int xtTHROW = 0; // THROW
 int xtENVIRONMENT_Q = 0; // ENVIRONMENT?
 int xtCOUNT = 0; // COUNT
 int xtS_QUOTE = 0; // S"
-int xtWORD = 0; // WORD
 int xtWORDS = 0; // WORDS
 int xtDABS = 0; // DABS
-int xtDECIMAL = 0; // DECIMAL
-int xtHEX = 0; // HEX
 int xtBYE = 0; // BYE
 int xtXDOVAR = 0; // (DOVAR)
 int xtLITERAL = 0; // LITERAL
@@ -211,6 +219,10 @@ int mem_addr(const char* ptr) {
 
 int mem_addr(const int* ptr) {
 	return vm.mem.addr(ptr);
+}
+
+int mem_addr(const CountedString* ptr) {
+	return vm.mem.addr(reinterpret_cast<const char*>(ptr));
 }
 
 char* mem_char_ptr(int addr, int size) {
@@ -343,20 +355,22 @@ dint r_dpeek(int depth) {
 void create_dictionary() {
 	//@@BEGIN: WordsCreateDictionary
 	xtBL = vm.dict->create("BL", 0, idBL);
-	xtTRUE = vm.dict->create("TRUE", 0, idTRUE);
-	xtFALSE = vm.dict->create("FALSE", 0, idFALSE);
 	xtS0 = vm.dict->create("S0", 0, idS0);
 	xtR0 = vm.dict->create("R0", 0, idR0);
 	xtCS0 = vm.dict->create("CS0", 0, idCS0);
-	xtSTATE = vm.dict->create("STATE", 0, idSTATE);
-	xtBASE = vm.dict->create("BASE", 0, idBASE);
-	xtDPL = vm.dict->create("DPL", 0, idDPL);
-	xtTRACE = vm.dict->create("TRACE", 0, idTRACE);
+	xtTRUE = vm.dict->create("TRUE", 0, idTRUE);
+	xtFALSE = vm.dict->create("FALSE", 0, idFALSE);
 	xtTO_IN = vm.dict->create(">IN", 0, idTO_IN);
 	xtNR_IN = vm.dict->create("#IN", 0, idNR_IN);
 	xtBLK = vm.dict->create("BLK", 0, idBLK);
 	xtSOURCE_ID = vm.dict->create("SOURCE_ID", 0, idSOURCE_ID);
+	xtSTATE = vm.dict->create("STATE", 0, idSTATE);
+	xtDPL = vm.dict->create("DPL", 0, idDPL);
+	xtTRACE = vm.dict->create("TRACE", 0, idTRACE);
+	xtBASE = vm.dict->create("BASE", 0, idBASE);
 	xtPAD = vm.dict->create("PAD", 0, idPAD);
+	xtDECIMAL = vm.dict->create("DECIMAL", 0, idDECIMAL);
+	xtHEX = vm.dict->create("HEX", 0, idHEX);
 	xtPLUS = vm.dict->create("+", 0, idPLUS);
 	xtMULT = vm.dict->create("*", 0, idMULT);
 	xtMINUS = vm.dict->create("-", 0, idMINUS);
@@ -462,6 +476,15 @@ void create_dictionary() {
 	xtUNUSED = vm.dict->create("UNUSED", 0, idUNUSED);
 	xtMARKER = vm.dict->create("MARKER", 0, idMARKER);
 	xtXMARKER = vm.dict->create("(MARKER)", F_HIDDEN, idXMARKER);
+	xtPARSE = vm.dict->create("PARSE", 0, idPARSE);
+	xtPARSE_WORD = vm.dict->create("PARSE-WORD", 0, idPARSE_WORD);
+	xtWORD = vm.dict->create("WORD", 0, idWORD);
+	xtCHAR = vm.dict->create("CHAR", 0, idCHAR);
+	xtBRACKET_CHAR = vm.dict->create("[CHAR]", F_IMMEDIATE, idBRACKET_CHAR);
+	xtNUMBER_Q = vm.dict->create("NUMBER?", 0, idNUMBER_Q);
+	xtNUMBER = vm.dict->create("NUMBER", 0, idNUMBER);
+	xtTO_NUMBER = vm.dict->create(">NUMBER", 0, idTO_NUMBER);
+	xtCONVERT = vm.dict->create("CONVERT", 0, idCONVERT);
 	xtTYPE = vm.dict->create("TYPE", 0, idTYPE);
 	xtEMIT = vm.dict->create("EMIT", 0, idEMIT);
 	xtCR = vm.dict->create("CR", 0, idCR);
@@ -485,11 +508,8 @@ void create_dictionary() {
 	xtENVIRONMENT_Q = vm.dict->create("ENVIRONMENT?", 0, idENVIRONMENT_Q);
 	xtCOUNT = vm.dict->create("COUNT", 0, idCOUNT);
 	xtS_QUOTE = vm.dict->create("S\"", 0, idS_QUOTE);
-	xtWORD = vm.dict->create("WORD", 0, idWORD);
 	xtWORDS = vm.dict->create("WORDS", 0, idWORDS);
 	xtDABS = vm.dict->create("DABS", 0, idDABS);
-	xtDECIMAL = vm.dict->create("DECIMAL", 0, idDECIMAL);
-	xtHEX = vm.dict->create("HEX", 0, idHEX);
 	xtBYE = vm.dict->create("BYE", 0, idBYE);
 	xtXDOVAR = vm.dict->create("(DOVAR)", F_HIDDEN, idXDOVAR);
 	xtLITERAL = vm.dict->create("LITERAL", F_IMMEDIATE, idLITERAL);
@@ -510,20 +530,22 @@ void f_execute(int xt) {
 		switch (code) {
 		//@@BEGIN: WordsIdExecution
 		case idBL: push(BL); break; // BL
-		case idTRUE: push(F_TRUE); break; // TRUE
-		case idFALSE: push(F_FALSE); break; // FALSE
 		case idS0: push(STACK_SZ); break; // S0
 		case idR0: push(STACK_SZ); break; // R0
 		case idCS0: push(STACK_SZ); break; // CS0
-		case idSTATE: push(mem_addr(&vm.user->STATE)); break; // STATE
-		case idBASE: push(mem_addr(&vm.user->BASE)); break; // BASE
-		case idDPL: push(mem_addr(&vm.user->DPL)); break; // DPL
-		case idTRACE: push(mem_addr(&vm.user->TRACE)); break; // TRACE
+		case idTRUE: push(F_TRUE); break; // TRUE
+		case idFALSE: push(F_FALSE); break; // FALSE
 		case idTO_IN: push(mem_addr(&vm.user->TO_IN)); break; // >IN
 		case idNR_IN: push(mem_addr(&vm.user->NR_IN)); break; // #IN
 		case idBLK: push(mem_addr(&vm.user->BLK)); break; // BLK
 		case idSOURCE_ID: push(mem_addr(&vm.user->SOURCE_ID)); break; // SOURCE_ID
+		case idSTATE: push(mem_addr(&vm.user->STATE)); break; // STATE
+		case idDPL: push(mem_addr(&vm.user->DPL)); break; // DPL
+		case idTRACE: push(mem_addr(&vm.user->TRACE)); break; // TRACE
+		case idBASE: push(mem_addr(&vm.user->BASE)); break; // BASE
 		case idPAD: { push(mem_addr(vm.pad->pad())); }; break; // PAD
+		case idDECIMAL: { vm.user->BASE = 10; }; break; // DECIMAL
+		case idHEX: { vm.user->BASE = 16; }; break; // HEX
 		case idPLUS: { push(pop() + pop()); }; break; // +
 		case idMULT: { push(pop() * pop()); }; break; // *
 		case idMINUS: { int b = pop(), a = pop(); push(a - b); }; break; // -
@@ -629,6 +651,15 @@ void f_execute(int xt) {
 		case idUNUSED: { push(vm.dict->unused()); }; break; // UNUSED
 		case idMARKER: { f_marker(); }; break; // MARKER
 		case idXMARKER: { f_xmarker(body); }; break; // (MARKER)
+		case idPARSE: { f_parse(); }; break; // PARSE
+		case idPARSE_WORD: { f_parse_word(); }; break; // PARSE-WORD
+		case idWORD: { f_word(); }; break; // WORD
+		case idCHAR: { f_char(); }; break; // CHAR
+		case idBRACKET_CHAR: { f_bracket_char(); }; break; // [CHAR]
+		case idNUMBER_Q: { f_number_q(); }; break; // NUMBER?
+		case idNUMBER: { f_number(); }; break; // NUMBER
+		case idTO_NUMBER: { f_to_number(); }; break; // >NUMBER
+		case idCONVERT: { f_convert(); }; break; // CONVERT
 		case idTYPE: { int size = pop(), a = pop(); print_string(a, size); }; break; // TYPE
 		case idEMIT: { print_char(pop()); }; break; // EMIT
 		case idCR: { print_char(CR); }; break; // CR
@@ -652,11 +683,8 @@ void f_execute(int xt) {
 		case idENVIRONMENT_Q: { int size = pop(), addr = pop(); f_environment_q(mem_char_ptr(addr), size); }; break; // ENVIRONMENT?
 		case idCOUNT: { f_count(); }; break; // COUNT
 		case idS_QUOTE: { f_s_quote(); }; break; // S"
-		case idWORD: { f_word(); }; break; // WORD
 		case idWORDS: { f_words(); }; break; // WORDS
 		case idDABS: { dpush(f_dabs(dpop())); }; break; // DABS
-		case idDECIMAL: { vm.user->BASE = 10; }; break; // DECIMAL
-		case idHEX: { vm.user->BASE = 16; }; break; // HEX
 		case idBYE: { exit(EXIT_SUCCESS); }; break; // BYE
 		case idXDOVAR: { ; }; break; // (DOVAR)
 		case idLITERAL: { ; }; break; // LITERAL
@@ -680,14 +708,14 @@ void f_execute(int xt) {
 // user variables
 void User::init() {
 	//@@BEGIN: VarsInit
-	STATE = STATE_INTERPRET;
-	BASE = 10;
-	DPL = 0;
-	TRACE = 0;
 	TO_IN = 0;
 	NR_IN = 0;
 	BLK = 0;
 	SOURCE_ID = -1;
+	STATE = STATE_INTERPRET;
+	DPL = 0;
+	TRACE = 0;
+	BASE = 10;
 	//@@END
 }
 

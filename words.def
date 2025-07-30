@@ -4,10 +4,20 @@
 // License: GPL3 https://www.gnu.org/licenses/gpl-3.0.html
 //-----------------------------------------------------------------------------
 
+//-----------------------------------------------------------------------------
 // PAD
+//-----------------------------------------------------------------------------
 "PAD", PAD, 0, "push(mem_addr(vm.pad->pad()));"
 
+//-----------------------------------------------------------------------------
+// base conversion
+//-----------------------------------------------------------------------------
+"DECIMAL", DECIMAL, 0, "vm.user->BASE = 10;"
+"HEX", HEX, 0, "vm.user->BASE = 16;"
+
+//-----------------------------------------------------------------------------
 // arithmetic
+//-----------------------------------------------------------------------------
 "+", PLUS, 0, "push(pop() + pop());"
 "*", MULT, 0, "push(pop() * pop());"
 "-", MINUS, 0, "int b = pop(), a = pop(); push(a - b);"
@@ -36,7 +46,9 @@
 "CELLS", CELLS, 0, "push(pop() * CELL_SZ);"
 "WITHIN", WITHIN, 0, "f_within();"
 
+//-----------------------------------------------------------------------------
 // logical
+//-----------------------------------------------------------------------------
 "AND", AND, 0, "push(pop() & pop());"
 "OR", OR, 0, "push(pop() | pop());"
 "XOR", XOR, 0, "push(pop() ^ pop());"
@@ -44,7 +56,9 @@
 "LSHIFT", LSHIFT, 0, "int n = pop(), a = pop(); push(a << n);"
 "RSHIFT", RSHIFT, 0, "int n = pop(), a = pop(); push(a >> n);"
 
+//-----------------------------------------------------------------------------
 // comparison
+//-----------------------------------------------------------------------------
 "=", EQUAL, 0, "push(f_bool(pop() == pop()));"
 "<>", DIFFERENT, 0, "push(f_bool(pop() != pop()));"
 "<", LESS, 0, "int b = pop(), a = pop(); push(f_bool(a < b));"
@@ -64,7 +78,9 @@
 "0>", ZERO_GREATER, 0, "push(f_bool(pop() > 0));"
 "0>=", ZERO_GREATER_EQUAL, 0, "push(f_bool(pop() >= 0));"
 
+//-----------------------------------------------------------------------------
 // memory access
+//-----------------------------------------------------------------------------
 "!", STORE, 0, "int a = pop(), v = pop(); store(a, v);"
 "@", FETCH, 0, "push(fetch(pop()));"
 "+!", PLUS_STORE, 0, "int a = pop(), v = pop(); store(a, fetch(a) + v);"
@@ -76,7 +92,9 @@
 "ERASE", ERASE, 0, "int n = pop(), a = pop(); vm.mem.erase(a, n);"
 "MOVE", MOVE, 0, "int n = pop(), dst = pop(), src = pop(); vm.mem.move(src, dst, n);"
 
+//-----------------------------------------------------------------------------
 // parameter stack
+//-----------------------------------------------------------------------------
 "DROP", DROP, 0, "pop();"
 "SWAP", SWAP, 0, "int a = pop(), b = pop(); push(a); push(b);"
 "DUP", DUP, 0, "push(peek(0));"
@@ -102,7 +120,9 @@
 "SP!", SP_STORE, 0, "vm.stack->set_ptr(pop());"
 ".S", DOT_S, 0, "vm.stack->print();"
 
+//-----------------------------------------------------------------------------
 // return stack
+//-----------------------------------------------------------------------------
 ">R", TO_R, 0, "r_push(pop());"
 "R>", FROM_R, 0, "push(r_pop());"
 "RDROP", R_DROP, 0, "r_pop();"
@@ -119,7 +139,9 @@
 "RSP!", RSP_STORE, 0, "vm.rstack->set_ptr(pop());"
 ".RS", DOT_RS, 0, "vm.rstack->print(""R"");"
 
+//-----------------------------------------------------------------------------
 // dictionary
+//-----------------------------------------------------------------------------
 ",", COMMA, 0, "comma(pop());"
 "C,", CCOMMA, 0, "ccomma(pop());"
 "HERE", HERE, 0, "push(vm.dict->here());"
@@ -134,6 +156,20 @@
 "MARKER", MARKER, 0, "f_marker();"
 "(MARKER)", XMARKER, F_HIDDEN, "f_xmarker(body);"
 
+//-----------------------------------------------------------------------------
+// parser
+//-----------------------------------------------------------------------------
+"PARSE", PARSE, 0, "f_parse();"
+"PARSE-WORD", PARSE_WORD, 0, "f_parse_word();"
+"WORD", WORD, 0, "f_word();"
+
+"CHAR", CHAR, 0, "f_char();"
+"[CHAR]", BRACKET_CHAR, F_IMMEDIATE, "f_bracket_char();"
+
+"NUMBER?", NUMBER_Q, 0, "f_number_q();"
+"NUMBER", NUMBER, 0, "f_number();"
+">NUMBER", TO_NUMBER, 0, "f_to_number();"
+"CONVERT", CONVERT, 0, "f_convert();"
 
 
 
@@ -141,17 +177,18 @@
 
 
 
-
-
-
+//-----------------------------------------------------------------------------
 // string output
+//-----------------------------------------------------------------------------
 "TYPE", TYPE, 0, "int size = pop(), a = pop(); print_string(a, size);"
 "EMIT", EMIT, 0, "print_char(pop());"
 "CR", CR, 0, "print_char(CR);"
 "SPACE", SPACE, 0, "print_char(BL);"
 "SPACES", SPACES, 0, "print_spaces(pop());"
 
+//-----------------------------------------------------------------------------
 // formatted number output
+//-----------------------------------------------------------------------------
 "<#", LESS_HASH, 0, "vm.number_output->start();"
 "#", HASH, 0, "vm.number_output->add_digit();"
 "#S", HASH_S, 0, "vm.number_output->add_digits();"
@@ -159,7 +196,9 @@
 "SIGN", SIGN, 0, "vm.number_output->add_sign(pop());"
 "#>", HASH_GREATER, 0, "vm.number_output->end();"
 
+//-----------------------------------------------------------------------------
 // number output
+//-----------------------------------------------------------------------------
 ".", DOT, 0, "print_number(pop());"
 "D.", D_DOT, 0, "print_number(dpop());"
 "D.R", D_DOT_R, 0, "int w = pop(); dint v = dpop(); print_number(v, w);"
@@ -179,13 +218,10 @@
 "S""", S_QUOTE, 0, "f_s_quote();"
 
 
-"WORD", WORD, 0, "f_word();"
 "WORDS", WORDS, 0, "f_words();"
 
 "DABS", DABS, 0, "dpush(f_dabs(dpop()));"
 
-"DECIMAL", DECIMAL, 0, "vm.user->BASE = 10;"
-"HEX", HEX, 0, "vm.user->BASE = 16;"
 "BYE", BYE, 0, "exit(EXIT_SUCCESS);"
 "(DOVAR)", XDOVAR, F_HIDDEN, ";"
 "LITERAL", LITERAL, F_IMMEDIATE, ";"

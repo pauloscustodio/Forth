@@ -27,7 +27,7 @@ int Header::name_size() const {
 }
 
 int Header::xt() const {
-	return mem_addr(reinterpret_cast<const char*>(&this->code));
+	return mem_addr(&this->code);
 }
 
 Header* Header::header(int xt) {
@@ -66,7 +66,7 @@ int Dict::create(const ForthString* name, int flags, int code) {
 }
 
 int Dict::parse_create(int code) {
-	const ForthString* name = f_parse_word(BL);
+	const ForthString* name = parse_word(BL);
 	if (name->size() == 0)
 		error(Error::AttemptToUseZeroLengthStringAsName);
 	return create(name, 0, code);

@@ -57,20 +57,22 @@ static inline const string BLOCK_FILENAME = "forth.blk";
 enum {
     //@@BEGIN: WordsIdDeclaration
     idBL, // BL
-    idTRUE, // TRUE
-    idFALSE, // FALSE
     idS0, // S0
     idR0, // R0
     idCS0, // CS0
-    idSTATE, // STATE
-    idBASE, // BASE
-    idDPL, // DPL
-    idTRACE, // TRACE
+    idTRUE, // TRUE
+    idFALSE, // FALSE
     idTO_IN, // >IN
     idNR_IN, // #IN
     idBLK, // BLK
     idSOURCE_ID, // SOURCE_ID
+    idSTATE, // STATE
+    idDPL, // DPL
+    idTRACE, // TRACE
+    idBASE, // BASE
     idPAD, // PAD
+    idDECIMAL, // DECIMAL
+    idHEX, // HEX
     idPLUS, // +
     idMULT, // *
     idMINUS, // -
@@ -176,6 +178,15 @@ enum {
     idUNUSED, // UNUSED
     idMARKER, // MARKER
     idXMARKER, // (MARKER)
+    idPARSE, // PARSE
+    idPARSE_WORD, // PARSE-WORD
+    idWORD, // WORD
+    idCHAR, // CHAR
+    idBRACKET_CHAR, // [CHAR]
+    idNUMBER_Q, // NUMBER?
+    idNUMBER, // NUMBER
+    idTO_NUMBER, // >NUMBER
+    idCONVERT, // CONVERT
     idTYPE, // TYPE
     idEMIT, // EMIT
     idCR, // CR
@@ -199,11 +210,8 @@ enum {
     idENVIRONMENT_Q, // ENVIRONMENT?
     idCOUNT, // COUNT
     idS_QUOTE, // S"
-    idWORD, // WORD
     idWORDS, // WORDS
     idDABS, // DABS
-    idDECIMAL, // DECIMAL
-    idHEX, // HEX
     idBYE, // BYE
     idXDOVAR, // (DOVAR)
     idLITERAL, // LITERAL
@@ -216,20 +224,22 @@ enum {
 
 //@@BEGIN: WordsXtDeclaration
 extern int xtBL; // BL
-extern int xtTRUE; // TRUE
-extern int xtFALSE; // FALSE
 extern int xtS0; // S0
 extern int xtR0; // R0
 extern int xtCS0; // CS0
-extern int xtSTATE; // STATE
-extern int xtBASE; // BASE
-extern int xtDPL; // DPL
-extern int xtTRACE; // TRACE
+extern int xtTRUE; // TRUE
+extern int xtFALSE; // FALSE
 extern int xtTO_IN; // >IN
 extern int xtNR_IN; // #IN
 extern int xtBLK; // BLK
 extern int xtSOURCE_ID; // SOURCE_ID
+extern int xtSTATE; // STATE
+extern int xtDPL; // DPL
+extern int xtTRACE; // TRACE
+extern int xtBASE; // BASE
 extern int xtPAD; // PAD
+extern int xtDECIMAL; // DECIMAL
+extern int xtHEX; // HEX
 extern int xtPLUS; // +
 extern int xtMULT; // *
 extern int xtMINUS; // -
@@ -335,6 +345,15 @@ extern int xtALLOT; // ALLOT
 extern int xtUNUSED; // UNUSED
 extern int xtMARKER; // MARKER
 extern int xtXMARKER; // (MARKER)
+extern int xtPARSE; // PARSE
+extern int xtPARSE_WORD; // PARSE-WORD
+extern int xtWORD; // WORD
+extern int xtCHAR; // CHAR
+extern int xtBRACKET_CHAR; // [CHAR]
+extern int xtNUMBER_Q; // NUMBER?
+extern int xtNUMBER; // NUMBER
+extern int xtTO_NUMBER; // >NUMBER
+extern int xtCONVERT; // CONVERT
 extern int xtTYPE; // TYPE
 extern int xtEMIT; // EMIT
 extern int xtCR; // CR
@@ -358,11 +377,8 @@ extern int xtTHROW; // THROW
 extern int xtENVIRONMENT_Q; // ENVIRONMENT?
 extern int xtCOUNT; // COUNT
 extern int xtS_QUOTE; // S"
-extern int xtWORD; // WORD
 extern int xtWORDS; // WORDS
 extern int xtDABS; // DABS
-extern int xtDECIMAL; // DECIMAL
-extern int xtHEX; // HEX
 extern int xtBYE; // BYE
 extern int xtXDOVAR; // (DOVAR)
 extern int xtLITERAL; // LITERAL
@@ -374,14 +390,14 @@ extern int xtQUIT; // QUIT
 // user variables
 struct User {
     //@@BEGIN: Vars
-    int STATE;
-    int BASE;
-    int DPL;
-    int TRACE;
     int TO_IN;
     int NR_IN;
     int BLK;
     int SOURCE_ID;
+    int STATE;
+    int DPL;
+    int TRACE;
+    int BASE;
     //@@END
 
     void init();
@@ -402,6 +418,9 @@ dint dcell(int hi, int lo);
 // pointer - address conversion
 int mem_addr(const char* ptr);
 int mem_addr(const int* ptr);
+class CountedString;
+int mem_addr(const CountedString* ptr);
+
 char* mem_char_ptr(int addr, int size = 0);
 int* mem_int_ptr(int addr, int size = 0);
 

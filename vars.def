@@ -4,13 +4,21 @@
 // License: GPL3 https://www.gnu.org/licenses/gpl-3.0.html
 //-----------------------------------------------------------------------------
 
-"STATE", STATE, STATE_INTERPRET
-"BASE", BASE, 10
-"DPL", DPL, 0
-"TRACE", TRACE, 0
-
 // input
 ">IN", TO_IN, 0
 "#IN", NR_IN, 0
 "BLK", BLK, 0
 "SOURCE_ID", SOURCE_ID, -1
+
+// compiler
+"STATE", STATE, STATE_INTERPRET
+
+// parser
+"DPL", DPL, 0
+
+// debugger
+"TRACE", TRACE, 0
+
+// base conversion
+"BASE", BASE, 10
+

@@ -4,6 +4,7 @@
 // License: GPL3 https://www.gnu.org/licenses/gpl-3.0.html
 //-----------------------------------------------------------------------------
 
+#include "errors.h"
 #include "forth.h"
 #include "parser.h"
 #include "vm.h"
@@ -64,7 +65,7 @@ static int skip_to_delimiter(char delimiter = BL) {
 }
 
 // parse a word from the input buffer, delimited by the specified character
-const ForthString* f_parse_word(char delimiter) {
+const ForthString* parse_word(char delimiter) {
     if (delimiter == BL)
         skip_blanks();	// skip blanks before word
     else
@@ -74,24 +75,48 @@ const ForthString* f_parse_word(char delimiter) {
     int start = vm.user->TO_IN;
     int end = skip_to_delimiter(delimiter);
 
-    if (start == end) {
-        return nullptr; // no word found
-    }
-    else {
-        int size = end - start;
-        ForthString* ret = vm.wordbuf->append(tib + start, size);
-        return ret;
-    }
+    int size = end - start;
+    ForthString* ret = vm.wordbuf->append(tib + start, size);
+    return ret;
+}
+
+void f_parse() {
+    char delimiter = pop();
+    const ForthString* word = parse_word(delimiter);
+    push(mem_addr(word->str()));
+    push(word->size());
+}
+
+void f_parse_word() {
+    const ForthString* word = parse_word(BL);
+    push(mem_addr(word->str()));
+    push(word->size());
 }
 
 void f_word() {
     char delimiter = pop();
-    const ForthString* word = f_parse_word(delimiter);
-    if (word == nullptr)
-        word = vm.wordbuf->append("");
-
+    const ForthString* word = parse_word(delimiter);
     const CountedString* addr = word->counted_string();
-    push(mem_addr(reinterpret_cast<const char*>(addr)));	// address counted string
+    push(mem_addr(addr));	// address counted string
+}
+
+void f_char() {
+    const ForthString* word = parse_word(BL);
+    if (word->size() == 0)
+        push(0);
+    else
+        push(word->str()[0]);
+}
+
+void f_bracket_char() {
+    f_char();
+    char c = pop();
+    comma(xtXLITERAL);
+    comma(c);
+}
+
+bool parse_number(const string& text, bool& is_double, dint& value) {
+    return parse_number(text.c_str(), text.size(), is_double, value);
 }
 
 // parse number with optional sign (+-)
@@ -99,11 +124,11 @@ void f_word() {
 // skip punctuation ( , . + - / : )
 // if punctuation found, set DPL to number of digits after last punctuation, return double cell
 // return true if ok, false if error
-bool f_parse_number(const char* text, size_t size, bool& is_double, dint& value) {
-    return f_parse_number(text, static_cast<int>(size), is_double, value);
+bool parse_number(const char* text, size_t size, bool& is_double, dint& value) {
+    return parse_number(text, static_cast<int>(size), is_double, value);
 }
 
-bool f_parse_number(const char* text, int size, bool& is_double, dint& value) {
+bool parse_number(const char* text, int size, bool& is_double, dint& value) {
     // init output vars
     int sign = 1;
     int base = vm.user->BASE;
@@ -184,3 +209,64 @@ bool f_parse_number(const char* text, int size, bool& is_double, dint& value) {
     return true;
 }
 
+static int _number(bool do_error) {
+    int size = pop();
+    int addr = pop();
+    const char* text = mem_char_ptr(addr);
+    bool is_double;
+    dint value;
+
+    if (!parse_number(text, size, is_double, value)) {
+        if (do_error)
+            error(Error::InvalidNumber, string(text, text + size));
+        return 0;
+    }
+    else {
+        if (is_double) {
+            push(dcell_lo(value));
+            push(dcell_hi(value));
+            return 2;
+        }
+        else {
+            push(dcell_lo(value));
+        }
+        return 1;
+    }
+}
+
+void f_number_q() {
+    int num_cells = _number(false);
+    push(num_cells);
+}
+
+void f_number() {
+    _number(true);
+}
+
+void f_to_number() {
+    int size = pop();
+    int addr = pop();
+    udint n = static_cast<udint>(dpop());
+    int digit;
+    while (size > 0 && (digit = char_digit(cfetch(addr))) >= 0
+        && digit < vm.user->BASE) {
+        n = n * vm.user->BASE + digit;
+        addr++;
+        size--;
+    }
+    dpush(n);
+    push(addr);
+    push(size);
+}
+
+void f_convert() {
+    int addr = pop() + 1;
+    udint n = static_cast<udint>(dpop());
+    int digit;
+    while ((digit = char_digit(cfetch(addr))) >= 0 && digit < vm.user->BASE) {
+        n = n * vm.user->BASE + digit;
+        addr++;
+    }
+    dpush(n);
+    push(addr);
+}

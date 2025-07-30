@@ -9,10 +9,21 @@
 #include "forth.h"
 #include "input.h"
 #include "wordbuf.h"
+#include <string>
 using namespace std;
 
-const ForthString* f_parse_word(char delimiter = BL); // nullptr if no more words in TIB
+const ForthString* parse_word(char delimiter = BL); // empty string if no more words in TIB
+void f_parse();
+void f_parse_word();
 void f_word();
+void f_char();
+void f_bracket_char();
 
-bool f_parse_number(const char* text, size_t size, bool& is_double, dint& value);
-bool f_parse_number(const char* text, int size, bool& is_double, dint& value);
+bool parse_number(const string& text, bool& is_double, dint& value);
+bool parse_number(const char* text, size_t size, bool& is_double, dint& value);
+bool parse_number(const char* text, int size, bool& is_double, dint& value);
+
+void f_number_q();
+void f_number();
+void f_to_number();
+void f_convert();

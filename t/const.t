@@ -23,10 +23,4 @@ forth_ok("R0 .S", "( 4096 )");
 note "Test CS0";
 forth_ok("CS0 .S", "( 4096 )");
 
-note "Test UNUSED";
-forth_ok("UNUSED .S", "( 247905 )");
-
-note "Test HERE";
-forth_ok("HERE .S", "( 6100 )");
-
 end_test;

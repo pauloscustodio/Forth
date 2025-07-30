@@ -45,7 +45,7 @@ void f_interpret_word(const char* word, int size) {
                 comma(xt);
             }
         }
-        else if (f_parse_number(word, size, is_double, value)) {
+        else if (parse_number(word, size, is_double, value)) {
             if (is_double) { // double cell
                 if (vm.user->STATE == STATE_INTERPRET) {
                     dpush(value);
@@ -91,8 +91,8 @@ void f_interpret_word(const char* word, int size) {
 
 void f_interpret() {
     while (true) {
-        const ForthString* word = f_parse_word(BL);
-        if (word == nullptr)
+        const ForthString* word = parse_word(BL);
+        if (word->size() == 0)
             break;
         f_interpret_word(word->str(), word->size());
     }
