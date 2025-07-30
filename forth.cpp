@@ -33,7 +33,8 @@ int xtFALSE = 0; // FALSE
 int xtTO_IN = 0; // >IN
 int xtNR_IN = 0; // #IN
 int xtBLK = 0; // BLK
-int xtSOURCE_ID = 0; // SOURCE_ID
+int xtSOURCE_ID = 0; // SOURCE-ID
+int xtSPAN = 0; // SPAN
 int xtSTATE = 0; // STATE
 int xtDPL = 0; // DPL
 int xtTRACE = 0; // TRACE
@@ -163,6 +164,16 @@ int xtXS_QUOTE = 0; // (S")
 int xtC_QUOTE = 0; // C"
 int xtXC_QUOTE = 0; // (C")
 int xtDOT_PAREN = 0; // .(
+int xtTIB = 0; // TIB
+int xtNR_TIB = 0; // #TIB
+int xtSOURCE = 0; // SOURCE
+int xtREFILL = 0; // REFILL
+int xtACCEPT = 0; // ACCEPT
+int xtEXPECT = 0; // EXPECT
+int xtKEY = 0; // KEY
+int xtQUERY = 0; // QUERY
+int xtSAVE_INPUT = 0; // SAVE-INPUT
+int xtRESTORE_INPUT = 0; // RESTORE-INPUT
 int xtTYPE = 0; // TYPE
 int xtEMIT = 0; // EMIT
 int xtCR = 0; // CR
@@ -369,7 +380,8 @@ void create_dictionary() {
 	xtTO_IN = vm.dict->create(">IN", 0, idTO_IN);
 	xtNR_IN = vm.dict->create("#IN", 0, idNR_IN);
 	xtBLK = vm.dict->create("BLK", 0, idBLK);
-	xtSOURCE_ID = vm.dict->create("SOURCE_ID", 0, idSOURCE_ID);
+	xtSOURCE_ID = vm.dict->create("SOURCE-ID", 0, idSOURCE_ID);
+	xtSPAN = vm.dict->create("SPAN", 0, idSPAN);
 	xtSTATE = vm.dict->create("STATE", 0, idSTATE);
 	xtDPL = vm.dict->create("DPL", 0, idDPL);
 	xtTRACE = vm.dict->create("TRACE", 0, idTRACE);
@@ -499,6 +511,16 @@ void create_dictionary() {
 	xtC_QUOTE = vm.dict->create("C\"", F_IMMEDIATE, idC_QUOTE);
 	xtXC_QUOTE = vm.dict->create("(C\")", F_HIDDEN, idXC_QUOTE);
 	xtDOT_PAREN = vm.dict->create(".(", F_IMMEDIATE, idDOT_PAREN);
+	xtTIB = vm.dict->create("TIB", 0, idTIB);
+	xtNR_TIB = vm.dict->create("#TIB", 0, idNR_TIB);
+	xtSOURCE = vm.dict->create("SOURCE", 0, idSOURCE);
+	xtREFILL = vm.dict->create("REFILL", 0, idREFILL);
+	xtACCEPT = vm.dict->create("ACCEPT", 0, idACCEPT);
+	xtEXPECT = vm.dict->create("EXPECT", 0, idEXPECT);
+	xtKEY = vm.dict->create("KEY", 0, idKEY);
+	xtQUERY = vm.dict->create("QUERY", 0, idQUERY);
+	xtSAVE_INPUT = vm.dict->create("SAVE-INPUT", 0, idSAVE_INPUT);
+	xtRESTORE_INPUT = vm.dict->create("RESTORE-INPUT", 0, idRESTORE_INPUT);
 	xtTYPE = vm.dict->create("TYPE", 0, idTYPE);
 	xtEMIT = vm.dict->create("EMIT", 0, idEMIT);
 	xtCR = vm.dict->create("CR", 0, idCR);
@@ -550,7 +572,8 @@ void f_execute(int xt) {
 		case idTO_IN: push(mem_addr(&vm.user->TO_IN)); break; // >IN
 		case idNR_IN: push(mem_addr(&vm.user->NR_IN)); break; // #IN
 		case idBLK: push(mem_addr(&vm.user->BLK)); break; // BLK
-		case idSOURCE_ID: push(mem_addr(&vm.user->SOURCE_ID)); break; // SOURCE_ID
+		case idSOURCE_ID: push(mem_addr(&vm.user->SOURCE_ID)); break; // SOURCE-ID
+		case idSPAN: push(mem_addr(&vm.user->SPAN)); break; // SPAN
 		case idSTATE: push(mem_addr(&vm.user->STATE)); break; // STATE
 		case idDPL: push(mem_addr(&vm.user->DPL)); break; // DPL
 		case idTRACE: push(mem_addr(&vm.user->TRACE)); break; // TRACE
@@ -680,6 +703,16 @@ void f_execute(int xt) {
 		case idC_QUOTE: { f_c_quote(); }; break; // C"
 		case idXC_QUOTE: { f_xc_quote(); }; break; // (C")
 		case idDOT_PAREN: { f_dot_paren(); }; break; // .(
+		case idTIB: { push(mem_addr(vm.tib->tib())); }; break; // TIB
+		case idNR_TIB: { push(mem_addr(&vm.user->NR_IN)); }; break; // #TIB
+		case idSOURCE: { push(mem_addr(vm.tib->tib())); push(vm.user->NR_IN); }; break; // SOURCE
+		case idREFILL: { push(f_bool(f_refill())); }; break; // REFILL
+		case idACCEPT: { f_accept(); }; break; // ACCEPT
+		case idEXPECT: { f_expect(); }; break; // EXPECT
+		case idKEY: { f_key(); }; break; // KEY
+		case idQUERY: { f_query(); }; break; // QUERY
+		case idSAVE_INPUT: { f_save_input(); }; break; // SAVE-INPUT
+		case idRESTORE_INPUT: { f_restore_input(); }; break; // RESTORE-INPUT
 		case idTYPE: { int size = pop(), a = pop(); print_string(a, size); }; break; // TYPE
 		case idEMIT: { print_char(pop()); }; break; // EMIT
 		case idCR: { print_char(CR); }; break; // CR
@@ -730,6 +763,7 @@ void User::init() {
 	NR_IN = 0;
 	BLK = 0;
 	SOURCE_ID = -1;
+	SPAN = 0;
 	STATE = STATE_INTERPRET;
 	DPL = 0;
 	TRACE = 0;

@@ -102,6 +102,28 @@ bool InputFiles::refill() {
 	return ok;
 }
 
+int InputFiles::tell() {
+	int source_id = vm.user->SOURCE_ID;
+	if (source_id < 1)
+		return 0;
+	else if (source_id < static_cast<int>(m_files.size()) && m_files[source_id] != nullptr)
+		return static_cast<int>(m_files[source_id]->tellg());
+	else {
+		error(Error::FileIOException);
+		return 0;
+	}
+}
+
+void InputFiles::seek(int fpos) {
+	int source_id = vm.user->SOURCE_ID;
+	if (source_id < 1)
+		return;
+	else if (source_id < static_cast<int>(m_files.size()) && m_files[source_id] != nullptr)
+		m_files[source_id]->seekg(fpos);
+	else
+		error(Error::FileIOException);
+}
+
 //-----------------------------------------------------------------------------
 
 void Input::push_text(const string& text) {
@@ -216,6 +238,90 @@ void Input::push_remaining_buffer() {
 	}
 }
 
+//-----------------------------------------------------------------------------
+
 bool f_refill() {
 	return vm.input->refill();
+}
+
+void f_accept() {
+	int max_size = pop();
+	int addr = pop();
+	char* text = mem_char_ptr(addr);
+
+	string line;
+	if (std::getline(cin, line)) {
+		if (static_cast<int>(line.size()) > max_size)
+			line.resize(max_size);
+
+		while (!line.empty() && line.back() == '\n')
+			line.pop_back();					// remove newline
+
+		memcpy(text, line.c_str(), line.size());
+
+		push(static_cast<int>(line.size()));	// length received
+	}
+	else {
+		push(0);								// zero length
+	}
+}
+
+void f_expect() {
+	f_accept();
+	vm.user->SPAN = pop();
+}
+
+void f_key() {
+	char c;
+	cin >> c;
+	push(c);
+}
+
+void f_query() {
+	int old_source_id = vm.user->SOURCE_ID;    // save in case it's -1
+	vm.input->push_cin();
+	f_refill();
+	vm.input->pop_input();
+	vm.user->SOURCE_ID = old_source_id;
+}
+
+enum { INPUT_STR, INPUT_KBD, INPUT_FILE };
+
+void f_save_input() {
+	if (vm.user->SOURCE_ID < 0) {
+		push(INPUT_STR);
+		vm.input->push_remaining_buffer();
+	}
+	else if (vm.user->SOURCE_ID == 0) {
+		push(INPUT_KBD);
+		vm.input->push_remaining_buffer();
+	}
+	else {
+		push(vm.input_files->tell());
+		push(INPUT_FILE);
+		vm.input->push_remaining_buffer();
+	}
+}
+
+void f_restore_input() {
+	switch (pop()) {
+	case INPUT_STR:
+		vm.input->pop_input();
+		push(F_TRUE);
+		break;
+
+	case INPUT_KBD:
+		vm.input->pop_input();
+		push(F_TRUE);
+		break;
+
+	case INPUT_FILE:
+		vm.input->pop_input();
+		vm.input_files->seek(pop());
+		push(F_TRUE);
+		break;
+
+	default:
+		push(F_FALSE);
+	}
 }

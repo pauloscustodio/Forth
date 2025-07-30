@@ -65,7 +65,8 @@ enum {
     idTO_IN, // >IN
     idNR_IN, // #IN
     idBLK, // BLK
-    idSOURCE_ID, // SOURCE_ID
+    idSOURCE_ID, // SOURCE-ID
+    idSPAN, // SPAN
     idSTATE, // STATE
     idDPL, // DPL
     idTRACE, // TRACE
@@ -195,6 +196,16 @@ enum {
     idC_QUOTE, // C"
     idXC_QUOTE, // (C")
     idDOT_PAREN, // .(
+    idTIB, // TIB
+    idNR_TIB, // #TIB
+    idSOURCE, // SOURCE
+    idREFILL, // REFILL
+    idACCEPT, // ACCEPT
+    idEXPECT, // EXPECT
+    idKEY, // KEY
+    idQUERY, // QUERY
+    idSAVE_INPUT, // SAVE-INPUT
+    idRESTORE_INPUT, // RESTORE-INPUT
     idTYPE, // TYPE
     idEMIT, // EMIT
     idCR, // CR
@@ -238,7 +249,8 @@ extern int xtFALSE; // FALSE
 extern int xtTO_IN; // >IN
 extern int xtNR_IN; // #IN
 extern int xtBLK; // BLK
-extern int xtSOURCE_ID; // SOURCE_ID
+extern int xtSOURCE_ID; // SOURCE-ID
+extern int xtSPAN; // SPAN
 extern int xtSTATE; // STATE
 extern int xtDPL; // DPL
 extern int xtTRACE; // TRACE
@@ -368,6 +380,16 @@ extern int xtXS_QUOTE; // (S")
 extern int xtC_QUOTE; // C"
 extern int xtXC_QUOTE; // (C")
 extern int xtDOT_PAREN; // .(
+extern int xtTIB; // TIB
+extern int xtNR_TIB; // #TIB
+extern int xtSOURCE; // SOURCE
+extern int xtREFILL; // REFILL
+extern int xtACCEPT; // ACCEPT
+extern int xtEXPECT; // EXPECT
+extern int xtKEY; // KEY
+extern int xtQUERY; // QUERY
+extern int xtSAVE_INPUT; // SAVE-INPUT
+extern int xtRESTORE_INPUT; // RESTORE-INPUT
 extern int xtTYPE; // TYPE
 extern int xtEMIT; // EMIT
 extern int xtCR; // CR
@@ -406,6 +428,7 @@ struct User {
     int NR_IN;
     int BLK;
     int SOURCE_ID;
+    int SPAN;
     int STATE;
     int DPL;
     int TRACE;

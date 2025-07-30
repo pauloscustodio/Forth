@@ -183,6 +183,19 @@
 "(C"")", XC_QUOTE, F_HIDDEN, "f_xc_quote();"
 ".(", DOT_PAREN, F_IMMEDIATE, "f_dot_paren();"
 
+//-----------------------------------------------------------------------------
+// input
+//-----------------------------------------------------------------------------
+"TIB", TIB, 0, "push(mem_addr(vm.tib->tib()));"
+"#TIB", NR_TIB, 0, "push(mem_addr(&vm.user->NR_IN));"
+"SOURCE", SOURCE, 0, "push(mem_addr(vm.tib->tib())); push(vm.user->NR_IN);"
+"REFILL", REFILL, 0, "push(f_bool(f_refill()));"
+"ACCEPT", ACCEPT, 0, "f_accept();"
+"EXPECT", EXPECT, 0, "f_expect();"
+"KEY", KEY, 0, "f_key();"
+"QUERY", QUERY, 0, "f_query();"
+"SAVE-INPUT", SAVE_INPUT, 0, "f_save_input();"
+"RESTORE-INPUT", RESTORE_INPUT, 0, "f_restore_input();"
 
 
 

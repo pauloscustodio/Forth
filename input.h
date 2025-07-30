@@ -52,6 +52,9 @@ public:
 	// read from SOURCE_ID into TIB
 	bool refill();
 
+	int tell();
+	void seek(int fpos);
+
 private:
 	vector<ifstream*> m_files; // indexed by SOURCE_ID
 };
@@ -72,6 +75,8 @@ public:
 	void push_file(const char* filename, size_t size);
 	void push_file(const char* filename, int size);
 
+	void push_remaining_buffer();
+
 	void pop_input();
 
 	bool refill();
@@ -87,74 +92,12 @@ private:
 
 	vector<Buffer> m_buffers;
 
-	void push_remaining_buffer();
 };
 
 bool f_refill();
-
-/*
-class Buffer {
-public:
-	void init();
-
-    int blk() const { return m_blk; }
-    int source_id() const { return m_source_id; }
-    const char* buffer() const { return m_buffer; }
-    int buffer_ptr() const { return m_ptr; }
-    int buffer_size() const { return m_size; }
-    void set_buffer_ptr(int ptr);
-
-	void read_text(const char* text, int size);
-	void read_file(int source_id, const char* filename, int size);
-	void close_file();
-	void read_block(int blk);
-	void read_cin();
-	bool refill();
-
-private:
-	ifstream* m_ifs;			// input stream, if any
-	int m_blk;					// block number, if any
-	int m_source_id;			// source-id (-1 string, 0 cin, 1..N file)
-	char m_buffer[BUFFER_SZ];	// input buffer, in other cases
-	int m_size;					// input buffer size
-	int m_ptr;					// input buffer index
-
-	void check_error(int error_number);
-	void set_buffer(const string& text);
-	void set_buffer(const char* text, size_t size);
-	void set_buffer(const char* text, int size);
-
-	static string block_filename();
-};
-
-//-----------------------------------------------------------------------------
-
-class Input {
-public:
-	void init();
-	void deinit();
-
-	int blk() const;
-    int source_id() const;
-    const char* buffer() const;
-    int buffer_ptr() const;
-    int buffer_size() const;
-	void set_buffer_ptr(int ptr);
-
-	void push_text(const string& text);
-	void push_text(const char* text, size_t size);
-	void push_text(const char* text, int size);
-	void push_file(const string& filename);
-	void push_file(const char* filename, size_t size);
-	void push_file(const char* filename, int size);
-    void push_block(int blk);
-	void push_cin();
-    bool has_input() const;
-    bool refill();
-	void pop_input();
-
-private:
-	Buffer m_buffers[MAX_FILES];	// input buffers
-	int m_size;						// number of used input buffer
-};
-*/
+void f_accept();
+void f_expect();
+void f_key();
+void f_query();
+void f_save_input();
+void f_restore_input();
