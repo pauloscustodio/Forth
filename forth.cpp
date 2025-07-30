@@ -155,6 +155,14 @@ int xtNUMBER_Q = 0; // NUMBER?
 int xtNUMBER = 0; // NUMBER
 int xtTO_NUMBER = 0; // >NUMBER
 int xtCONVERT = 0; // CONVERT
+int xtCOUNT = 0; // COUNT
+int xtDOT_QUOTE = 0; // ."
+int xtXDOT_QUOTE = 0; // (.")
+int xtS_QUOTE = 0; // S"
+int xtXS_QUOTE = 0; // (S")
+int xtC_QUOTE = 0; // C"
+int xtXC_QUOTE = 0; // (C")
+int xtDOT_PAREN = 0; // .(
 int xtTYPE = 0; // TYPE
 int xtEMIT = 0; // EMIT
 int xtCR = 0; // CR
@@ -176,8 +184,6 @@ int xtRDEPTH = 0; // RDEPTH
 int xtCS_DEPTH = 0; // CS_DEPTH
 int xtTHROW = 0; // THROW
 int xtENVIRONMENT_Q = 0; // ENVIRONMENT?
-int xtCOUNT = 0; // COUNT
-int xtS_QUOTE = 0; // S"
 int xtWORDS = 0; // WORDS
 int xtDABS = 0; // DABS
 int xtBYE = 0; // BYE
@@ -485,6 +491,14 @@ void create_dictionary() {
 	xtNUMBER = vm.dict->create("NUMBER", 0, idNUMBER);
 	xtTO_NUMBER = vm.dict->create(">NUMBER", 0, idTO_NUMBER);
 	xtCONVERT = vm.dict->create("CONVERT", 0, idCONVERT);
+	xtCOUNT = vm.dict->create("COUNT", 0, idCOUNT);
+	xtDOT_QUOTE = vm.dict->create(".\"", F_IMMEDIATE, idDOT_QUOTE);
+	xtXDOT_QUOTE = vm.dict->create("(.\")", F_HIDDEN, idXDOT_QUOTE);
+	xtS_QUOTE = vm.dict->create("S\"", F_IMMEDIATE, idS_QUOTE);
+	xtXS_QUOTE = vm.dict->create("(S\")", F_HIDDEN, idXS_QUOTE);
+	xtC_QUOTE = vm.dict->create("C\"", F_IMMEDIATE, idC_QUOTE);
+	xtXC_QUOTE = vm.dict->create("(C\")", F_HIDDEN, idXC_QUOTE);
+	xtDOT_PAREN = vm.dict->create(".(", F_IMMEDIATE, idDOT_PAREN);
 	xtTYPE = vm.dict->create("TYPE", 0, idTYPE);
 	xtEMIT = vm.dict->create("EMIT", 0, idEMIT);
 	xtCR = vm.dict->create("CR", 0, idCR);
@@ -506,8 +520,6 @@ void create_dictionary() {
 	xtCS_DEPTH = vm.dict->create("CS_DEPTH", 0, idCS_DEPTH);
 	xtTHROW = vm.dict->create("THROW", 0, idTHROW);
 	xtENVIRONMENT_Q = vm.dict->create("ENVIRONMENT?", 0, idENVIRONMENT_Q);
-	xtCOUNT = vm.dict->create("COUNT", 0, idCOUNT);
-	xtS_QUOTE = vm.dict->create("S\"", 0, idS_QUOTE);
 	xtWORDS = vm.dict->create("WORDS", 0, idWORDS);
 	xtDABS = vm.dict->create("DABS", 0, idDABS);
 	xtBYE = vm.dict->create("BYE", 0, idBYE);
@@ -660,6 +672,14 @@ void f_execute(int xt) {
 		case idNUMBER: { f_number(); }; break; // NUMBER
 		case idTO_NUMBER: { f_to_number(); }; break; // >NUMBER
 		case idCONVERT: { f_convert(); }; break; // CONVERT
+		case idCOUNT: { f_count(); }; break; // COUNT
+		case idDOT_QUOTE: { f_dot_quote(); }; break; // ."
+		case idXDOT_QUOTE: { f_xdot_quote(); }; break; // (.")
+		case idS_QUOTE: { f_s_quote(); }; break; // S"
+		case idXS_QUOTE: { f_xs_quote(); }; break; // (S")
+		case idC_QUOTE: { f_c_quote(); }; break; // C"
+		case idXC_QUOTE: { f_xc_quote(); }; break; // (C")
+		case idDOT_PAREN: { f_dot_paren(); }; break; // .(
 		case idTYPE: { int size = pop(), a = pop(); print_string(a, size); }; break; // TYPE
 		case idEMIT: { print_char(pop()); }; break; // EMIT
 		case idCR: { print_char(CR); }; break; // CR
@@ -681,8 +701,6 @@ void f_execute(int xt) {
 		case idCS_DEPTH: { push(vm.cs_stack->depth()); }; break; // CS_DEPTH
 		case idTHROW: { f_throw(); }; break; // THROW
 		case idENVIRONMENT_Q: { int size = pop(), addr = pop(); f_environment_q(mem_char_ptr(addr), size); }; break; // ENVIRONMENT?
-		case idCOUNT: { f_count(); }; break; // COUNT
-		case idS_QUOTE: { f_s_quote(); }; break; // S"
 		case idWORDS: { f_words(); }; break; // WORDS
 		case idDABS: { dpush(f_dabs(dpop())); }; break; // DABS
 		case idBYE: { exit(EXIT_SUCCESS); }; break; // BYE

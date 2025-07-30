@@ -187,6 +187,14 @@ enum {
     idNUMBER, // NUMBER
     idTO_NUMBER, // >NUMBER
     idCONVERT, // CONVERT
+    idCOUNT, // COUNT
+    idDOT_QUOTE, // ."
+    idXDOT_QUOTE, // (.")
+    idS_QUOTE, // S"
+    idXS_QUOTE, // (S")
+    idC_QUOTE, // C"
+    idXC_QUOTE, // (C")
+    idDOT_PAREN, // .(
     idTYPE, // TYPE
     idEMIT, // EMIT
     idCR, // CR
@@ -208,8 +216,6 @@ enum {
     idCS_DEPTH, // CS_DEPTH
     idTHROW, // THROW
     idENVIRONMENT_Q, // ENVIRONMENT?
-    idCOUNT, // COUNT
-    idS_QUOTE, // S"
     idWORDS, // WORDS
     idDABS, // DABS
     idBYE, // BYE
@@ -354,6 +360,14 @@ extern int xtNUMBER_Q; // NUMBER?
 extern int xtNUMBER; // NUMBER
 extern int xtTO_NUMBER; // >NUMBER
 extern int xtCONVERT; // CONVERT
+extern int xtCOUNT; // COUNT
+extern int xtDOT_QUOTE; // ."
+extern int xtXDOT_QUOTE; // (.")
+extern int xtS_QUOTE; // S"
+extern int xtXS_QUOTE; // (S")
+extern int xtC_QUOTE; // C"
+extern int xtXC_QUOTE; // (C")
+extern int xtDOT_PAREN; // .(
 extern int xtTYPE; // TYPE
 extern int xtEMIT; // EMIT
 extern int xtCR; // CR
@@ -375,8 +389,6 @@ extern int xtRDEPTH; // RDEPTH
 extern int xtCS_DEPTH; // CS_DEPTH
 extern int xtTHROW; // THROW
 extern int xtENVIRONMENT_Q; // ENVIRONMENT?
-extern int xtCOUNT; // COUNT
-extern int xtS_QUOTE; // S"
 extern int xtWORDS; // WORDS
 extern int xtDABS; // DABS
 extern int xtBYE; // BYE

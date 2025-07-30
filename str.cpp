@@ -40,8 +40,64 @@ void f_count() {
 	push(size);
 }
 
+void f_dot_quote() {
+	const ForthString* message = parse_word('"');
+	if (vm.user->STATE == STATE_COMPILE) {
+		int str_addr = vm.dict->alloc_name(message);
+		comma(xtXDOT_QUOTE);
+		comma(str_addr);
+	}
+	else {
+		print_string(message->str(), message->size());
+	}
+}
+
+void f_xdot_quote() {
+	int str_addr = fetch(ip); ip += CELL_SZ;
+	const ForthString* message = reinterpret_cast<const ForthString*>(mem_char_ptr(str_addr));
+	print_string(message->str(), message->size());
+}
+
 void f_s_quote() {
-	const ForthString* word = parse_word('"');
-	push(mem_addr(word->str()));	// address of word
-	push(word->size());				// length of word
+	const ForthString* message = parse_word('"');
+	if (vm.user->STATE == STATE_COMPILE) {
+		int str_addr = vm.dict->alloc_name(message);
+		comma(xtXS_QUOTE);
+		comma(str_addr);
+	}
+	else {
+		push(mem_addr(message->str()));
+		push(message->size());
+	}
+}
+
+void f_xs_quote() {
+	int str_addr = fetch(ip); ip += CELL_SZ;
+	const ForthString* message = reinterpret_cast<const ForthString*>(mem_char_ptr(str_addr));
+	push(mem_addr(message->str()));
+	push(message->size());
+}
+
+void f_c_quote() {
+	const ForthString* message = parse_word('"');
+	const CountedString* cmessage = message->counted_string();
+	if (vm.user->STATE == STATE_COMPILE) {
+		int str_addr = vm.dict->alloc_name(message);
+		comma(xtXC_QUOTE);
+		comma(str_addr);
+	}
+	else
+		push(mem_addr(cmessage));
+}
+
+void f_xc_quote() {
+	int str_addr = fetch(ip); ip += CELL_SZ;
+	const ForthString* message = reinterpret_cast<const ForthString*>(mem_char_ptr(str_addr));
+	const CountedString* cmessage = message->counted_string();
+	push(mem_addr(cmessage));
+}
+
+void f_dot_paren() {
+	const ForthString* message = parse_word(')');
+	print_string(message->str(), message->size());
 }

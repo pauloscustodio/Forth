@@ -171,6 +171,18 @@
 ">NUMBER", TO_NUMBER, 0, "f_to_number();"
 "CONVERT", CONVERT, 0, "f_convert();"
 
+//-----------------------------------------------------------------------------
+// strings
+//-----------------------------------------------------------------------------
+"COUNT", COUNT, 0, "f_count();"
+".""", DOT_QUOTE, F_IMMEDIATE, "f_dot_quote();"
+"(."")", XDOT_QUOTE, F_HIDDEN, "f_xdot_quote();"
+"S""", S_QUOTE, F_IMMEDIATE, "f_s_quote();"
+"(S"")", XS_QUOTE, F_HIDDEN, "f_xs_quote();"
+"C""", C_QUOTE, F_IMMEDIATE, "f_c_quote();"
+"(C"")", XC_QUOTE, F_HIDDEN, "f_xc_quote();"
+".(", DOT_PAREN, F_IMMEDIATE, "f_dot_paren();"
+
 
 
 
@@ -213,10 +225,6 @@
 
 "THROW", THROW, 0, "f_throw();"
 "ENVIRONMENT?", ENVIRONMENT_Q, 0, "int size = pop(), addr = pop(); f_environment_q(mem_char_ptr(addr), size);"
-
-"COUNT", COUNT, 0, "f_count();"
-"S""", S_QUOTE, 0, "f_s_quote();"
-
 
 "WORDS", WORDS, 0, "f_words();"
 
