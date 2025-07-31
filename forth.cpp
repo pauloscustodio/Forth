@@ -104,6 +104,7 @@ int xtQ_DUP = 0; // ?DUP
 int xtOVER = 0; // OVER
 int xtROT = 0; // ROT
 int xtMINUS_ROT = 0; // -ROT
+int xtDEPTH = 0; // DEPTH
 int xtNIP = 0; // NIP
 int xtPICK = 0; // PICK
 int xtROLL = 0; // ROLL
@@ -114,23 +115,19 @@ int xtTWO_DUP = 0; // 2DUP
 int xtTWO_OVER = 0; // 2OVER
 int xtTWO_ROT = 0; // 2ROT
 int xtMINUS_2ROT = 0; // -2ROT
-int xtDEPTH = 0; // DEPTH
 int xtSP_FETCH = 0; // SP@
 int xtSP_STORE = 0; // SP!
-int xtDOT_S = 0; // .S
 int xtTO_R = 0; // >R
 int xtFROM_R = 0; // R>
 int xtR_DROP = 0; // RDROP
+int xtRSP_FETCH = 0; // RSP@
+int xtRSP_STORE = 0; // RSP!
 int xtR_FETCH = 0; // R@
 int xtI = 0; // I
 int xtJ = 0; // J
 int xtTWO_TO_R = 0; // 2>R
 int xtTWO_R_TO = 0; // 2R>
 int xtTWO_R_FETCH = 0; // 2R@
-int xtR_DEPTH = 0; // RDEPTH
-int xtRSP_FETCH = 0; // RSP@
-int xtRSP_STORE = 0; // RSP!
-int xtDOT_RS = 0; // .RS
 int xtCOMMA = 0; // ,
 int xtCCOMMA = 0; // C,
 int xtHERE = 0; // HERE
@@ -160,13 +157,12 @@ int xtXS_QUOTE = 0; // (S")
 int xtC_QUOTE = 0; // C"
 int xtXC_QUOTE = 0; // (C")
 int xtDOT_PAREN = 0; // .(
-int xtTO_IN = 0; // >IN
-int xtNR_IN = 0; // #IN
-int xtBLK = 0; // BLK
-int xtSOURCE_ID = 0; // SOURCE-ID
 int xtTIB = 0; // TIB
+int xtNR_IN = 0; // #IN
 int xtNR_TIB = 0; // #TIB
+int xtTO_IN = 0; // >IN
 int xtSOURCE = 0; // SOURCE
+int xtSOURCE_ID = 0; // SOURCE-ID
 int xtREFILL = 0; // REFILL
 int xtACCEPT = 0; // ACCEPT
 int xtEXPECT = 0; // EXPECT
@@ -193,6 +189,10 @@ int xtDOT_R = 0; // .R
 int xtU_DOT_R = 0; // U.R
 int xtRDEPTH = 0; // RDEPTH
 int xtCS_DEPTH = 0; // CS_DEPTH
+int xtDOT_S = 0; // .S
+int xtR_DEPTH = 0; // RDEPTH
+int xtDOT_RS = 0; // .RS
+int xtBLK = 0; // BLK
 int xtTHROW = 0; // THROW
 int xtENVIRONMENT_Q = 0; // ENVIRONMENT?
 int xtWORDS = 0; // WORDS
@@ -451,6 +451,7 @@ void create_dictionary() {
 	xtOVER = vm.dict->create("OVER", 0, idOVER);
 	xtROT = vm.dict->create("ROT", 0, idROT);
 	xtMINUS_ROT = vm.dict->create("-ROT", 0, idMINUS_ROT);
+	xtDEPTH = vm.dict->create("DEPTH", 0, idDEPTH);
 	xtNIP = vm.dict->create("NIP", 0, idNIP);
 	xtPICK = vm.dict->create("PICK", 0, idPICK);
 	xtROLL = vm.dict->create("ROLL", 0, idROLL);
@@ -461,23 +462,19 @@ void create_dictionary() {
 	xtTWO_OVER = vm.dict->create("2OVER", 0, idTWO_OVER);
 	xtTWO_ROT = vm.dict->create("2ROT", 0, idTWO_ROT);
 	xtMINUS_2ROT = vm.dict->create("-2ROT", 0, idMINUS_2ROT);
-	xtDEPTH = vm.dict->create("DEPTH", 0, idDEPTH);
 	xtSP_FETCH = vm.dict->create("SP@", 0, idSP_FETCH);
 	xtSP_STORE = vm.dict->create("SP!", 0, idSP_STORE);
-	xtDOT_S = vm.dict->create(".S", 0, idDOT_S);
 	xtTO_R = vm.dict->create(">R", 0, idTO_R);
 	xtFROM_R = vm.dict->create("R>", 0, idFROM_R);
 	xtR_DROP = vm.dict->create("RDROP", 0, idR_DROP);
+	xtRSP_FETCH = vm.dict->create("RSP@", 0, idRSP_FETCH);
+	xtRSP_STORE = vm.dict->create("RSP!", 0, idRSP_STORE);
 	xtR_FETCH = vm.dict->create("R@", 0, idR_FETCH);
 	xtI = vm.dict->create("I", 0, idI);
 	xtJ = vm.dict->create("J", 0, idJ);
 	xtTWO_TO_R = vm.dict->create("2>R", 0, idTWO_TO_R);
 	xtTWO_R_TO = vm.dict->create("2R>", 0, idTWO_R_TO);
 	xtTWO_R_FETCH = vm.dict->create("2R@", 0, idTWO_R_FETCH);
-	xtR_DEPTH = vm.dict->create("RDEPTH", 0, idR_DEPTH);
-	xtRSP_FETCH = vm.dict->create("RSP@", 0, idRSP_FETCH);
-	xtRSP_STORE = vm.dict->create("RSP!", 0, idRSP_STORE);
-	xtDOT_RS = vm.dict->create(".RS", 0, idDOT_RS);
 	xtCOMMA = vm.dict->create(",", 0, idCOMMA);
 	xtCCOMMA = vm.dict->create("C,", 0, idCCOMMA);
 	xtHERE = vm.dict->create("HERE", 0, idHERE);
@@ -507,13 +504,12 @@ void create_dictionary() {
 	xtC_QUOTE = vm.dict->create("C\"", F_IMMEDIATE, idC_QUOTE);
 	xtXC_QUOTE = vm.dict->create("(C\")", F_HIDDEN, idXC_QUOTE);
 	xtDOT_PAREN = vm.dict->create(".(", F_IMMEDIATE, idDOT_PAREN);
-	xtTO_IN = vm.dict->create(">IN", 0, idTO_IN);
-	xtNR_IN = vm.dict->create("#IN", 0, idNR_IN);
-	xtBLK = vm.dict->create("BLK", 0, idBLK);
-	xtSOURCE_ID = vm.dict->create("SOURCE-ID", 0, idSOURCE_ID);
 	xtTIB = vm.dict->create("TIB", 0, idTIB);
+	xtNR_IN = vm.dict->create("#IN", 0, idNR_IN);
 	xtNR_TIB = vm.dict->create("#TIB", 0, idNR_TIB);
+	xtTO_IN = vm.dict->create(">IN", 0, idTO_IN);
 	xtSOURCE = vm.dict->create("SOURCE", 0, idSOURCE);
+	xtSOURCE_ID = vm.dict->create("SOURCE-ID", 0, idSOURCE_ID);
 	xtREFILL = vm.dict->create("REFILL", 0, idREFILL);
 	xtACCEPT = vm.dict->create("ACCEPT", 0, idACCEPT);
 	xtEXPECT = vm.dict->create("EXPECT", 0, idEXPECT);
@@ -540,6 +536,10 @@ void create_dictionary() {
 	xtU_DOT_R = vm.dict->create("U.R", 0, idU_DOT_R);
 	xtRDEPTH = vm.dict->create("RDEPTH", 0, idRDEPTH);
 	xtCS_DEPTH = vm.dict->create("CS_DEPTH", 0, idCS_DEPTH);
+	xtDOT_S = vm.dict->create(".S", 0, idDOT_S);
+	xtR_DEPTH = vm.dict->create("RDEPTH", 0, idR_DEPTH);
+	xtDOT_RS = vm.dict->create(".RS", 0, idDOT_RS);
+	xtBLK = vm.dict->create("BLK", 0, idBLK);
 	xtTHROW = vm.dict->create("THROW", 0, idTHROW);
 	xtENVIRONMENT_Q = vm.dict->create("ENVIRONMENT?", 0, idENVIRONMENT_Q);
 	xtWORDS = vm.dict->create("WORDS", 0, idWORDS);
@@ -643,6 +643,7 @@ void f_execute(int xt) {
 		case idOVER: { push(peek(1)); }; break; // OVER
 		case idROT: { int c = pop(), b = pop(), a = pop(); push(b); push(c); push(a); }; break; // ROT
 		case idMINUS_ROT: { int c = pop(), b = pop(), a = pop(); push(c); push(a); push(b); }; break; // -ROT
+		case idDEPTH: { push(vm.stack->depth()); }; break; // DEPTH
 		case idNIP: { int a = pop(); pop(); push(a); }; break; // NIP
 		case idPICK: { push(peek(pop())); }; break; // PICK
 		case idROLL: { roll(pop()); }; break; // ROLL
@@ -653,23 +654,19 @@ void f_execute(int xt) {
 		case idTWO_OVER: { push(peek(3)); push(peek(3)); }; break; // 2OVER
 		case idTWO_ROT: { dint c = dpop(), b = dpop(), a = dpop(); dpush(b); dpush(c); dpush(a); }; break; // 2ROT
 		case idMINUS_2ROT: { dint c = dpop(), b = dpop(), a = dpop(); dpush(c); dpush(a); dpush(b); }; break; // -2ROT
-		case idDEPTH: { push(vm.stack->depth()); }; break; // DEPTH
 		case idSP_FETCH: { push(vm.stack->ptr()); }; break; // SP@
 		case idSP_STORE: { vm.stack->set_ptr(pop()); }; break; // SP!
-		case idDOT_S: { vm.stack->print(); }; break; // .S
 		case idTO_R: { r_push(pop()); }; break; // >R
 		case idFROM_R: { push(r_pop()); }; break; // R>
 		case idR_DROP: { r_pop(); }; break; // RDROP
+		case idRSP_FETCH: { push(vm.rstack->ptr()); }; break; // RSP@
+		case idRSP_STORE: { vm.rstack->set_ptr(pop()); }; break; // RSP!
 		case idR_FETCH: { push(r_peek(0)); }; break; // R@
 		case idI: { push(r_peek(0)); }; break; // I
 		case idJ: { push(r_peek(2)); }; break; // J
 		case idTWO_TO_R: { r_dpush(dpop()); }; break; // 2>R
 		case idTWO_R_TO: { dpush(r_dpop()); }; break; // 2R>
 		case idTWO_R_FETCH: { dpush(r_dpeek(0)); }; break; // 2R@
-		case idR_DEPTH: { push(vm.rstack->depth()); }; break; // RDEPTH
-		case idRSP_FETCH: { push(vm.rstack->ptr()); }; break; // RSP@
-		case idRSP_STORE: { vm.rstack->set_ptr(pop()); }; break; // RSP!
-		case idDOT_RS: { vm.rstack->print("R"); }; break; // .RS
 		case idCOMMA: { comma(pop()); }; break; // ,
 		case idCCOMMA: { ccomma(pop()); }; break; // C,
 		case idHERE: { push(vm.dict->here()); }; break; // HERE
@@ -699,13 +696,12 @@ void f_execute(int xt) {
 		case idC_QUOTE: { f_c_quote(); }; break; // C"
 		case idXC_QUOTE: { f_xc_quote(); }; break; // (C")
 		case idDOT_PAREN: { f_dot_paren(); }; break; // .(
-		case idTO_IN: { f_to_in(); }; break; // >IN
-		case idNR_IN: { f_nr_in(); }; break; // #IN
-		case idBLK: { f_blk(); }; break; // BLK
-		case idSOURCE_ID: { f_source_id(); }; break; // SOURCE-ID
 		case idTIB: { f_tib(); }; break; // TIB
+		case idNR_IN: { f_nr_in(); }; break; // #IN
 		case idNR_TIB: { f_nr_tib(); }; break; // #TIB
+		case idTO_IN: { f_to_in(); }; break; // >IN
 		case idSOURCE: { f_source(); }; break; // SOURCE
+		case idSOURCE_ID: { f_source_id(); }; break; // SOURCE-ID
 		case idREFILL: { push(f_bool(f_refill())); }; break; // REFILL
 		case idACCEPT: { f_accept(); }; break; // ACCEPT
 		case idEXPECT: { f_expect(); }; break; // EXPECT
@@ -732,6 +728,10 @@ void f_execute(int xt) {
 		case idU_DOT_R: { int w = pop(); uint v = pop(); print_unsigned_number(v, w); }; break; // U.R
 		case idRDEPTH: { push(vm.rstack->depth()); }; break; // RDEPTH
 		case idCS_DEPTH: { push(vm.cs_stack->depth()); }; break; // CS_DEPTH
+		case idDOT_S: { vm.stack->print(); }; break; // .S
+		case idR_DEPTH: { push(vm.rstack->depth()); }; break; // RDEPTH
+		case idDOT_RS: { vm.rstack->print("R"); }; break; // .RS
+		case idBLK: { f_blk(); }; break; // BLK
 		case idTHROW: { f_throw(); }; break; // THROW
 		case idENVIRONMENT_Q: { int size = pop(), addr = pop(); f_environment_q(mem_char_ptr(addr), size); }; break; // ENVIRONMENT?
 		case idWORDS: { f_words(); }; break; // WORDS

@@ -136,6 +136,7 @@ enum {
     idOVER, // OVER
     idROT, // ROT
     idMINUS_ROT, // -ROT
+    idDEPTH, // DEPTH
     idNIP, // NIP
     idPICK, // PICK
     idROLL, // ROLL
@@ -146,23 +147,19 @@ enum {
     idTWO_OVER, // 2OVER
     idTWO_ROT, // 2ROT
     idMINUS_2ROT, // -2ROT
-    idDEPTH, // DEPTH
     idSP_FETCH, // SP@
     idSP_STORE, // SP!
-    idDOT_S, // .S
     idTO_R, // >R
     idFROM_R, // R>
     idR_DROP, // RDROP
+    idRSP_FETCH, // RSP@
+    idRSP_STORE, // RSP!
     idR_FETCH, // R@
     idI, // I
     idJ, // J
     idTWO_TO_R, // 2>R
     idTWO_R_TO, // 2R>
     idTWO_R_FETCH, // 2R@
-    idR_DEPTH, // RDEPTH
-    idRSP_FETCH, // RSP@
-    idRSP_STORE, // RSP!
-    idDOT_RS, // .RS
     idCOMMA, // ,
     idCCOMMA, // C,
     idHERE, // HERE
@@ -192,13 +189,12 @@ enum {
     idC_QUOTE, // C"
     idXC_QUOTE, // (C")
     idDOT_PAREN, // .(
-    idTO_IN, // >IN
-    idNR_IN, // #IN
-    idBLK, // BLK
-    idSOURCE_ID, // SOURCE-ID
     idTIB, // TIB
+    idNR_IN, // #IN
     idNR_TIB, // #TIB
+    idTO_IN, // >IN
     idSOURCE, // SOURCE
+    idSOURCE_ID, // SOURCE-ID
     idREFILL, // REFILL
     idACCEPT, // ACCEPT
     idEXPECT, // EXPECT
@@ -225,6 +221,10 @@ enum {
     idU_DOT_R, // U.R
     idRDEPTH, // RDEPTH
     idCS_DEPTH, // CS_DEPTH
+    idDOT_S, // .S
+    idR_DEPTH, // RDEPTH
+    idDOT_RS, // .RS
+    idBLK, // BLK
     idTHROW, // THROW
     idENVIRONMENT_Q, // ENVIRONMENT?
     idWORDS, // WORDS
@@ -320,6 +320,7 @@ extern int xtQ_DUP; // ?DUP
 extern int xtOVER; // OVER
 extern int xtROT; // ROT
 extern int xtMINUS_ROT; // -ROT
+extern int xtDEPTH; // DEPTH
 extern int xtNIP; // NIP
 extern int xtPICK; // PICK
 extern int xtROLL; // ROLL
@@ -330,23 +331,19 @@ extern int xtTWO_DUP; // 2DUP
 extern int xtTWO_OVER; // 2OVER
 extern int xtTWO_ROT; // 2ROT
 extern int xtMINUS_2ROT; // -2ROT
-extern int xtDEPTH; // DEPTH
 extern int xtSP_FETCH; // SP@
 extern int xtSP_STORE; // SP!
-extern int xtDOT_S; // .S
 extern int xtTO_R; // >R
 extern int xtFROM_R; // R>
 extern int xtR_DROP; // RDROP
+extern int xtRSP_FETCH; // RSP@
+extern int xtRSP_STORE; // RSP!
 extern int xtR_FETCH; // R@
 extern int xtI; // I
 extern int xtJ; // J
 extern int xtTWO_TO_R; // 2>R
 extern int xtTWO_R_TO; // 2R>
 extern int xtTWO_R_FETCH; // 2R@
-extern int xtR_DEPTH; // RDEPTH
-extern int xtRSP_FETCH; // RSP@
-extern int xtRSP_STORE; // RSP!
-extern int xtDOT_RS; // .RS
 extern int xtCOMMA; // ,
 extern int xtCCOMMA; // C,
 extern int xtHERE; // HERE
@@ -376,13 +373,12 @@ extern int xtXS_QUOTE; // (S")
 extern int xtC_QUOTE; // C"
 extern int xtXC_QUOTE; // (C")
 extern int xtDOT_PAREN; // .(
-extern int xtTO_IN; // >IN
-extern int xtNR_IN; // #IN
-extern int xtBLK; // BLK
-extern int xtSOURCE_ID; // SOURCE-ID
 extern int xtTIB; // TIB
+extern int xtNR_IN; // #IN
 extern int xtNR_TIB; // #TIB
+extern int xtTO_IN; // >IN
 extern int xtSOURCE; // SOURCE
+extern int xtSOURCE_ID; // SOURCE-ID
 extern int xtREFILL; // REFILL
 extern int xtACCEPT; // ACCEPT
 extern int xtEXPECT; // EXPECT
@@ -409,6 +405,10 @@ extern int xtDOT_R; // .R
 extern int xtU_DOT_R; // U.R
 extern int xtRDEPTH; // RDEPTH
 extern int xtCS_DEPTH; // CS_DEPTH
+extern int xtDOT_S; // .S
+extern int xtR_DEPTH; // RDEPTH
+extern int xtDOT_RS; // .RS
+extern int xtBLK; // BLK
 extern int xtTHROW; // THROW
 extern int xtENVIRONMENT_Q; // ENVIRONMENT?
 extern int xtWORDS; // WORDS

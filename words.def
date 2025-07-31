@@ -102,6 +102,7 @@
 "OVER", OVER, 0, "push(peek(1));"
 "ROT", ROT, 0, "int c = pop(), b = pop(), a = pop(); push(b); push(c); push(a);"
 "-ROT", MINUS_ROT, 0, "int c = pop(), b = pop(), a = pop(); push(c); push(a); push(b);"
+"DEPTH", DEPTH, 0, "push(vm.stack->depth());"
 "NIP", NIP, 0, "int a = pop(); pop(); push(a);"
 "PICK", PICK, 0, "push(peek(pop()));"
 "ROLL", ROLL, 0, "roll(pop());"
@@ -114,11 +115,8 @@
 "2ROT", TWO_ROT, 0, "dint c = dpop(), b = dpop(), a = dpop(); dpush(b); dpush(c); dpush(a);"
 "-2ROT", MINUS_2ROT, 0, "dint c = dpop(), b = dpop(), a = dpop(); dpush(c); dpush(a); dpush(b);"
 
-"DEPTH", DEPTH, 0, "push(vm.stack->depth());"
-
 "SP@", SP_FETCH, 0, "push(vm.stack->ptr());"
 "SP!", SP_STORE, 0, "vm.stack->set_ptr(pop());"
-".S", DOT_S, 0, "vm.stack->print();"
 
 //-----------------------------------------------------------------------------
 // return stack
@@ -126,18 +124,14 @@
 ">R", TO_R, 0, "r_push(pop());"
 "R>", FROM_R, 0, "push(r_pop());"
 "RDROP", R_DROP, 0, "r_pop();"
+"RSP@", RSP_FETCH, 0, "push(vm.rstack->ptr());"
+"RSP!", RSP_STORE, 0, "vm.rstack->set_ptr(pop());"
 "R@", R_FETCH, 0, "push(r_peek(0));"
 "I", I, 0, "push(r_peek(0));"
 "J", J, 0, "push(r_peek(2));"
 "2>R", TWO_TO_R, 0, "r_dpush(dpop());"
 "2R>", TWO_R_TO, 0, "dpush(r_dpop());"
 "2R@", TWO_R_FETCH, 0, "dpush(r_dpeek(0));"
-
-"RDEPTH", R_DEPTH, 0, "push(vm.rstack->depth());"
-
-"RSP@", RSP_FETCH, 0, "push(vm.rstack->ptr());"
-"RSP!", RSP_STORE, 0, "vm.rstack->set_ptr(pop());"
-".RS", DOT_RS, 0, "vm.rstack->print(""R"");"
 
 //-----------------------------------------------------------------------------
 // dictionary
@@ -186,13 +180,12 @@
 //-----------------------------------------------------------------------------
 // input
 //-----------------------------------------------------------------------------
-">IN", TO_IN, 0, "f_to_in();"
-"#IN", NR_IN, 0, "f_nr_in();"
-"BLK", BLK, 0, "f_blk();"
-"SOURCE-ID", SOURCE_ID, 0, "f_source_id();"
 "TIB", TIB, 0, "f_tib();"
+"#IN", NR_IN, 0, "f_nr_in();"
 "#TIB", NR_TIB, 0, "f_nr_tib();"
+">IN", TO_IN, 0, "f_to_in();"
 "SOURCE", SOURCE, 0, "f_source();"
+"SOURCE-ID", SOURCE_ID, 0, "f_source_id();"
 "REFILL", REFILL, 0, "push(f_bool(f_refill()));"
 "ACCEPT", ACCEPT, 0, "f_accept();"
 "EXPECT", EXPECT, 0, "f_expect();"
@@ -200,6 +193,8 @@
 "QUERY", QUERY, 0, "f_query();"
 "SAVE-INPUT", SAVE_INPUT, 0, "f_save_input();"
 "RESTORE-INPUT", RESTORE_INPUT, 0, "f_restore_input();"
+
+
 
 
 
@@ -239,6 +234,10 @@
 
 "RDEPTH", RDEPTH, 0, "push(vm.rstack->depth());"
 "CS_DEPTH", CS_DEPTH, 0, "push(vm.cs_stack->depth());"
+".S", DOT_S, 0, "vm.stack->print();"
+"RDEPTH", R_DEPTH, 0, "push(vm.rstack->depth());"
+".RS", DOT_RS, 0, "vm.rstack->print(""R"");"
+"BLK", BLK, 0, "f_blk();"
 
 "THROW", THROW, 0, "f_throw();"
 "ENVIRONMENT?", ENVIRONMENT_Q, 0, "int size = pop(), addr = pop(); f_environment_q(mem_char_ptr(addr), size);"
