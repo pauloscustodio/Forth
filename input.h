@@ -63,7 +63,7 @@ public:
 	void push_text(const char* text, size_t size);
 	void push_text(const char* text, int size);
 
-	void push_block(int blk);
+	bool push_block(int blk);
 
 	void push_cin();
 	
@@ -100,6 +100,8 @@ private:
 	int m_empty_to_in;
 	int m_empty_nr_in;
 	int m_empty_blk;
+	
+	bool _refill(bool do_pop);
 };
 
 void f_to_in();

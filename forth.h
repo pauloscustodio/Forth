@@ -219,6 +219,10 @@ enum {
     idU_DOT, // U.
     idDOT_R, // .R
     idU_DOT_R, // U.R
+    idINTERPRET, // INTERPRET
+    idEVALUATE, // EVALUATE
+    idEXECUTE, // EXECUTE
+    idEXIT, // EXIT
     idRDEPTH, // RDEPTH
     idCS_DEPTH, // CS_DEPTH
     idDOT_S, // .S
@@ -233,7 +237,6 @@ enum {
     idXDOVAR, // (DOVAR)
     idLITERAL, // LITERAL
     idXLITERAL, // (LITERAL)
-    idINTERPRET, // INTERPRET
     idQUIT, // QUIT
     //@@END
     MAX_WORD_ID
@@ -403,6 +406,10 @@ extern int xtD_DOT_R; // D.R
 extern int xtU_DOT; // U.
 extern int xtDOT_R; // .R
 extern int xtU_DOT_R; // U.R
+extern int xtINTERPRET; // INTERPRET
+extern int xtEVALUATE; // EVALUATE
+extern int xtEXECUTE; // EXECUTE
+extern int xtEXIT; // EXIT
 extern int xtRDEPTH; // RDEPTH
 extern int xtCS_DEPTH; // CS_DEPTH
 extern int xtDOT_S; // .S
@@ -417,7 +424,6 @@ extern int xtBYE; // BYE
 extern int xtXDOVAR; // (DOVAR)
 extern int xtLITERAL; // LITERAL
 extern int xtXLITERAL; // (LITERAL)
-extern int xtINTERPRET; // INTERPRET
 extern int xtQUIT; // QUIT
 //@@END
 

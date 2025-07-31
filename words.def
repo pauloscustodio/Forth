@@ -194,15 +194,8 @@
 "SAVE-INPUT", SAVE_INPUT, 0, "f_save_input();"
 "RESTORE-INPUT", RESTORE_INPUT, 0, "f_restore_input();"
 
-
-
-
-
-
-
-
 //-----------------------------------------------------------------------------
-// string output
+// output
 //-----------------------------------------------------------------------------
 "TYPE", TYPE, 0, "int size = pop(), a = pop(); print_string(a, size);"
 "EMIT", EMIT, 0, "print_char(pop());"
@@ -210,9 +203,6 @@
 "SPACE", SPACE, 0, "print_char(BL);"
 "SPACES", SPACES, 0, "print_spaces(pop());"
 
-//-----------------------------------------------------------------------------
-// formatted number output
-//-----------------------------------------------------------------------------
 "<#", LESS_HASH, 0, "vm.number_output->start();"
 "#", HASH, 0, "vm.number_output->add_digit();"
 "#S", HASH_S, 0, "vm.number_output->add_digits();"
@@ -220,15 +210,25 @@
 "SIGN", SIGN, 0, "vm.number_output->add_sign(pop());"
 "#>", HASH_GREATER, 0, "vm.number_output->end();"
 
-//-----------------------------------------------------------------------------
-// number output
-//-----------------------------------------------------------------------------
 ".", DOT, 0, "print_number(pop());"
 "D.", D_DOT, 0, "print_number(dpop());"
 "D.R", D_DOT_R, 0, "int w = pop(); dint v = dpop(); print_number(v, w);"
 "U.", U_DOT, 0, "print_unsigned_number(pop());"
 ".R", DOT_R, 0, "int w = pop(), v = pop(); print_number(v, w);"
 "U.R", U_DOT_R, 0, "int w = pop(); uint v = pop(); print_unsigned_number(v, w);"
+
+//-----------------------------------------------------------------------------
+// inner interpreter
+//-----------------------------------------------------------------------------
+"INTERPRET", INTERPRET, 0, "f_interpret();"
+"EVALUATE", EVALUATE, 0, "f_evaluate();"
+"EXECUTE", EXECUTE, 0, "f_execute(pop());"
+"EXIT", EXIT, 0, "if (r_depth() == 0) do_exit = true; else ip = r_pop();"
+
+
+
+
+
 
 
 
@@ -250,5 +250,4 @@
 "(DOVAR)", XDOVAR, F_HIDDEN, ";"
 "LITERAL", LITERAL, F_IMMEDIATE, ";"
 "(LITERAL)", XLITERAL, F_HIDDEN, ";"
-"INTERPRET", INTERPRET, 0, "f_interpret();"
 "QUIT", QUIT, 0, "f_quit();"

@@ -230,7 +230,7 @@ void Input::push_text(const char* text, int size) {
 	}
 }
 
-void Input::push_block(int blk) {
+bool Input::push_block(int blk) {
 	if (blk < 1)
 		error(Error::InvalidBlockNumber);
 	if (m_ptr + 1 >= MAX_FILES)
@@ -242,12 +242,18 @@ void Input::push_block(int blk) {
 	vm.input_files->get_buffer(source_id, BUFFER_SZ, line);
 	vm.input_files->close_file(source_id);
 
-	m_ptr++;
-	memcpy(m_buffers[m_ptr].buffer, line.c_str(), line.size());
-	m_buffers[m_ptr].to_in = 0;
-	m_buffers[m_ptr].nr_in = static_cast<int>(line.size());
-	m_buffers[m_ptr].blk = blk;
-	m_buffers[m_ptr].source_id = 0;
+	if (line.size() > 0) {
+		m_ptr++;
+		memcpy(m_buffers[m_ptr].buffer, line.c_str(), line.size());
+		m_buffers[m_ptr].to_in = 0;
+		m_buffers[m_ptr].nr_in = static_cast<int>(line.size());
+		m_buffers[m_ptr].blk = blk;
+		m_buffers[m_ptr].source_id = 0;
+		return true;
+	}
+	else {
+		return false;
+	}
 }
 
 void Input::push_cin() {
@@ -289,44 +295,13 @@ void Input::pop_input() {
 }
 
 bool Input::refill_current_buffer() {
-	if (m_ptr < 0)
-		return false;
-	else {
-		Buffer* buffer = &m_buffers[m_ptr];
-		if (buffer->source_id < 0)		// input from string
-			return false;
-		else if (buffer->blk > 0)		// input from block
-			return false;
-		else {							// input from stream
-			string line;
-			if (vm.input_files->getline(buffer->source_id, line)) {
-				memcpy(buffer->buffer, line.c_str(), line.size());
-				buffer->to_in = 0;
-				buffer->nr_in = static_cast<int>(line.size());
-				return true;			// read a new line
-			}
-			else {
-				return false;
-			}
-		}
-	}
+	bool do_pop = false;
+	return _refill(do_pop);
 }
 
 bool Input::refill() {
-	while (m_ptr >= 0) {
-		Buffer* buffer = &m_buffers[m_ptr];
-		if (buffer->source_id < 0)		// input from string
-			return false;
-		else if (buffer->blk > 0)		// input from block
-			return false;
-		else {							// input from stream
-			if (refill_current_buffer())
-				return true;
-			else 
-				pop_input();			// get last buffer from stack and continue
-		}
-	}
-	return false;
+	bool do_pop = true;
+	return _refill(do_pop);
 }
 
 char* Input::source_ptr() {
@@ -386,6 +361,43 @@ int Input::source_id() const {
 		return m_buffers[m_ptr].source_id;
 	else
 		return 0;
+}
+
+bool Input::_refill(bool do_pop) {
+	while (m_ptr >= 0) {
+		Buffer* buffer = &m_buffers[m_ptr];
+
+		if (buffer->source_id < 0)		// input from string
+			return false;
+		else if (buffer->blk > 0) {		// input from block
+			buffer->blk++;
+			if (push_block(buffer->blk))
+				return true;
+			else {
+				buffer->blk = 0;		// continue to read from source-id
+				continue;
+			}
+		}
+
+		string line;
+		if (vm.input_files->getline(buffer->source_id, line)) {
+			memcpy(buffer->buffer, line.c_str(), line.size());
+			buffer->to_in = 0;
+			buffer->nr_in = static_cast<int>(line.size());
+			return true;			// read a new line
+		}
+		else {
+			if (do_pop) {
+				pop_input();
+			}
+			else {
+				buffer->nr_in = buffer->to_in = 0;
+				return false;
+			}
+		}
+	}
+
+	return false;
 }
 
 //-----------------------------------------------------------------------------

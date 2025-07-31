@@ -187,6 +187,10 @@ int xtD_DOT_R = 0; // D.R
 int xtU_DOT = 0; // U.
 int xtDOT_R = 0; // .R
 int xtU_DOT_R = 0; // U.R
+int xtINTERPRET = 0; // INTERPRET
+int xtEVALUATE = 0; // EVALUATE
+int xtEXECUTE = 0; // EXECUTE
+int xtEXIT = 0; // EXIT
 int xtRDEPTH = 0; // RDEPTH
 int xtCS_DEPTH = 0; // CS_DEPTH
 int xtDOT_S = 0; // .S
@@ -201,7 +205,6 @@ int xtBYE = 0; // BYE
 int xtXDOVAR = 0; // (DOVAR)
 int xtLITERAL = 0; // LITERAL
 int xtXLITERAL = 0; // (LITERAL)
-int xtINTERPRET = 0; // INTERPRET
 int xtQUIT = 0; // QUIT
 //@@END
 
@@ -534,6 +537,10 @@ void create_dictionary() {
 	xtU_DOT = vm.dict->create("U.", 0, idU_DOT);
 	xtDOT_R = vm.dict->create(".R", 0, idDOT_R);
 	xtU_DOT_R = vm.dict->create("U.R", 0, idU_DOT_R);
+	xtINTERPRET = vm.dict->create("INTERPRET", 0, idINTERPRET);
+	xtEVALUATE = vm.dict->create("EVALUATE", 0, idEVALUATE);
+	xtEXECUTE = vm.dict->create("EXECUTE", 0, idEXECUTE);
+	xtEXIT = vm.dict->create("EXIT", 0, idEXIT);
 	xtRDEPTH = vm.dict->create("RDEPTH", 0, idRDEPTH);
 	xtCS_DEPTH = vm.dict->create("CS_DEPTH", 0, idCS_DEPTH);
 	xtDOT_S = vm.dict->create(".S", 0, idDOT_S);
@@ -548,7 +555,6 @@ void create_dictionary() {
 	xtXDOVAR = vm.dict->create("(DOVAR)", F_HIDDEN, idXDOVAR);
 	xtLITERAL = vm.dict->create("LITERAL", F_IMMEDIATE, idLITERAL);
 	xtXLITERAL = vm.dict->create("(LITERAL)", F_HIDDEN, idXLITERAL);
-	xtINTERPRET = vm.dict->create("INTERPRET", 0, idINTERPRET);
 	xtQUIT = vm.dict->create("QUIT", 0, idQUIT);
 	//@@END
 }
@@ -726,6 +732,10 @@ void f_execute(int xt) {
 		case idU_DOT: { print_unsigned_number(pop()); }; break; // U.
 		case idDOT_R: { int w = pop(), v = pop(); print_number(v, w); }; break; // .R
 		case idU_DOT_R: { int w = pop(); uint v = pop(); print_unsigned_number(v, w); }; break; // U.R
+		case idINTERPRET: { f_interpret(); }; break; // INTERPRET
+		case idEVALUATE: { f_evaluate(); }; break; // EVALUATE
+		case idEXECUTE: { f_execute(pop()); }; break; // EXECUTE
+		case idEXIT: { if (r_depth() == 0) do_exit = true; else ip = r_pop(); }; break; // EXIT
 		case idRDEPTH: { push(vm.rstack->depth()); }; break; // RDEPTH
 		case idCS_DEPTH: { push(vm.cs_stack->depth()); }; break; // CS_DEPTH
 		case idDOT_S: { vm.stack->print(); }; break; // .S
@@ -740,7 +750,6 @@ void f_execute(int xt) {
 		case idXDOVAR: { ; }; break; // (DOVAR)
 		case idLITERAL: { ; }; break; // LITERAL
 		case idXLITERAL: { ; }; break; // (LITERAL)
-		case idINTERPRET: { f_interpret(); }; break; // INTERPRET
 		case idQUIT: { f_quit(); }; break; // QUIT
 		//@@END
 		default:
