@@ -86,13 +86,13 @@ sub patch_file {
 			my $prefix = $1;
 			push @out, $_;
 			for my $const (@const) {
-				push @out, $prefix."extern int xt".$const->{id}."; // ".$const->{name}."\n";
+				push @out, $prefix."extern int xt".$const->{id}."; // ".$const->{name}." .\n";
 			}
 			for my $var (@vars) {
-				push @out, $prefix."extern int xt".$var->{id}."; // ".$var->{name}."\n";
+				push @out, $prefix."extern int xt".$var->{id}."; // ".$var->{name}." .\n";
 			}
 			for my $word (@words) {
-				push @out, $prefix."extern int xt".$word->{id}."; // ".$word->{name}."\n";
+				push @out, $prefix."extern int xt".$word->{id}."; // ".$word->{name}." .\n";
 			}
 			while (@in && $in[0] !~ /^\s*\/\/\@\@END/) {
 				shift @in;
@@ -102,13 +102,13 @@ sub patch_file {
 			my $prefix = $1;
 			push @out, $_;
 			for my $const (@const) {
-				push @out, $prefix."int xt".$const->{id}." = 0; // ".$const->{name}."\n";
+				push @out, $prefix."int xt".$const->{id}." = 0; // ".$const->{name}." .\n";
 			}
 			for my $var (@vars) {
-				push @out, $prefix."int xt".$var->{id}." = 0; // ".$var->{name}."\n";
+				push @out, $prefix."int xt".$var->{id}." = 0; // ".$var->{name}." .\n";
 			}
 			for my $word (@words) {
-				push @out, $prefix."int xt".$word->{id}." = 0; // ".$word->{name}."\n";
+				push @out, $prefix."int xt".$word->{id}." = 0; // ".$word->{name}." .\n";
 			}
 			while (@in && $in[0] !~ /^\s*\/\/\@\@END/) {
 				shift @in;
@@ -134,13 +134,13 @@ sub patch_file {
 			my $prefix = $1;
 			push @out, $_;
 			for my $const (@const) {
-				push @out, $prefix."id".$const->{id}.", // ".$const->{name}."\n";
+				push @out, $prefix."id".$const->{id}.", // ".$const->{name}." .\n";
 			}
 			for my $var (@vars) {
-				push @out, $prefix."id".$var->{id}.", // ".$var->{name}."\n";
+				push @out, $prefix."id".$var->{id}.", // ".$var->{name}." .\n";
 			}
 			for my $word (@words) {
-				push @out, $prefix."id".$word->{id}.", // ".$word->{name}."\n";
+				push @out, $prefix."id".$word->{id}.", // ".$word->{name}." .\n";
 			}
 			while (@in && $in[0] !~ /^\s*\/\/\@\@END/) {
 				shift @in;
@@ -150,13 +150,13 @@ sub patch_file {
 			my $prefix = $1;
 			push @out, $_;
 			for my $const (@const) {
-				push @out, $prefix."case id".$const->{id}.": push(".$const->{value}."); break; // ".$const->{name}."\n";
+				push @out, $prefix."case id".$const->{id}.": push(".$const->{value}."); break; // ".$const->{name}." .\n";
 			}
 			for my $var (@vars) {
-				push @out, $prefix."case id".$var->{id}.": push(mem_addr(&vm.user->".$var->{id}.")); break; // ".$var->{name}."\n";
+				push @out, $prefix."case id".$var->{id}.": push(mem_addr(&vm.user->".$var->{id}.")); break; // ".$var->{name}." .\n";
 			}
 			for my $word (@words) {
-				push @out, $prefix."case id".$word->{id}.": { ".$word->{code}." }; break; // ".$word->{name}."\n";
+				push @out, $prefix."case id".$word->{id}.": { ".$word->{code}." }; break; // ".$word->{name}." .\n";
 			}
 			while (@in && $in[0] !~ /^\s*\/\/\@\@END/) {
 				shift @in;

@@ -20,11 +20,13 @@ struct Header {
 		bool immediate : 1;
 		bool smudge : 1;
 	} flags;
+	int does;			// address of DOES> code
     int code;			// either primitive code or address of xt of word
 
 	ForthString* name() const;
 	int name_size() const;
 	int xt() const;
+	int body() const;
 	static Header* header(int xt);
 };
 
@@ -63,6 +65,8 @@ public:
 	Header* find_word(const string& name) const;
     Header* find_word(const char* name, size_t size) const;
     Header* find_word(const char* name, int size) const;
+    Header* find_word(const ForthString* name) const;
+	Header* parse_find_word();
 
 private:
 	int m_latest;		// point to last defined word header
@@ -74,7 +78,25 @@ private:
 };
 
 void f_find(int addr);	// search dictionary, word max size 255
-void f_create();
 void f_marker();
 void f_xmarker(int body);
 void f_words();
+void f_create();
+void f_colon();
+void f_colon_noname();
+void f_semicolon();
+void f_variable();
+void f_2variable();
+void f_value();
+void f_to();
+void f_constant();
+void f_2constant();
+void f_does();
+void f_xdoes_define();
+void f_xdoes_run(int body);
+int f_tick();
+void f_bracket_tick();
+void f_postpone();
+void f_bracket_compile();
+void f_immediate();
+void f_hidden();

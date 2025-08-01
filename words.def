@@ -225,6 +225,54 @@
 "EXECUTE", EXECUTE, 0, "f_execute(pop());"
 "EXIT", EXIT, 0, "if (r_depth() == 0) do_exit = true; else ip = r_pop();"
 
+//-----------------------------------------------------------------------------
+// compiler
+//-----------------------------------------------------------------------------
+":", COLON, 0, "f_colon();"
+":NONAME", COLON_NONAME, 0, "f_colon_noname();"
+";", SEMICOLON, F_IMMEDIATE, "f_semicolon();"
+"(DOCOL)", XDOCOL, F_HIDDEN, "r_push(ip); ip = body;"
+
+"CREATE", CREATE, 0, "f_create();"
+"VARIABLE", VARIABLE, 0, "f_variable();"
+"(DOVAR)", XDOVAR, F_HIDDEN, "push(body);"
+
+"2VARIABLE", TWO_VARIABLE, 0, "f_2variable();"
+
+"VALUE", VALUE, 0, "f_value();"
+"TO", TO, F_IMMEDIATE, "f_to();"
+
+"CONSTANT", CONSTANT, 0, "f_constant();"
+"(DOCONST)", XDOCONST, F_HIDDEN, "push(fetch(body));"
+
+"2CONSTANT", TWO_CONSTANT, 0, "f_2constant();"
+"(DO2CONST)", XDO2CONST, F_HIDDEN, "dpush(dfetch(body));"
+
+"LITERAL", LITERAL, F_IMMEDIATE, "comma(xtXLITERAL); comma(pop());"
+"(LITERAL)", XLITERAL, F_HIDDEN, "push(fetch(ip)); ip += CELL_SZ;"
+
+"2LITERAL", TWO_LITERAL, F_IMMEDIATE, "comma(xtX2LITERAL); dcomma(dpop());"
+"(2LITERAL)", X2LITERAL, F_HIDDEN, "dpush(dfetch(ip)); ip += DCELL_SZ;"
+
+"DOES>", DOES, F_IMMEDIATE, "f_does();"
+"(DOES>DEFINE)", XDOES_DEFINE, F_HIDDEN, "f_xdoes_define();"
+"(DOES>RUN)", XDOES_RUN, F_HIDDEN, "f_xdoes_run(body);"
+
+"[", LBRACKET, F_IMMEDIATE, "vm.user->STATE = STATE_INTERPRET;"
+"]", RBRACKET, 0, "vm.user->STATE = STATE_COMPILE;"
+"(", OPEN_PAREN, F_IMMEDIATE, "f_open_paren();"
+"\", BACKSLASH, F_IMMEDIATE, "f_backslash();"
+"BRANCH", BRANCH, F_HIDDEN, "ip += fetch(ip);"
+"0BRANCH", ZBRANCH, F_HIDDEN, "if (!pop()) ip += fetch(ip); else ip += CELL_SZ;"
+
+"'", TICK, 0, "push(f_tick());"
+"[']", BRACKET_TICK, F_IMMEDIATE, "f_bracket_tick();"
+"POSTPONE", POSTPONE, F_IMMEDIATE, "f_postpone();"
+"IMMEDIATE", IMMEDIATE, F_IMMEDIATE, "f_immediate();"
+"COMPILE,", COMPILE_COMMA, F_IMMEDIATE, "comma(pop());"
+"[COMPILE]", BRACKET_COMPILE, F_IMMEDIATE, "f_bracket_compile();"
+
+
 
 
 
@@ -247,7 +295,4 @@
 "DABS", DABS, 0, "dpush(f_dabs(dpop()));"
 
 "BYE", BYE, 0, "exit(EXIT_SUCCESS);"
-"(DOVAR)", XDOVAR, F_HIDDEN, ";"
-"LITERAL", LITERAL, F_IMMEDIATE, ";"
-"(LITERAL)", XLITERAL, F_HIDDEN, ";"
 "QUIT", QUIT, 0, "f_quit();"

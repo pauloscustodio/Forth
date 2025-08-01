@@ -279,3 +279,18 @@ void f_convert() {
     dpush(n);
     push(addr);
 }
+
+void f_open_paren() {
+    skip_to_delimiter(')');
+}
+
+void f_backslash() {
+    if (vm.input->blk() != 0) {
+        int* to_in = vm.input->to_in_ptr();
+        *to_in = (*to_in + BLOCK_COLS - 1) & ~(BLOCK_COLS - 1);
+    }
+    else {
+        skip_to_delimiter(CR);
+    }
+}
+

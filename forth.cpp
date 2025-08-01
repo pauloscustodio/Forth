@@ -24,188 +24,218 @@ using namespace std;
 int ip = 0;
 
 //@@BEGIN: WordsXtDefinition
-int xtBL = 0; // BL
-int xtS0 = 0; // S0
-int xtR0 = 0; // R0
-int xtCS0 = 0; // CS0
-int xtTRUE = 0; // TRUE
-int xtFALSE = 0; // FALSE
-int xtSPAN = 0; // SPAN
-int xtSTATE = 0; // STATE
-int xtDPL = 0; // DPL
-int xtTRACE = 0; // TRACE
-int xtBASE = 0; // BASE
-int xtPAD = 0; // PAD
-int xtDECIMAL = 0; // DECIMAL
-int xtHEX = 0; // HEX
-int xtPLUS = 0; // +
-int xtMULT = 0; // *
-int xtMINUS = 0; // -
-int xtDIV = 0; // /
-int xtMOD = 0; // MOD
-int xtDIV_MOD = 0; // /MOD
-int xtMULT_DIV = 0; // */
-int xtMULT_DIV_MOD = 0; // */MOD
-int xtFM_DIV_MOD = 0; // FM/MOD
-int xtUM_DIV_MOD = 0; // UM/MOD
-int xtSM_DIV_REM = 0; // SM/REM
-int xtM_STAR = 0; // M*
-int xtONE_PLUS = 0; // 1+
-int xtONE_MINUS = 0; // 1-
-int xtTWO_MULT = 0; // 2*
-int xtTWO_DIV = 0; // 2/
-int xtNEGATE = 0; // NEGATE
-int xtS_TO_D = 0; // S>D
-int xtUM_MULT = 0; // UM*
-int xtABS = 0; // ABS
-int xtFMAX = 0; // MAX
-int xtFMIN = 0; // MIN
-int xtCHAR_PLUS = 0; // CHAR+
-int xtCHARS = 0; // CHARS
-int xtCELL_PLUS = 0; // CELL+
-int xtCELLS = 0; // CELLS
-int xtWITHIN = 0; // WITHIN
-int xtAND = 0; // AND
-int xtOR = 0; // OR
-int xtXOR = 0; // XOR
-int xtINVERT = 0; // INVERT
-int xtLSHIFT = 0; // LSHIFT
-int xtRSHIFT = 0; // RSHIFT
-int xtEQUAL = 0; // =
-int xtDIFFERENT = 0; // <>
-int xtLESS = 0; // <
-int xtLESS_EQUAL = 0; // <=
-int xtGREATER = 0; // >
-int xtGREATER_EQUAL = 0; // >=
-int xtU_LESS = 0; // U<
-int xtU_LESS_EQUAL = 0; // U<=
-int xtU_GREATER = 0; // U>
-int xtU_GREATER_EQUAL = 0; // U>=
-int xtZERO_EQUAL = 0; // 0=
-int xtZERO_DIFFERENT = 0; // 0<>
-int xtZERO_LESS = 0; // 0<
-int xtZERO_LESS_EQUAL = 0; // 0<=
-int xtZERO_GREATER = 0; // 0>
-int xtZERO_GREATER_EQUAL = 0; // 0>=
-int xtSTORE = 0; // !
-int xtFETCH = 0; // @
-int xtPLUS_STORE = 0; // +!
-int xtCSTORE = 0; // C!
-int xtCFETCH = 0; // C@
-int xtTWO_STORE = 0; // 2!
-int xtTWO_FETCH = 0; // 2@
-int xtFILL = 0; // FILL
-int xtERASE = 0; // ERASE
-int xtMOVE = 0; // MOVE
-int xtDROP = 0; // DROP
-int xtSWAP = 0; // SWAP
-int xtDUP = 0; // DUP
-int xtQ_DUP = 0; // ?DUP
-int xtOVER = 0; // OVER
-int xtROT = 0; // ROT
-int xtMINUS_ROT = 0; // -ROT
-int xtDEPTH = 0; // DEPTH
-int xtNIP = 0; // NIP
-int xtPICK = 0; // PICK
-int xtROLL = 0; // ROLL
-int xtTUCK = 0; // TUCK
-int xtTWO_DROP = 0; // 2DROP
-int xtTWO_SWAP = 0; // 2SWAP
-int xtTWO_DUP = 0; // 2DUP
-int xtTWO_OVER = 0; // 2OVER
-int xtTWO_ROT = 0; // 2ROT
-int xtMINUS_2ROT = 0; // -2ROT
-int xtSP_FETCH = 0; // SP@
-int xtSP_STORE = 0; // SP!
-int xtTO_R = 0; // >R
-int xtFROM_R = 0; // R>
-int xtR_DROP = 0; // RDROP
-int xtRSP_FETCH = 0; // RSP@
-int xtRSP_STORE = 0; // RSP!
-int xtR_FETCH = 0; // R@
-int xtI = 0; // I
-int xtJ = 0; // J
-int xtTWO_TO_R = 0; // 2>R
-int xtTWO_R_TO = 0; // 2R>
-int xtTWO_R_FETCH = 0; // 2R@
-int xtCOMMA = 0; // ,
-int xtCCOMMA = 0; // C,
-int xtHERE = 0; // HERE
-int xtLATEST = 0; // LATEST
-int xtFIND = 0; // FIND
-int xtTO_BODY = 0; // >BODY
-int xtALIGN = 0; // ALIGN
-int xtALIGNED = 0; // ALIGNED
-int xtALLOT = 0; // ALLOT
-int xtUNUSED = 0; // UNUSED
-int xtMARKER = 0; // MARKER
-int xtXMARKER = 0; // (MARKER)
-int xtPARSE = 0; // PARSE
-int xtPARSE_WORD = 0; // PARSE-WORD
-int xtWORD = 0; // WORD
-int xtCHAR = 0; // CHAR
-int xtBRACKET_CHAR = 0; // [CHAR]
-int xtNUMBER_Q = 0; // NUMBER?
-int xtNUMBER = 0; // NUMBER
-int xtTO_NUMBER = 0; // >NUMBER
-int xtCONVERT = 0; // CONVERT
-int xtCOUNT = 0; // COUNT
-int xtDOT_QUOTE = 0; // ."
-int xtXDOT_QUOTE = 0; // (.")
-int xtS_QUOTE = 0; // S"
-int xtXS_QUOTE = 0; // (S")
-int xtC_QUOTE = 0; // C"
-int xtXC_QUOTE = 0; // (C")
-int xtDOT_PAREN = 0; // .(
-int xtTIB = 0; // TIB
-int xtNR_IN = 0; // #IN
-int xtNR_TIB = 0; // #TIB
-int xtTO_IN = 0; // >IN
-int xtSOURCE = 0; // SOURCE
-int xtSOURCE_ID = 0; // SOURCE-ID
-int xtREFILL = 0; // REFILL
-int xtACCEPT = 0; // ACCEPT
-int xtEXPECT = 0; // EXPECT
-int xtKEY = 0; // KEY
-int xtQUERY = 0; // QUERY
-int xtSAVE_INPUT = 0; // SAVE-INPUT
-int xtRESTORE_INPUT = 0; // RESTORE-INPUT
-int xtTYPE = 0; // TYPE
-int xtEMIT = 0; // EMIT
-int xtCR = 0; // CR
-int xtSPACE = 0; // SPACE
-int xtSPACES = 0; // SPACES
-int xtLESS_HASH = 0; // <#
-int xtHASH = 0; // #
-int xtHASH_S = 0; // #S
-int xtHOLD = 0; // HOLD
-int xtSIGN = 0; // SIGN
-int xtHASH_GREATER = 0; // #>
-int xtDOT = 0; // .
-int xtD_DOT = 0; // D.
-int xtD_DOT_R = 0; // D.R
-int xtU_DOT = 0; // U.
-int xtDOT_R = 0; // .R
-int xtU_DOT_R = 0; // U.R
-int xtINTERPRET = 0; // INTERPRET
-int xtEVALUATE = 0; // EVALUATE
-int xtEXECUTE = 0; // EXECUTE
-int xtEXIT = 0; // EXIT
-int xtRDEPTH = 0; // RDEPTH
-int xtCS_DEPTH = 0; // CS_DEPTH
-int xtDOT_S = 0; // .S
-int xtR_DEPTH = 0; // RDEPTH
-int xtDOT_RS = 0; // .RS
-int xtBLK = 0; // BLK
-int xtTHROW = 0; // THROW
-int xtENVIRONMENT_Q = 0; // ENVIRONMENT?
-int xtWORDS = 0; // WORDS
-int xtDABS = 0; // DABS
-int xtBYE = 0; // BYE
-int xtXDOVAR = 0; // (DOVAR)
-int xtLITERAL = 0; // LITERAL
-int xtXLITERAL = 0; // (LITERAL)
-int xtQUIT = 0; // QUIT
+int xtBL = 0; // BL .
+int xtS0 = 0; // S0 .
+int xtR0 = 0; // R0 .
+int xtCS0 = 0; // CS0 .
+int xtTRUE = 0; // TRUE .
+int xtFALSE = 0; // FALSE .
+int xtSPAN = 0; // SPAN .
+int xtSTATE = 0; // STATE .
+int xtDPL = 0; // DPL .
+int xtTRACE = 0; // TRACE .
+int xtBASE = 0; // BASE .
+int xtPAD = 0; // PAD .
+int xtDECIMAL = 0; // DECIMAL .
+int xtHEX = 0; // HEX .
+int xtPLUS = 0; // + .
+int xtMULT = 0; // * .
+int xtMINUS = 0; // - .
+int xtDIV = 0; // / .
+int xtMOD = 0; // MOD .
+int xtDIV_MOD = 0; // /MOD .
+int xtMULT_DIV = 0; // */ .
+int xtMULT_DIV_MOD = 0; // */MOD .
+int xtFM_DIV_MOD = 0; // FM/MOD .
+int xtUM_DIV_MOD = 0; // UM/MOD .
+int xtSM_DIV_REM = 0; // SM/REM .
+int xtM_STAR = 0; // M* .
+int xtONE_PLUS = 0; // 1+ .
+int xtONE_MINUS = 0; // 1- .
+int xtTWO_MULT = 0; // 2* .
+int xtTWO_DIV = 0; // 2/ .
+int xtNEGATE = 0; // NEGATE .
+int xtS_TO_D = 0; // S>D .
+int xtUM_MULT = 0; // UM* .
+int xtABS = 0; // ABS .
+int xtFMAX = 0; // MAX .
+int xtFMIN = 0; // MIN .
+int xtCHAR_PLUS = 0; // CHAR+ .
+int xtCHARS = 0; // CHARS .
+int xtCELL_PLUS = 0; // CELL+ .
+int xtCELLS = 0; // CELLS .
+int xtWITHIN = 0; // WITHIN .
+int xtAND = 0; // AND .
+int xtOR = 0; // OR .
+int xtXOR = 0; // XOR .
+int xtINVERT = 0; // INVERT .
+int xtLSHIFT = 0; // LSHIFT .
+int xtRSHIFT = 0; // RSHIFT .
+int xtEQUAL = 0; // = .
+int xtDIFFERENT = 0; // <> .
+int xtLESS = 0; // < .
+int xtLESS_EQUAL = 0; // <= .
+int xtGREATER = 0; // > .
+int xtGREATER_EQUAL = 0; // >= .
+int xtU_LESS = 0; // U< .
+int xtU_LESS_EQUAL = 0; // U<= .
+int xtU_GREATER = 0; // U> .
+int xtU_GREATER_EQUAL = 0; // U>= .
+int xtZERO_EQUAL = 0; // 0= .
+int xtZERO_DIFFERENT = 0; // 0<> .
+int xtZERO_LESS = 0; // 0< .
+int xtZERO_LESS_EQUAL = 0; // 0<= .
+int xtZERO_GREATER = 0; // 0> .
+int xtZERO_GREATER_EQUAL = 0; // 0>= .
+int xtSTORE = 0; // ! .
+int xtFETCH = 0; // @ .
+int xtPLUS_STORE = 0; // +! .
+int xtCSTORE = 0; // C! .
+int xtCFETCH = 0; // C@ .
+int xtTWO_STORE = 0; // 2! .
+int xtTWO_FETCH = 0; // 2@ .
+int xtFILL = 0; // FILL .
+int xtERASE = 0; // ERASE .
+int xtMOVE = 0; // MOVE .
+int xtDROP = 0; // DROP .
+int xtSWAP = 0; // SWAP .
+int xtDUP = 0; // DUP .
+int xtQ_DUP = 0; // ?DUP .
+int xtOVER = 0; // OVER .
+int xtROT = 0; // ROT .
+int xtMINUS_ROT = 0; // -ROT .
+int xtDEPTH = 0; // DEPTH .
+int xtNIP = 0; // NIP .
+int xtPICK = 0; // PICK .
+int xtROLL = 0; // ROLL .
+int xtTUCK = 0; // TUCK .
+int xtTWO_DROP = 0; // 2DROP .
+int xtTWO_SWAP = 0; // 2SWAP .
+int xtTWO_DUP = 0; // 2DUP .
+int xtTWO_OVER = 0; // 2OVER .
+int xtTWO_ROT = 0; // 2ROT .
+int xtMINUS_2ROT = 0; // -2ROT .
+int xtSP_FETCH = 0; // SP@ .
+int xtSP_STORE = 0; // SP! .
+int xtTO_R = 0; // >R .
+int xtFROM_R = 0; // R> .
+int xtR_DROP = 0; // RDROP .
+int xtRSP_FETCH = 0; // RSP@ .
+int xtRSP_STORE = 0; // RSP! .
+int xtR_FETCH = 0; // R@ .
+int xtI = 0; // I .
+int xtJ = 0; // J .
+int xtTWO_TO_R = 0; // 2>R .
+int xtTWO_R_TO = 0; // 2R> .
+int xtTWO_R_FETCH = 0; // 2R@ .
+int xtCOMMA = 0; // , .
+int xtCCOMMA = 0; // C, .
+int xtHERE = 0; // HERE .
+int xtLATEST = 0; // LATEST .
+int xtFIND = 0; // FIND .
+int xtTO_BODY = 0; // >BODY .
+int xtALIGN = 0; // ALIGN .
+int xtALIGNED = 0; // ALIGNED .
+int xtALLOT = 0; // ALLOT .
+int xtUNUSED = 0; // UNUSED .
+int xtMARKER = 0; // MARKER .
+int xtXMARKER = 0; // (MARKER) .
+int xtPARSE = 0; // PARSE .
+int xtPARSE_WORD = 0; // PARSE-WORD .
+int xtWORD = 0; // WORD .
+int xtCHAR = 0; // CHAR .
+int xtBRACKET_CHAR = 0; // [CHAR] .
+int xtNUMBER_Q = 0; // NUMBER? .
+int xtNUMBER = 0; // NUMBER .
+int xtTO_NUMBER = 0; // >NUMBER .
+int xtCONVERT = 0; // CONVERT .
+int xtCOUNT = 0; // COUNT .
+int xtDOT_QUOTE = 0; // ." .
+int xtXDOT_QUOTE = 0; // (.") .
+int xtS_QUOTE = 0; // S" .
+int xtXS_QUOTE = 0; // (S") .
+int xtC_QUOTE = 0; // C" .
+int xtXC_QUOTE = 0; // (C") .
+int xtDOT_PAREN = 0; // .( .
+int xtTIB = 0; // TIB .
+int xtNR_IN = 0; // #IN .
+int xtNR_TIB = 0; // #TIB .
+int xtTO_IN = 0; // >IN .
+int xtSOURCE = 0; // SOURCE .
+int xtSOURCE_ID = 0; // SOURCE-ID .
+int xtREFILL = 0; // REFILL .
+int xtACCEPT = 0; // ACCEPT .
+int xtEXPECT = 0; // EXPECT .
+int xtKEY = 0; // KEY .
+int xtQUERY = 0; // QUERY .
+int xtSAVE_INPUT = 0; // SAVE-INPUT .
+int xtRESTORE_INPUT = 0; // RESTORE-INPUT .
+int xtTYPE = 0; // TYPE .
+int xtEMIT = 0; // EMIT .
+int xtCR = 0; // CR .
+int xtSPACE = 0; // SPACE .
+int xtSPACES = 0; // SPACES .
+int xtLESS_HASH = 0; // <# .
+int xtHASH = 0; // # .
+int xtHASH_S = 0; // #S .
+int xtHOLD = 0; // HOLD .
+int xtSIGN = 0; // SIGN .
+int xtHASH_GREATER = 0; // #> .
+int xtDOT = 0; // . .
+int xtD_DOT = 0; // D. .
+int xtD_DOT_R = 0; // D.R .
+int xtU_DOT = 0; // U. .
+int xtDOT_R = 0; // .R .
+int xtU_DOT_R = 0; // U.R .
+int xtINTERPRET = 0; // INTERPRET .
+int xtEVALUATE = 0; // EVALUATE .
+int xtEXECUTE = 0; // EXECUTE .
+int xtEXIT = 0; // EXIT .
+int xtCOLON = 0; // : .
+int xtCOLON_NONAME = 0; // :NONAME .
+int xtSEMICOLON = 0; // ; .
+int xtXDOCOL = 0; // (DOCOL) .
+int xtCREATE = 0; // CREATE .
+int xtVARIABLE = 0; // VARIABLE .
+int xtXDOVAR = 0; // (DOVAR) .
+int xtTWO_VARIABLE = 0; // 2VARIABLE .
+int xtVALUE = 0; // VALUE .
+int xtTO = 0; // TO .
+int xtCONSTANT = 0; // CONSTANT .
+int xtXDOCONST = 0; // (DOCONST) .
+int xtTWO_CONSTANT = 0; // 2CONSTANT .
+int xtXDO2CONST = 0; // (DO2CONST) .
+int xtLITERAL = 0; // LITERAL .
+int xtXLITERAL = 0; // (LITERAL) .
+int xtTWO_LITERAL = 0; // 2LITERAL .
+int xtX2LITERAL = 0; // (2LITERAL) .
+int xtDOES = 0; // DOES> .
+int xtXDOES_DEFINE = 0; // (DOES>DEFINE) .
+int xtXDOES_RUN = 0; // (DOES>RUN) .
+int xtLBRACKET = 0; // [ .
+int xtRBRACKET = 0; // ] .
+int xtOPEN_PAREN = 0; // ( .
+int xtBACKSLASH = 0; // \ .
+int xtBRANCH = 0; // BRANCH .
+int xtZBRANCH = 0; // 0BRANCH .
+int xtTICK = 0; // ' .
+int xtBRACKET_TICK = 0; // ['] .
+int xtPOSTPONE = 0; // POSTPONE .
+int xtIMMEDIATE = 0; // IMMEDIATE .
+int xtCOMPILE_COMMA = 0; // COMPILE, .
+int xtBRACKET_COMPILE = 0; // [COMPILE] .
+int xtRDEPTH = 0; // RDEPTH .
+int xtCS_DEPTH = 0; // CS_DEPTH .
+int xtDOT_S = 0; // .S .
+int xtR_DEPTH = 0; // RDEPTH .
+int xtDOT_RS = 0; // .RS .
+int xtBLK = 0; // BLK .
+int xtTHROW = 0; // THROW .
+int xtENVIRONMENT_Q = 0; // ENVIRONMENT? .
+int xtWORDS = 0; // WORDS .
+int xtDABS = 0; // DABS .
+int xtBYE = 0; // BYE .
+int xtQUIT = 0; // QUIT .
 //@@END
 
 // bool
@@ -541,6 +571,39 @@ void create_dictionary() {
 	xtEVALUATE = vm.dict->create("EVALUATE", 0, idEVALUATE);
 	xtEXECUTE = vm.dict->create("EXECUTE", 0, idEXECUTE);
 	xtEXIT = vm.dict->create("EXIT", 0, idEXIT);
+	xtCOLON = vm.dict->create(":", 0, idCOLON);
+	xtCOLON_NONAME = vm.dict->create(":NONAME", 0, idCOLON_NONAME);
+	xtSEMICOLON = vm.dict->create(";", F_IMMEDIATE, idSEMICOLON);
+	xtXDOCOL = vm.dict->create("(DOCOL)", F_HIDDEN, idXDOCOL);
+	xtCREATE = vm.dict->create("CREATE", 0, idCREATE);
+	xtVARIABLE = vm.dict->create("VARIABLE", 0, idVARIABLE);
+	xtXDOVAR = vm.dict->create("(DOVAR)", F_HIDDEN, idXDOVAR);
+	xtTWO_VARIABLE = vm.dict->create("2VARIABLE", 0, idTWO_VARIABLE);
+	xtVALUE = vm.dict->create("VALUE", 0, idVALUE);
+	xtTO = vm.dict->create("TO", F_IMMEDIATE, idTO);
+	xtCONSTANT = vm.dict->create("CONSTANT", 0, idCONSTANT);
+	xtXDOCONST = vm.dict->create("(DOCONST)", F_HIDDEN, idXDOCONST);
+	xtTWO_CONSTANT = vm.dict->create("2CONSTANT", 0, idTWO_CONSTANT);
+	xtXDO2CONST = vm.dict->create("(DO2CONST)", F_HIDDEN, idXDO2CONST);
+	xtLITERAL = vm.dict->create("LITERAL", F_IMMEDIATE, idLITERAL);
+	xtXLITERAL = vm.dict->create("(LITERAL)", F_HIDDEN, idXLITERAL);
+	xtTWO_LITERAL = vm.dict->create("2LITERAL", F_IMMEDIATE, idTWO_LITERAL);
+	xtX2LITERAL = vm.dict->create("(2LITERAL)", F_HIDDEN, idX2LITERAL);
+	xtDOES = vm.dict->create("DOES>", F_IMMEDIATE, idDOES);
+	xtXDOES_DEFINE = vm.dict->create("(DOES>DEFINE)", F_HIDDEN, idXDOES_DEFINE);
+	xtXDOES_RUN = vm.dict->create("(DOES>RUN)", F_HIDDEN, idXDOES_RUN);
+	xtLBRACKET = vm.dict->create("[", F_IMMEDIATE, idLBRACKET);
+	xtRBRACKET = vm.dict->create("]", 0, idRBRACKET);
+	xtOPEN_PAREN = vm.dict->create("(", F_IMMEDIATE, idOPEN_PAREN);
+	xtBACKSLASH = vm.dict->create("\\", F_IMMEDIATE, idBACKSLASH);
+	xtBRANCH = vm.dict->create("BRANCH", F_HIDDEN, idBRANCH);
+	xtZBRANCH = vm.dict->create("0BRANCH", F_HIDDEN, idZBRANCH);
+	xtTICK = vm.dict->create("'", 0, idTICK);
+	xtBRACKET_TICK = vm.dict->create("[']", F_IMMEDIATE, idBRACKET_TICK);
+	xtPOSTPONE = vm.dict->create("POSTPONE", F_IMMEDIATE, idPOSTPONE);
+	xtIMMEDIATE = vm.dict->create("IMMEDIATE", F_IMMEDIATE, idIMMEDIATE);
+	xtCOMPILE_COMMA = vm.dict->create("COMPILE,", F_IMMEDIATE, idCOMPILE_COMMA);
+	xtBRACKET_COMPILE = vm.dict->create("[COMPILE]", F_IMMEDIATE, idBRACKET_COMPILE);
 	xtRDEPTH = vm.dict->create("RDEPTH", 0, idRDEPTH);
 	xtCS_DEPTH = vm.dict->create("CS_DEPTH", 0, idCS_DEPTH);
 	xtDOT_S = vm.dict->create(".S", 0, idDOT_S);
@@ -552,9 +615,6 @@ void create_dictionary() {
 	xtWORDS = vm.dict->create("WORDS", 0, idWORDS);
 	xtDABS = vm.dict->create("DABS", 0, idDABS);
 	xtBYE = vm.dict->create("BYE", 0, idBYE);
-	xtXDOVAR = vm.dict->create("(DOVAR)", F_HIDDEN, idXDOVAR);
-	xtLITERAL = vm.dict->create("LITERAL", F_IMMEDIATE, idLITERAL);
-	xtXLITERAL = vm.dict->create("(LITERAL)", F_HIDDEN, idXLITERAL);
 	xtQUIT = vm.dict->create("QUIT", 0, idQUIT);
 	//@@END
 }
@@ -569,188 +629,218 @@ void f_execute(int xt) {
 
 		switch (code) {
 		//@@BEGIN: WordsIdExecution
-		case idBL: push(BL); break; // BL
-		case idS0: push(STACK_SZ); break; // S0
-		case idR0: push(STACK_SZ); break; // R0
-		case idCS0: push(STACK_SZ); break; // CS0
-		case idTRUE: push(F_TRUE); break; // TRUE
-		case idFALSE: push(F_FALSE); break; // FALSE
-		case idSPAN: push(mem_addr(&vm.user->SPAN)); break; // SPAN
-		case idSTATE: push(mem_addr(&vm.user->STATE)); break; // STATE
-		case idDPL: push(mem_addr(&vm.user->DPL)); break; // DPL
-		case idTRACE: push(mem_addr(&vm.user->TRACE)); break; // TRACE
-		case idBASE: push(mem_addr(&vm.user->BASE)); break; // BASE
-		case idPAD: { push(mem_addr(vm.pad->pad())); }; break; // PAD
-		case idDECIMAL: { vm.user->BASE = 10; }; break; // DECIMAL
-		case idHEX: { vm.user->BASE = 16; }; break; // HEX
-		case idPLUS: { push(pop() + pop()); }; break; // +
-		case idMULT: { push(pop() * pop()); }; break; // *
-		case idMINUS: { int b = pop(), a = pop(); push(a - b); }; break; // -
-		case idDIV: { int b = pop(), a = pop(); push(f_div(a, b)); }; break; // /
-		case idMOD: { int b = pop(), a = pop(); push(f_mod(a, b)); }; break; // MOD
-		case idDIV_MOD: { f_div_mod(); }; break; // /MOD
-		case idMULT_DIV: { f_mul_div(); }; break; // */
-		case idMULT_DIV_MOD: { f_mul_div_mod(); }; break; // */MOD
-		case idFM_DIV_MOD: { f_fm_div_mod(); }; break; // FM/MOD
-		case idUM_DIV_MOD: { f_um_div_mod(); }; break; // UM/MOD
-		case idSM_DIV_REM: { f_sm_div_rem(); }; break; // SM/REM
-		case idM_STAR: { dint b = pop(), a = pop(); dpush(a * b); }; break; // M*
-		case idONE_PLUS: { push(pop() + 1); }; break; // 1+
-		case idONE_MINUS: { push(pop() - 1); }; break; // 1-
-		case idTWO_MULT: { push(pop() * 2); }; break; // 2*
-		case idTWO_DIV: { push(f_div(pop(), 2)); }; break; // 2/
-		case idNEGATE: { push(-pop()); }; break; // NEGATE
-		case idS_TO_D: { dpush(pop()); }; break; // S>D
-		case idUM_MULT: { udint b = static_cast<uint>(pop()), a = static_cast<uint>(pop()); dpush(a * b); }; break; // UM*
-		case idABS: { push(f_abs(pop())); }; break; // ABS
-		case idFMAX: { push(f_max(pop(), pop())); }; break; // MAX
-		case idFMIN: { push(f_min(pop(), pop())); }; break; // MIN
-		case idCHAR_PLUS: { push(pop() + 1); }; break; // CHAR+
-		case idCHARS: { push(pop() * 1); }; break; // CHARS
-		case idCELL_PLUS: { push(pop() + CELL_SZ); }; break; // CELL+
-		case idCELLS: { push(pop() * CELL_SZ); }; break; // CELLS
-		case idWITHIN: { f_within(); }; break; // WITHIN
-		case idAND: { push(pop() & pop()); }; break; // AND
-		case idOR: { push(pop() | pop()); }; break; // OR
-		case idXOR: { push(pop() ^ pop()); }; break; // XOR
-		case idINVERT: { push(~pop()); }; break; // INVERT
-		case idLSHIFT: { int n = pop(), a = pop(); push(a << n); }; break; // LSHIFT
-		case idRSHIFT: { int n = pop(), a = pop(); push(a >> n); }; break; // RSHIFT
-		case idEQUAL: { push(f_bool(pop() == pop())); }; break; // =
-		case idDIFFERENT: { push(f_bool(pop() != pop())); }; break; // <>
-		case idLESS: { int b = pop(), a = pop(); push(f_bool(a < b)); }; break; // <
-		case idLESS_EQUAL: { int b = pop(), a = pop(); push(f_bool(a <= b)); }; break; // <=
-		case idGREATER: { int b = pop(), a = pop(); push(f_bool(a > b)); }; break; // >
-		case idGREATER_EQUAL: { int b = pop(), a = pop(); push(f_bool(a >= b)); }; break; // >=
-		case idU_LESS: { uint b = pop(), a = pop(); push(f_bool(a < b)); }; break; // U<
-		case idU_LESS_EQUAL: { uint b = pop(), a = pop(); push(f_bool(a <= b)); }; break; // U<=
-		case idU_GREATER: { uint b = pop(), a = pop(); push(f_bool(a > b)); }; break; // U>
-		case idU_GREATER_EQUAL: { uint b = pop(), a = pop(); push(f_bool(a >= b)); }; break; // U>=
-		case idZERO_EQUAL: { push(f_bool(pop() == 0)); }; break; // 0=
-		case idZERO_DIFFERENT: { push(f_bool(pop() != 0)); }; break; // 0<>
-		case idZERO_LESS: { push(f_bool(pop() < 0)); }; break; // 0<
-		case idZERO_LESS_EQUAL: { push(f_bool(pop() <= 0)); }; break; // 0<=
-		case idZERO_GREATER: { push(f_bool(pop() > 0)); }; break; // 0>
-		case idZERO_GREATER_EQUAL: { push(f_bool(pop() >= 0)); }; break; // 0>=
-		case idSTORE: { int a = pop(), v = pop(); store(a, v); }; break; // !
-		case idFETCH: { push(fetch(pop())); }; break; // @
-		case idPLUS_STORE: { int a = pop(), v = pop(); store(a, fetch(a) + v); }; break; // +!
-		case idCSTORE: { int a = pop(), v = pop(); cstore(a, v); }; break; // C!
-		case idCFETCH: { push(cfetch(pop())); }; break; // C@
-		case idTWO_STORE: { int a = pop(); dstore(a, dpop()); }; break; // 2!
-		case idTWO_FETCH: { dpush(dfetch(pop())); }; break; // 2@
-		case idFILL: { int c = pop(), n = pop(), a = pop(); vm.mem.fill(a, n, c); }; break; // FILL
-		case idERASE: { int n = pop(), a = pop(); vm.mem.erase(a, n); }; break; // ERASE
-		case idMOVE: { int n = pop(), dst = pop(), src = pop(); vm.mem.move(src, dst, n); }; break; // MOVE
-		case idDROP: { pop(); }; break; // DROP
-		case idSWAP: { int a = pop(), b = pop(); push(a); push(b); }; break; // SWAP
-		case idDUP: { push(peek(0)); }; break; // DUP
-		case idQ_DUP: { int a = peek(); if (a) push(a); }; break; // ?DUP
-		case idOVER: { push(peek(1)); }; break; // OVER
-		case idROT: { int c = pop(), b = pop(), a = pop(); push(b); push(c); push(a); }; break; // ROT
-		case idMINUS_ROT: { int c = pop(), b = pop(), a = pop(); push(c); push(a); push(b); }; break; // -ROT
-		case idDEPTH: { push(vm.stack->depth()); }; break; // DEPTH
-		case idNIP: { int a = pop(); pop(); push(a); }; break; // NIP
-		case idPICK: { push(peek(pop())); }; break; // PICK
-		case idROLL: { roll(pop()); }; break; // ROLL
-		case idTUCK: { int a = pop(), b = pop(); push(a); push(b); push(a); }; break; // TUCK
-		case idTWO_DROP: { dpop(); }; break; // 2DROP
-		case idTWO_SWAP: { dint a = dpop(), b = dpop(); dpush(a); dpush(b); }; break; // 2SWAP
-		case idTWO_DUP: { push(peek(1)); push(peek(1)); }; break; // 2DUP
-		case idTWO_OVER: { push(peek(3)); push(peek(3)); }; break; // 2OVER
-		case idTWO_ROT: { dint c = dpop(), b = dpop(), a = dpop(); dpush(b); dpush(c); dpush(a); }; break; // 2ROT
-		case idMINUS_2ROT: { dint c = dpop(), b = dpop(), a = dpop(); dpush(c); dpush(a); dpush(b); }; break; // -2ROT
-		case idSP_FETCH: { push(vm.stack->ptr()); }; break; // SP@
-		case idSP_STORE: { vm.stack->set_ptr(pop()); }; break; // SP!
-		case idTO_R: { r_push(pop()); }; break; // >R
-		case idFROM_R: { push(r_pop()); }; break; // R>
-		case idR_DROP: { r_pop(); }; break; // RDROP
-		case idRSP_FETCH: { push(vm.rstack->ptr()); }; break; // RSP@
-		case idRSP_STORE: { vm.rstack->set_ptr(pop()); }; break; // RSP!
-		case idR_FETCH: { push(r_peek(0)); }; break; // R@
-		case idI: { push(r_peek(0)); }; break; // I
-		case idJ: { push(r_peek(2)); }; break; // J
-		case idTWO_TO_R: { r_dpush(dpop()); }; break; // 2>R
-		case idTWO_R_TO: { dpush(r_dpop()); }; break; // 2R>
-		case idTWO_R_FETCH: { dpush(r_dpeek(0)); }; break; // 2R@
-		case idCOMMA: { comma(pop()); }; break; // ,
-		case idCCOMMA: { ccomma(pop()); }; break; // C,
-		case idHERE: { push(vm.dict->here()); }; break; // HERE
-		case idLATEST: { push(vm.dict->latest()); }; break; // LATEST
-		case idFIND: { f_find(pop()); }; break; // FIND
-		case idTO_BODY: { push(pop() + CELL_SZ); }; break; // >BODY
-		case idALIGN: { align(); }; break; // ALIGN
-		case idALIGNED: { push(aligned(pop())); }; break; // ALIGNED
-		case idALLOT: { vm.dict->allot(pop()); }; break; // ALLOT
-		case idUNUSED: { push(vm.dict->unused()); }; break; // UNUSED
-		case idMARKER: { f_marker(); }; break; // MARKER
-		case idXMARKER: { f_xmarker(body); }; break; // (MARKER)
-		case idPARSE: { f_parse(); }; break; // PARSE
-		case idPARSE_WORD: { f_parse_word(); }; break; // PARSE-WORD
-		case idWORD: { f_word(); }; break; // WORD
-		case idCHAR: { f_char(); }; break; // CHAR
-		case idBRACKET_CHAR: { f_bracket_char(); }; break; // [CHAR]
-		case idNUMBER_Q: { f_number_q(); }; break; // NUMBER?
-		case idNUMBER: { f_number(); }; break; // NUMBER
-		case idTO_NUMBER: { f_to_number(); }; break; // >NUMBER
-		case idCONVERT: { f_convert(); }; break; // CONVERT
-		case idCOUNT: { f_count(); }; break; // COUNT
-		case idDOT_QUOTE: { f_dot_quote(); }; break; // ."
-		case idXDOT_QUOTE: { f_xdot_quote(); }; break; // (.")
-		case idS_QUOTE: { f_s_quote(); }; break; // S"
-		case idXS_QUOTE: { f_xs_quote(); }; break; // (S")
-		case idC_QUOTE: { f_c_quote(); }; break; // C"
-		case idXC_QUOTE: { f_xc_quote(); }; break; // (C")
-		case idDOT_PAREN: { f_dot_paren(); }; break; // .(
-		case idTIB: { f_tib(); }; break; // TIB
-		case idNR_IN: { f_nr_in(); }; break; // #IN
-		case idNR_TIB: { f_nr_tib(); }; break; // #TIB
-		case idTO_IN: { f_to_in(); }; break; // >IN
-		case idSOURCE: { f_source(); }; break; // SOURCE
-		case idSOURCE_ID: { f_source_id(); }; break; // SOURCE-ID
-		case idREFILL: { push(f_bool(f_refill())); }; break; // REFILL
-		case idACCEPT: { f_accept(); }; break; // ACCEPT
-		case idEXPECT: { f_expect(); }; break; // EXPECT
-		case idKEY: { f_key(); }; break; // KEY
-		case idQUERY: { f_query(); }; break; // QUERY
-		case idSAVE_INPUT: { f_save_input(); }; break; // SAVE-INPUT
-		case idRESTORE_INPUT: { f_restore_input(); }; break; // RESTORE-INPUT
-		case idTYPE: { int size = pop(), a = pop(); print_string(a, size); }; break; // TYPE
-		case idEMIT: { print_char(pop()); }; break; // EMIT
-		case idCR: { print_char(CR); }; break; // CR
-		case idSPACE: { print_char(BL); }; break; // SPACE
-		case idSPACES: { print_spaces(pop()); }; break; // SPACES
-		case idLESS_HASH: { vm.number_output->start(); }; break; // <#
-		case idHASH: { vm.number_output->add_digit(); }; break; // #
-		case idHASH_S: { vm.number_output->add_digits(); }; break; // #S
-		case idHOLD: { vm.number_output->add_char(pop()); }; break; // HOLD
-		case idSIGN: { vm.number_output->add_sign(pop()); }; break; // SIGN
-		case idHASH_GREATER: { vm.number_output->end(); }; break; // #>
-		case idDOT: { print_number(pop()); }; break; // .
-		case idD_DOT: { print_number(dpop()); }; break; // D.
-		case idD_DOT_R: { int w = pop(); dint v = dpop(); print_number(v, w); }; break; // D.R
-		case idU_DOT: { print_unsigned_number(pop()); }; break; // U.
-		case idDOT_R: { int w = pop(), v = pop(); print_number(v, w); }; break; // .R
-		case idU_DOT_R: { int w = pop(); uint v = pop(); print_unsigned_number(v, w); }; break; // U.R
-		case idINTERPRET: { f_interpret(); }; break; // INTERPRET
-		case idEVALUATE: { f_evaluate(); }; break; // EVALUATE
-		case idEXECUTE: { f_execute(pop()); }; break; // EXECUTE
-		case idEXIT: { if (r_depth() == 0) do_exit = true; else ip = r_pop(); }; break; // EXIT
-		case idRDEPTH: { push(vm.rstack->depth()); }; break; // RDEPTH
-		case idCS_DEPTH: { push(vm.cs_stack->depth()); }; break; // CS_DEPTH
-		case idDOT_S: { vm.stack->print(); }; break; // .S
-		case idR_DEPTH: { push(vm.rstack->depth()); }; break; // RDEPTH
-		case idDOT_RS: { vm.rstack->print("R"); }; break; // .RS
-		case idBLK: { f_blk(); }; break; // BLK
-		case idTHROW: { f_throw(); }; break; // THROW
-		case idENVIRONMENT_Q: { int size = pop(), addr = pop(); f_environment_q(mem_char_ptr(addr), size); }; break; // ENVIRONMENT?
-		case idWORDS: { f_words(); }; break; // WORDS
-		case idDABS: { dpush(f_dabs(dpop())); }; break; // DABS
-		case idBYE: { exit(EXIT_SUCCESS); }; break; // BYE
-		case idXDOVAR: { ; }; break; // (DOVAR)
-		case idLITERAL: { ; }; break; // LITERAL
-		case idXLITERAL: { ; }; break; // (LITERAL)
-		case idQUIT: { f_quit(); }; break; // QUIT
+		case idBL: push(BL); break; // BL .
+		case idS0: push(STACK_SZ); break; // S0 .
+		case idR0: push(STACK_SZ); break; // R0 .
+		case idCS0: push(STACK_SZ); break; // CS0 .
+		case idTRUE: push(F_TRUE); break; // TRUE .
+		case idFALSE: push(F_FALSE); break; // FALSE .
+		case idSPAN: push(mem_addr(&vm.user->SPAN)); break; // SPAN .
+		case idSTATE: push(mem_addr(&vm.user->STATE)); break; // STATE .
+		case idDPL: push(mem_addr(&vm.user->DPL)); break; // DPL .
+		case idTRACE: push(mem_addr(&vm.user->TRACE)); break; // TRACE .
+		case idBASE: push(mem_addr(&vm.user->BASE)); break; // BASE .
+		case idPAD: { push(mem_addr(vm.pad->pad())); }; break; // PAD .
+		case idDECIMAL: { vm.user->BASE = 10; }; break; // DECIMAL .
+		case idHEX: { vm.user->BASE = 16; }; break; // HEX .
+		case idPLUS: { push(pop() + pop()); }; break; // + .
+		case idMULT: { push(pop() * pop()); }; break; // * .
+		case idMINUS: { int b = pop(), a = pop(); push(a - b); }; break; // - .
+		case idDIV: { int b = pop(), a = pop(); push(f_div(a, b)); }; break; // / .
+		case idMOD: { int b = pop(), a = pop(); push(f_mod(a, b)); }; break; // MOD .
+		case idDIV_MOD: { f_div_mod(); }; break; // /MOD .
+		case idMULT_DIV: { f_mul_div(); }; break; // */ .
+		case idMULT_DIV_MOD: { f_mul_div_mod(); }; break; // */MOD .
+		case idFM_DIV_MOD: { f_fm_div_mod(); }; break; // FM/MOD .
+		case idUM_DIV_MOD: { f_um_div_mod(); }; break; // UM/MOD .
+		case idSM_DIV_REM: { f_sm_div_rem(); }; break; // SM/REM .
+		case idM_STAR: { dint b = pop(), a = pop(); dpush(a * b); }; break; // M* .
+		case idONE_PLUS: { push(pop() + 1); }; break; // 1+ .
+		case idONE_MINUS: { push(pop() - 1); }; break; // 1- .
+		case idTWO_MULT: { push(pop() * 2); }; break; // 2* .
+		case idTWO_DIV: { push(f_div(pop(), 2)); }; break; // 2/ .
+		case idNEGATE: { push(-pop()); }; break; // NEGATE .
+		case idS_TO_D: { dpush(pop()); }; break; // S>D .
+		case idUM_MULT: { udint b = static_cast<uint>(pop()), a = static_cast<uint>(pop()); dpush(a * b); }; break; // UM* .
+		case idABS: { push(f_abs(pop())); }; break; // ABS .
+		case idFMAX: { push(f_max(pop(), pop())); }; break; // MAX .
+		case idFMIN: { push(f_min(pop(), pop())); }; break; // MIN .
+		case idCHAR_PLUS: { push(pop() + 1); }; break; // CHAR+ .
+		case idCHARS: { push(pop() * 1); }; break; // CHARS .
+		case idCELL_PLUS: { push(pop() + CELL_SZ); }; break; // CELL+ .
+		case idCELLS: { push(pop() * CELL_SZ); }; break; // CELLS .
+		case idWITHIN: { f_within(); }; break; // WITHIN .
+		case idAND: { push(pop() & pop()); }; break; // AND .
+		case idOR: { push(pop() | pop()); }; break; // OR .
+		case idXOR: { push(pop() ^ pop()); }; break; // XOR .
+		case idINVERT: { push(~pop()); }; break; // INVERT .
+		case idLSHIFT: { int n = pop(), a = pop(); push(a << n); }; break; // LSHIFT .
+		case idRSHIFT: { int n = pop(), a = pop(); push(a >> n); }; break; // RSHIFT .
+		case idEQUAL: { push(f_bool(pop() == pop())); }; break; // = .
+		case idDIFFERENT: { push(f_bool(pop() != pop())); }; break; // <> .
+		case idLESS: { int b = pop(), a = pop(); push(f_bool(a < b)); }; break; // < .
+		case idLESS_EQUAL: { int b = pop(), a = pop(); push(f_bool(a <= b)); }; break; // <= .
+		case idGREATER: { int b = pop(), a = pop(); push(f_bool(a > b)); }; break; // > .
+		case idGREATER_EQUAL: { int b = pop(), a = pop(); push(f_bool(a >= b)); }; break; // >= .
+		case idU_LESS: { uint b = pop(), a = pop(); push(f_bool(a < b)); }; break; // U< .
+		case idU_LESS_EQUAL: { uint b = pop(), a = pop(); push(f_bool(a <= b)); }; break; // U<= .
+		case idU_GREATER: { uint b = pop(), a = pop(); push(f_bool(a > b)); }; break; // U> .
+		case idU_GREATER_EQUAL: { uint b = pop(), a = pop(); push(f_bool(a >= b)); }; break; // U>= .
+		case idZERO_EQUAL: { push(f_bool(pop() == 0)); }; break; // 0= .
+		case idZERO_DIFFERENT: { push(f_bool(pop() != 0)); }; break; // 0<> .
+		case idZERO_LESS: { push(f_bool(pop() < 0)); }; break; // 0< .
+		case idZERO_LESS_EQUAL: { push(f_bool(pop() <= 0)); }; break; // 0<= .
+		case idZERO_GREATER: { push(f_bool(pop() > 0)); }; break; // 0> .
+		case idZERO_GREATER_EQUAL: { push(f_bool(pop() >= 0)); }; break; // 0>= .
+		case idSTORE: { int a = pop(), v = pop(); store(a, v); }; break; // ! .
+		case idFETCH: { push(fetch(pop())); }; break; // @ .
+		case idPLUS_STORE: { int a = pop(), v = pop(); store(a, fetch(a) + v); }; break; // +! .
+		case idCSTORE: { int a = pop(), v = pop(); cstore(a, v); }; break; // C! .
+		case idCFETCH: { push(cfetch(pop())); }; break; // C@ .
+		case idTWO_STORE: { int a = pop(); dstore(a, dpop()); }; break; // 2! .
+		case idTWO_FETCH: { dpush(dfetch(pop())); }; break; // 2@ .
+		case idFILL: { int c = pop(), n = pop(), a = pop(); vm.mem.fill(a, n, c); }; break; // FILL .
+		case idERASE: { int n = pop(), a = pop(); vm.mem.erase(a, n); }; break; // ERASE .
+		case idMOVE: { int n = pop(), dst = pop(), src = pop(); vm.mem.move(src, dst, n); }; break; // MOVE .
+		case idDROP: { pop(); }; break; // DROP .
+		case idSWAP: { int a = pop(), b = pop(); push(a); push(b); }; break; // SWAP .
+		case idDUP: { push(peek(0)); }; break; // DUP .
+		case idQ_DUP: { int a = peek(); if (a) push(a); }; break; // ?DUP .
+		case idOVER: { push(peek(1)); }; break; // OVER .
+		case idROT: { int c = pop(), b = pop(), a = pop(); push(b); push(c); push(a); }; break; // ROT .
+		case idMINUS_ROT: { int c = pop(), b = pop(), a = pop(); push(c); push(a); push(b); }; break; // -ROT .
+		case idDEPTH: { push(vm.stack->depth()); }; break; // DEPTH .
+		case idNIP: { int a = pop(); pop(); push(a); }; break; // NIP .
+		case idPICK: { push(peek(pop())); }; break; // PICK .
+		case idROLL: { roll(pop()); }; break; // ROLL .
+		case idTUCK: { int a = pop(), b = pop(); push(a); push(b); push(a); }; break; // TUCK .
+		case idTWO_DROP: { dpop(); }; break; // 2DROP .
+		case idTWO_SWAP: { dint a = dpop(), b = dpop(); dpush(a); dpush(b); }; break; // 2SWAP .
+		case idTWO_DUP: { push(peek(1)); push(peek(1)); }; break; // 2DUP .
+		case idTWO_OVER: { push(peek(3)); push(peek(3)); }; break; // 2OVER .
+		case idTWO_ROT: { dint c = dpop(), b = dpop(), a = dpop(); dpush(b); dpush(c); dpush(a); }; break; // 2ROT .
+		case idMINUS_2ROT: { dint c = dpop(), b = dpop(), a = dpop(); dpush(c); dpush(a); dpush(b); }; break; // -2ROT .
+		case idSP_FETCH: { push(vm.stack->ptr()); }; break; // SP@ .
+		case idSP_STORE: { vm.stack->set_ptr(pop()); }; break; // SP! .
+		case idTO_R: { r_push(pop()); }; break; // >R .
+		case idFROM_R: { push(r_pop()); }; break; // R> .
+		case idR_DROP: { r_pop(); }; break; // RDROP .
+		case idRSP_FETCH: { push(vm.rstack->ptr()); }; break; // RSP@ .
+		case idRSP_STORE: { vm.rstack->set_ptr(pop()); }; break; // RSP! .
+		case idR_FETCH: { push(r_peek(0)); }; break; // R@ .
+		case idI: { push(r_peek(0)); }; break; // I .
+		case idJ: { push(r_peek(2)); }; break; // J .
+		case idTWO_TO_R: { r_dpush(dpop()); }; break; // 2>R .
+		case idTWO_R_TO: { dpush(r_dpop()); }; break; // 2R> .
+		case idTWO_R_FETCH: { dpush(r_dpeek(0)); }; break; // 2R@ .
+		case idCOMMA: { comma(pop()); }; break; // , .
+		case idCCOMMA: { ccomma(pop()); }; break; // C, .
+		case idHERE: { push(vm.dict->here()); }; break; // HERE .
+		case idLATEST: { push(vm.dict->latest()); }; break; // LATEST .
+		case idFIND: { f_find(pop()); }; break; // FIND .
+		case idTO_BODY: { push(pop() + CELL_SZ); }; break; // >BODY .
+		case idALIGN: { align(); }; break; // ALIGN .
+		case idALIGNED: { push(aligned(pop())); }; break; // ALIGNED .
+		case idALLOT: { vm.dict->allot(pop()); }; break; // ALLOT .
+		case idUNUSED: { push(vm.dict->unused()); }; break; // UNUSED .
+		case idMARKER: { f_marker(); }; break; // MARKER .
+		case idXMARKER: { f_xmarker(body); }; break; // (MARKER) .
+		case idPARSE: { f_parse(); }; break; // PARSE .
+		case idPARSE_WORD: { f_parse_word(); }; break; // PARSE-WORD .
+		case idWORD: { f_word(); }; break; // WORD .
+		case idCHAR: { f_char(); }; break; // CHAR .
+		case idBRACKET_CHAR: { f_bracket_char(); }; break; // [CHAR] .
+		case idNUMBER_Q: { f_number_q(); }; break; // NUMBER? .
+		case idNUMBER: { f_number(); }; break; // NUMBER .
+		case idTO_NUMBER: { f_to_number(); }; break; // >NUMBER .
+		case idCONVERT: { f_convert(); }; break; // CONVERT .
+		case idCOUNT: { f_count(); }; break; // COUNT .
+		case idDOT_QUOTE: { f_dot_quote(); }; break; // ." .
+		case idXDOT_QUOTE: { f_xdot_quote(); }; break; // (.") .
+		case idS_QUOTE: { f_s_quote(); }; break; // S" .
+		case idXS_QUOTE: { f_xs_quote(); }; break; // (S") .
+		case idC_QUOTE: { f_c_quote(); }; break; // C" .
+		case idXC_QUOTE: { f_xc_quote(); }; break; // (C") .
+		case idDOT_PAREN: { f_dot_paren(); }; break; // .( .
+		case idTIB: { f_tib(); }; break; // TIB .
+		case idNR_IN: { f_nr_in(); }; break; // #IN .
+		case idNR_TIB: { f_nr_tib(); }; break; // #TIB .
+		case idTO_IN: { f_to_in(); }; break; // >IN .
+		case idSOURCE: { f_source(); }; break; // SOURCE .
+		case idSOURCE_ID: { f_source_id(); }; break; // SOURCE-ID .
+		case idREFILL: { push(f_bool(f_refill())); }; break; // REFILL .
+		case idACCEPT: { f_accept(); }; break; // ACCEPT .
+		case idEXPECT: { f_expect(); }; break; // EXPECT .
+		case idKEY: { f_key(); }; break; // KEY .
+		case idQUERY: { f_query(); }; break; // QUERY .
+		case idSAVE_INPUT: { f_save_input(); }; break; // SAVE-INPUT .
+		case idRESTORE_INPUT: { f_restore_input(); }; break; // RESTORE-INPUT .
+		case idTYPE: { int size = pop(), a = pop(); print_string(a, size); }; break; // TYPE .
+		case idEMIT: { print_char(pop()); }; break; // EMIT .
+		case idCR: { print_char(CR); }; break; // CR .
+		case idSPACE: { print_char(BL); }; break; // SPACE .
+		case idSPACES: { print_spaces(pop()); }; break; // SPACES .
+		case idLESS_HASH: { vm.number_output->start(); }; break; // <# .
+		case idHASH: { vm.number_output->add_digit(); }; break; // # .
+		case idHASH_S: { vm.number_output->add_digits(); }; break; // #S .
+		case idHOLD: { vm.number_output->add_char(pop()); }; break; // HOLD .
+		case idSIGN: { vm.number_output->add_sign(pop()); }; break; // SIGN .
+		case idHASH_GREATER: { vm.number_output->end(); }; break; // #> .
+		case idDOT: { print_number(pop()); }; break; // . .
+		case idD_DOT: { print_number(dpop()); }; break; // D. .
+		case idD_DOT_R: { int w = pop(); dint v = dpop(); print_number(v, w); }; break; // D.R .
+		case idU_DOT: { print_unsigned_number(pop()); }; break; // U. .
+		case idDOT_R: { int w = pop(), v = pop(); print_number(v, w); }; break; // .R .
+		case idU_DOT_R: { int w = pop(); uint v = pop(); print_unsigned_number(v, w); }; break; // U.R .
+		case idINTERPRET: { f_interpret(); }; break; // INTERPRET .
+		case idEVALUATE: { f_evaluate(); }; break; // EVALUATE .
+		case idEXECUTE: { f_execute(pop()); }; break; // EXECUTE .
+		case idEXIT: { if (r_depth() == 0) do_exit = true; else ip = r_pop(); }; break; // EXIT .
+		case idCOLON: { f_colon(); }; break; // : .
+		case idCOLON_NONAME: { f_colon_noname(); }; break; // :NONAME .
+		case idSEMICOLON: { f_semicolon(); }; break; // ; .
+		case idXDOCOL: { r_push(ip); ip = body; }; break; // (DOCOL) .
+		case idCREATE: { f_create(); }; break; // CREATE .
+		case idVARIABLE: { f_variable(); }; break; // VARIABLE .
+		case idXDOVAR: { push(body); }; break; // (DOVAR) .
+		case idTWO_VARIABLE: { f_2variable(); }; break; // 2VARIABLE .
+		case idVALUE: { f_value(); }; break; // VALUE .
+		case idTO: { f_to(); }; break; // TO .
+		case idCONSTANT: { f_constant(); }; break; // CONSTANT .
+		case idXDOCONST: { push(fetch(body)); }; break; // (DOCONST) .
+		case idTWO_CONSTANT: { f_2constant(); }; break; // 2CONSTANT .
+		case idXDO2CONST: { dpush(dfetch(body)); }; break; // (DO2CONST) .
+		case idLITERAL: { comma(xtXLITERAL); comma(pop()); }; break; // LITERAL .
+		case idXLITERAL: { push(fetch(ip)); ip += CELL_SZ; }; break; // (LITERAL) .
+		case idTWO_LITERAL: { comma(xtX2LITERAL); dcomma(dpop()); }; break; // 2LITERAL .
+		case idX2LITERAL: { dpush(dfetch(ip)); ip += DCELL_SZ; }; break; // (2LITERAL) .
+		case idDOES: { f_does(); }; break; // DOES> .
+		case idXDOES_DEFINE: { f_xdoes_define(); }; break; // (DOES>DEFINE) .
+		case idXDOES_RUN: { f_xdoes_run(body); }; break; // (DOES>RUN) .
+		case idLBRACKET: { vm.user->STATE = STATE_INTERPRET; }; break; // [ .
+		case idRBRACKET: { vm.user->STATE = STATE_COMPILE; }; break; // ] .
+		case idOPEN_PAREN: { f_open_paren(); }; break; // ( .
+		case idBACKSLASH: { f_backslash(); }; break; // \ .
+		case idBRANCH: { ip += fetch(ip); }; break; // BRANCH .
+		case idZBRANCH: { if (!pop()) ip += fetch(ip); else ip += CELL_SZ; }; break; // 0BRANCH .
+		case idTICK: { push(f_tick()); }; break; // ' .
+		case idBRACKET_TICK: { f_bracket_tick(); }; break; // ['] .
+		case idPOSTPONE: { f_postpone(); }; break; // POSTPONE .
+		case idIMMEDIATE: { f_immediate(); }; break; // IMMEDIATE .
+		case idCOMPILE_COMMA: { comma(pop()); }; break; // COMPILE, .
+		case idBRACKET_COMPILE: { f_bracket_compile(); }; break; // [COMPILE] .
+		case idRDEPTH: { push(vm.rstack->depth()); }; break; // RDEPTH .
+		case idCS_DEPTH: { push(vm.cs_stack->depth()); }; break; // CS_DEPTH .
+		case idDOT_S: { vm.stack->print(); }; break; // .S .
+		case idR_DEPTH: { push(vm.rstack->depth()); }; break; // RDEPTH .
+		case idDOT_RS: { vm.rstack->print("R"); }; break; // .RS .
+		case idBLK: { f_blk(); }; break; // BLK .
+		case idTHROW: { f_throw(); }; break; // THROW .
+		case idENVIRONMENT_Q: { int size = pop(), addr = pop(); f_environment_q(mem_char_ptr(addr), size); }; break; // ENVIRONMENT? .
+		case idWORDS: { f_words(); }; break; // WORDS .
+		case idDABS: { dpush(f_dabs(dpop())); }; break; // DABS .
+		case idBYE: { exit(EXIT_SUCCESS); }; break; // BYE .
+		case idQUIT: { f_quit(); }; break; // QUIT .
 		//@@END
 		default:
 			error(Error::InvalidWordXT, std::to_string(xt));

@@ -27,3 +27,6 @@ void f_number_q();
 void f_number();
 void f_to_number();
 void f_convert();
+
+void f_open_paren();
+void f_backslash();

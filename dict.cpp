@@ -30,6 +30,10 @@ int Header::xt() const {
 	return mem_addr(&this->code);
 }
 
+int Header::body() const {
+	return xt() + CELL_SZ;
+}
+
 Header* Header::header(int xt) {
 	int addr = xt - offsetof(Header, code);
 	return reinterpret_cast<Header*>(mem_char_ptr(addr));
@@ -166,6 +170,17 @@ Header* Dict::find_word(const char* name, int size) const {
 	return nullptr;
 }
 
+Header* Dict::find_word(const ForthString* name) const {
+	return find_word(name->str(), name->size());
+}
+
+Header* Dict::parse_find_word() {
+	const ForthString* name = parse_word(BL);
+	if (name->size() == 0)
+		error(Error::AttemptToUseZeroLengthStringAsName);
+	return find_word(name);
+}
+
 void Dict::check_free_space(int size) const {
 	if (m_here + size >= m_names)
 		error(Error::DictionaryOverflow);
@@ -184,6 +199,7 @@ int Dict::create_cont(int name_addr, int flags, int code) {
 	header->flags.hidden = (flags & F_HIDDEN) ? true : false;
 	header->flags.immediate = (flags & F_IMMEDIATE) ? true : false;
 
+	header->does = 0;
 	header->code = code;
 
 	m_here += aligned(sizeof(Header));
@@ -208,10 +224,6 @@ void f_find(int addr) {
 			push(-1);
 		}
 	}
-}
-
-void f_create() {
-	vm.dict->parse_create(idXDOVAR);
 }
 
 void f_marker() {
@@ -256,4 +268,139 @@ void f_words() {
 	cout << endl;
 }
 
+void f_create() {
+	vm.dict->parse_create(idXDOVAR);
+}
 
+void f_colon() {
+	if (vm.cs_stack->depth() > 0)
+		error(Error::CompilerNesting);
+	else {
+		vm.cs_stack->push(idCOLON);
+		vm.dict->parse_create(idXDOCOL);
+		Header* header = reinterpret_cast<Header*>(mem_char_ptr(vm.dict->latest()));
+		header->flags.smudge = true;
+		vm.user->STATE = STATE_COMPILE;
+	}
+}
+
+void f_colon_noname() {
+	if (vm.cs_stack->depth() > 0)
+		error(Error::CompilerNesting);
+	else {
+		vm.cs_stack->push(idCOLON);
+		vm.dict->create("", 0, idXDOCOL);
+		Header* header = reinterpret_cast<Header*>(mem_char_ptr(vm.dict->latest()));
+		header->flags.smudge = true;
+		vm.user->STATE = STATE_COMPILE;
+		push(header->xt());
+	}
+}
+
+void f_semicolon() {
+	if (vm.cs_stack->depth() != 1 || vm.cs_stack->peek() != idCOLON)
+		error(Error::CompilerNesting);
+	else {
+		vm.cs_stack->pop();
+		comma(xtEXIT);
+		Header* header = reinterpret_cast<Header*>(mem_char_ptr(vm.dict->latest()));
+		header->flags.smudge = false;
+		vm.user->STATE = STATE_INTERPRET;
+	}
+}
+
+void f_variable() {
+	vm.dict->parse_create(idXDOVAR);
+	comma(0);
+}
+
+void f_2variable() {
+	vm.dict->parse_create(idXDOVAR);
+	dcomma(0);
+}
+
+void f_value() {
+	vm.dict->parse_create(idXDOCONST);
+	comma(pop());
+}
+
+void f_to() {
+	Header* header = vm.dict->parse_find_word();
+	if (header == nullptr)
+		error(Error::UndefinedWord);
+	else {
+		if (vm.user->STATE == STATE_COMPILE) {
+			comma(xtXLITERAL);
+			comma(header->body());
+			comma(xtSTORE);
+		}
+		else
+			store(header->body(), pop());
+	}	
+}
+
+void f_constant() {
+	vm.dict->parse_create(idXDOCONST);
+	comma(pop());
+}
+
+void f_2constant() {
+	vm.dict->parse_create(idXDO2CONST);
+	dcomma(dpop());
+}
+
+void f_does() {
+	comma(xtXDOES_DEFINE);                  // set this word as having DOES>
+	comma(vm.dict->here() + 2 * CELL_SZ);	// location of run code
+	comma(xtEXIT);                          // exit from CREATE part
+	// run code starts here
+}
+
+void f_xdoes_define() {
+	int run_code = fetch(ip);
+	ip += CELL_SZ;							// start of runtime code
+
+	Header* def_word = reinterpret_cast<Header*>(mem_char_ptr(vm.dict->latest()));
+	def_word->does = run_code;				// start of DOES> code
+	def_word->code = idXDOES_RUN;			// new execution id
+}
+
+void f_xdoes_run(int body) {
+	push(body);                     // store parameter field on the stack
+	r_push(ip);                     // save current ip
+	Header* header = Header::header(body - CELL_SZ);
+	ip = header->does;				// call code after DOES>
+}
+
+int f_tick() {
+	Header* header = vm.dict->parse_find_word();
+	if (header == nullptr)
+		error(Error::UndefinedWord);
+	return header->xt();
+}
+
+void f_bracket_tick() {
+	int xt = f_tick();
+	comma(xtXLITERAL);
+	comma(xt);
+}
+
+void f_postpone() {
+	int xt = f_tick();
+	comma(xt);
+}
+
+void f_bracket_compile() {
+	int xt = f_tick();
+	comma(xt);
+}
+
+void f_immediate() {
+	Header* header = reinterpret_cast<Header*>(mem_char_ptr(vm.dict->latest()));
+	header->flags.immediate = true;
+}
+
+void f_hidden() {
+	Header* header = reinterpret_cast<Header*>(mem_char_ptr(vm.dict->latest()));
+	header->flags.hidden = true;
+}
