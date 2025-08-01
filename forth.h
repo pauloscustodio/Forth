@@ -259,6 +259,32 @@ enum {
     idIMMEDIATE, // IMMEDIATE .
     idCOMPILE_COMMA, // COMPILE, .
     idBRACKET_COMPILE, // [COMPILE] .
+    idIF, // IF .
+    idELSE, // ELSE .
+    idTHEN, // THEN .
+    idDO, // DO .
+    idXDO, // (DO) .
+    idQUERY_DO, // ?DO .
+    idXQUERY_DO, // (?DO) .
+    idLOOP, // LOOP .
+    idXLOOP, // (LOOP) .
+    idPLUS_LOOP, // +LOOP .
+    idXPLUS_LOOP, // (+LOOP) .
+    idLEAVE, // LEAVE .
+    idXLEAVE, // (LEAVE) .
+    idUNLOOP, // UNLOOP .
+    idXUNLOOP, // (UNLOOP) .
+    idBEGIN, // BEGIN .
+    idAGAIN, // AGAIN .
+    idUNTIL, // UNTIL .
+    idWHILE, // WHILE .
+    idREPEAT, // REPEAT .
+    idRECURSE, // RECURSE .
+    idCASE, // CASE .
+    idOF, // OF .
+    idXOF, // (OF) .
+    idENDOF, // ENDOF .
+    idENDCASE, // ENDCASE .
     idRDEPTH, // RDEPTH .
     idCS_DEPTH, // CS_DEPTH .
     idDOT_S, // .S .
@@ -476,6 +502,32 @@ extern int xtPOSTPONE; // POSTPONE .
 extern int xtIMMEDIATE; // IMMEDIATE .
 extern int xtCOMPILE_COMMA; // COMPILE, .
 extern int xtBRACKET_COMPILE; // [COMPILE] .
+extern int xtIF; // IF .
+extern int xtELSE; // ELSE .
+extern int xtTHEN; // THEN .
+extern int xtDO; // DO .
+extern int xtXDO; // (DO) .
+extern int xtQUERY_DO; // ?DO .
+extern int xtXQUERY_DO; // (?DO) .
+extern int xtLOOP; // LOOP .
+extern int xtXLOOP; // (LOOP) .
+extern int xtPLUS_LOOP; // +LOOP .
+extern int xtXPLUS_LOOP; // (+LOOP) .
+extern int xtLEAVE; // LEAVE .
+extern int xtXLEAVE; // (LEAVE) .
+extern int xtUNLOOP; // UNLOOP .
+extern int xtXUNLOOP; // (UNLOOP) .
+extern int xtBEGIN; // BEGIN .
+extern int xtAGAIN; // AGAIN .
+extern int xtUNTIL; // UNTIL .
+extern int xtWHILE; // WHILE .
+extern int xtREPEAT; // REPEAT .
+extern int xtRECURSE; // RECURSE .
+extern int xtCASE; // CASE .
+extern int xtOF; // OF .
+extern int xtXOF; // (OF) .
+extern int xtENDOF; // ENDOF .
+extern int xtENDCASE; // ENDCASE .
 extern int xtRDEPTH; // RDEPTH .
 extern int xtCS_DEPTH; // CS_DEPTH .
 extern int xtDOT_S; // .S .

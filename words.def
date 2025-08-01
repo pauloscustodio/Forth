@@ -272,7 +272,37 @@
 "COMPILE,", COMPILE_COMMA, F_IMMEDIATE, "comma(pop());"
 "[COMPILE]", BRACKET_COMPILE, F_IMMEDIATE, "f_bracket_compile();"
 
+"IF", IF, F_IMMEDIATE, "f_if();"
+"ELSE", ELSE, F_IMMEDIATE, "f_else();"
+"THEN", THEN, F_IMMEDIATE, "f_then();"
 
+"DO", DO, F_IMMEDIATE, "f_do();"
+"(DO)", XDO, F_HIDDEN, "f_xdo();"
+"?DO", QUERY_DO, F_IMMEDIATE, "f_query_do();"
+"(?DO)", XQUERY_DO, F_HIDDEN, "f_xquery_do();"
+
+"LOOP", LOOP, F_IMMEDIATE, "f_loop();"
+"(LOOP)", XLOOP, F_HIDDEN, "f_xloop();"
+"+LOOP", PLUS_LOOP, F_IMMEDIATE, "f_plus_loop();"
+"(+LOOP)", XPLUS_LOOP, F_HIDDEN, "f_xplus_loop();"
+
+"LEAVE", LEAVE, F_IMMEDIATE, "f_leave();"
+"(LEAVE)", XLEAVE, F_HIDDEN, "f_xleave();"
+"UNLOOP", UNLOOP, F_IMMEDIATE, "f_unloop();"
+"(UNLOOP)", XUNLOOP, F_HIDDEN, "f_xunloop();"
+
+"BEGIN", BEGIN, F_IMMEDIATE, "f_begin();"
+"AGAIN", AGAIN, F_IMMEDIATE, "f_again();"
+"UNTIL", UNTIL, F_IMMEDIATE, "f_until();"
+"WHILE", WHILE, F_IMMEDIATE, "f_while();"
+"REPEAT", REPEAT, F_IMMEDIATE, "f_repeat();"
+"RECURSE", RECURSE, F_IMMEDIATE, "f_recurse();"
+
+"CASE", CASE, F_IMMEDIATE, "f_case();"
+"OF", OF, F_IMMEDIATE, "f_of();"
+"(OF)", XOF, F_HIDDEN, "f_xof();"
+"ENDOF", ENDOF, F_IMMEDIATE, "f_endof();"
+"ENDCASE", ENDCASE, F_IMMEDIATE, "f_endcase();"
 
 
 

@@ -4,6 +4,7 @@
 // License: GPL3 https://www.gnu.org/licenses/gpl-3.0.html
 //-----------------------------------------------------------------------------
 
+#include "compiler.h"
 #include "dict.h"
 #include "environ.h"
 #include "errors.h"
@@ -224,6 +225,32 @@ int xtPOSTPONE = 0; // POSTPONE .
 int xtIMMEDIATE = 0; // IMMEDIATE .
 int xtCOMPILE_COMMA = 0; // COMPILE, .
 int xtBRACKET_COMPILE = 0; // [COMPILE] .
+int xtIF = 0; // IF .
+int xtELSE = 0; // ELSE .
+int xtTHEN = 0; // THEN .
+int xtDO = 0; // DO .
+int xtXDO = 0; // (DO) .
+int xtQUERY_DO = 0; // ?DO .
+int xtXQUERY_DO = 0; // (?DO) .
+int xtLOOP = 0; // LOOP .
+int xtXLOOP = 0; // (LOOP) .
+int xtPLUS_LOOP = 0; // +LOOP .
+int xtXPLUS_LOOP = 0; // (+LOOP) .
+int xtLEAVE = 0; // LEAVE .
+int xtXLEAVE = 0; // (LEAVE) .
+int xtUNLOOP = 0; // UNLOOP .
+int xtXUNLOOP = 0; // (UNLOOP) .
+int xtBEGIN = 0; // BEGIN .
+int xtAGAIN = 0; // AGAIN .
+int xtUNTIL = 0; // UNTIL .
+int xtWHILE = 0; // WHILE .
+int xtREPEAT = 0; // REPEAT .
+int xtRECURSE = 0; // RECURSE .
+int xtCASE = 0; // CASE .
+int xtOF = 0; // OF .
+int xtXOF = 0; // (OF) .
+int xtENDOF = 0; // ENDOF .
+int xtENDCASE = 0; // ENDCASE .
 int xtRDEPTH = 0; // RDEPTH .
 int xtCS_DEPTH = 0; // CS_DEPTH .
 int xtDOT_S = 0; // .S .
@@ -604,6 +631,32 @@ void create_dictionary() {
 	xtIMMEDIATE = vm.dict->create("IMMEDIATE", F_IMMEDIATE, idIMMEDIATE);
 	xtCOMPILE_COMMA = vm.dict->create("COMPILE,", F_IMMEDIATE, idCOMPILE_COMMA);
 	xtBRACKET_COMPILE = vm.dict->create("[COMPILE]", F_IMMEDIATE, idBRACKET_COMPILE);
+	xtIF = vm.dict->create("IF", F_IMMEDIATE, idIF);
+	xtELSE = vm.dict->create("ELSE", F_IMMEDIATE, idELSE);
+	xtTHEN = vm.dict->create("THEN", F_IMMEDIATE, idTHEN);
+	xtDO = vm.dict->create("DO", F_IMMEDIATE, idDO);
+	xtXDO = vm.dict->create("(DO)", F_HIDDEN, idXDO);
+	xtQUERY_DO = vm.dict->create("?DO", F_IMMEDIATE, idQUERY_DO);
+	xtXQUERY_DO = vm.dict->create("(?DO)", F_HIDDEN, idXQUERY_DO);
+	xtLOOP = vm.dict->create("LOOP", F_IMMEDIATE, idLOOP);
+	xtXLOOP = vm.dict->create("(LOOP)", F_HIDDEN, idXLOOP);
+	xtPLUS_LOOP = vm.dict->create("+LOOP", F_IMMEDIATE, idPLUS_LOOP);
+	xtXPLUS_LOOP = vm.dict->create("(+LOOP)", F_HIDDEN, idXPLUS_LOOP);
+	xtLEAVE = vm.dict->create("LEAVE", F_IMMEDIATE, idLEAVE);
+	xtXLEAVE = vm.dict->create("(LEAVE)", F_HIDDEN, idXLEAVE);
+	xtUNLOOP = vm.dict->create("UNLOOP", F_IMMEDIATE, idUNLOOP);
+	xtXUNLOOP = vm.dict->create("(UNLOOP)", F_HIDDEN, idXUNLOOP);
+	xtBEGIN = vm.dict->create("BEGIN", F_IMMEDIATE, idBEGIN);
+	xtAGAIN = vm.dict->create("AGAIN", F_IMMEDIATE, idAGAIN);
+	xtUNTIL = vm.dict->create("UNTIL", F_IMMEDIATE, idUNTIL);
+	xtWHILE = vm.dict->create("WHILE", F_IMMEDIATE, idWHILE);
+	xtREPEAT = vm.dict->create("REPEAT", F_IMMEDIATE, idREPEAT);
+	xtRECURSE = vm.dict->create("RECURSE", F_IMMEDIATE, idRECURSE);
+	xtCASE = vm.dict->create("CASE", F_IMMEDIATE, idCASE);
+	xtOF = vm.dict->create("OF", F_IMMEDIATE, idOF);
+	xtXOF = vm.dict->create("(OF)", F_HIDDEN, idXOF);
+	xtENDOF = vm.dict->create("ENDOF", F_IMMEDIATE, idENDOF);
+	xtENDCASE = vm.dict->create("ENDCASE", F_IMMEDIATE, idENDCASE);
 	xtRDEPTH = vm.dict->create("RDEPTH", 0, idRDEPTH);
 	xtCS_DEPTH = vm.dict->create("CS_DEPTH", 0, idCS_DEPTH);
 	xtDOT_S = vm.dict->create(".S", 0, idDOT_S);
@@ -829,6 +882,32 @@ void f_execute(int xt) {
 		case idIMMEDIATE: { f_immediate(); }; break; // IMMEDIATE .
 		case idCOMPILE_COMMA: { comma(pop()); }; break; // COMPILE, .
 		case idBRACKET_COMPILE: { f_bracket_compile(); }; break; // [COMPILE] .
+		case idIF: { f_if(); }; break; // IF .
+		case idELSE: { f_else(); }; break; // ELSE .
+		case idTHEN: { f_then(); }; break; // THEN .
+		case idDO: { f_do(); }; break; // DO .
+		case idXDO: { f_xdo(); }; break; // (DO) .
+		case idQUERY_DO: { f_query_do(); }; break; // ?DO .
+		case idXQUERY_DO: { f_xquery_do(); }; break; // (?DO) .
+		case idLOOP: { f_loop(); }; break; // LOOP .
+		case idXLOOP: { f_xloop(); }; break; // (LOOP) .
+		case idPLUS_LOOP: { f_plus_loop(); }; break; // +LOOP .
+		case idXPLUS_LOOP: { f_xplus_loop(); }; break; // (+LOOP) .
+		case idLEAVE: { f_leave(); }; break; // LEAVE .
+		case idXLEAVE: { f_xleave(); }; break; // (LEAVE) .
+		case idUNLOOP: { f_unloop(); }; break; // UNLOOP .
+		case idXUNLOOP: { f_xunloop(); }; break; // (UNLOOP) .
+		case idBEGIN: { f_begin(); }; break; // BEGIN .
+		case idAGAIN: { f_again(); }; break; // AGAIN .
+		case idUNTIL: { f_until(); }; break; // UNTIL .
+		case idWHILE: { f_while(); }; break; // WHILE .
+		case idREPEAT: { f_repeat(); }; break; // REPEAT .
+		case idRECURSE: { f_recurse(); }; break; // RECURSE .
+		case idCASE: { f_case(); }; break; // CASE .
+		case idOF: { f_of(); }; break; // OF .
+		case idXOF: { f_xof(); }; break; // (OF) .
+		case idENDOF: { f_endof(); }; break; // ENDOF .
+		case idENDCASE: { f_endcase(); }; break; // ENDCASE .
 		case idRDEPTH: { push(vm.rstack->depth()); }; break; // RDEPTH .
 		case idCS_DEPTH: { push(vm.cs_stack->depth()); }; break; // CS_DEPTH .
 		case idDOT_S: { vm.stack->print(); }; break; // .S .
