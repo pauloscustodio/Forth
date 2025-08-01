@@ -251,6 +251,11 @@ int xtOF = 0; // OF .
 int xtXOF = 0; // (OF) .
 int xtENDOF = 0; // ENDOF .
 int xtENDCASE = 0; // ENDCASE .
+int xtQUIT = 0; // QUIT .
+int xtBYE = 0; // BYE .
+int xtABORT = 0; // ABORT .
+int xtABORT_QUOTE = 0; // ABORT" .
+int xtXABORT_QUOTE = 0; // (ABORT") .
 int xtRDEPTH = 0; // RDEPTH .
 int xtCS_DEPTH = 0; // CS_DEPTH .
 int xtDOT_S = 0; // .S .
@@ -261,8 +266,6 @@ int xtTHROW = 0; // THROW .
 int xtENVIRONMENT_Q = 0; // ENVIRONMENT? .
 int xtWORDS = 0; // WORDS .
 int xtDABS = 0; // DABS .
-int xtBYE = 0; // BYE .
-int xtQUIT = 0; // QUIT .
 //@@END
 
 // bool
@@ -657,6 +660,11 @@ void create_dictionary() {
 	xtXOF = vm.dict->create("(OF)", F_HIDDEN, idXOF);
 	xtENDOF = vm.dict->create("ENDOF", F_IMMEDIATE, idENDOF);
 	xtENDCASE = vm.dict->create("ENDCASE", F_IMMEDIATE, idENDCASE);
+	xtQUIT = vm.dict->create("QUIT", 0, idQUIT);
+	xtBYE = vm.dict->create("BYE", 0, idBYE);
+	xtABORT = vm.dict->create("ABORT", 0, idABORT);
+	xtABORT_QUOTE = vm.dict->create("ABORT\"", F_IMMEDIATE, idABORT_QUOTE);
+	xtXABORT_QUOTE = vm.dict->create("(ABORT\")", F_HIDDEN, idXABORT_QUOTE);
 	xtRDEPTH = vm.dict->create("RDEPTH", 0, idRDEPTH);
 	xtCS_DEPTH = vm.dict->create("CS_DEPTH", 0, idCS_DEPTH);
 	xtDOT_S = vm.dict->create(".S", 0, idDOT_S);
@@ -667,8 +675,6 @@ void create_dictionary() {
 	xtENVIRONMENT_Q = vm.dict->create("ENVIRONMENT?", 0, idENVIRONMENT_Q);
 	xtWORDS = vm.dict->create("WORDS", 0, idWORDS);
 	xtDABS = vm.dict->create("DABS", 0, idDABS);
-	xtBYE = vm.dict->create("BYE", 0, idBYE);
-	xtQUIT = vm.dict->create("QUIT", 0, idQUIT);
 	//@@END
 }
 
@@ -908,6 +914,11 @@ void f_execute(int xt) {
 		case idXOF: { f_xof(); }; break; // (OF) .
 		case idENDOF: { f_endof(); }; break; // ENDOF .
 		case idENDCASE: { f_endcase(); }; break; // ENDCASE .
+		case idQUIT: { f_quit(); }; break; // QUIT .
+		case idBYE: { exit(EXIT_SUCCESS); }; break; // BYE .
+		case idABORT: { exit(EXIT_FAILURE); }; break; // ABORT .
+		case idABORT_QUOTE: { f_abort_quote(); }; break; // ABORT" .
+		case idXABORT_QUOTE: { f_xabort_quote(); }; break; // (ABORT") .
 		case idRDEPTH: { push(vm.rstack->depth()); }; break; // RDEPTH .
 		case idCS_DEPTH: { push(vm.cs_stack->depth()); }; break; // CS_DEPTH .
 		case idDOT_S: { vm.stack->print(); }; break; // .S .
@@ -918,8 +929,6 @@ void f_execute(int xt) {
 		case idENVIRONMENT_Q: { int size = pop(), addr = pop(); f_environment_q(mem_char_ptr(addr), size); }; break; // ENVIRONMENT? .
 		case idWORDS: { f_words(); }; break; // WORDS .
 		case idDABS: { dpush(f_dabs(dpop())); }; break; // DABS .
-		case idBYE: { exit(EXIT_SUCCESS); }; break; // BYE .
-		case idQUIT: { f_quit(); }; break; // QUIT .
 		//@@END
 		default:
 			error(Error::InvalidWordXT, std::to_string(xt));

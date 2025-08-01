@@ -285,6 +285,11 @@ enum {
     idXOF, // (OF) .
     idENDOF, // ENDOF .
     idENDCASE, // ENDCASE .
+    idQUIT, // QUIT .
+    idBYE, // BYE .
+    idABORT, // ABORT .
+    idABORT_QUOTE, // ABORT" .
+    idXABORT_QUOTE, // (ABORT") .
     idRDEPTH, // RDEPTH .
     idCS_DEPTH, // CS_DEPTH .
     idDOT_S, // .S .
@@ -295,8 +300,6 @@ enum {
     idENVIRONMENT_Q, // ENVIRONMENT? .
     idWORDS, // WORDS .
     idDABS, // DABS .
-    idBYE, // BYE .
-    idQUIT, // QUIT .
     //@@END
     MAX_WORD_ID
 };
@@ -528,6 +531,11 @@ extern int xtOF; // OF .
 extern int xtXOF; // (OF) .
 extern int xtENDOF; // ENDOF .
 extern int xtENDCASE; // ENDCASE .
+extern int xtQUIT; // QUIT .
+extern int xtBYE; // BYE .
+extern int xtABORT; // ABORT .
+extern int xtABORT_QUOTE; // ABORT" .
+extern int xtXABORT_QUOTE; // (ABORT") .
 extern int xtRDEPTH; // RDEPTH .
 extern int xtCS_DEPTH; // CS_DEPTH .
 extern int xtDOT_S; // .S .
@@ -538,8 +546,6 @@ extern int xtTHROW; // THROW .
 extern int xtENVIRONMENT_Q; // ENVIRONMENT? .
 extern int xtWORDS; // WORDS .
 extern int xtDABS; // DABS .
-extern int xtBYE; // BYE .
-extern int xtQUIT; // QUIT .
 //@@END
 
 // user variables

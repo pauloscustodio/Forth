@@ -304,6 +304,15 @@
 "ENDOF", ENDOF, F_IMMEDIATE, "f_endof();"
 "ENDCASE", ENDCASE, F_IMMEDIATE, "f_endcase();"
 
+//-----------------------------------------------------------------------------
+// main loop
+//-----------------------------------------------------------------------------
+"QUIT", QUIT, 0, "f_quit();"
+"BYE", BYE, 0, "exit(EXIT_SUCCESS);"
+"ABORT", ABORT, 0, "exit(EXIT_FAILURE);"
+"ABORT""", ABORT_QUOTE, F_IMMEDIATE, "f_abort_quote();"
+"(ABORT"")", XABORT_QUOTE, F_HIDDEN, "f_xabort_quote();"
+
 
 
 
@@ -324,5 +333,3 @@
 
 "DABS", DABS, 0, "dpush(f_dabs(dpop()));"
 
-"BYE", BYE, 0, "exit(EXIT_SUCCESS);"
-"QUIT", QUIT, 0, "f_quit();"

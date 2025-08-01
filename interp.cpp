@@ -128,3 +128,21 @@ void f_quit() {
         f_interpret();
     exit(EXIT_SUCCESS);
 }
+
+void f_abort_quote() {
+    const ForthString* message = parse_word('"');
+    int str_addr = vm.dict->alloc_name(message);
+    comma(xtXABORT_QUOTE);
+    comma(str_addr);
+}
+
+void f_xabort_quote() {
+    int str_addr = fetch(ip); ip += CELL_SZ;
+    const ForthString* message = reinterpret_cast<const ForthString*>(mem_char_ptr(str_addr));
+
+    int f = pop();
+    if (f) {
+        cerr << endl << "Aborted: " << message->to_string() << endl;
+        exit(EXIT_FAILURE);
+    }
+}
