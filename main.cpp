@@ -11,7 +11,7 @@
 using namespace std;
 
 static void die_usage() {
-	cerr << "Usage: forth [-e forth] [source [args...]]" << endl;
+	cerr << "Usage: forth [-e forth] [-t] [source [args...]]" << endl;
 	exit(EXIT_FAILURE);
 }
 
@@ -30,6 +30,9 @@ int main(int argc, char* argv[]) {
 				f_evaluate(g_argv[0]);
 				did_forth = true;
 			}
+			break;
+		case 't':
+			vm.user->TRACE = F_TRUE;
 			break;
 		default:
 			die_usage();

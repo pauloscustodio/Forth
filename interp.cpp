@@ -29,17 +29,7 @@ void f_interpret_word(const char* word, int size) {
         if (header) {	// word found
             int xt = header->xt();
             if (header->flags.immediate || vm.user->STATE == STATE_INTERPRET) {
-                if (vm.user->TRACE) {
-                    ForthString* name = header->name();
-                    cout << ">>" << BL << name->to_string() << BL;
-                }
-
                 f_execute(xt);
-
-                if (vm.user->TRACE) {
-                    vm.stack->print();
-                    cout << endl;
-                }
             }
             else {
                 comma(xt);
@@ -90,10 +80,17 @@ void f_interpret_word(const char* word, int size) {
 }
 
 void f_interpret() {
-    while (true) {
+    while (vm.input->has_input()) {
         const ForthString* word = parse_word(BL);
-        if (word->size() == 0)
-            break;
+        if (word->size() == 0) {
+            // remove a temporary buffer created by QUERY
+            if (vm.input->is_single_line_buffer()) {
+                vm.input->pop_input();
+                continue;
+            }
+            else
+                break;
+        }
         f_interpret_word(word->str(), word->size());
     }
 

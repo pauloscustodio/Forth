@@ -182,7 +182,7 @@
 //-----------------------------------------------------------------------------
 "TIB", TIB, 0, "f_tib();"
 "#IN", NR_IN, 0, "f_nr_in();"
-"#TIB", NR_TIB, 0, "f_nr_tib();"
+"#TIB", NR_TIB, 0, "f_nr_in();"
 ">IN", TO_IN, 0, "f_to_in();"
 "SOURCE", SOURCE, 0, "f_source();"
 "SOURCE-ID", SOURCE_ID, 0, "f_source_id();"

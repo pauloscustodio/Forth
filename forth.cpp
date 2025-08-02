@@ -683,6 +683,13 @@ void f_execute(int xt) {
 	int old_ip = ip;
 	ip = 0;
 	while (true) {
+		if (vm.user->TRACE) {
+			Header* header = Header::header(xt);
+			ForthString* name = header->name();
+			cout << string(2 * (1 + r_depth()), '>') << BL
+				<< name->to_string() << BL;
+		}
+
 		int code = fetch(xt);
 		int body = xt + CELL_SZ;			// point to data area, if any
 
@@ -823,7 +830,7 @@ void f_execute(int xt) {
 		case idDOT_PAREN: { f_dot_paren(); }; break; // .( .
 		case idTIB: { f_tib(); }; break; // TIB .
 		case idNR_IN: { f_nr_in(); }; break; // #IN .
-		case idNR_TIB: { f_nr_tib(); }; break; // #TIB .
+		case idNR_TIB: { f_nr_in(); }; break; // #TIB .
 		case idTO_IN: { f_to_in(); }; break; // >IN .
 		case idSOURCE: { f_source(); }; break; // SOURCE .
 		case idSOURCE_ID: { f_source_id(); }; break; // SOURCE-ID .
@@ -932,6 +939,12 @@ void f_execute(int xt) {
 		//@@END
 		default:
 			error(Error::InvalidWordXT, std::to_string(xt));
+		}
+
+		if (vm.user->TRACE) {
+			cout << BL;
+			vm.stack->print();
+			cout << endl;
 		}
 
 		if (ip == 0 || do_exit)				// ip did not change, exit

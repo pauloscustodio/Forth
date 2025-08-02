@@ -38,7 +38,7 @@ public:
 	int create(const char* name, int size, int flags, int code); // return xt of word
 	int create(const ForthString* name, int flags, int code); // return xt of word
 
-	int parse_create(int code); // return xt of word
+	int parse_create(int code, int flags); // return xt of word
 
 	void allot(int size);
 	int unused() const;

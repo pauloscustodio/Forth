@@ -69,11 +69,11 @@ int Dict::create(const ForthString* name, int flags, int code) {
 	return create_cont(name_addr, flags, code);
 }
 
-int Dict::parse_create(int code) {
+int Dict::parse_create(int code, int flags) {
 	const ForthString* name = parse_word(BL);
 	if (name->size() == 0)
 		error(Error::AttemptToUseZeroLengthStringAsName);
-	return create(name, 0, code);
+	return create(name, flags, code);
 }
 
 void Dict::allot(int size) {
@@ -231,7 +231,7 @@ void f_marker() {
 	int save_here = vm.dict->here();
 	int save_names = vm.dict->names();
 
-	vm.dict->parse_create(idXMARKER);
+	vm.dict->parse_create(idXMARKER, 0);
 
 	comma(save_latest);
 	comma(save_here);
@@ -269,7 +269,7 @@ void f_words() {
 }
 
 void f_create() {
-	vm.dict->parse_create(idXDOVAR);
+	vm.dict->parse_create(idXDOVAR, 0);
 }
 
 void f_colon() {
@@ -277,9 +277,7 @@ void f_colon() {
 		error(Error::CompilerNesting);
 	else {
 		vm.cs_stack->push(idCOLON);
-		vm.dict->parse_create(idXDOCOL);
-		Header* header = reinterpret_cast<Header*>(mem_char_ptr(vm.dict->latest()));
-		header->flags.smudge = true;
+		vm.dict->parse_create(idXDOCOL, F_SMUDGE);
 		vm.user->STATE = STATE_COMPILE;
 	}
 }
@@ -310,17 +308,17 @@ void f_semicolon() {
 }
 
 void f_variable() {
-	vm.dict->parse_create(idXDOVAR);
+	vm.dict->parse_create(idXDOVAR, 0);
 	comma(0);
 }
 
 void f_2variable() {
-	vm.dict->parse_create(idXDOVAR);
+	vm.dict->parse_create(idXDOVAR, 0);
 	dcomma(0);
 }
 
 void f_value() {
-	vm.dict->parse_create(idXDOCONST);
+	vm.dict->parse_create(idXDOCONST, 0);
 	comma(pop());
 }
 
@@ -340,12 +338,12 @@ void f_to() {
 }
 
 void f_constant() {
-	vm.dict->parse_create(idXDOCONST);
+	vm.dict->parse_create(idXDOCONST, 0);
 	comma(pop());
 }
 
 void f_2constant() {
-	vm.dict->parse_create(idXDO2CONST);
+	vm.dict->parse_create(idXDO2CONST, 0);
 	dcomma(dpop());
 }
 

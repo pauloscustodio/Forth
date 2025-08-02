@@ -205,6 +205,14 @@ void Input::init() {
 	m_ptr = -1;
 }
 
+bool Input::has_input() const { 
+	return m_ptr >= 0;
+}
+
+int Input::input_level() const {
+	return m_ptr;
+}
+
 void Input::push_text(const string& text) {
 	push_text(text.c_str(), text.size());
 }
@@ -221,12 +229,13 @@ void Input::push_text(const char* text, int size) {
 		error(Error::TooManyOpenFiles);
 	}
 	else {
-		m_ptr++;
+		++m_ptr;
 		memcpy(m_buffers[m_ptr].buffer, text, size);
 		m_buffers[m_ptr].to_in = 0;
 		m_buffers[m_ptr].nr_in = size;
 		m_buffers[m_ptr].blk = 0;
 		m_buffers[m_ptr].source_id = -1;
+		m_buffers[m_ptr].max_read_lines = -1;
 	}
 }
 
@@ -243,12 +252,13 @@ bool Input::push_block(int blk) {
 	vm.input_files->close_file(source_id);
 
 	if (line.size() > 0) {
-		m_ptr++;
+		++m_ptr;
 		memcpy(m_buffers[m_ptr].buffer, line.c_str(), line.size());
 		m_buffers[m_ptr].to_in = 0;
 		m_buffers[m_ptr].nr_in = static_cast<int>(line.size());
 		m_buffers[m_ptr].blk = blk;
 		m_buffers[m_ptr].source_id = 0;
+		m_buffers[m_ptr].max_read_lines = -1;
 		return true;
 	}
 	else {
@@ -257,25 +267,27 @@ bool Input::push_block(int blk) {
 }
 
 void Input::push_cin() {
-	if (m_ptr + 1 >= MAX_FILES)
-		error(Error::TooManyOpenFiles);
+	_push_cin(-1);
+}
 
-	m_ptr++;
-	m_buffers[m_ptr].to_in = 0;
-	m_buffers[m_ptr].nr_in = 0;
-	m_buffers[m_ptr].blk = 0;
-	m_buffers[m_ptr].source_id = 0;
+void Input::push_cin_single_line() {
+	_push_cin(1);
+}
+
+bool Input::is_single_line_buffer() const {
+	return m_buffers[m_ptr].max_read_lines == 0;
 }
 
 void Input::push_file(const string& filename) {
 	if (m_ptr + 1 >= MAX_FILES)
 		error(Error::TooManyOpenFiles);
 
-	m_ptr++;
+	++m_ptr;
 	m_buffers[m_ptr].to_in = 0;
 	m_buffers[m_ptr].nr_in = 0;
 	m_buffers[m_ptr].blk = 0;
 	m_buffers[m_ptr].source_id = vm.input_files->open_file(filename);
+	m_buffers[m_ptr].max_read_lines = -1;
 }
 
 void Input::push_file(const char* filename, size_t size) {
@@ -290,18 +302,48 @@ void Input::pop_input() {
 	if (m_ptr >= 0) {
 		if (m_buffers[m_ptr].source_id > 0)
 			vm.input_files->close_file(m_buffers[m_ptr].source_id);
-		m_ptr--;
+		--m_ptr;
 	}
 }
 
-bool Input::refill_current_buffer() {
-	bool do_pop = false;
-	return _refill(do_pop);
-}
-
 bool Input::refill() {
-	bool do_pop = true;
-	return _refill(do_pop);
+	while (m_ptr >= 0) {
+		Buffer* buffer = &m_buffers[m_ptr];
+
+		if (buffer->source_id < 0)		// input from string
+			return false;
+		else if (buffer->blk > 0) {		// input from block
+			buffer->blk++;
+			if (push_block(buffer->blk))
+				return true;
+			else {
+				buffer->blk = 0;		// continue to read from source-id
+				continue;
+			}
+		}
+
+		if (buffer->max_read_lines == 0) {
+			pop_input();
+			continue;
+		}
+
+		string line;
+		if (vm.input_files->getline(buffer->source_id, line)) {
+			memcpy(buffer->buffer, line.c_str(), line.size());
+			buffer->to_in = 0;
+			buffer->nr_in = static_cast<int>(line.size());
+
+			if (buffer->max_read_lines > 0)
+				--buffer->max_read_lines;
+
+			return true;			// read a new line
+		}
+		else {
+			pop_input();
+		}
+	}
+
+	return false;
 }
 
 char* Input::source_ptr() {
@@ -363,41 +405,16 @@ int Input::source_id() const {
 		return 0;
 }
 
-bool Input::_refill(bool do_pop) {
-	while (m_ptr >= 0) {
-		Buffer* buffer = &m_buffers[m_ptr];
+void Input::_push_cin(int max_read_lines) {
+	if (m_ptr + 1 >= MAX_FILES)
+		error(Error::TooManyOpenFiles);
 
-		if (buffer->source_id < 0)		// input from string
-			return false;
-		else if (buffer->blk > 0) {		// input from block
-			buffer->blk++;
-			if (push_block(buffer->blk))
-				return true;
-			else {
-				buffer->blk = 0;		// continue to read from source-id
-				continue;
-			}
-		}
-
-		string line;
-		if (vm.input_files->getline(buffer->source_id, line)) {
-			memcpy(buffer->buffer, line.c_str(), line.size());
-			buffer->to_in = 0;
-			buffer->nr_in = static_cast<int>(line.size());
-			return true;			// read a new line
-		}
-		else {
-			if (do_pop) {
-				pop_input();
-			}
-			else {
-				buffer->nr_in = buffer->to_in = 0;
-				return false;
-			}
-		}
-	}
-
-	return false;
+	++m_ptr;
+	m_buffers[m_ptr].to_in = 0;
+	m_buffers[m_ptr].nr_in = 0;
+	m_buffers[m_ptr].blk = 0;
+	m_buffers[m_ptr].source_id = 0;
+	m_buffers[m_ptr].max_read_lines = max_read_lines;
 }
 
 //-----------------------------------------------------------------------------
@@ -422,13 +439,9 @@ void f_tib() {
 	push(mem_addr(vm.input->source_ptr()));
 }
 
-void f_nr_tib() {
-	push(vm.input->nr_in());
-}
-
 void f_source() {
 	f_tib();
-	f_nr_tib();
+	push(vm.input->nr_in());
 }
 
 bool f_refill() {
@@ -469,16 +482,18 @@ void f_key() {
 }
 
 void f_query() {
-	vm.input->push_cin();
-	vm.input->refill_current_buffer();
-	vm.input->pop_input();
+	vm.input->push_cin_single_line();
+	vm.input->refill();
 }
 
 void f_save_input() {
+	push(vm.input->input_level());
 	vm.input->push_text("");	// source_id=-1, is not popped by refill
 }
 
 void f_restore_input() {
-	vm.input->pop_input();
+	int wanted_level = pop();
+	while (vm.input->input_level() > wanted_level)
+		vm.input->pop_input();
 	push(F_TRUE);
 }

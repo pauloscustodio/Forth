@@ -59,6 +59,9 @@ class Input {
 public:
 	void init();
 
+	bool has_input() const;
+	int input_level() const;
+
 	void push_text(const string& text);
 	void push_text(const char* text, size_t size);
 	void push_text(const char* text, int size);
@@ -66,14 +69,15 @@ public:
 	bool push_block(int blk);
 
 	void push_cin();
-	
+	void push_cin_single_line();
+	bool is_single_line_buffer() const;
+
 	void push_file(const string& filename);
 	void push_file(const char* filename, size_t size);
 	void push_file(const char* filename, int size);
 
 	void pop_input();
 
-	bool refill_current_buffer();
 	bool refill();
 
 	char* source_ptr();
@@ -92,6 +96,7 @@ private:
 		int nr_in;
 		int blk;
 		int source_id;
+		int max_read_lines;
 	};
 
 	Buffer m_buffers[MAX_FILES];
@@ -101,7 +106,7 @@ private:
 	int m_empty_nr_in;
 	int m_empty_blk;
 	
-	bool _refill(bool do_pop);
+	void _push_cin(int max_read_lines);
 };
 
 void f_to_in();
@@ -109,7 +114,6 @@ void f_nr_in();
 void f_blk();
 void f_source_id();
 void f_tib();
-void f_nr_tib();
 void f_source();
 bool f_refill();
 void f_accept();
