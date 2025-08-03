@@ -181,6 +181,16 @@ Header* Dict::parse_find_word() {
 	return find_word(name);
 }
 
+Header* Dict::parse_find_existing_word() {
+	const ForthString* name = parse_word(BL);
+	if (name->size() == 0)
+		error(Error::AttemptToUseZeroLengthStringAsName);
+	Header* header = find_word(name);
+	if (header == nullptr)
+		error(Error::UndefinedWord, name->to_string());
+	return header;
+}
+
 void Dict::check_free_space(int size) const {
 	if (m_here + size >= m_names)
 		error(Error::DictionaryOverflow);
@@ -323,20 +333,16 @@ void f_value() {
 }
 
 void f_to() {
-	Header* header = vm.dict->parse_find_word();
-	if (header == nullptr)
-		error(Error::UndefinedWord);
-	else {
-		if (vm.user->STATE == STATE_COMPILE) {
-			comma(xtXLITERAL);
-			comma(header->body());
-			comma(xtSTORE);
-		}
-		else
-			store(header->body(), pop());
-	}	
+	Header* header = vm.dict->parse_find_existing_word();
+	assert(header != nullptr);
+	if (vm.user->STATE == STATE_COMPILE) {
+		comma(xtXLITERAL);
+		comma(header->body());
+		comma(xtSTORE);
+	}
+	else
+		store(header->body(), pop());
 }
-
 void f_constant() {
 	vm.dict->parse_create(idXDOCONST, 0);
 	comma(pop());
@@ -371,9 +377,8 @@ void f_xdoes_run(int body) {
 }
 
 int f_tick() {
-	Header* header = vm.dict->parse_find_word();
-	if (header == nullptr)
-		error(Error::UndefinedWord);
+	Header* header = vm.dict->parse_find_existing_word();
+	assert(header != nullptr);
 	return header->xt();
 }
 

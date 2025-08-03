@@ -313,13 +313,14 @@ bool Input::refill() {
 		if (buffer->source_id < 0)		// input from string
 			return false;
 		else if (buffer->blk > 0) {		// input from block
-			buffer->blk++;
-			if (push_block(buffer->blk))
-				return true;
-			else {
-				buffer->blk = 0;		// continue to read from source-id
-				continue;
-			}
+			return false;
+//			buffer->blk++;
+//			if (push_block(buffer->blk))
+//				return true;
+//			else {
+//				buffer->blk = 0;		// continue to read from source-id
+//				continue;
+//			}
 		}
 
 		if (buffer->max_read_lines == 0) {

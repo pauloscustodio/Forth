@@ -290,15 +290,13 @@ enum {
     idABORT, // ABORT .
     idABORT_QUOTE, // ABORT" .
     idXABORT_QUOTE, // (ABORT") .
-    idRDEPTH, // RDEPTH .
-    idCS_DEPTH, // CS_DEPTH .
     idDOT_S, // .S .
-    idR_DEPTH, // RDEPTH .
     idDOT_RS, // .RS .
-    idBLK, // BLK .
-    idTHROW, // THROW .
-    idENVIRONMENT_Q, // ENVIRONMENT? .
     idWORDS, // WORDS .
+    idENVIRONMENT_Q, // ENVIRONMENT? .
+    idBLK, // BLK .
+    idLOAD, // LOAD .
+    idTHROW, // THROW .
     idDABS, // DABS .
     //@@END
     MAX_WORD_ID
@@ -536,15 +534,13 @@ extern int xtBYE; // BYE .
 extern int xtABORT; // ABORT .
 extern int xtABORT_QUOTE; // ABORT" .
 extern int xtXABORT_QUOTE; // (ABORT") .
-extern int xtRDEPTH; // RDEPTH .
-extern int xtCS_DEPTH; // CS_DEPTH .
 extern int xtDOT_S; // .S .
-extern int xtR_DEPTH; // RDEPTH .
 extern int xtDOT_RS; // .RS .
-extern int xtBLK; // BLK .
-extern int xtTHROW; // THROW .
-extern int xtENVIRONMENT_Q; // ENVIRONMENT? .
 extern int xtWORDS; // WORDS .
+extern int xtENVIRONMENT_Q; // ENVIRONMENT? .
+extern int xtBLK; // BLK .
+extern int xtLOAD; // LOAD .
+extern int xtTHROW; // THROW .
 extern int xtDABS; // DABS .
 //@@END
 

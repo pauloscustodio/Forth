@@ -67,6 +67,7 @@ public:
     Header* find_word(const char* name, int size) const;
     Header* find_word(const ForthString* name) const;
 	Header* parse_find_word();
+	Header* parse_find_existing_word();
 
 private:
 	int m_latest;		// point to last defined word header

@@ -17,7 +17,7 @@ string CountedString::to_string() const {
 
 void CountedString::set_string(const char* str, int size) {
 	if (size > MAX_COUNTED_STRING_SZ)
-		error(Error::ParsedStringOverflow);
+		error(Error::ParsedStringOverflow, string(str, str + size));
 	m_size = size > MAX_COUNTED_STRING_SZ ? MAX_COUNTED_STRING_SZ : size;
 	memcpy(m_str, str, m_size);
 	m_str[m_size] = BL;
@@ -31,7 +31,7 @@ string ForthString::to_string() const {
 
 const CountedString* ForthString::counted_string() const { 
 	if (m_size > MAX_COUNTED_STRING_SZ)
-		error(Error::ParsedStringOverflow);
+		error(Error::ParsedStringOverflow, to_string());
 	return reinterpret_cast<const CountedString*>(&m_short_size); 
 }
 

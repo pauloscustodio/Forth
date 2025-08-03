@@ -13,8 +13,71 @@ note 'Test COUNT';
 note 'Test TYPE';
 forth_ok("HERE 2 C, 'O' C, 'K' C, COUNT TYPE", "OK");
 
+note "Test FIND";
+note "Test COUNT";
+note "Test TYPE";
+forth_ok("BL WORD hello   FIND .S", "( 24 0 )");
+forth_ok("BL WORD hello   FIND DROP COUNT TYPE", "hello");
+forth_ok("BL WORD dup     FIND SWAP ' dup     = SWAP .S", "( -1 -1 )");
+forth_ok("BL WORD literal FIND SWAP ' literal = SWAP .S", "( -1 1 )");
+
+note "Test '";
+note "Test EXECUTE";
+forth_nok("'", "\nError: attempt to use zero-length string as a name\n");
+forth_nok("' hello", "\nError: undefined word: hello\n");
+forth_ok("1 2 3 ' .S EXECUTE", "( 1 2 3 )");
+
+note "Test [']";
+note "Test EXECUTE";
+forth_nok(": x ['] hello ; x", "\nError: undefined word: hello\n");
+forth_ok(": x ['] .S EXECUTE ; 1 2 3 x", "( 1 2 3 )");
+
+note "Test POSTPONE";
+forth_ok(": x 1 . ; IMMEDIATE  : y POSTPONE x ;  ", "");
+forth_ok(": x 1 . ; IMMEDIATE  : y POSTPONE x ; y", "1 ");
+
+note "Test COMPILE,";
+forth_ok(": x [ ' DUP ] COMPILE, ;  1 x .S", "( 1 1 )");
+
+note "Test [COMPILE]";
+my $func = <<END;
+	: ENDIF [COMPILE] THEN ; IMMEDIATE  
+	: x IF 1 . ELSE 2 . ENDIF ;
+END
+forth_ok("$func  0 x", "2 ");
+forth_ok("$func -1 x", "1 ");
+
+note "Test CREATE";
+forth_nok("CREATE", "\nError: attempt to use zero-length string as a name\n");
+forth_ok("CREATE ".("x" x 1017), "");
+forth_nok("CREATE ".("x" x 1018), "\nError: input buffer overflow\n");
+forth_ok("CREATE x 123 , x @ .S", "( 123 )");
+
+note "Test CONSTANT";
+forth_ok("123 CONSTANT x  x  .S", "( 123 )");
+
+note "Test VARIABLE";
+forth_ok("VARIABLE x  123 x !  ' x >BODY @  .S", "( 123 )");
+
+note "Test >BODY";
+forth_ok("CREATE x 123 , ' x >BODY @ .S", "( 123 )");
+
+note "Test :";
+note "Test ;";
+forth_nok(":", "\nError: attempt to use zero-length string as a name\n");
+forth_nok(": ".("x" x 1023), "\nError: input buffer overflow\n");
+forth_nok(": x [ :", "\nError: compiler nesting\n");
+forth_nok(";", "\nError: compiler nesting\n");
+forth_ok(": x DUP ; 1 x .S", "( 1 1 )");
+
+note "Test :NONAME";
+forth_ok(":NONAME 1 . ; EXECUTE .S", "1 ( )");
+
 note "Test CHAR";
 forth_ok("CHAR ! .S", "( 33 )");
+
+note "Test [CHAR]";
+forth_ok(": x [CHAR] ! ; x .S", "( 33 )");
 
 note "Test ALIGN";
 forth_ok("HERE ALIGN HERE SWAP - .S", "( 0 )");
@@ -34,5 +97,27 @@ forth_ok("HERE -1 ALLOT HERE SWAP - .S", "( -1 )");
 
 note "Test UNUSED";
 forth_ok("UNUSED 1 , UNUSED - .S", "( 1 )");
+
+note "Test LATEST";
+forth_ok(<<END, "x( -1 )");
+		HERE
+		: x 1 2 3 4 5 6 7 8 9 10 ;
+		LATEST = 
+		LATEST CELL+ @ CELL+ COUNT TYPE
+		.S
+END
+
+note "Test MARKER";
+forth_ok(<<END, "( -1 -1 -1 -1 )");
+		HERE LATEST
+		MARKER mark
+		: x 1 2 3 4 5 6 7 8 9 10 ;
+		: y 1 2 3 4 5 6 7 8 9 10 ;
+		: z 1 2 3 4 5 6 7 8 9 10 ;
+		2DUP LATEST <> SWAP HERE <> 2SWAP
+		mark
+		LATEST = SWAP HERE =
+		.S
+END
 
 end_test;

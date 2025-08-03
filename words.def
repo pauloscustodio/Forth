@@ -313,23 +313,27 @@
 "ABORT""", ABORT_QUOTE, F_IMMEDIATE, "f_abort_quote();"
 "(ABORT"")", XABORT_QUOTE, F_HIDDEN, "f_xabort_quote();"
 
-
-
-
-
-
-
-"RDEPTH", RDEPTH, 0, "push(vm.rstack->depth());"
-"CS_DEPTH", CS_DEPTH, 0, "push(vm.cs_stack->depth());"
+//-----------------------------------------------------------------------------
+// tools
+//-----------------------------------------------------------------------------
 ".S", DOT_S, 0, "vm.stack->print();"
-"RDEPTH", R_DEPTH, 0, "push(vm.rstack->depth());"
 ".RS", DOT_RS, 0, "vm.rstack->print(""R"");"
-"BLK", BLK, 0, "f_blk();"
-
-"THROW", THROW, 0, "f_throw();"
+"WORDS", WORDS, 0, "f_words();"
 "ENVIRONMENT?", ENVIRONMENT_Q, 0, "int size = pop(), addr = pop(); f_environment_q(mem_char_ptr(addr), size);"
 
-"WORDS", WORDS, 0, "f_words();"
+//-----------------------------------------------------------------------------
+// blocks
+//-----------------------------------------------------------------------------
+"BLK", BLK, 0, "f_blk();"
+
+"LOAD", LOAD, 0, "f_load(pop());"
+
+
+
+
+
+"THROW", THROW, 0, "f_throw();"
+
 
 "DABS", DABS, 0, "dpush(f_dabs(dpop()));"
 

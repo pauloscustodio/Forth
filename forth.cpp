@@ -4,6 +4,7 @@
 // License: GPL3 https://www.gnu.org/licenses/gpl-3.0.html
 //-----------------------------------------------------------------------------
 
+#include "block.h"
 #include "compiler.h"
 #include "dict.h"
 #include "environ.h"
@@ -256,15 +257,13 @@ int xtBYE = 0; // BYE .
 int xtABORT = 0; // ABORT .
 int xtABORT_QUOTE = 0; // ABORT" .
 int xtXABORT_QUOTE = 0; // (ABORT") .
-int xtRDEPTH = 0; // RDEPTH .
-int xtCS_DEPTH = 0; // CS_DEPTH .
 int xtDOT_S = 0; // .S .
-int xtR_DEPTH = 0; // RDEPTH .
 int xtDOT_RS = 0; // .RS .
-int xtBLK = 0; // BLK .
-int xtTHROW = 0; // THROW .
-int xtENVIRONMENT_Q = 0; // ENVIRONMENT? .
 int xtWORDS = 0; // WORDS .
+int xtENVIRONMENT_Q = 0; // ENVIRONMENT? .
+int xtBLK = 0; // BLK .
+int xtLOAD = 0; // LOAD .
+int xtTHROW = 0; // THROW .
 int xtDABS = 0; // DABS .
 //@@END
 
@@ -665,15 +664,13 @@ void create_dictionary() {
 	xtABORT = vm.dict->create("ABORT", 0, idABORT);
 	xtABORT_QUOTE = vm.dict->create("ABORT\"", F_IMMEDIATE, idABORT_QUOTE);
 	xtXABORT_QUOTE = vm.dict->create("(ABORT\")", F_HIDDEN, idXABORT_QUOTE);
-	xtRDEPTH = vm.dict->create("RDEPTH", 0, idRDEPTH);
-	xtCS_DEPTH = vm.dict->create("CS_DEPTH", 0, idCS_DEPTH);
 	xtDOT_S = vm.dict->create(".S", 0, idDOT_S);
-	xtR_DEPTH = vm.dict->create("RDEPTH", 0, idR_DEPTH);
 	xtDOT_RS = vm.dict->create(".RS", 0, idDOT_RS);
-	xtBLK = vm.dict->create("BLK", 0, idBLK);
-	xtTHROW = vm.dict->create("THROW", 0, idTHROW);
-	xtENVIRONMENT_Q = vm.dict->create("ENVIRONMENT?", 0, idENVIRONMENT_Q);
 	xtWORDS = vm.dict->create("WORDS", 0, idWORDS);
+	xtENVIRONMENT_Q = vm.dict->create("ENVIRONMENT?", 0, idENVIRONMENT_Q);
+	xtBLK = vm.dict->create("BLK", 0, idBLK);
+	xtLOAD = vm.dict->create("LOAD", 0, idLOAD);
+	xtTHROW = vm.dict->create("THROW", 0, idTHROW);
 	xtDABS = vm.dict->create("DABS", 0, idDABS);
 	//@@END
 }
@@ -926,15 +923,13 @@ void f_execute(int xt) {
 		case idABORT: { exit(EXIT_FAILURE); }; break; // ABORT .
 		case idABORT_QUOTE: { f_abort_quote(); }; break; // ABORT" .
 		case idXABORT_QUOTE: { f_xabort_quote(); }; break; // (ABORT") .
-		case idRDEPTH: { push(vm.rstack->depth()); }; break; // RDEPTH .
-		case idCS_DEPTH: { push(vm.cs_stack->depth()); }; break; // CS_DEPTH .
 		case idDOT_S: { vm.stack->print(); }; break; // .S .
-		case idR_DEPTH: { push(vm.rstack->depth()); }; break; // RDEPTH .
 		case idDOT_RS: { vm.rstack->print("R"); }; break; // .RS .
-		case idBLK: { f_blk(); }; break; // BLK .
-		case idTHROW: { f_throw(); }; break; // THROW .
-		case idENVIRONMENT_Q: { int size = pop(), addr = pop(); f_environment_q(mem_char_ptr(addr), size); }; break; // ENVIRONMENT? .
 		case idWORDS: { f_words(); }; break; // WORDS .
+		case idENVIRONMENT_Q: { int size = pop(), addr = pop(); f_environment_q(mem_char_ptr(addr), size); }; break; // ENVIRONMENT? .
+		case idBLK: { f_blk(); }; break; // BLK .
+		case idLOAD: { f_load(pop()); }; break; // LOAD .
+		case idTHROW: { f_throw(); }; break; // THROW .
 		case idDABS: { dpush(f_dabs(dpop())); }; break; // DABS .
 		//@@END
 		default:
