@@ -43,17 +43,21 @@ for (sort keys %untested) {
 }
 
 # show ANS words that are not implemented
-# ['CORE EXT' => 0],['BLOCK' => 0], ['BLOCK EXT' => 0],['DOUBLE' => 0], ['DOUBLE EXT' => 0],['FILE' => 0], ['FILE EXT' => 0]
-for (['CORE' => 1]) {
+# ,['BLOCK' => 0], ['BLOCK EXT' => 0],['DOUBLE' => 0], ['DOUBLE EXT' => 0],['FILE' => 0], ['FILE EXT' => 0]
+for (['CORE' => 1], ['CORE EXT' => 0]) {
 	my($wordset, $included) = @$_;
 	my $env_query = $wordset =~ s/ /-/gr;
 	
 	my @pending;
-	@ARGV = <t/DPANS94.txt>;
+	@ARGV = <t/Forth2012-words.txt>;
 	while (<>) {
-		next unless /^\s+[0-9.]+\s+(\S+).*?([A-Z]+.*)/;
-		my($word, $word_wordset) = ($1, $2);
-		$word =~ s/environment-query$//;
+		next unless /[0-9.]+\s+(\S+).*?([A-Z]+.*)/;
+		my($chapter, $word, $reading, $word_wordset) = split(/\t/, $_);
+		for ($chapter, $word, $reading, $word_wordset) {
+			s/^\s+//; s/\s+$//;
+		}
+		note "($chapter, $word, $reading, $word_wordset)";
+		#$word =~ s/environment-query$//;
 		if ($word_wordset eq $wordset && !exists $words{$word}) {
 			push(@pending, $word);
 		}
@@ -66,6 +70,26 @@ for (['CORE' => 1]) {
 	else {
 		forth_ok(qq(S" $env_query" ENVIRONMENT? .S), "( 0 -1 )");
 		note "$wordset not implemented: @pending";
+	}
+}
+
+# show implemented/not-implemented words
+my %wordsets;
+@ARGV = <t/Forth2012-words.txt>;
+while (<>) {
+	next unless /[0-9.]+\s+(\S+).*?([A-Z]+.*)/;
+	my($chapter, $word, $reading, $word_wordset) = split(/\t/, $_);
+	for ($chapter, $word, $reading, $wordset) {
+		s/^\s+//; s/\s+$//;
+	}
+	$wordsets{$word_wordset}{$word} = 1;
+}
+
+for my $wordset (sort keys %wordsets) {
+	note $wordset;
+	for my $word (sort keys %{$wordsets{$wordset}}) {
+		my $defined = exists $words{$word} ? "T" : "-";
+		note "$defined\t$word";
 	}
 }
 

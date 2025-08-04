@@ -3,7 +3,7 @@
 BEGIN { use lib 't'; require 'testlib.pl'; }
 
 # usage
-capture_nok("./forth -h", "Usage: forth [-e forth] [source [args...]]\n");
+capture_nok("./forth -h", "Usage: forth [-e forth] [-t] [source [args...]]\n");
 
 note "Test THROW";
 forth_ok("1 0 THROW .", "1 ");
