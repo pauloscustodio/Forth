@@ -1,68 +1,119 @@
 //-----------------------------------------------------------------------------
-// C implementation of a Forth interpreter
+// C++ implementation of a Forth interpreter
 // Copyright (c) Paulo Custodio, 2020-2025
 // License: GPL3 https://www.gnu.org/licenses/gpl-3.0.html
 //-----------------------------------------------------------------------------
 
 #pragma once
 
-#include "forth.h"
+#include "str.h"
+#include <string>
+#include <vector>
+using namespace std;
 
-// flags for name length
-#define F_COUNTED_STR_MASK  0xff
-#define F_LENMASK           0x3f
-#define F_HIDDEN            0x40
-#define F_IMMEDIATE         0x80
+struct Header {
+	int link;			// address of previous header
+	int name_addr;		// address of name
+	struct {
+		bool smudge : 1;
+		bool hidden : 1;
+		bool immediate : 1;
+	} flags;
+	int does;			// address of DOES> code
+	int code;			// primitive code
 
-void init_dict(void);
+	CString* name() const;
+	int xt() const;
+	int body() const;
+	static Header* header(int xt);
+};
 
-void comma(int value);
-void dcomma(dint value);
-void ccomma(int value);
-void counted_str_comma(const char* text, int len);
-void dict_name_comma(const char* text, int len, int flags);
-void long_str_comma(const char* text, int len);
-void align(void);
 
-// dictionary
-int  create(const char* name, int len, int flags, int id);
-void parse_create(int id);
-void f_create(void);
+class Dict {
+public:
+	void init(int lo_mem, int hi_mem);
+	void clear();
 
-void f_colon(void);
-void f_colon_noname(void);
-void f_semicolon(void);
+	int latest() const { return latest_; }
+	int here() const { return here_; }
+	int names() const { return names_; }
 
-void f_constant(void);
-void f_2constant(void);
+	void set_latest(int latest) { latest_ = latest; }
+	void set_here(int here) { here_ = here; }
+	void set_names(int names) { names_ = names; }
 
-void f_variable(void);
-void f_2variable(void);
+	void allot(int size);
+	int unused() const;
 
-void f_value(void);
-void f_to(void);
+	int parse_create(int code, int flags); // return xt of word
 
-void f_does(void);
-void f_xdoes_define(void);
+	int create(const string& name, int flags, int code); // return xt of word
+	int create(const char* name, size_t size, int flags, int code); // return xt of word
+	int create(const char* name, int size, int flags, int code); // return xt of word
+	int create(const CString* name, int flags, int code); // return xt of word
+
+	int alloc_cstring(const string& str);
+	int alloc_cstring(const char* str, size_t size);
+	int alloc_cstring(const char* str, int size);
+	int alloc_cstring(const CString* str);
+
+	int alloc_string(const string& str);
+	int alloc_string(const char* str, size_t size);
+	int alloc_string(const char* str, int size);
+	int alloc_string(const LongString* str);
+
+	void ccomma(int value);
+	void comma(int value);
+	void dcomma(dint value);
+	void align();
+
+	Header* parse_find_word();
+	Header* parse_find_existing_word();
+
+	Header* find_word(const string& name) const;
+	Header* find_word(const char* name, size_t size) const;
+	Header* find_word(const char* name, int size) const;
+	Header* find_word(const CString* name) const;
+
+	vector<string> get_words() const;
+
+private:
+    int lo_mem_, hi_mem_;// memory limits
+	int latest_;			// point to last defined word header
+	int here_;			// point to next free position at bottom of memory
+	int names_;			// point to last name created at top of memory
+
+	void check_free_space(int size = 0) const;
+	int create_cont(int name_addr, int flags, int code);
+};
+
+
+void f_find(int addr);	// search dictionary, word max size 255
+
+void f_colon();
+void f_colon_noname();
+void f_semicolon();
+
+int f_tick();
+void f_bracket_tick();
+
+void f_postpone();
+void f_bracket_compile();
+void f_immediate();
+void f_hidden();
+
+void f_create();
+void f_variable();
+void f_2variable();
+void f_value();
+void f_to();
+void f_constant();
+void f_2constant();
+void f_does();
+void f_xdoes_define();
 void f_xdoes_run(int body);
 
-int  link_to_name(int link);
-int  link_to_does(int link);
-int  link_to_xt(int link);
-int  xt_to_link(int xt);
-int  xt_to_body(int xt);
-int  body_to_does(int xt);
-void toggle_hidden(void);
-void toggle_immediate(void);
-
-int  c_find_link(const char* word, int len);
-void f_find(int cstr);
-int  f_tick(void);
-void f_bracket_tick(void);
-void f_postpone(void);
-void f_bracket_compile(void);
-
-void f_marker(void);
+void f_marker();
 void f_xmarker(int body);
 
-void print_words(void);
+void f_words();

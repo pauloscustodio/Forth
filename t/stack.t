@@ -1,0 +1,75 @@
+#!/usr/bin/perl
+
+BEGIN { use lib 't'; require 'testlib.pl'; }
+
+note "Test DROP";
+forth_ok("1 DROP .S  1 2 DROP .S", "( )( 1 )");
+forth_nok("DROP", "\nError: Stack underflow\n");
+
+note "Test SWAP";
+forth_ok("1 2 SWAP .S  3 SWAP .S", "( 2 1 )( 2 3 1 )");
+forth_nok("1 SWAP", "\nError: Stack underflow\n");
+
+note "Test DUP";
+forth_ok("1 DUP .S  2 DUP .S", "( 1 1 )( 1 1 2 2 )");
+forth_nok("DUP", "\nError: Stack underflow\n");
+
+note "Test ?DUP";
+forth_ok("0 ?DUP .S", "( 0 )");
+forth_ok("1 ?DUP .S", "( 1 1 )");
+
+note "Test OVER";
+forth_ok("1 2 OVER .S", "( 1 2 1 )");
+forth_nok("1 OVER", "\nError: Stack underflow\n");
+
+note "Test ROT";
+forth_ok("1 2 3 ROT .S", "( 2 3 1 )");
+forth_nok("1 2 ROT", "\nError: Stack underflow\n");
+
+note "Test NIP";
+forth_ok("1 2 NIP .S", "( 2 )");
+forth_nok("1 NIP", "\nError: Stack underflow\n");
+
+note "Test PICK";
+forth_ok("1 2 3 0 PICK .S", "( 1 2 3 3 )");
+forth_ok("1 2 3 1 PICK .S", "( 1 2 3 2 )");
+forth_ok("1 2 3 2 PICK .S", "( 1 2 3 1 )");
+forth_nok("1 2 3 3 PICK", "\nError: Stack underflow\n");
+forth_nok("3 2 1 -1 PICK .S", "\nError: Invalid memory address\n");
+
+note "Test ROLL";
+forth_ok(" 1 2 3 4  0 ROLL .S", "( 1 2 3 4 )");
+forth_ok(" 1 2 3 4  1 ROLL .S", "( 1 2 4 3 )");
+forth_ok(" 1 2 3 4  2 ROLL .S", "( 1 3 4 2 )");
+forth_ok(" 1 2 3 4  3 ROLL .S", "( 2 3 4 1 )");
+forth_nok("1 2 3 4  4 ROLL", "\nError: Stack underflow\n");
+forth_nok("1 2 3 4  -1 ROLL", "\nError: Invalid memory address\n");
+
+note "Test TUCK";
+forth_ok(" 1 2 TUCK .S", "( 2 1 2 )");
+forth_nok("1   TUCK", "\nError: Stack underflow\n");
+
+note "Test 2DROP";
+forth_ok("1 2 3 2DROP .S", "( 1 )");
+forth_nok("1 2DROP", "\nError: Stack underflow\n");
+
+note "Test 2SWAP";
+forth_ok("1 2 3 4 2SWAP .S", "( 3 4 1 2 )");
+forth_nok("1 2 3 2SWAP", "\nError: Stack underflow\n");
+
+note "Test 2DUP";
+forth_ok("1 2 2DUP .S", "( 1 2 1 2 )");
+forth_nok("1 2DUP", "\nError: Stack underflow\n");
+
+note "Test 2OVER";
+forth_ok("1 2 3 4 2OVER .S", "( 1 2 3 4 1 2 )");
+forth_nok("1 2 3 2OVER", "\nError: Stack underflow\n");
+
+note "Test 2ROT";
+forth_ok("1 2 3 4 5 6 2ROT .S", "( 3 4 5 6 1 2 )");
+forth_nok("1 2 3 4 5 2ROT", "\nError: Stack underflow\n");
+
+note "Test DEPTH";
+forth_ok("DEPTH . 1 DEPTH . 2 DEPTH . .S", "0 1 2 ( 1 2 )");
+
+end_test;

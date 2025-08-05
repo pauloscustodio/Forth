@@ -35,8 +35,7 @@ sub capture_ok {
 	
 	path("$test.exp")->spew($exp_out);
 	run_ok("$cmd > $test.out");
-	run_ok("dos2unix -q $test.exp $test.out");
-	run_ok("diff $test.exp $test.out");
+	run_ok("diff -w $test.exp $test.out");
 	check_die();
 }
 
@@ -46,8 +45,7 @@ sub capture_nok {
 	
 	path("$test.exp")->spew($exp_err);
 	run_nok("$cmd 2> $test.err");
-	run_ok("dos2unix -q $test.exp $test.err");
-	run_ok("diff $test.exp $test.err");
+	run_ok("diff -w $test.exp $test.err");
 	check_die();
 }
 

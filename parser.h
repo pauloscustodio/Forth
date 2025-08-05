@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-// C implementation of a Forth interpreter
+// C++ implementation of a Forth interpreter
 // Copyright (c) Paulo Custodio, 2020-2025
 // License: GPL3 https://www.gnu.org/licenses/gpl-3.0.html
 //-----------------------------------------------------------------------------
@@ -7,22 +7,24 @@
 #pragma once
 
 #include "forth.h"
+#include "str.h"
+using namespace std;
 
-void skip_blanks(void);
+const char* parse_word(int& size, char delimiter = BL);
+CString* parse_cword(char delimiter = BL);
 
-const char* c_parse(int delim, int* len);
-const char* c_parse_word(int* len);
+bool parse_number(const string& text, bool& is_double, dint& value);
+bool parse_number(const char* text, size_t size, bool& is_double, dint& value);
+bool parse_number(const char* text, int size, bool& is_double, dint& value);
 
-void f_parse(int delim);
-void f_parse_word(void);
 int f_word(int delim);
-int f_char(int delim);
-void f_bracket_char(int delim);
-void f_open_paren(void);
-void f_backslash(void);
+void f_number_q();
+void f_number();
+void f_to_number();
+void f_convert();
 
-int c_parse_number(const char* text, int len, dint* value);
-void f_number_q(void);
-void f_number(void);
-void f_to_number(void);
-void f_convert(void);
+void f_open_paren();
+void f_backslash();
+
+int f_char(char delim);
+void f_bracket_char(char delim);

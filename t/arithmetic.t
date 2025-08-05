@@ -13,47 +13,47 @@ forth_ok("2 1 - .S", "( 1 )");
 
 note "Test /";
 forth_ok("14 3 / .S", "( 4 )");
-forth_nok("10 0 /", "\nError: division by zero\n");
+forth_nok("10 0 /", "\nError: Division by zero\n");
 
 note "Test MOD";
 forth_ok(" 14  3 MOD .S", "( 2 )");
 forth_ok("-14  3 MOD .S", "( 1 )");
 forth_ok(" 14 -3 MOD .S", "( -1 )");
-forth_nok("10  0 MOD", "\nError: division by zero\n");
+forth_nok("10  0 MOD", "\nError: Division by zero\n");
 
 note "Test /MOD";
 forth_ok("14 3 /MOD .S", "( 2 4 )");
 forth_ok("-14 3 /MOD .S", "( 1 -5 )");
 forth_ok("14 -3 /MOD .S", "( -1 -5 )");
-forth_nok("10 0 /MOD", "\nError: division by zero\n");
+forth_nok("10 0 /MOD", "\nError: Division by zero\n");
 
 note "Test */";
 forth_ok(" 1525 10 100 */ .S", "( 152 )");
-forth_nok("1525 10   0 */", "\nError: division by zero\n");
+forth_nok("1525 10   0 */", "\nError: Division by zero\n");
 
 note "Test */MOD";
 forth_ok("1525  14  3 */MOD .S", "( 2 7116 )");
 forth_ok("1525 -14  3 */MOD .S", "( 1 -7117 )");
 forth_ok("1525  14 -3 */MOD .S", "( -1 -7117 )");
-forth_nok("100 10  0 */MOD", "\nError: division by zero\n");
+forth_nok("100 10  0 */MOD", "\nError: Division by zero\n");
 
 note "Test FM/MOD";
 forth_ok(" 1525.  14 FM/MOD .S", "( 13 108 )");
 forth_ok("-1525. -14 FM/MOD .S", "( -13 108 )");
 forth_ok(" 1525. -14 FM/MOD .S", "( -1 -109 )");
 forth_ok("-1525.  14 FM/MOD .S", "( 1 -109 )");
-forth_nok(" 100.   0 FM/MOD", "\nError: division by zero\n");
+forth_nok(" 100.   0 FM/MOD", "\nError: Division by zero\n");
 
 note "Test UM/MOD";
 forth_ok(" 1525.  14 UM/MOD .S", "( 13 108 )");
-forth_nok(" 100.   0 UM/MOD", "\nError: division by zero\n");
+forth_nok(" 100.   0 UM/MOD", "\nError: Division by zero\n");
 
 note "Test SM/REM";
 forth_ok(" 1525.  14 SM/REM .S", "( 13 108 )");
 forth_ok("-1525. -14 SM/REM .S", "( -13 108 )");
 forth_ok(" 1525. -14 SM/REM .S", "( 13 -108 )");
 forth_ok("-1525.  14 SM/REM .S", "( -13 -108 )");
-forth_nok(" 100.   0 SM/REM", "\nError: division by zero\n");
+forth_nok(" 100.   0 SM/REM", "\nError: Division by zero\n");
 
 note "Test M*";
 forth_ok("2  4 M* .S", "( 8 0 )");

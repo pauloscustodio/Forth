@@ -1,35 +1,34 @@
 //-----------------------------------------------------------------------------
-// C implementation of a Forth interpreter
+// C++ implementation of a Forth interpreter
 // Copyright (c) Paulo Custodio, 2020-2025
 // License: GPL3 https://www.gnu.org/licenses/gpl-3.0.html
 //-----------------------------------------------------------------------------
 
 #ifndef X
-#define X(code, message)
+#define X(id, message)
 #endif
 
-X(ErrorDataStackOveflow, "data stack overflow")
-X(ErrorDataStackUnderflow, "data stack underflow")
-X(ErrorDivisionByZero, "division by zero")
-X(ErrorInputBufferOverflow, "input buffer overflow")
-X(ErrorInvalidNumber, "invalid number")
-X(ErrorMemoryAddressRange, "memory address range")
-X(ErrorMemoryAlignment, "memory alignment")
-X(ErrorMemoryOverflow, "memory overflow")
-X(ErrorNameExpected, "name expected")
-X(ErrorNameTooLong, "name too long")
-X(ErrorNestedColonDefinition, "nested colon definition")
-X(ErrorNumberOutputOverflow, "number output overflow")
-X(ErrorOpenFile, "open file")
-X(ErrorOutOfMemory, "out of memory")
-X(ErrorReturnStackOveflow, "return stack overflow")
-X(ErrorReturnStackUnderflow, "return stack underflow")
-X(ErrorSemicolonWithoutColon, "; without :")
-X(ErrorStringTooLong, "string too long")
-X(ErrorStructStackOveflow, "struct stack overflow")
-X(ErrorStructStackUnderflow, "struct stack underflow")
-X(ErrorTooManyOpenFiles, "too many open files")
-X(ErrorWordNotDefined, "word not defined")
-X(ErrorInvalidForthCode, "invalid Forth code")
+X(None, "No error")
+X(InvalidMemoryAddress, "Invalid memory address")
+X(AddressAlignmentException, "Address alignment exception")
+X(MemoryOverflow, "Memory overflow")
+X(StackOverflow, "Stack overflow")
+X(StackUnderflow, "Stack underflow")
+X(ReturnStackOverflow, "Return stack overflow")
+X(ReturnStackUnderflow, "Return stack underflow")
+X(StructStackOverflow, "Structure stack overflow")
+X(StructStackUnderflow, "Structure stack underflow")
+X(ParsedStringOverflow, "Parsed string overflow")
+X(BufferOverflow, "Buffer overflow")
+X(DictionaryOverflow, "Dictionary overflow")
+X(OpenFileError, "Open file error")
+X(InvalidWordXT, "Invalid word xt")
+X(AttemptToUseZeroLengthStringAsName, "Attempt to use zero length string as name")
+X(UndefinedWord, "Undefined word")
+X(InvalidNumber, "Invalid number")
+X(CompilerNesting, "Compiler nesting")
+X(NumberOutputOverflow, "Number output overflow")
+X(NameTooLong, "Name too long")
+X(DivisionByZero, "Division by zero")
 
 #undef X

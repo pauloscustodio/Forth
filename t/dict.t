@@ -16,20 +16,46 @@ forth_ok("HERE 2 C, 'O' C, 'K' C, COUNT TYPE", "OK");
 note "Test FIND";
 note "Test COUNT";
 note "Test TYPE";
-forth_ok("BL WORD hello   FIND .S", "( 384 0 )");
+forth_ok("BL WORD hello   FIND .S", "( 0 0 )");
 forth_ok("BL WORD hello   FIND DROP COUNT TYPE", "hello");
 forth_ok("BL WORD dup     FIND SWAP ' dup     = SWAP .S", "( -1 -1 )");
 forth_ok("BL WORD literal FIND SWAP ' literal = SWAP .S", "( -1 1 )");
 
+note "Test CREATE";
+forth_nok("CREATE", "\nError: Attempt to use zero length string as name\n");
+forth_ok("CREATE ".("x" x 63), "");
+forth_nok("CREATE ".("x" x 64), "\nError: Name too long: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\n");
+forth_ok("CREATE x 123 , x @ .S", "( 123 )");
+
+note "Test CONSTANT";
+forth_ok("123 CONSTANT x  x  .S", "( 123 )");
+
+note "Test VARIABLE";
+forth_ok("VARIABLE x  123 x !  ' x >BODY @  .S", "( 123 )");
+
+note "Test >BODY";
+forth_ok("CREATE x 123 , ' x >BODY @ .S", "( 123 )");
+
+note "Test :";
+note "Test ;";
+forth_nok(":", "\nError: Attempt to use zero length string as name\n");
+forth_nok(": ".("x" x 64), "\nError: Name too long: ".("x" x 64)."\n");
+forth_nok(": x [ :", "\nError: Compiler nesting\n");
+forth_nok(";", "\nError: Compiler nesting\n");
+forth_ok(": x DUP ; 1 x .S", "( 1 1 )");
+
+note "Test :NONAME";
+forth_ok(":NONAME 1 . ; EXECUTE .S", "1 ( )");
+
 note "Test '";
 note "Test EXECUTE";
-forth_nok("'", "\nError: word not defined: \n");
-forth_nok("' hello", "\nError: word not defined: hello\n");
+forth_nok("'", "\nError: Attempt to use zero length string as name\n");
+forth_nok("' hello", "\nError: Undefined word: hello\n");
 forth_ok("1 2 3 ' .S EXECUTE", "( 1 2 3 )");
 
 note "Test [']";
 note "Test EXECUTE";
-forth_nok(": x ['] hello ; x", "\nError: word not defined: hello\n");
+forth_nok(": x ['] hello ; x", "\nError: Undefined word: hello\n");
 forth_ok(": x ['] .S EXECUTE ; 1 2 3 x", "( 1 2 3 )");
 
 note "Test POSTPONE";
@@ -47,31 +73,11 @@ END
 forth_ok("$func  0 x", "2 ");
 forth_ok("$func -1 x", "1 ");
 
-note "Test CREATE";
-forth_nok("CREATE", "\nError: name expected\n");
-forth_ok("CREATE ".("x" x 63), "");
-forth_nok("CREATE ".("x" x 64), "\nError: name too long: ".("x" x 64)."\n");
-forth_ok("CREATE x 123 , x @ .S", "( 123 )");
+note "Test CHAR";
+forth_ok("CHAR ! .S", "( 33 )");
 
-note "Test CONSTANT";
-forth_ok("123 CONSTANT x  x  .S", "( 123 )");
-
-note "Test VARIABLE";
-forth_ok("VARIABLE x  123 x !  ' x >BODY @  .S", "( 123 )");
-
-note "Test >BODY";
-forth_ok("CREATE x 123 , ' x >BODY @ .S", "( 123 )");
-
-note "Test :";
-note "Test ;";
-forth_nok(":", "\nError: name expected\n");
-forth_nok(": ".("x" x 64), "\nError: name too long: ".("x" x 64)."\n");
-forth_nok(": x [ :", "\nError: nested colon definition\n");
-forth_nok(";", "\nError: ; without :\n");
-forth_ok(": x DUP ; 1 x .S", "( 1 1 )");
-
-note "Test :NONAME";
-forth_ok(":NONAME 1 . ; EXECUTE .S", "1 ( )");
+note "Test [CHAR]";
+forth_ok(": x [CHAR] ! ; x .S", "( 33 )");
 
 note "Test ALIGN";
 forth_ok("HERE ALIGN HERE SWAP - .S", "( 0 )");
@@ -92,26 +98,16 @@ forth_ok("HERE -1 ALLOT HERE SWAP - .S", "( -1 )");
 note "Test UNUSED";
 forth_ok("UNUSED 1 , UNUSED - .S", "( 1 )");
 
-note "Test LATEST";
-forth_ok(<<END, "( -1 1 ".ord('x')." )");
-		HERE
-		: x 1 2 3 4 5 6 7 8 9 10 ;
-		LATEST = 
-		LATEST CELL+ DUP C@
-		SWAP CHAR+ C@
-		.S
-END
-
 note "Test MARKER";
-forth_ok(<<END, "( -1 -1 -1 -1 )");
-		HERE LATEST
+forth_ok(<<END, "( -1 -1 )");
+		HERE
 		MARKER mark
 		: x 1 2 3 4 5 6 7 8 9 10 ;
 		: y 1 2 3 4 5 6 7 8 9 10 ;
 		: z 1 2 3 4 5 6 7 8 9 10 ;
-		2DUP LATEST <> SWAP HERE <> 2SWAP
+		DUP HERE <> SWAP
 		mark
-		LATEST = SWAP HERE =
+		HERE =
 		.S
 END
 

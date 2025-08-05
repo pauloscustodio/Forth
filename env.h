@@ -9,9 +9,11 @@
 #include <string>
 using namespace std;
 
-enum class Error {
-#define X(id, message) id,
-#include "errors.def"
-};
+extern int g_argc;
+extern char** g_argv;
+extern bool g_interactive;
 
-[[noreturn]] void error(Error err, const string& arg = "");
+void f_environment_q();
+void f_environment_q(const string& query);
+void f_environment_q(const char* query, size_t size);
+void f_environment_q(const char* query, int size);

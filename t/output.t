@@ -22,9 +22,9 @@ forth_ok(<<'END', "( 1912276171 287 )1,234,567,890,123");
 END
 forth_ok("-1234567890123. SWAP OVER DABS .S <# #S ROT SIGN #> TYPE", 
 		 "( -288 1912276171 287 )-1234567890123");
-forth_ok("0. <# ".("#\n" x 128)." #> TYPE", "0" x 128);
-forth_nok("0. <# ".("#\n" x 129)." #> TYPE", 
-		  "\nError: number output overflow\n");
+forth_ok("0. <# ".("#\n" x 256)." #> TYPE", "0" x 256);
+forth_nok("0. <# ".("#\n" x 257)." #> TYPE", 
+		  "\nError: Number output overflow\n");
 
 note "Test .";
 forth_ok("0 .", "0 ");
@@ -58,6 +58,31 @@ forth_ok("123 2 U.R", "123");
 forth_ok("123 3 U.R", "123");
 forth_ok("123 4 U.R", " 123");
 forth_ok("123 5 U.R", "  123");
+
+note "Test U.R";
+forth_ok("-1 7 U.R", "4294967295");
+forth_ok("-1 8 U.R", "4294967295");
+forth_ok("-1 9 U.R", "4294967295");
+forth_ok("-1 10 U.R", "4294967295");
+forth_ok("-1 11 U.R", " 4294967295");
+forth_ok("-1 12 U.R", "  4294967295");
+
+note 'Test D.';
+forth_ok("1. D. .S",	"1 ( )");
+forth_ok("-1. D. .S",	"-1 ( )");
+
+note 'Test D.R';
+forth_ok("1. 0 D.R",	"1");
+forth_ok("1. 1 D.R",	"1");
+forth_ok("1. 2 D.R",	" 1");
+forth_ok("1. 3 D.R",	"  1");
+forth_ok("1. 4 D.R",	"   1");
+
+forth_ok("-1. 0 D.R",	"-1");
+forth_ok("-1. 1 D.R",	"-1");
+forth_ok("-1. 2 D.R",	"-1");
+forth_ok("-1. 3 D.R",	" -1");
+forth_ok("-1. 4 D.R",	"  -1");
 
 note "Test EMIT";
 forth_ok("33 EMIT", "!");
