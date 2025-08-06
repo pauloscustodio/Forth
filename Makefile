@@ -27,9 +27,9 @@ TASKS	?= 9
 
 all: $(PROJ)$(EXE)
 
-$(PROJ)$(EXE): $(OBJS) $(DEFS) Makefile
+$(PROJ)$(EXE): $(OBJS) $(DEFS) Makefile $(wildcard *.pl)
 	$(CXX) $(CXXFLAGS) -o $(PROJ)$(EXE) $(OBJS)
-	perl update_readme.pl
+	perl update_words.pl
 	dos2unix README.md
 
 clean:
@@ -42,6 +42,6 @@ astyle:
 	$(ASTYLE) *.cpp *.h
 
 cloc:
-	perl -S cloc *.cpp *.h *.def t/*.t t/*.pl
+	perl -S cloc *.cpp *.h *.def *.pl t/*.t t/*.pl
 
 -include $(DEPENDS)
