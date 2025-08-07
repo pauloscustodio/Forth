@@ -29,6 +29,14 @@ END
 forth_ok("PARSE-WORD  !   TYPE .S", "!( )");
 forth_ok("PARSE-WORD  abc TYPE '!' EMIT PARSE-WORD def TYPE .S", "abc!def( )");
 
+note "Test PARSE-NAME";
+forth_ok(<<END, "( )");
+		PARSE-NAME
+		TYPE .S
+END
+forth_ok("PARSE-NAME  !   TYPE .S", "!( )");
+forth_ok("PARSE-NAME  abc TYPE '!' EMIT PARSE-NAME def TYPE .S", "abc!def( )");
+
 note "Test CHAR";
 forth_ok("CHAR ! .S", "( 33 )");
 

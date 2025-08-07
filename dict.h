@@ -117,3 +117,11 @@ void f_marker();
 void f_xmarker(int body);
 
 void f_words();
+
+void f_defer();
+void f_xdefer(int body);
+void f_defer_fetch();
+void f_defer_fetch(int xt);
+void f_defer_store();
+void f_action_of();
+void f_is();

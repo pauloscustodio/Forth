@@ -169,7 +169,8 @@ CODE("(MARKER)", XMARKER, F_HIDDEN, f_xmarker(body))
 // parser
 CODE("WORD", WORD, 0, push(f_word(pop())))
 CODE("PARSE", PARSE, 0, f_parse(pop()))
-CODE("PARSE-WORD", PARSE_WORD, 0, f_parse_word())
+CODE("PARSE-WORD", PARSE_WORD, 0, f_parse_name())
+CODE("PARSE-NAME", PARSE_NAME, 0, f_parse_name())
 
 CODE("CHAR", CHAR, 0, push(f_char(BL)))
 CODE("[CHAR]", BRACKET_CHAR, F_IMMEDIATE, f_bracket_char(BL))
@@ -285,6 +286,13 @@ CODE("POSTPONE", POSTPONE, F_IMMEDIATE, f_postpone())
 CODE("IMMEDIATE", IMMEDIATE, F_IMMEDIATE, f_immediate())
 CODE("COMPILE,", COMPILE_COMMA, F_IMMEDIATE, comma(pop()))
 CODE("[COMPILE]", BRACKET_COMPILE, F_IMMEDIATE, f_bracket_compile())
+
+CODE("DEFER", DEFER, 0, f_defer())
+CODE("(DEFER)", XDEFER, F_HIDDEN, f_xdefer(body))
+CODE("DEFER@", DEFER_FETCH, 0, f_defer_fetch(pop()))
+CODE("DEFER!", DEFER_STORE, 0, f_defer_store())
+CODE("ACTION-OF", ACTION_OF, F_IMMEDIATE, f_action_of())
+CODE("IS", IS, F_IMMEDIATE, f_is())
 
 CODE("(", OPEN_PAREN, F_IMMEDIATE, f_open_paren())
 CODE("\\", BACKSLASH, F_IMMEDIATE, f_backslash())

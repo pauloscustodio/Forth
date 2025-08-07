@@ -359,6 +359,7 @@ void f_to() {
 	else
 		store(header->body(), pop());
 }
+
 void f_constant() {
 	vm.dict->parse_create(idXDOCONST, 0);
 	comma(pop());
@@ -432,5 +433,58 @@ void f_words() {
 		}
 	}
 	cout << endl;
+}
+
+void f_defer() {
+	vm.dict->parse_create(idXDEFER, 0);
+	comma(xtABORT);
+}
+
+void f_xdefer(int body) {
+	int xt = fetch(body);
+	f_execute(xt);
+}
+
+void f_defer_fetch() {
+	int xt = pop();
+	f_defer_fetch(xt);
+}
+
+void f_defer_fetch(int xt) {
+	int body = xt + CELL_SZ;
+	push(fetch(body));
+}
+
+void f_defer_store() {
+	int xt_self = pop();
+	int xt_action = pop();
+	int body = xt_self + CELL_SZ;
+	store(body, xt_action);
+}
+
+void f_action_of() {
+	Header* header = vm.dict->parse_find_existing_word();
+	assert(header != nullptr);
+	if (vm.user->STATE == STATE_INTERPRET) {
+		f_defer_fetch(header->xt());
+	}
+	else {
+		comma(xtXLITERAL);
+		comma(header->xt());
+		comma(xtDEFER_FETCH);
+	}
+}
+
+void f_is() {
+	Header* header = vm.dict->parse_find_existing_word();
+	assert(header != nullptr);
+	if (vm.user->STATE == STATE_INTERPRET) {
+		store(header->body(), pop());
+	}
+	else {
+		comma(xtXLITERAL);
+		comma(header->xt());
+		comma(xtDEFER_STORE);
+	}
 }
 

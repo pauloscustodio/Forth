@@ -19,7 +19,7 @@ bool parse_number(const char* text, int size, bool& is_double, dint& value);
 
 int f_word(char delimiter);
 void f_parse(char delimiter);
-void f_parse_word();
+void f_parse_name();
 
 int f_char(char delimiter);
 void f_bracket_char(char delimiter);

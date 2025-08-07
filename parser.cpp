@@ -187,7 +187,7 @@ void f_parse(char delimiter) {
     push(size);
 }
 
-void f_parse_word() {
+void f_parse_name() {
     int size;
     const char* word = parse_word(size, BL);
     push(mem_addr(word));
