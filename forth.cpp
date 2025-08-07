@@ -7,6 +7,7 @@
 #include "compiler.h"
 #include "env.h"
 #include "errors.h"
+#include "file.h"
 #include "forth.h"
 #include "interp.h"
 #include "math.h"

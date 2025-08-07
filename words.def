@@ -353,6 +353,11 @@ CODE("ENVIRONMENT?", ENVIRONMENT_Q, 0, f_environment_q())
 CODE("DABS", DABS, 0, dpush(f_dabs(dpop())))
 
 
+// files
+CODE("INCLUDED", INCLUDED, 0, f_included())
+
+
+
 #undef CONST
 #undef VAR
 #undef CODE

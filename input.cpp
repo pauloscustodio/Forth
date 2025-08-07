@@ -48,6 +48,7 @@ void Input::open_file(const string& filename) {
         error(Error::OpenFileError, filename);
 
     source_id_ = 1; // file
+    set_buffer("", 0);
 }
 
 void Input::open_terminal() {
@@ -55,11 +56,15 @@ void Input::open_terminal() {
         input_file_->close();
 
     source_id_ = 0; // terminal
+    set_buffer("", 0);
 }
 
 void Input::set_text(const char* text, int size) {
-    set_buffer(text, size);
+    if (input_file_->is_open())
+        input_file_->close();
+
     source_id_ = -1; // string
+    set_buffer(text, size);
 }
 
 void Input::set_text(const char* text, size_t size) {
@@ -111,15 +116,15 @@ void Input::save_input() {
     SaveInput save;
     save.filename = *filename_;
     if (input_file_->is_open()) {
-            save.is_open = true;
-            save.fpos = input_file_->tellg();
-            input_file_->close();
-        }
+        save.is_open = true;
+        save.fpos = input_file_->tellg();
+        input_file_->close();
+    }
     else {
         save.is_open = false;
         save.fpos = 0;
     }
-    
+
     save.source_id = source_id_;
     save.buffer = string(buffer_, buffer_ + vm.user->NR_IN);
     save.nr_in = vm.user->NR_IN;
@@ -132,12 +137,18 @@ bool Input::restore_input() {
     if (input_stack_->empty())
         return false;
     else {
+        if (input_file_->is_open())
+            input_file_->close();
+        
         SaveInput save = input_stack_->back();
         input_stack_->pop_back();
 
         *filename_ = save.filename;
         if (save.is_open) {
             input_file_->open(*filename_, ios::binary);
+            if (!input_file_->is_open())
+                error(Error::OpenFileError, *filename_);
+
             input_file_->seekg(save.fpos);
         }
         source_id_ = save.source_id;

@@ -23,6 +23,7 @@
     <ClInclude Include="..\..\dict.h" />
     <ClInclude Include="..\..\env.h" />
     <ClInclude Include="..\..\errors.h" />
+    <ClInclude Include="..\..\file.h" />
     <ClInclude Include="..\..\forth.h" />
     <ClInclude Include="..\..\input.h" />
     <ClInclude Include="..\..\interp.h" />
@@ -39,6 +40,7 @@
     <ClCompile Include="..\..\dict.cpp" />
     <ClCompile Include="..\..\env.cpp" />
     <ClCompile Include="..\..\errors.cpp" />
+    <ClCompile Include="..\..\file.cpp" />
     <ClCompile Include="..\..\forth.cpp" />
     <ClCompile Include="..\..\input.cpp" />
     <ClCompile Include="..\..\interp.cpp" />

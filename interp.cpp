@@ -128,8 +128,17 @@ void f_evaluate(const char* text, int size) {
 void f_quit() {
     vm.r_stack->clear();
     vm.user->STATE = STATE_INTERPRET;
-    while (f_refill())
-        f_interpret();
+    while (true) {
+        while (f_refill())
+            f_interpret();
+        if (vm.input->restore_input()) {
+            f_interpret();  // skip first refill(), buffer is already setup
+            continue;
+        }
+        else
+            break;
+    }
+    
     exit(EXIT_SUCCESS);
 }
 
