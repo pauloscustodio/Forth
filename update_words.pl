@@ -47,7 +47,7 @@ for my $wordset (sort keys %wordsets) {
 	$out .= "  Missing:\n".wrap("    ", "    ", "@missing")."\n" if @missing;
 	$out .= "\n";
 }
-$out .= "NON-STANDARD:\n  Implemented:\n".
+$out .= "NOT STANDARD:\n  Implemented:\n".
 		wrap("    ", "    ", join(" ", sort keys %not_standard_words))."\n";
 
 # patch README

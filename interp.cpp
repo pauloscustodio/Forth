@@ -85,8 +85,12 @@ void f_interpret() {
     while (true) {
         int size;
         const char* word = parse_word(size, BL);
-        if (size == 0)
-            break;
+        if (size == 0) {
+            if (vm.input->restore_input_if_query())
+                continue;
+            else
+                break;
+        }
 
         interpret_word(word, size);
     }
@@ -111,35 +115,14 @@ void f_evaluate(const char* text, size_t size) {
 
 void f_evaluate(const char* text, int size) {
     // save input context
-    string old_filename = vm.input->filename();
-    int old_source_id = vm.input->source_id();
-    string old_buffer(vm.input->buffer(), vm.input->buffer() + vm.input->size());
-    int old_to_in = vm.user->TO_IN;
+    vm.input->save_input();
     
-    streampos old_fpos = 0;
-    if (vm.input->input_file()->is_open())
-        old_fpos = vm.input->input_file()->tellg();
-
     // parse string
     vm.input->set_text(text, size);
     f_execute(xtINTERPRET);
 
     // restore input context
-    if (old_source_id < 0) {
-        vm.input->set_text(old_buffer);
-        vm.user->TO_IN = old_to_in;
-    }
-    else if (old_source_id == 0) {
-        vm.input->open_terminal();
-        vm.user->TO_IN = old_to_in;
-    }
-    else {
-        vm.input->open_file(old_filename);
-        if (vm.input->input_file()->is_open()) 
-            vm.input->input_file()->seekg(old_fpos);
-        vm.input->set_buffer(old_buffer);
-        vm.user->TO_IN = old_to_in;
-    }
+    vm.input->restore_input();
 }
 
 void f_quit() {

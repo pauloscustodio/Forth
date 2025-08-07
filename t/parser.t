@@ -13,7 +13,21 @@ forth_ok(<<'END', "hello");
 		COUNT TYPE
 END
 
-forth_ok(("0" x 1000)." .S", "( 0 )");
+note "Test PARSE";
+forth_ok(<<END, "( )");
+		'!' PARSE
+		TYPE .S
+END
+forth_ok("'!' PARSE ! TYPE .S", "( )");
+forth_ok("'!' PARSE abc! TYPE '!' EMIT '!' PARSE def! TYPE .S", "abc!def( )");
+
+note "Test PARSE-WORD";
+forth_ok(<<END, "( )");
+		PARSE-WORD
+		TYPE .S
+END
+forth_ok("PARSE-WORD  !   TYPE .S", "!( )");
+forth_ok("PARSE-WORD  abc TYPE '!' EMIT PARSE-WORD def TYPE .S", "abc!def( )");
 
 note "Test CHAR";
 forth_ok("CHAR ! .S", "( 33 )");
@@ -29,6 +43,8 @@ note "Test DPL";
 note "Test BASE";
 note "Test DECIMAL";
 note "Test HEX";
+
+forth_ok(("0" x 1000)." .S", "( 0 )");
 
 # not a number
 forth_ok(" BL WORD abc COUNT NUMBER? .S DROP DPL @ .S", "( 0 )( 0 )");

@@ -29,33 +29,31 @@ static int char_digit(char c) {
 
 static void skip_blanks() {
     char* buffer = vm.input->buffer();
-    int size = vm.input->size();
 
-    while (vm.user->TO_IN < size && is_space(buffer[vm.user->TO_IN])) 
+    while (vm.user->TO_IN < vm.user->NR_IN  && is_space(buffer[vm.user->TO_IN]))
         ++vm.user->TO_IN;
 }
 
 static int skip_to_delimiter(char delimiter) {
     char* buffer = vm.input->buffer();
-    int size = vm.input->size();
 
     int end = vm.user->TO_IN;
     if (delimiter == BL) {
-        while (vm.user->TO_IN < size && !is_space(buffer[vm.user->TO_IN])) 
+        while (vm.user->TO_IN < vm.user->NR_IN && !is_space(buffer[vm.user->TO_IN]))
             ++vm.user->TO_IN;
         
         end = vm.user->TO_IN;
 
-        if (vm.user->TO_IN < size && is_space(buffer[vm.user->TO_IN]))
+        if (vm.user->TO_IN < vm.user->NR_IN && is_space(buffer[vm.user->TO_IN]))
             ++vm.user->TO_IN;		// skip delimiter
     }
     else {
-        while (vm.user->TO_IN < size && buffer[vm.user->TO_IN] != delimiter) 
+        while (vm.user->TO_IN < vm.user->NR_IN && buffer[vm.user->TO_IN] != delimiter)
             ++vm.user->TO_IN;
         
         end = vm.user->TO_IN;
 
-        if (vm.user->TO_IN < size && buffer[vm.user->TO_IN] == delimiter) 
+        if (vm.user->TO_IN < vm.user->NR_IN && buffer[vm.user->TO_IN] == delimiter)
             ++vm.user->TO_IN;		// skip delimiter
         
     }
@@ -177,9 +175,38 @@ bool parse_number(const char* text, int size, bool& is_double, dint& value) {
     return true;
 }
 
-int f_word(int delim) {
-    CString* word = parse_cword(delim);
+int f_word(char delimiter) {
+    CString* word = parse_cword(delimiter);
     return mem_addr(word);
+}
+
+void f_parse(char delimiter) {
+    int size;
+    const char* word = parse_word(size, delimiter);
+    push(mem_addr(word));
+    push(size);
+}
+
+void f_parse_word() {
+    int size;
+    const char* word = parse_word(size, BL);
+    push(mem_addr(word));
+    push(size);
+}
+
+int f_char(char delimiter) {
+    int size = 0;
+    const char* str = parse_word(size, delimiter);
+    if (size == 0)
+        return 0;
+    else
+        return *str;
+}
+
+void f_bracket_char(char delimiter) {
+    int c = f_char(delimiter);
+    comma(xtXLITERAL);
+    comma(c);
 }
 
 static int _number(bool do_error) {
@@ -255,20 +282,5 @@ void f_backslash() {
     */
 
     skip_to_delimiter(CR);
-}
-
-int f_char(char delim) {
-    int size = 0;
-    const char* str = parse_word(size, delim);
-    if (size == 0)
-        return 0;
-    else
-        return *str;
-}
-
-void f_bracket_char(char delim) {
-    int c = f_char(delim);
-    comma(xtXLITERAL);
-    comma(c);
 }
 

@@ -26,6 +26,10 @@ note "Test ROT";
 forth_ok("1 2 3 ROT .S", "( 2 3 1 )");
 forth_nok("1 2 ROT", "\nError: Stack underflow\n");
 
+note "Test -ROT";
+forth_ok("1 2 3 -ROT .S", "( 3 1 2 )");
+forth_nok("1 2 -ROT", "\nError: Stack underflow\n");
+
 note "Test NIP";
 forth_ok("1 2 NIP .S", "( 2 )");
 forth_nok("1 NIP", "\nError: Stack underflow\n");
@@ -68,6 +72,21 @@ forth_nok("1 2 3 2OVER", "\nError: Stack underflow\n");
 note "Test 2ROT";
 forth_ok("1 2 3 4 5 6 2ROT .S", "( 3 4 5 6 1 2 )");
 forth_nok("1 2 3 4 5 2ROT", "\nError: Stack underflow\n");
+
+note "Test -2ROT";
+forth_ok("1 2 3 4 5 6 -2ROT .S", "( 5 6 1 2 3 4 )");
+forth_nok("1 2 3 4 5 -2ROT", "\nError: Stack underflow\n");
+
+note "Test SP@";
+note "Test SP!";
+note "Test S0";
+forth_ok("1 SP@ 2 SWAP SP! .S", "( 1 )");
+forth_ok("1 2 3 4 5 6 S0 SP! .S", "( )");
+forth_ok("S0 SP@ - .S", "( 1 )");
+forth_ok("1 2 S0 SP@ - .S", "( 1 2 3 )");
+
+note "Test S0";
+forth_ok("S0 .S", "( 4096 )");
 
 note "Test DEPTH";
 forth_ok("DEPTH . 1 DEPTH . 2 DEPTH . .S", "0 1 2 ( 1 2 )");

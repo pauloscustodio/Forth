@@ -17,7 +17,13 @@ bool parse_number(const string& text, bool& is_double, dint& value);
 bool parse_number(const char* text, size_t size, bool& is_double, dint& value);
 bool parse_number(const char* text, int size, bool& is_double, dint& value);
 
-int f_word(int delim);
+int f_word(char delimiter);
+void f_parse(char delimiter);
+void f_parse_word();
+
+int f_char(char delimiter);
+void f_bracket_char(char delimiter);
+
 void f_number_q();
 void f_number();
 void f_to_number();
@@ -26,5 +32,3 @@ void f_convert();
 void f_open_paren();
 void f_backslash();
 
-int f_char(char delim);
-void f_bracket_char(char delim);

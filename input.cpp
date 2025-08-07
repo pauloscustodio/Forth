@@ -15,14 +15,18 @@ void Pad::init() {
 }
 
 void Input::init() {
+    filename_ = new string;
     input_file_ = new ifstream();
     source_id_ = 0;
 	memset(buffer_, BL, sizeof(buffer_));
-    size_ = 0;
+    input_stack_ = new vector<SaveInput>;
+    num_query_ = 0;
 }
 
 void Input::deinit() {
+    delete filename_;
     delete input_file_;
+    delete input_stack_;
 }
 
 void Input::open_file(const char* filename, int size) {
@@ -34,7 +38,7 @@ void Input::open_file(const char* filename, size_t size) {
 }
 
 void Input::open_file(const string& filename) {
-    filename_ = filename;
+    *filename_ = filename;
 
     if (input_file_->is_open()) 
         input_file_->close();
@@ -70,10 +74,10 @@ void Input::set_buffer(const char* text, int size) {
     if (size > BUFFER_SZ)
         error(Error::BufferOverflow);
 
-    size_ = size;
+    vm.user->NR_IN = size;
     vm.user->TO_IN = 0;
-    memcpy(buffer_, text, size_);
-    buffer_[size_] = BL; // BL after the string
+    memcpy(buffer_, text, size);
+    buffer_[size] = BL; // BL after the string
 }
 
 void Input::set_buffer(const char* text, size_t size) {
@@ -95,20 +99,77 @@ bool Input::refill() {
     else
         ok = static_cast<bool>(std::getline(*input_file_, line)); // input from file
 
-    if (line.size() > BUFFER_SZ)
-        error(Error::BufferOverflow);
-
-    size_ = static_cast<int>(line.size());
+    set_buffer(line);
+    vm.user->NR_IN = static_cast<int>(line.size());
     vm.user->TO_IN = 0;
-    memcpy(buffer_, line.c_str(), size_);
-    buffer_[size_] = BL; // BL after the string
 
     return ok;
 }
 
+// save input context
+void Input::save_input() {
+    SaveInput save;
+    save.filename = *filename_;
+    if (input_file_->is_open()) {
+            save.is_open = true;
+            save.fpos = input_file_->tellg();
+            input_file_->close();
+        }
+    else {
+        save.is_open = false;
+        save.fpos = 0;
+    }
+    
+    save.source_id = source_id_;
+    save.buffer = string(buffer_, buffer_ + vm.user->NR_IN);
+    save.nr_in = vm.user->NR_IN;
+    save.to_in = vm.user->TO_IN;
+
+    input_stack_->push_back(save);
+}
+
+bool Input::restore_input() {
+    if (input_stack_->empty())
+        return false;
+    else {
+        SaveInput save = input_stack_->back();
+        input_stack_->pop_back();
+
+        *filename_ = save.filename;
+        if (save.is_open) {
+            input_file_->open(*filename_, ios::binary);
+            input_file_->seekg(save.fpos);
+        }
+        source_id_ = save.source_id;
+        set_buffer(save.buffer);
+        vm.user->NR_IN = save.nr_in;
+        vm.user->TO_IN = save.to_in;
+
+        return true;
+    }
+}
+
+void Input::save_input_for_query() {
+    ++num_query_;
+    save_input();
+}
+
+bool Input::restore_input_if_query() {
+    if (num_query_ <= 0)
+        return false;
+    else {
+        --num_query_;
+        return restore_input();
+    }
+}
+
 void f_source() {
     push(mem_addr(vm.input->buffer()));
-    push(vm.input->size());
+    push(vm.user->NR_IN);
+}
+
+void f_tib() {
+    push(mem_addr(vm.input->buffer()));
 }
 
 bool f_refill() {
@@ -140,3 +201,23 @@ int f_key() {
     cin >> c;
     return c;
 }
+
+void f_expect() {
+    f_accept();
+    vm.user->SPAN = pop();
+}
+
+void f_query() {
+    vm.input->save_input_for_query();
+    vm.input->open_terminal();
+    vm.input->refill();
+}
+
+void f_save_input() {
+    vm.input->save_input();
+}
+
+bool f_restore_input() {
+    return vm.input->restore_input();
+}
+
