@@ -19,6 +19,9 @@ public:
     void add_digits();
     void add_char(char c);
     void add_sign(int sign);
+    void add_string(const string& str);
+    void add_string(const char* str, size_t size);
+    void add_string(const char* str, int size);
     void end() const;
     void end_print() const;
 

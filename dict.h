@@ -103,6 +103,7 @@ void f_immediate();
 void f_hidden();
 
 void f_create();
+void f_buffer_colon();
 void f_variable();
 void f_2variable();
 void f_value();

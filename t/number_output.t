@@ -26,6 +26,16 @@ forth_ok("0. <# ".("#\n" x 256)." #> TYPE", "0" x 256);
 forth_nok("0. <# ".("#\n" x 257)." #> TYPE", 
 		  "\nError: Number output overflow\n");
 
+note "SIGN";
+forth_ok('<#  127. TUCK DABS #S ROT SIGN #> TYPE .S', '127( )');
+forth_ok('<# -127. TUCK DABS #S ROT SIGN #> TYPE .S', '-127( )');
+
+note "Test HOLD";
+forth_ok('<# 12700 0 # # CHAR , HOLD #S CHAR $ HOLD #> TYPE .S', '$127,00( )');
+
+note "Test HOLDS";
+forth_ok('<# 127 0 #S S" Number:" HOLDS #> TYPE .S', "Number:127( )");
+
 note "Test .";
 forth_ok("0 .", "0 ");
 forth_ok("-12345 .", "-12345 ");
@@ -84,20 +94,5 @@ forth_ok("-1. 2 D.R",	"-1");
 forth_ok("-1. 3 D.R",	" -1");
 forth_ok("-1. 4 D.R",	"  -1");
 
-note "Test EMIT";
-forth_ok("33 EMIT", "!");
-
-note "Test CR";
-forth_ok("CR", "\n");
-
-note "Test SPACE";
-forth_ok("SPACE", " ");
-
-note "Test SPACES";
-forth_ok("-1 SPACES", "");
-forth_ok(" 0 SPACES", "");
-forth_ok(" 1 SPACES", " ");
-forth_ok(" 2 SPACES", "  ");
-forth_ok(" 3 SPACES", "   ");
 
 end_test;

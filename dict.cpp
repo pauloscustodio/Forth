@@ -333,6 +333,12 @@ void f_create() {
 	vm.dict->parse_create(idXDOVAR, 0);
 }
 
+void f_buffer_colon() {
+	vm.dict->parse_create(idXDOVAR, 0);
+	int size = pop();
+	vm.dict->allot(size);
+}
+
 void f_variable() {
 	vm.dict->parse_create(idXDOVAR, 0);
 	comma(0);

@@ -225,6 +225,7 @@ CODE("<#", LESS_HASH, 0, vm.number_output->start())
 CODE("#", HASH, 0, vm.number_output->add_digit())
 CODE("#S", HASH_S, 0, vm.number_output->add_digits())
 CODE("HOLD", HOLD, 0, vm.number_output->add_char(pop()))
+CODE("HOLDS", HOLDS, 0, int size = pop(); int addr = pop(); vm.number_output->add_string(mem_char_ptr(addr), size))
 CODE("SIGN", SIGN, 0, vm.number_output->add_sign(pop()))
 CODE("#>", HASH_GREATER, 0, vm.number_output->end())
 
@@ -260,6 +261,7 @@ CODE("[']", BRACKET_TICK, F_IMMEDIATE, f_bracket_tick())
 CODE("CREATE", CREATE, 0, f_create())
 CODE("VARIABLE", VARIABLE, 0, f_variable())
 CODE("(DOVAR)", XDOVAR, F_HIDDEN, push(body))
+CODE("BUFFER:", BUFFER_COLON, 0, f_buffer_colon())
 
 CODE("2VARIABLE", TWO_VARIABLE, 0, f_2variable())
 

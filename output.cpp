@@ -57,6 +57,19 @@ void NumberOutput::add_sign(int sign) {
         add_char('-');
 }
 
+void NumberOutput::add_string(const string& str) {
+    add_string(str.c_str(), str.size());
+}
+
+void NumberOutput::add_string(const char* str, size_t size) {
+    add_string(str, static_cast<int>(size));
+}
+
+void NumberOutput::add_string(const char* str, int size) {
+    for (int i = size - 1; i >= 0; --i)
+        add_char(str[i]);
+}
+
 void NumberOutput::end() const {
     dpop();     // drop number
     push(mem_addr(buffer_ + ptr_));
