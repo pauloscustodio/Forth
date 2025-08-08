@@ -187,6 +187,7 @@ CODE("COUNT", COUNT, 0, f_count())
 CODE(".\"", DOT_QUOTE, F_IMMEDIATE, f_dot_quote())
 CODE("(.\")", XDOT_QUOTE, F_HIDDEN, f_xdot_quote())
 CODE("S\"", S_QUOTE, F_IMMEDIATE, f_s_quote())
+CODE("S\\\"", S_BACKSLASH_QUOTE, F_IMMEDIATE, f_s_backslash_quote())
 CODE("(S\")", XS_QUOTE, F_HIDDEN, f_xs_quote())
 CODE("C\"", C_QUOTE, F_IMMEDIATE, f_c_quote())
 CODE("(C\")", XC_QUOTE, F_HIDDEN, f_xc_quote())
@@ -347,6 +348,7 @@ CODE(".S", DOT_S, 0, vm.stack->print())
 CODE(".RS", DOT_RS, 0, vm.r_stack->print())
 CODE("WORDS", WORDS, 0, f_words())
 CODE("ENVIRONMENT?", ENVIRONMENT_Q, 0, f_environment_q())
+CODE("DUMP", DUMP, 0, f_dump())
 
 
 // double

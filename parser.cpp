@@ -8,6 +8,7 @@
 #include "forth.h"
 #include "parser.h"
 #include "vm.h"
+#include <cctype>
 using namespace std;
 
 // ignore all control characters as spaces
@@ -79,6 +80,60 @@ CString* parse_cword(char delimiter) {
     const char* word = parse_word(size, delimiter);
     CString* cword = vm.wordbuf->append(word, size);
     return cword;
+}
+
+LongString* parse_backslash_string() {
+    char* buffer = vm.input->buffer();
+    string message;
+    for (; vm.user->TO_IN < vm.user->NR_IN; ++vm.user->TO_IN) {
+        if (buffer[vm.user->TO_IN] == '\"') {
+            ++vm.user->TO_IN;
+            break;
+        }
+
+        switch (buffer[vm.user->TO_IN]) {
+        case '\\':
+            ++vm.user->TO_IN;
+            if (vm.user->TO_IN < vm.user->NR_IN) {
+                switch (buffer[vm.user->TO_IN]) {
+                case 'a': message.push_back('\a'); break;
+                case 'b': message.push_back('\b'); break;
+                case 'e': message.push_back('\x1B'); break;
+                case 'f': message.push_back('\f'); break;
+                case 'l': message.push_back('\n'); break;
+                case 'm': message.push_back('\r'); message.push_back('\n'); break;
+                case 'n': message.push_back('\n'); break;
+                case 'q': message.push_back('"'); break;
+                case 'r': message.push_back('\r'); break;
+                case 't': message.push_back('\t'); break;
+                case 'v': message.push_back('\v'); break;
+                case 'z': message.push_back('\0'); break;
+                case '"': message.push_back('"'); break;
+                case '\\': message.push_back('\\'); break;
+                case 'x':
+                    ++vm.user->TO_IN;
+                    if (vm.user->TO_IN + 1 < vm.user->NR_IN &&
+                        isxdigit(buffer[vm.user->TO_IN]) &&
+                        isxdigit(buffer[vm.user->TO_IN + 1])
+                        ) {
+                        string hex_str = string(&buffer[vm.user->TO_IN], &buffer[vm.user->TO_IN + 2]);
+                        ++vm.user->TO_IN;
+                        int char_value = std::stoi(hex_str, nullptr, 16);
+                        message.push_back(char_value);
+                    }
+                    break;
+                default:
+                    break;  // ignore all other escape chars
+                }
+            }
+            break;
+        default:
+            message.push_back(buffer[vm.user->TO_IN]);
+        }
+    }
+    
+    int addr = vm.dict->alloc_string(message.c_str(), message.size());
+    return reinterpret_cast<LongString*>(mem_char_ptr(addr));
 }
 
 bool parse_number(const string& text, bool& is_double, dint& value) {

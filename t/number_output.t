@@ -5,8 +5,6 @@ BEGIN { use lib 't'; require 'testlib.pl'; }
 note "Test <#";
 note "Test #";
 note "Test #S";
-note "Test HOLD";
-note "Test SIGN";
 note "Test #>";
 forth_ok(" 1234567890123. .S SWAP OVER DABS <# #S ROT SIGN #> TYPE", 
 		  "( 1912276171 287 )1234567890123");
@@ -26,7 +24,7 @@ forth_ok("0. <# ".("#\n" x 256)." #> TYPE", "0" x 256);
 forth_nok("0. <# ".("#\n" x 257)." #> TYPE", 
 		  "\nError: Number output overflow\n");
 
-note "SIGN";
+note "Test SIGN";
 forth_ok('<#  127. TUCK DABS #S ROT SIGN #> TYPE .S', '127( )');
 forth_ok('<# -127. TUCK DABS #S ROT SIGN #> TYPE .S', '-127( )');
 

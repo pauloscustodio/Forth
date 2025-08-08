@@ -68,6 +68,9 @@
     <ClInclude Include="..\..\file.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\tools.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\dict.cpp">
@@ -116,6 +119,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\file.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\tools.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

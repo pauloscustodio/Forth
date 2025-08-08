@@ -158,6 +158,19 @@ void f_s_quote() {
 	}
 }
 
+void f_s_backslash_quote() {
+	const LongString* message = parse_backslash_string();
+	if (vm.user->STATE == STATE_COMPILE) {
+		int str_addr = vm.dict->alloc_string(message->str(), message->size());
+		comma(xtXS_QUOTE);
+		comma(str_addr);
+	}
+	else {
+		push(mem_addr(message->str()));
+		push(message->size());
+	}
+}
+
 void f_xs_quote() {
 	int str_addr = fetch(vm.ip); vm.ip += CELL_SZ;
 	const LongString* message = reinterpret_cast<const LongString*>(mem_char_ptr(str_addr));

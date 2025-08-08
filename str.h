@@ -70,6 +70,7 @@ void f_count();
 void f_dot_quote();
 void f_xdot_quote();
 void f_s_quote();
+void f_s_backslash_quote();
 void f_xs_quote();
 void f_c_quote();
 void f_xc_quote();

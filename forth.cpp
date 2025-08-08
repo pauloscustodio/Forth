@@ -13,6 +13,7 @@
 #include "math.h"
 #include "output.h"
 #include "parser.h"
+#include "tools.h"
 #include "vm.h"
 using namespace std;
 
