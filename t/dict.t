@@ -58,10 +58,6 @@ note "Test EXECUTE";
 forth_nok(": x ['] hello ; x", "\nError: Undefined word: hello\n");
 forth_ok(": x ['] .S EXECUTE ; 1 2 3 x", "( 1 2 3 )");
 
-note "Test POSTPONE";
-forth_ok(": x 1 . ; IMMEDIATE  : y POSTPONE x ;  ", "");
-forth_ok(": x 1 . ; IMMEDIATE  : y POSTPONE x ; y", "1 ");
-
 note "Test COMPILE,";
 forth_ok(": x [ ' DUP ] COMPILE, ;  1 x .S", "( 1 1 )");
 

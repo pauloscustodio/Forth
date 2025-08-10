@@ -275,8 +275,18 @@ void f_bracket_tick() {
 }
 
 void f_postpone() {
-	int xt = f_tick();
-	comma(xt);
+	Header* header = vm.dict->parse_find_existing_word();
+    assert(header != nullptr);
+	if (header->flags.immediate) {
+		// compile imediate words immediately
+        comma(header->xt());	
+	}
+	else {
+		// make code to compile worder later
+		comma(xtXLITERAL);		// xt of word in stack
+		comma(header->xt());
+		comma(xtCOMMA);
+	}
 }
 
 void f_bracket_compile() {
