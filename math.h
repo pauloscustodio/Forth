@@ -28,3 +28,4 @@ dint f_dmax(dint a, dint b);
 dint f_dmin(dint a, dint b);
 bool within(int x, int a, int b);
 void f_within();
+void f_um_mult();

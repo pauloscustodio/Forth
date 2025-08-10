@@ -77,7 +77,7 @@ void f_fm_div_mod() {
 }
 
 void f_sm_div_rem() {
-    dint n = (dint)pop();
+    dint n = static_cast<dint>(pop());
     dint d = dpop();
     if (n == 0) {
         error(Error::DivisionByZero);
@@ -89,7 +89,7 @@ void f_sm_div_rem() {
 }
 
 void f_um_div_mod() {
-    udint n = (udint)pop();
+    udint n = static_cast<uint>(pop());
     udint d = dpop();
     if (n == 0) {
         error(Error::DivisionByZero);
@@ -157,4 +157,11 @@ void f_within() {
     int a = pop();
     int x = pop();
     push(f_bool(within(x, a, b)));
+}
+
+void f_um_mult() {
+    udint b = static_cast<uint>(pop()); 
+    udint a = static_cast<uint>(pop()); 
+    udint result = a * b;
+    dpush(result);
 }
