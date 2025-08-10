@@ -262,41 +262,6 @@ void f_find(int addr) {
 	}
 }
 
-void f_colon() {
-	if (cs_depth() > 0)
-		error(Error::CompilerNesting);
-	else {
-		cs_push(idCOLON);
-		vm.dict->parse_create(idXDOCOL, F_SMUDGE);
-		vm.user->STATE = STATE_COMPILE;
-	}
-}
-
-void f_colon_noname() {
-	if (cs_depth() > 0)
-		error(Error::CompilerNesting);
-	else {
-		cs_push(idCOLON);
-		vm.dict->create("", 0, idXDOCOL);
-		Header* header = reinterpret_cast<Header*>(mem_char_ptr(vm.dict->latest()));
-		header->flags.smudge = true;
-		vm.user->STATE = STATE_COMPILE;
-		push(header->xt());
-	}
-}
-
-void f_semicolon() {
-	if (cs_depth() != 1 || cs_peek() != idCOLON)
-		error(Error::CompilerNesting);
-	else {
-		cs_pop();
-		comma(xtEXIT);
-		Header* header = reinterpret_cast<Header*>(mem_char_ptr(vm.dict->latest()));
-		header->flags.smudge = false;
-		vm.user->STATE = STATE_INTERPRET;
-	}
-}
-
 int f_tick() {
 	Header* header = vm.dict->parse_find_existing_word();
 	assert(header != nullptr);

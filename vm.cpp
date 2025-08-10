@@ -30,11 +30,14 @@ VM::VM() {
 
 	// top of memory
 	r_stack = reinterpret_cast<Stack*>(mem.alloc_top(sizeof(Stack)));
-	r_stack->init('R', Error::ReturnStackUnderflow, Error::ReturnStackOverflow);
+	r_stack->init('R', 
+		Error::ReturnStackUnderflow, Error::ReturnStackOverflow);
 	cs_stack = reinterpret_cast<Stack*>(mem.alloc_top(sizeof(Stack)));
-	cs_stack->init('S', Error::StructStackUnderflow, Error::StructStackOverflow);
+	cs_stack->init('C', 
+		Error::StructStackUnderflow, Error::StructStackOverflow);
 	stack = reinterpret_cast<Stack*>(mem.alloc_top(sizeof(Stack)));
-	stack->init('\0', Error::StackUnderflow, Error::StackOverflow);
+	stack->init('\0', 
+		Error::StackUnderflow, Error::StackOverflow);
 
 	// use the remaing as dictionary space
 	dict = reinterpret_cast<Dict*>(mem.alloc_bottom(sizeof(Dict)));
@@ -174,19 +177,18 @@ dint r_dpeek(int depth) {
 	return vm.r_stack->dpeek(depth);
 }
 
-void cs_push(int value) {
-	vm.cs_stack->push(value);
+void cs_dpush(dint pos_addr) {
+	vm.cs_stack->dpush(pos_addr);
 }
 
-int cs_pop() {
-	return vm.cs_stack->pop();
+dint cs_dpop() {
+	return vm.cs_stack->dpop();
 }
 
-int cs_peek(int depth) {
-	return vm.cs_stack->peek(depth);
+dint cs_dpeek(int depth) {
+	return vm.cs_stack->dpeek(depth);
 }
 
-int cs_depth() {
-	return vm.cs_stack->depth();
+int cs_ddepth() {
+	return vm.cs_stack->depth() / 2;
 }
-

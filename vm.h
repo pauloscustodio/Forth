@@ -34,7 +34,7 @@ struct VM {
 
 	// stacks
 	Stack* r_stack;			// return stack
-	Stack* cs_stack;		// struct stack
+	Stack* cs_stack;		// control stack
 	Stack* stack;			// data stack
 
 	// dictionary
@@ -85,8 +85,17 @@ void r_dpush(dint value);
 dint r_dpop();
 dint r_dpeek(int depth = 0);
 
-void cs_push(int value);
-int cs_pop();
-int cs_peek(int depth = 0);
-int cs_depth();
+enum { 
+	POS_COLON_START, POS_BEGIN_START, POS_DO_START, POS_CASE_START,
 
+	POS_BEGIN_BACK, POS_DO_BACK, 
+
+	POS_IF_FWD, POS_ELSE_FWD, POS_WHILE_FWD,
+	POS_DO_FWD, POS_LEAVE_FWD, 
+	POS_OF_FWD, POS_ENDOF_FWD,
+};
+
+void cs_dpush(dint pos_addr);
+dint cs_dpop();
+dint cs_dpeek(int depth = 0);
+int cs_ddepth();

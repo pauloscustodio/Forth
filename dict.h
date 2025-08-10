@@ -90,10 +90,6 @@ private:
 
 void f_find(int addr);	// search dictionary, word max size 255
 
-void f_colon();
-void f_colon_noname();
-void f_semicolon();
-
 int f_tick();
 void f_bracket_tick();
 

@@ -4,7 +4,7 @@
 // License: GPL3 https://www.gnu.org/licenses/gpl-3.0.html
 //-----------------------------------------------------------------------------
 
-#include "compiler.h"
+#include "control.h"
 #include "env.h"
 #include "errors.h"
 #include "file.h"

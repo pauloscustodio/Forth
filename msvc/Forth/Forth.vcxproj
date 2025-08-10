@@ -19,7 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\compiler.h" />
+    <ClInclude Include="..\..\control.h" />
     <ClInclude Include="..\..\dict.h" />
     <ClInclude Include="..\..\env.h" />
     <ClInclude Include="..\..\errors.h" />
@@ -37,7 +37,7 @@
     <ClInclude Include="..\..\vm.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\compiler.cpp" />
+    <ClCompile Include="..\..\control.cpp" />
     <ClCompile Include="..\..\dict.cpp" />
     <ClCompile Include="..\..\env.cpp" />
     <ClCompile Include="..\..\errors.cpp" />

@@ -108,6 +108,10 @@ bool Input::refill() {
     vm.user->NR_IN = static_cast<int>(line.size());
     vm.user->TO_IN = 0;
 
+    if (vm.user->TRACE) {
+        cout << endl << "> " << line << endl;
+    }
+
     return ok;
 }
 

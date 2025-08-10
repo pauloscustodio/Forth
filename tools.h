@@ -10,3 +10,5 @@ using namespace std;
 
 void f_dump();
 void f_dump(const char* mem, int size);
+
+void f_see();

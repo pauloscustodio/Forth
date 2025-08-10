@@ -87,8 +87,8 @@ CODE("AND", AND, 0, push(pop()& pop()))
 CODE("OR", OR, 0, push(pop() | pop()))
 CODE("XOR", XOR, 0, push(pop() ^ pop()))
 CODE("INVERT", INVERT, 0, push(~pop()))
-CODE("LSHIFT", LSHIFT, 0, int n = pop(); push(pop() << n))
-CODE("RSHIFT", RSHIFT, 0, int n = pop(); push(pop() >> n))
+CODE("LSHIFT", LSHIFT, 0, uint count = pop(); uint n = pop(); push(n << count))
+CODE("RSHIFT", RSHIFT, 0, uint count = pop(); uint n = pop(); push(n >> count))
 
 
 // comparison
@@ -252,6 +252,7 @@ CODE(":", COLON, 0, f_colon())
 CODE(":NONAME", COLON_NONAME, 0, f_colon_noname())
 CODE(";", SEMICOLON, F_IMMEDIATE, f_semicolon())
 CODE("(DOCOL)", XDOCOL, F_HIDDEN, r_push(vm.ip); vm.ip = body)
+CODE("(SEMICOLON)", XSEMICOLON, F_HIDDEN, if (r_depth() == 0) do_exit = true; else vm.ip = r_pop())
 
 CODE("[", LBRACKET, F_IMMEDIATE, vm.user->STATE = STATE_INTERPRET)
 CODE("]", RBRACKET, 0, vm.user->STATE = STATE_COMPILE)
@@ -349,7 +350,7 @@ CODE(".RS", DOT_RS, 0, vm.r_stack->print())
 CODE("WORDS", WORDS, 0, f_words())
 CODE("ENVIRONMENT?", ENVIRONMENT_Q, 0, f_environment_q())
 CODE("DUMP", DUMP, 0, f_dump())
-
+CODE("SEE", SEE, 0, f_see())
 
 // double
 CODE("DABS", DABS, 0, dpush(f_dabs(dpop())))

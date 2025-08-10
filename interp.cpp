@@ -51,10 +51,8 @@ void interpret_word(const char* word, int size) {
                     }
                 }
                 else {
-                    comma(xtXLITERAL);
-                    comma(dcell_lo(value));
-                    comma(xtXLITERAL);
-                    comma(dcell_hi(value));
+                    comma(xtX2LITERAL);
+                    dcomma(value);
                 }
             }
             else { // single cell
