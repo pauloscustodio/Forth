@@ -39,11 +39,10 @@ public:
 
     void set_text(const char* text, int size);
     void set_text(const char* text, size_t size);
-    void set_text(const string& text);
 
-    void set_buffer(const char* text, int size);
-    void set_buffer(const char* text, size_t size);
-    void set_buffer(const string& text);
+    void set_tib(const char* text, int size);
+    void set_tib(const char* text, size_t size);
+    void set_tib(const string& text);
 
     bool refill();
 
@@ -57,7 +56,8 @@ private:
     string* filename_;          // name of the file being read
     ifstream* input_file_;      // open file
     int source_id_;             // 0: terminal, 1: file, -1: string
-    char buffer_[BUFFER_SZ + 1];// input buffer +1 for BL
+    char* buffer_;              // current input buffer, tib_ or the string supplied to EVALUATE
+    char tib_[BUFFER_SZ + 1];   // input buffer +1 for BL
     int num_query_;             // number of times f_query was called and save_input() called within
 
     struct SaveInput {
@@ -65,7 +65,8 @@ private:
         bool is_open;
         streampos fpos;
         int source_id;
-        string buffer;
+        string tib;
+        char* buffer;
         int nr_in;
         int to_in;
     };

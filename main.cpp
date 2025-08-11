@@ -8,6 +8,7 @@
 #include "forth.h"
 #include "vm.h"
 #include <iostream>
+#include <cstring>
 using namespace std;
 
 static void die_usage() {
@@ -27,7 +28,7 @@ int main(int argc, char* argv[]) {
 				die_usage();
 			else {
 				g_argc--; g_argv++;
-                vm.input->set_text(g_argv[0]);
+                vm.input->set_text(g_argv[0], strlen(g_argv[0]));
 				f_execute(xtINTERPRET);
 				did_forth = true;
 			}

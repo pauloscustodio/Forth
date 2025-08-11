@@ -18,7 +18,8 @@ void Input::init() {
     filename_ = new string;
     input_file_ = new ifstream();
     source_id_ = 0;
-	memset(buffer_, BL, sizeof(buffer_));
+    buffer_ = tib_;
+	memset(tib_, BL, sizeof(tib_));
     input_stack_ = new vector<SaveInput>;
     num_query_ = 0;
 }
@@ -48,7 +49,7 @@ void Input::open_file(const string& filename) {
         error(Error::OpenFileError, filename);
 
     source_id_ = 1; // file
-    set_buffer("", 0);
+    set_tib("", 0);
 }
 
 void Input::open_terminal() {
@@ -56,7 +57,7 @@ void Input::open_terminal() {
         input_file_->close();
 
     source_id_ = 0; // terminal
-    set_buffer("", 0);
+    set_tib("", 0);
 }
 
 void Input::set_text(const char* text, int size) {
@@ -64,33 +65,32 @@ void Input::set_text(const char* text, int size) {
         input_file_->close();
 
     source_id_ = -1; // string
-    set_buffer(text, size);
+    vm.user->NR_IN = size;
+    vm.user->TO_IN = 0;
+    buffer_ = const_cast<char*>(text);
 }
 
 void Input::set_text(const char* text, size_t size) {
     set_text(text, static_cast<int>(size));
 }
 
-void Input::set_text(const string& text) {
-    set_text(text.c_str(), text.size());
-}
-
-void Input::set_buffer(const char* text, int size) {
+void Input::set_tib(const char* text, int size) {
     if (size > BUFFER_SZ)
         error(Error::BufferOverflow);
 
     vm.user->NR_IN = size;
     vm.user->TO_IN = 0;
-    memcpy(buffer_, text, size);
-    buffer_[size] = BL; // BL after the string
+    memcpy(tib_, text, size);
+    tib_[size] = BL; // BL after the string
+    buffer_ = tib_;
 }
 
-void Input::set_buffer(const char* text, size_t size) {
-    set_buffer(text, static_cast<int>(size));
+void Input::set_tib(const char* text, size_t size) {
+    set_tib(text, static_cast<int>(size));
 }
 
-void Input::set_buffer(const string& text) {
-    set_buffer(text.c_str(), text.size());
+void Input::set_tib(const string& text) {
+    set_tib(text.c_str(), text.size());
 }
 
 bool Input::refill() {
@@ -104,7 +104,7 @@ bool Input::refill() {
     else
         ok = static_cast<bool>(std::getline(*input_file_, line)); // input from file
 
-    set_buffer(line);
+    set_tib(line);
     vm.user->NR_IN = static_cast<int>(line.size());
     vm.user->TO_IN = 0;
 
@@ -130,7 +130,8 @@ void Input::save_input() {
     }
 
     save.source_id = source_id_;
-    save.buffer = string(buffer_, buffer_ + vm.user->NR_IN);
+    save.tib = string(tib_, tib_ + vm.user->NR_IN);
+    save.buffer = buffer_;
     save.nr_in = vm.user->NR_IN;
     save.to_in = vm.user->TO_IN;
 
@@ -156,7 +157,8 @@ bool Input::restore_input() {
             input_file_->seekg(save.fpos);
         }
         source_id_ = save.source_id;
-        set_buffer(save.buffer);
+        set_tib(save.tib);
+        buffer_ = save.buffer;
         vm.user->NR_IN = save.nr_in;
         vm.user->TO_IN = save.to_in;
 

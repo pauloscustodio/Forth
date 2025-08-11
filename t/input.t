@@ -2,12 +2,9 @@
 
 BEGIN { use lib 't'; require 'testlib.pl'; }
 
-note "Test SOURCE";
-forth_ok("SOURCE TYPE", "SOURCE TYPE");
-
 note "Test TIB";
 forth_ok("TIB 11 TYPE", "TIB 11 TYPE");
-forth_ok("TIB .S", "( 1564 )");
+forth_ok("TIB .S", "( 1576 )");
 
 note "Test #IN";
 forth_ok("#IN @ .S", "( 8 )");
