@@ -4,30 +4,78 @@ BEGIN { use lib 't'; require 'testlib.pl'; }
 
 chdir "t/forth2012-test-suite/src" or die;
 
-note "prelimtest.fth";
-path("$test.fs")->spew('S" prelimtest.fth" INCLUDED');
-run_ok("../../../forth $test.fs > $test.out");
-$out = path("$test.out")->slurp;
-# diag $out;
-for (1..23) {
-	like $out, qr/Pass #$_:/, "Pass $_";
-}
-like $out, qr/0 tests failed/, "0 tests failed";
-
 note "runtests.fth";
 path("$test.fs")->spew('S" runtests.fth" INCLUDED');
-run_ok("echo hello | ../../../forth $test.fs > $test.out");
-$out = path("$test.out")->slurp;
-#diag $out;
-unlike $out, qr/INCORRECT RESULT/;
-unlike $out, qr/WRONG NUMBER OF RESULTS/;
-like $out, qr/YOU SHOULD SEE THE STANDARD GRAPHIC CHARACTERS:\s+!"#\$\%&'\(\)\*\+,-\.\/0123456789:;<=>\?\@\s+ABCDEFGHIJKLMNOPQRSTUVWXYZ\[\\\]\^_`\s+abcdefghijklmnopqrstuvwxyz\{\|\}~/;
-like $out, qr/YOU SHOULD SEE 0-9 SEPARATED BY A SPACE:\s+0 1 2 3 4 5 6 7 8 9 /;
-like $out, qr/YOU SHOULD SEE 0-9 \(WITH NO SPACES\):\s+0123456789/;
-like $out, qr/YOU SHOULD SEE A-G SEPARATED BY A SPACE:\s+A B C D E F G /;
-like $out, qr/YOU SHOULD SEE 0-5 SEPARATED BY TWO SPACES:\s+0  1  2  3  4  5  /;
-like $out, qr/YOU SHOULD SEE TWO SEPARATE LINES:\s+LINE 1\s+LINE 2/;
-like $out, qr/YOU SHOULD SEE THE NUMBER RANGES OF SIGNED AND UNSIGNED NUMBERS:\s+  SIGNED: -80000000 7FFFFFFF \s+UNSIGNED: 0 FFFFFFFF /;
-like $out, qr/PLEASE TYPE UP TO 80 CHARACTERS:\s+RECEIVED: "hello"/;
+capture_ok("echo hello | ../../../forth $test.fs", <<'END');
+
+Running ANS Forth and Forth 2012 test programs, version 0.13.4
+
+
+CR CR SOURCE TYPE ( Preliminary test ) CR
+SOURCE ( These lines test SOURCE, TYPE, CR and parenthetic comments ) TYPE CR
+( The next line of output should be blank to test CR ) SOURCE TYPE CR CR
+
+( Pass #1: testing 0 >IN +! ) 0 >IN +! SOURCE TYPE CR
+( Pass #2: testing 1 >IN +! ) 1 >IN +! xSOURCE TYPE CR
+( Pass #3: testing 1+ ) 1 1+ >IN +! xxSOURCE TYPE CR
+( Pass #4: testing @ ! BASE ) 0 1+ 1+ BASE ! BASE @ >IN +! xxSOURCE TYPE CR
+( Pass #5: testing decimal BASE ) BASE @ >IN +! xxxxxxxxxxSOURCE TYPE CR
+( Pass #6: testing : ; ) : .SRC SOURCE TYPE CR ; 6 >IN +! xxxxxx.SRC
+( Pass #7: testing number input ) 19 >IN +! xxxxxxxxxxxxxxxxxxx.SRC
+( Pass #8: testing VARIABLE ) VARIABLE Y 2 Y ! Y @ >IN +! xx.SRC
+( Pass #9: testing WORD COUNT ) 5 MSG abcdef) Y ! Y ! >IN +! xxxxx.SRC
+( Pass #10: testing WORD COUNT ) MSG ab) >IN +! xxY ! .SRC
+Pass #11: testing WORD COUNT .MSG
+Pass #12: testing = returns all 1's for true
+Pass #13: testing = returns 0 for false
+Pass #14: testing -1 interpreted correctly
+Pass #15: testing 2*
+Pass #16: testing 2*
+Pass #17: testing AND
+Pass #18: testing AND
+Pass #19: testing AND
+Pass #20: testing ?F~ ?~~ Pass Error
+Pass #21: testing ?~
+Pass #22: testing EMIT
+Pass #23: testing S"
+
+Results: 
+
+Pass messages #1 to #23 should be displayed above
+and no error messages
+
+0 tests failed out of 57 additional tests
+
+
+--- End of Preliminary Tests --- 
+
+*********************YOU SHOULD SEE THE STANDARD GRAPHIC CHARACTERS:
+ !"#$%&'()*+,-./0123456789:;<=>?@
+ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`
+abcdefghijklmnopqrstuvwxyz{|}~
+YOU SHOULD SEE 0-9 SEPARATED BY A SPACE:
+0 1 2 3 4 5 6 7 8 9 
+YOU SHOULD SEE 0-9 (WITH NO SPACES):
+0123456789
+YOU SHOULD SEE A-G SEPARATED BY A SPACE:
+A B C D E F G 
+YOU SHOULD SEE 0-5 SEPARATED BY TWO SPACES:
+0  1  2  3  4  5  
+YOU SHOULD SEE TWO SEPARATE LINES:
+LINE 1
+LINE 2
+YOU SHOULD SEE THE NUMBER RANGES OF SIGNED AND UNSIGNED NUMBERS:
+  SIGNED: -80000000 7FFFFFFF 
+UNSIGNED: 0 FFFFFFFF 
+*
+PLEASE TYPE UP TO 80 CHARACTERS:
+
+RECEIVED: "hello"
+*
+End of Core word set tests
+
+Forth tests completed 
+
+END
 
 end_test;

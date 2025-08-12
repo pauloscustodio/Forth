@@ -22,7 +22,7 @@ void NumberOutput::start() {
 
 void NumberOutput::add_digit() {
     // compute digit
-    dint value = dpop();
+    udint value = dpop();
 
     // can use % instead of f_mod because value is assumed positive
     int digit = static_cast<int>(value % vm.user->BASE);
