@@ -52,7 +52,7 @@ void Dict::allot(int size) {
 }
 
 int Dict::unused() const {
-	return (names_ - here_) / CELL_SZ;
+	return names_ - here_;
 }
 
 int Dict::parse_create(int code, int flags) {

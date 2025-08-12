@@ -92,7 +92,7 @@ forth_ok("HERE  1 ALLOT HERE SWAP - .S", "( 1 )");
 forth_ok("HERE -1 ALLOT HERE SWAP - .S", "( -1 )");
 
 note "Test UNUSED";
-forth_ok("UNUSED 1 , UNUSED - .S", "( 1 )");
+forth_ok("UNUSED 1 , UNUSED - .S", "( 4 )");
 
 note "Test MARKER";
 forth_ok(<<END, "( -1 -1 )");
