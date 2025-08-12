@@ -309,22 +309,28 @@ void f_plus_loop() {
     f_loop_plus_loop(xtXPLUS_LOOP);
 }
 
+// ANS Forth expects +LOOP to check if the index crossed the boundary
 static void f_xloop_step(int step) {
-    int i = r_pop();
+    int old_i = r_pop();
     int limit = r_pop();
-    i += step;
-    bool repeat;
-    if (step > 0)
-        repeat = (i < limit);
-    else
-        repeat = (i >= limit);
-    if (repeat) {
+    int new_i = old_i + step;
+    int old_diff = old_i - limit;
+
+    // crossing code lifted from pforth/Gforth
+    // (x^y)<0 is equivalent to (x<0) != (y<0)
+    bool crossed =
+        (((old_diff ^ (old_diff + step))    // is the limit crossed?
+            & (old_diff ^ step))            // is it a wrap-around?
+            < 0);
+
+    if (!crossed) {     // loop
         vm.ip += fetch(vm.ip);
         r_push(limit);
-        r_push(i);
+        r_push(new_i);
     }
-    else
+    else {              // skip
         vm.ip += CELL_SZ;
+    }
 }
 
 void f_xloop() {
