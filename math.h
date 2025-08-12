@@ -26,6 +26,6 @@ int f_min(int a, int b);
 dint f_dabs(dint a);
 dint f_dmax(dint a, dint b);
 dint f_dmin(dint a, dint b);
-bool within(int x, int a, int b);
+bool within(uint x, uint a, uint b);
 void f_within();
 void f_um_mult();

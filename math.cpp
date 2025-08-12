@@ -143,20 +143,16 @@ dint f_dmin(dint a, dint b) {
     return a < b ? a : b;
 }
 
-bool within(int x, int a, int b) {
-    if (a > b)
-        return within(x, b, a);
-    else if (x >= a && x < b)
-        return true;
-    else
-        return false;
+bool within(uint x, uint lo, uint hi) {
+    // implement the same logic as Forth's WITHIN word
+    return (x - lo) < (hi - lo);
 }
 
 void f_within() {
-    int b = pop();
-    int a = pop();
-    int x = pop();
-    push(f_bool(within(x, a, b)));
+    uint hi = pop();
+    uint lo = pop();
+    uint x = pop();
+    push(f_bool(within(x, lo, hi)));
 }
 
 void f_um_mult() {
