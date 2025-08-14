@@ -6,6 +6,7 @@
 *.cc    text eol=lf
 *.cpp   text eol=lf
 *.def   text eol=lf
+*.fb    binary
 *.fr    text eol=lf
 *.fs    text eol=lf
 *.fth   text eol=lf
