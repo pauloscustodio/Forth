@@ -220,9 +220,11 @@ void f_else() {
     // make forward jump to THEN
     comma_fwd_jump(xtBRANCH, POS_ELSE_FWD);
 
-    // patch forward jump at IF or WHILE
-    if (!search_resolve_fwd_jump(POS_IF_FWD, POS_WHILE_FWD))
+    // patch forward jump at IF, ELSE or WHILE
+    dint save_fwd_jump = cs_dpop();
+    if (!search_resolve_fwd_jump(POS_IF_FWD, POS_ELSE_FWD, POS_WHILE_FWD))
         error(Error::CompilerNesting);
+    cs_dpush(save_fwd_jump);
 }
 
 void f_then() {
