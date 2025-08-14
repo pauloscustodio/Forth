@@ -259,7 +259,7 @@ void f_repeat() {
         error(Error::CompilerNesting);
 
     // fix WHILE
-    if (!search_resolve_fwd_jump(POS_WHILE_FWD))
+    if (!search_resolve_fwd_jump(POS_WHILE_FWD, POS_IF_FWD))
         error(Error::CompilerNesting);
 }
 
