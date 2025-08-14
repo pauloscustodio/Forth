@@ -137,9 +137,7 @@ STRING EXT:
 
 TOOLS:
   Implemented:
-    .S DUMP SEE WORDS
-  Missing:
-    ?
+    .S ? DUMP SEE WORDS
 
 TOOLS EXT:
   Implemented:

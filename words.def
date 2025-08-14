@@ -231,6 +231,7 @@ CODE("SIGN", SIGN, 0, vm.number_output->add_sign(pop()))
 CODE("#>", HASH_GREATER, 0, vm.number_output->end())
 
 CODE(".", DOT, 0, print_number(pop()))
+CODE("?", Q, 0, print_number(peek()))
 CODE("D.", DDOT, 0, print_number(dpop()))
 CODE("D.R", DDOTR, 0, int w = pop(); print_number(dpop(), w))
 CODE("U.", U_DOT, 0, print_unsigned_number((int)pop()))
@@ -353,6 +354,7 @@ CODE("DUMP", DUMP, 0, f_dump())
 CODE("SEE", SEE, 0, f_see())
 CODE("ON", ON, 0, store(pop(), F_TRUE))
 CODE("OFF", OFF, 0, store(pop(), F_FALSE))
+
 
 // double
 CODE("DABS", DABS, 0, dpush(f_dabs(dpop())))
