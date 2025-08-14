@@ -1,3 +1,4 @@
+*.4th   text eol=lf
 *.asm   text eol=lf
 *.bat   text eol=crlf
 *.bmk   text eol=lf
@@ -5,6 +6,9 @@
 *.cc    text eol=lf
 *.cpp   text eol=lf
 *.def   text eol=lf
+*.fr    text eol=lf
+*.fs    text eol=lf
+*.fth   text eol=lf
 *.h     text eol=lf
 *.hh    text eol=lf
 *.in    text eol=lf
