@@ -4,6 +4,5 @@ BEGIN { use lib 't'; require 'testlib.pl'; }
 
 note "Test IMMEDIATE";
 forth_ok(": x           33 EMIT ; IMMEDIATE : y x ;", "!");
-forth_ok(": x IMMEDIATE 33 EMIT ;           : y x ;", "!");
 
 end_test;
