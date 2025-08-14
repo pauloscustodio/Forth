@@ -161,14 +161,14 @@ bool parse_number(const char* text, int size, bool& is_double, dint& value) {
 
     if (p >= end) return false;			// no number
 
-    // check sign
+    // check sign before number prefix
     switch (*p) {
     case '-':
-        sign = -1;
+        sign *= -1;
         p++;
         break;
     case '+':
-        sign = 1;
+        sign *= 1;
         p++;
         break;
     }
@@ -178,6 +178,9 @@ bool parse_number(const char* text, int size, bool& is_double, dint& value) {
     // check base prefix
     switch (*p) {
     case '#':
+        base = 10;
+        p++;
+        break;
     case '$':
         base = 16;
         p++;
@@ -192,6 +195,20 @@ bool parse_number(const char* text, int size, bool& is_double, dint& value) {
             is_double = false;
             return true;
         }
+        break;
+    }
+
+    if (p >= end) return false;			// no number
+
+    // check sign after number prefix
+    switch (*p) {
+    case '-':
+        sign *= -1;
+        p++;
+        break;
+    case '+':
+        sign *= 1;
+        p++;
         break;
     }
 

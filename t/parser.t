@@ -115,25 +115,45 @@ forth_ok("BL WORD '!' COUNT NUMBER  .S      DROP DPL @ .S", "( 33 )( 0 )");
 forth_ok("BL WORD -'!' COUNT NUMBER? .S DROP DROP DPL @ .S", "( -33 1 )( 0 )");
 forth_ok("BL WORD -'!' COUNT NUMBER  .S      DROP DPL @ .S", "( -33 )( 0 )");
 
-# hex
-forth_ok("BL WORD #ff COUNT NUMBER? .S DROP DROP DPL @ .S", "( 255 1 )( 0 )");
-forth_ok("BL WORD #ff COUNT NUMBER  .S      DROP DPL @ .S", "( 255 )( 0 )");
+# decimal
+forth_ok("BL WORD #255 COUNT NUMBER? .S DROP DROP DPL @ .S", "( 255 1 )( 0 )");
+forth_ok("BL WORD #255 COUNT NUMBER  .S      DROP DPL @ .S", "( 255 )( 0 )");
 
+forth_ok("BL WORD -#-255 COUNT NUMBER? .S DROP DROP DPL @ .S", "( 255 1 )( 0 )");
+forth_ok("BL WORD -#-255 COUNT NUMBER  .S      DROP DPL @ .S", "( 255 )( 0 )");
+
+forth_ok("BL WORD -#255 COUNT NUMBER? .S DROP DROP DPL @ .S", "( -255 1 )( 0 )");
+forth_ok("BL WORD -#255 COUNT NUMBER  .S      DROP DPL @ .S", "( -255 )( 0 )");
+
+forth_ok("BL WORD #-255 COUNT NUMBER? .S DROP DROP DPL @ .S", "( -255 1 )( 0 )");
+forth_ok("BL WORD #-255 COUNT NUMBER  .S      DROP DPL @ .S", "( -255 )( 0 )");
+
+
+# hex
 forth_ok("BL WORD \$ff COUNT NUMBER? .S DROP DROP DPL @ .S", "( 255 1 )( 0 )");
 forth_ok("BL WORD \$ff COUNT NUMBER  .S      DROP DPL @ .S", "( 255 )( 0 )");
 
-forth_ok("BL WORD -#ff COUNT NUMBER? .S DROP DROP DPL @ .S", "( -255 1 )( 0 )");
-forth_ok("BL WORD -#ff COUNT NUMBER  .S      DROP DPL @ .S", "( -255 )( 0 )");
+forth_ok("BL WORD -\$-ff COUNT NUMBER? .S DROP DROP DPL @ .S", "( 255 1 )( 0 )");
+forth_ok("BL WORD -\$-ff COUNT NUMBER  .S      DROP DPL @ .S", "( 255 )( 0 )");
 
 forth_ok("BL WORD -\$ff COUNT NUMBER? .S DROP DROP DPL @ .S", "( -255 1 )( 0 )");
 forth_ok("BL WORD -\$ff COUNT NUMBER  .S      DROP DPL @ .S", "( -255 )( 0 )");
+
+forth_ok("BL WORD \$-ff COUNT NUMBER? .S DROP DROP DPL @ .S", "( -255 1 )( 0 )");
+forth_ok("BL WORD \$-ff COUNT NUMBER  .S      DROP DPL @ .S", "( -255 )( 0 )");
 
 # binary
 forth_ok("BL WORD %11111111 COUNT NUMBER? .S DROP DROP DPL @ .S", "( 255 1 )( 0 )");
 forth_ok("BL WORD %11111111 COUNT NUMBER  .S      DROP DPL @ .S", "( 255 )( 0 )");
 
+forth_ok("BL WORD -%-11111111 COUNT NUMBER? .S DROP DROP DPL @ .S", "( 255 1 )( 0 )");
+forth_ok("BL WORD -%-11111111 COUNT NUMBER  .S      DROP DPL @ .S", "( 255 )( 0 )");
+
 forth_ok("BL WORD -%11111111 COUNT NUMBER? .S DROP DROP DPL @ .S", "( -255 1 )( 0 )");
 forth_ok("BL WORD -%11111111 COUNT NUMBER  .S      DROP DPL @ .S", "( -255 )( 0 )");
+
+forth_ok("BL WORD %-11111111 COUNT NUMBER? .S DROP DROP DPL @ .S", "( -255 1 )( 0 )");
+forth_ok("BL WORD %-11111111 COUNT NUMBER  .S      DROP DPL @ .S", "( -255 )( 0 )");
 
 # base = 2
 forth_ok("BL WORD 11111111 COUNT 2 BASE ! NUMBER? DECIMAL .S DROP DROP DPL @ .S", "( 255 1 )( 0 )");
