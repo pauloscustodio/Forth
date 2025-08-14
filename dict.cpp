@@ -206,7 +206,9 @@ Header* Dict::find_word(const char* name, int size) const {
 		CString* found_name = header->name();
 		if (header->flags.hidden || header->flags.smudge)
 			; // skip hidden and smudged words
-		else if (size != header->name()->size())
+		else if (header->name()->size() == 0)
+			; // skip :NONAME
+		else if (header->name()->size() != size)
 			; // skip words with different name size
 		else if (case_insensitive_equal(name, size, found_name->str(), found_name->size())) {
 			return header;

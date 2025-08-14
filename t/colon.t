@@ -13,4 +13,8 @@ forth_ok(": x DUP ; 1 x .S", "( 1 1 )");
 note "Test :NONAME";
 forth_ok(":NONAME 1 . ; EXECUTE .S", "1 ( )");
 
+# do not create entries with empty names
+forth_ok('               C" " FIND NIP 0= .S', "( -1 )");
+forth_ok(':NONAME ; DROP C" " FIND NIP 0= .S', "( -1 )");
+
 end_test;
