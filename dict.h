@@ -95,6 +95,7 @@ void f_bracket_tick();
 
 void f_postpone();
 void f_bracket_compile();
+void f_compile_comma();
 void f_immediate();
 void f_hidden();
 

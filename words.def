@@ -289,7 +289,7 @@ CODE("(DOES>RUN)", XDOES_RUN, F_HIDDEN, f_xdoes_run(body))
 
 CODE("POSTPONE", POSTPONE, F_IMMEDIATE, f_postpone())
 CODE("IMMEDIATE", IMMEDIATE, F_IMMEDIATE, f_immediate())
-CODE("COMPILE,", COMPILE_COMMA, F_IMMEDIATE, comma(pop()))
+CODE("COMPILE,", COMPILE_COMMA, F_IMMEDIATE, f_compile_comma())
 CODE("[COMPILE]", BRACKET_COMPILE, F_IMMEDIATE, f_bracket_compile())
 
 CODE("DEFER", DEFER, 0, f_defer())

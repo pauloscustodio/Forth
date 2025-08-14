@@ -294,6 +294,10 @@ void f_bracket_compile() {
 	comma(xt);
 }
 
+void f_compile_comma() {
+	comma(xtCOMMA);
+}
+
 void f_immediate() {
 	Header* header = reinterpret_cast<Header*>(mem_char_ptr(vm.dict->latest()));
 	header->flags.immediate = true;
