@@ -1,9 +1,11 @@
 Forth
 -----
 
-This is a C implementation of a ANS 2012 Forth interpreter. It implements all the 
+This is a C++ implementation of a ANS 2012 Forth interpreter. It implements all the 
 CORE words. It is intended to be be used as a script interpreter, 
 i.e. calling ABORT exits the interpreter instead of restarting the QUIT loop.
+
+It was inspired by the excelent [pforth](https://github.com/philburk/pforth).
 
 See [ANS Forth Standard Introduction](https://forth-standard.org/standard/intro)
 
@@ -161,8 +163,8 @@ XCHAR EXT:
 NOT STANDARD:
   Implemented:
     #IN #TIB -2ROT -ROT .RS 0<= 0>= <= >= CONVERT DPL EXPECT INTERPRET
-    LATEST NUMBER NUMBER? PARSE-WORD QUERY R0 RDROP RSP! RSP@ S0 SP! SP@
-    SPAN TIB TRACE U<= U>=
+    LATEST NUMBER NUMBER? OFF ON PARSE-WORD QUERY R0 RDROP RSP! RSP@ S0 SP!
+    SP@ SPAN TIB TRACE U<= U>=
 ```
 
 Copyright (c) Paulo Custodio, 2020-2025

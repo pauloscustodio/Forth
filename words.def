@@ -351,6 +351,8 @@ CODE("WORDS", WORDS, 0, f_words())
 CODE("ENVIRONMENT?", ENVIRONMENT_Q, 0, f_environment_q())
 CODE("DUMP", DUMP, 0, f_dump())
 CODE("SEE", SEE, 0, f_see())
+CODE("ON", ON, 0, store(pop(), F_TRUE))
+CODE("OFF", OFF, 0, store(pop(), F_FALSE))
 
 // double
 CODE("DABS", DABS, 0, dpush(f_dabs(dpop())))
