@@ -235,6 +235,6 @@ void f_save_input() {
 }
 
 bool f_restore_input() {
-    return vm.input->restore_input();
+    return !vm.input->restore_input(); // true if cannot be restored
 }
 
