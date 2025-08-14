@@ -73,6 +73,10 @@ PLEASE TYPE UP TO 80 CHARACTERS:
 RECEIVED: "hello"
 *
 End of Core word set tests
+*********
+You should see 2345: 2345
+******
+End of additional Core tests
 
 Test utilities loaded
 ********************

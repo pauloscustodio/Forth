@@ -11,7 +11,7 @@ S" tester.fr" INCLUDED
 \ S" ttester.fs" INCLUDED
 
 S" core.fr" INCLUDED
-\ S" coreplustest.fth" INCLUDED
+S" coreplustest.fth" INCLUDED
 S" utilities.fth" INCLUDED
 S" errorreport.fth" INCLUDED
 S" coreexttest.fth" INCLUDED
