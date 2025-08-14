@@ -74,6 +74,61 @@ RECEIVED: "hello"
 *
 End of Core word set tests
 
+Test utilities loaded
+********************
+
+Output from .(
+You should see -9876: -9876 
+and again: -9876
+
+
+On the next 2 lines you should see First then Second messages:
+First message via .( 
+Second message via ."
+
+*
+
+Output from .R and U.R
+You should see lines duplicated:
+indented by 0 spaces
+1984383623 
+1984383623
+-2088648480 
+-2088648480
+1984383623 
+1984383623
+2206318816 
+2206318816
+
+indented by 0 spaces
+1984383623 
+1984383623
+-2088648480 
+-2088648480
+1984383623 
+1984383623
+2206318816 
+2206318816
+
+indented by 5 spaces
+     1984383623 
+     1984383623
+     -2088648480 
+     -2088648480
+     1984383623 
+     1984383623
+     2206318816 
+     2206318816
+
+*******
+The next test should display:
+One line...
+another line
+One line...
+anotherLine
+
+End of Core Extension word tests
+
 Forth tests completed 
 
 END

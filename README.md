@@ -2,7 +2,9 @@ Forth
 -----
 
 This is a C++ implementation of a ANS 2012 Forth interpreter. It implements all the 
-CORE words. It is intended to be be used as a script interpreter, 
+CORE and CORE-EXT words. 
+
+It is intended to be be used as a script interpreter, 
 i.e. calling ABORT exits the interpreter instead of restarting the QUIT loop.
 
 It was inspired by the excelent [pforth](https://github.com/philburk/pforth).

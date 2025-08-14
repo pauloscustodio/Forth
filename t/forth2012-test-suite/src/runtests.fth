@@ -12,8 +12,8 @@ S" tester.fr" INCLUDED
 
 S" core.fr" INCLUDED
 \ S" coreplustest.fth" INCLUDED
-\ S" utilities.fth" INCLUDED
-\ S" errorreport.fth" INCLUDED
+S" utilities.fth" INCLUDED
+S" errorreport.fth" INCLUDED
 S" coreexttest.fth" INCLUDED
 \ S" blocktest.fth" INCLUDED
 \ S" doubletest.fth" INCLUDED
@@ -25,7 +25,7 @@ S" coreexttest.fth" INCLUDED
 \ S" toolstest.fth" INCLUDED
 \ S" searchordertest.fth" INCLUDED
 \ S" stringtest.fth" INCLUDED
-REPORT-ERRORS
+\ REPORT-ERRORS
 
 CR .( Forth tests completed ) CR CR
 
