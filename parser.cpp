@@ -29,14 +29,14 @@ static int char_digit(char c) {
 }
 
 static void skip_blanks() {
-    char* buffer = vm.input->buffer();
+    const char* buffer = vm.input->buffer();
 
     while (vm.user->TO_IN < vm.user->NR_IN  && is_space(buffer[vm.user->TO_IN]))
         ++vm.user->TO_IN;
 }
 
 static int skip_to_delimiter(char delimiter) {
-    char* buffer = vm.input->buffer();
+    const char* buffer = vm.input->buffer();
 
     int end = vm.user->TO_IN;
     if (delimiter == BL) {
@@ -66,7 +66,7 @@ const char* parse_word(int& size, char delimiter) {
     if (delimiter == BL)
         skip_blanks();	// skip blanks before word
 
-    char* buffer = vm.input->buffer();
+    const char* buffer = vm.input->buffer();
     int start = vm.user->TO_IN;
     int end = skip_to_delimiter(delimiter);
 
@@ -83,7 +83,7 @@ CString* parse_cword(char delimiter) {
 }
 
 LongString* parse_backslash_string() {
-    char* buffer = vm.input->buffer();
+    const char* buffer = vm.input->buffer();
     string message;
     for (; vm.user->TO_IN < vm.user->NR_IN; ++vm.user->TO_IN) {
         if (buffer[vm.user->TO_IN] == '\"') {

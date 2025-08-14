@@ -29,7 +29,7 @@ public:
     const string& filename() const { return *filename_; }
     ifstream* input_file() { return input_file_; }
     int source_id() const { return source_id_; }
-    char* buffer() { return buffer_; }
+    const char* buffer() const { return buffer_; }
 
     void open_file(const char* filename, int size);
     void open_file(const char* filename, size_t size);
@@ -56,7 +56,7 @@ private:
     string* filename_;          // name of the file being read
     ifstream* input_file_;      // open file
     int source_id_;             // 0: terminal, 1: file, -1: string
-    char* buffer_;              // current input buffer, tib_ or the string supplied to EVALUATE
+    const char* buffer_;        // current input buffer, tib_ or the string supplied to EVALUATE
     char tib_[BUFFER_SZ + 1];   // input buffer +1 for BL
     int num_query_;             // number of times f_query was called and save_input() called within
 
@@ -66,7 +66,7 @@ private:
         streampos fpos;
         int source_id;
         string tib;
-        char* buffer;
+        const char* buffer;
         int nr_in;
         int to_in;
     };

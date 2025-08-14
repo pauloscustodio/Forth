@@ -67,7 +67,7 @@ void Input::set_text(const char* text, int size) {
     source_id_ = -1; // string
     vm.user->NR_IN = size;
     vm.user->TO_IN = 0;
-    buffer_ = const_cast<char*>(text);
+    buffer_ = text;
 }
 
 void Input::set_text(const char* text, size_t size) {

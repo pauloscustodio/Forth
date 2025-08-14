@@ -11,12 +11,22 @@
 #include <cstring>
 using namespace std;
 
+const char* FORTH_ENV = "FORTH";
+
 static void die_usage() {
 	cerr << "Usage: forth [-e forth] [-t] [source [args...]]" << endl;
 	exit(EXIT_FAILURE);
 }
 
 int main(int argc, char* argv[]) {
+	// parse env variable
+	const char* envp = getenv(FORTH_ENV);
+	if (envp != nullptr) {
+		vm.input->set_text(envp, strlen(envp));
+		f_execute(xtINTERPRET);
+	}
+
+	// parse command line
 	g_argc = argc; g_argv = argv;
 	g_interactive = false;
 	bool did_forth = false;
