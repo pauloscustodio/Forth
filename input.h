@@ -6,9 +6,10 @@
 
 #pragma once
 
+#include "block.h"
 #include "forth.h"
-#include <iostream>
 #include <fstream>
+#include <iostream>
 #include <vector>
 using namespace std;
 
@@ -19,7 +20,6 @@ public:
 private:
     char m_pad[PAD_SZ];
 };
-
 
 class Input {
 public:
@@ -39,6 +39,8 @@ public:
 
     void set_text(const char* text, int size);
     void set_text(const char* text, size_t size);
+
+    void set_block(Block* block);
 
     void set_tib(const char* text, int size);
     void set_tib(const char* text, size_t size);
@@ -65,6 +67,7 @@ private:
         bool is_open;
         streampos fpos;
         int source_id;
+        int blk;
         string tib;
         const char* buffer;
         int nr_in;

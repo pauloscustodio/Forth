@@ -15,7 +15,7 @@ S" coreplustest.fth" INCLUDED
 S" utilities.fth" INCLUDED
 S" errorreport.fth" INCLUDED
 S" coreexttest.fth" INCLUDED
-\ S" blocktest.fth" INCLUDED
+S" blocktest.fth" INCLUDED
 \ S" doubletest.fth" INCLUDED
 \ S" exceptiontest.fth" INCLUDED
 \ S" facilitytest.fth" INCLUDED

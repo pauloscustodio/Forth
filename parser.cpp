@@ -346,13 +346,11 @@ void f_open_paren() {
 }
 
 void f_backslash() {
-    /* TODO: skip to end of block line
-    if (vm.input->blk() != 0) {
-        int* to_in = vm.input->to_in_ptr();
-        *to_in = (*to_in + BLOCK_COLS - 1) & ~(BLOCK_COLS - 1);
+    if (vm.user->BLK > 0) {
+        vm.user->TO_IN = (vm.user->TO_IN + BLOCK_COLS - 1) & ~(BLOCK_COLS - 1);
     }
-    */
-
-    skip_to_delimiter(CR);
+    else {
+        skip_to_delimiter(CR);
+    }
 }
 

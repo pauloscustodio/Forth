@@ -345,6 +345,20 @@ CODE("ABORT\"", ABORT_QUOTE, F_IMMEDIATE, f_abort_quote())
 CODE("(ABORT\")", XABORT_QUOTE, F_HIDDEN, f_xabort_quote())
 
 
+// blocks
+VAR("BLK", BLK, 0, 0)
+VAR("SCR", SCR, 0, 0)
+CODE("BLOCK", BLOCK, 0, f_block())
+CODE("BUFFER", BUFFER, 0, f_block())
+CODE("SAVE-BUFFERS", SAVE_BUFFERS, 0, f_save_buffers())
+CODE("EMPTY-BUFFERS", EMPTY_BUFFERS, 0, f_empty_buffers())
+CODE("FLUSH", FLUSH, 0, f_flush())
+CODE("LOAD", LOAD, 0, f_load())
+CODE("UPDATE", UPDATE, 0, f_update())
+CODE("LIST", LIST, 0, f_list())
+CODE("THRU", THRU, 0, f_thru())
+
+
 // tools
 CODE(".S", DOT_S, 0, vm.stack->print())
 CODE(".RS", DOT_RS, 0, vm.r_stack->print())

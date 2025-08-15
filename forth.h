@@ -49,8 +49,10 @@ static const int STATE_COMPILE = 1;
 
 // blocks
 static const string BLOCKS_FILE = "blocks.fb";
+static const int BLOCK_SZ = 1024;
 static const int BLOCK_ROWS = 16;
 static const int BLOCK_COLS = 64;
+static const int NUM_BLK_BUFFERS = 16;
 
 // idWORD for all words - used in switch statement to select word to execute
 enum {

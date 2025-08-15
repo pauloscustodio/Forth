@@ -30,5 +30,7 @@ X(CompilerNesting, "Compiler nesting")
 X(NumberOutputOverflow, "Number output overflow")
 X(NameTooLong, "Name too long")
 X(DivisionByZero, "Division by zero")
+X(InvalidBlockNumber, "Invalid block number")
+X(NoMoreFreeBlocks, "No more free blocks")
 
 #undef X

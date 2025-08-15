@@ -116,6 +116,7 @@ void f_evaluate(const char* text, int size) {
     vm.input->save_input();
     
     // parse string
+    vm.user->BLK = 0;
     vm.input->set_text(text, size);
     f_execute(xtINTERPRET);
 

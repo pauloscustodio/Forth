@@ -13,8 +13,6 @@ forth_ok("TRUE TRACE ! : x DUP + ; 1 x .", <<END);
 >>>> +  ( 2 ) 
 >>>> (SEMICOLON)  ( 2 ) 
 >> . 2  ( ) 
-
-> 
 END
 
 end_test;

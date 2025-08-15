@@ -4,6 +4,7 @@
 // License: GPL3 https://www.gnu.org/licenses/gpl-3.0.html
 //-----------------------------------------------------------------------------
 
+#include "block.h"
 #include "errors.h"
 #include "input.h"
 #include "vm.h"
@@ -74,6 +75,14 @@ void Input::set_text(const char* text, size_t size) {
     set_text(text, static_cast<int>(size));
 }
 
+void Input::set_block(Block* block) {
+    vm.user->BLK = block->blk;
+    vm.user->NR_IN = BLOCK_SZ;
+    vm.user->TO_IN = 0;
+    buffer_ = block->block;
+    source_id_ = 0;
+}
+
 void Input::set_tib(const char* text, int size) {
     if (size > BUFFER_SZ)
         error(Error::BufferOverflow);
@@ -97,18 +106,38 @@ bool Input::refill() {
     bool ok = false;
     string line;
 
-    if (source_id_ < 0)
-        return false;       // input from string
-    else if (source_id_ == 0)
-        ok = static_cast<bool>(std::getline(cin, line)); // input from terminal
-    else
-        ok = static_cast<bool>(std::getline(*input_file_, line)); // input from file
+    if (source_id_ < 0) {               // input from string
+        return false;       
+    }
+    else if (vm.user->BLK > 0) {        // input from block
+        if (vm.user->BLK + 1 >= vm.blocks->num_blocks())
+            return false;
+        else {
+            ++vm.user->BLK;
+            Block* block = vm.blocks->f_block(vm.user->BLK);
+            set_block(block);
+
+            if (vm.user->TRACE) {
+                cout << endl << "> ";
+                print_string(block->block, BLOCK_SZ);
+                cout << endl;
+            }
+
+            return true;
+        }
+    }
+    else if (source_id_ == 0) {         // input from terminal
+        ok = static_cast<bool>(std::getline(cin, line)); 
+    }
+    else {                              // input from file
+        ok = static_cast<bool>(std::getline(*input_file_, line)); 
+    }
 
     set_tib(line);
     vm.user->NR_IN = static_cast<int>(line.size());
     vm.user->TO_IN = 0;
 
-    if (vm.user->TRACE) {
+    if (ok && vm.user->TRACE) {
         cout << endl << "> " << line << endl;
     }
 
@@ -130,6 +159,7 @@ void Input::save_input() {
     }
 
     save.source_id = source_id_;
+    save.blk = vm.user->BLK;
     save.tib = string(tib_, tib_ + vm.user->NR_IN);
     save.buffer = buffer_;
     save.nr_in = vm.user->NR_IN;
@@ -157,6 +187,7 @@ bool Input::restore_input() {
             input_file_->seekg(save.fpos);
         }
         source_id_ = save.source_id;
+        vm.user->BLK = save.blk;
         set_tib(save.tib);
         buffer_ = save.buffer;
         vm.user->NR_IN = save.nr_in;

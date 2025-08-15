@@ -1,8 +1,8 @@
 Forth
 -----
 
-This is a C++ implementation of a ANS 2012 Forth interpreter. It implements all the 
-CORE and CORE-EXT words. 
+This is a C++ implementation of a ANS 2012 Forth interpreter. It implements all
+the CORE, CORE-EXT, BLOCK and BLOCK-EXT words. 
 
 It is intended to be be used as a script interpreter, 
 i.e. calling ABORT exits the interpreter instead of restarting the QUIT loop.
@@ -17,15 +17,11 @@ Implemented WORDS:
 ```
 BLOCK:
   Implemented:
-    EVALUATE
-  Missing:
-    BLK BLOCK BUFFER FLUSH LOAD SAVE-BUFFERS UPDATE
+    BLK BLOCK BUFFER EVALUATE FLUSH LOAD SAVE-BUFFERS UPDATE
 
 BLOCK EXT:
   Implemented:
-    REFILL \
-  Missing:
-    EMPTY-BUFFERS LIST SCR THRU
+    EMPTY-BUFFERS LIST REFILL SCR THRU \
 
 CORE:
   Implemented:

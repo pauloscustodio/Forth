@@ -5,7 +5,8 @@ BEGIN { use lib 't'; require 'testlib.pl'; }
 note "Test WORDS";
 
 forth_ok("words", <<'END');
-INCLUDED DABS OFF ON SEE DUMP ENVIRONMENT? WORDS .RS .S ABORT" ABORT BYE QUIT
+INCLUDED DABS OFF ON SEE DUMP ENVIRONMENT? WORDS .RS .S THRU LIST UPDATE LOAD
+FLUSH EMPTY-BUFFERS SAVE-BUFFERS BUFFER BLOCK SCR BLK ABORT" ABORT BYE QUIT
 ENDCASE ENDOF OF CASE RECURSE REPEAT WHILE UNTIL AGAIN BEGIN UNLOOP LEAVE +LOOP
 LOOP ?DO DO THEN ELSE IF \ ( IS ACTION-OF DEFER! DEFER@ DEFER [COMPILE]
 COMPILE, IMMEDIATE POSTPONE DOES> 2LITERAL LITERAL 2CONSTANT CONSTANT TO VALUE
@@ -43,8 +44,8 @@ for (sort keys %untested) {
 }
 
 # show ANS words that are not implemented
-# ,['BLOCK' => 0], ['BLOCK EXT' => 0],['DOUBLE' => 0], ['DOUBLE EXT' => 0],['FILE' => 0], ['FILE EXT' => 0]
-for (['CORE' => 1], ['CORE EXT' => 0]) {
+# ,['DOUBLE' => 0], ['DOUBLE EXT' => 0],['FILE' => 0], ['FILE EXT' => 0]
+for (['CORE' => 1], ['CORE EXT' => 1], ['BLOCK' => 1], ['BLOCK EXT' => 1]) {
 	my($wordset, $included) = @$_;
 	my $env_query = $wordset =~ s/ /-/gr;
 	

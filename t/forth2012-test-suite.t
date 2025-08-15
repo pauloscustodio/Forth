@@ -132,6 +132,99 @@ One line...
 anotherLine
 
 End of Core Extension word tests
+*********
+Block 29 
+ 1 Should show a (mostly) blank screen                             
+ 2                                                                 
+ 3                                                                 
+ 4                                                                 
+ 5                                                                 
+ 6                                                                 
+ 7                                                                 
+ 8                                                                 
+ 9                                                                 
+10                                                                 
+11                                                                 
+12                                                                 
+13                                                                 
+14                                                                 
+15                                                                 
+16                                                                 
+
+Block 20 
+ 1 List of the First test block                                    
+ 2                                                                 
+ 3                                                                 
+ 4                                                                 
+ 5                                                                 
+ 6                                                                 
+ 7                                                                 
+ 8                                                                 
+ 9                                                                 
+10                                                                 
+11                                                                 
+12                                                                 
+13                                                                 
+14                                                                 
+15                                                                 
+16                                                                 
+
+Block 29 
+ 1 List of the Last test block                                     
+ 2                                                                 
+ 3                                                                 
+ 4                                                                 
+ 5                                                                 
+ 6                                                                 
+ 7                                                                 
+ 8                                                                 
+ 9                                                                 
+10                                                                 
+11                                                                 
+12                                                                 
+13                                                                 
+14                                                                 
+15                                                                 
+16                                                                 
+
+Block 21 
+ 1                                                                 
+ 2                                                                 
+ 3                                                                 
+ 4                                                                 
+ 5                                                                 
+ 6                                                                 
+ 7                                                                 
+ 8                                                                 
+ 9                                                                 
+10                                                                 
+11                                                                 
+12                                                                 
+13                                                                 
+14                                                                 
+15                                                                 
+16                                                    End of Screen
+
+Block 29 
+ 1 Should show another (mostly) blank screen                       
+ 2                                                                 
+ 3                                                                 
+ 4                                                                 
+ 5                                                                 
+ 6                                                                 
+ 7                                                                 
+ 8                                                                 
+ 9                                                                 
+10                                                                 
+11                                                                 
+12                                                                 
+13                                                                 
+14                                                                 
+15                                                                 
+16                                                                 
+***Calculated Characters per Line: 64 
+*
+End of Block word tests
 
 Forth tests completed 
 

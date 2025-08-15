@@ -6,6 +6,7 @@
 
 #pragma once
 
+#include "block.h"
 #include "dict.h"
 #include "input.h"
 #include "memory.h"
@@ -29,6 +30,7 @@ struct VM {
 	NumberOutput* number_output;	// HOLD buffer
 	Pad* pad;				// pad
 	Input* input;			// input buffer
+	Blocks* blocks;			// buffered block I/O
 
 	User* user;				// user variables
 

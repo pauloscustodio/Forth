@@ -25,9 +25,9 @@ forth_ok('S" STACK-CELLS" 		ENVIRONMENT? .S', "( 4096 -1 )");
 
 # deprecated queries
 forth_ok('S" CORE" 				ENVIRONMENT? .S', "( -1 -1 )");
-forth_ok('S" CORE-EXT" 			ENVIRONMENT? .S', "( 0 -1 )");
-forth_ok('S" BLOCK" 			ENVIRONMENT? .S', "( 0 -1 )");
-forth_ok('S" BLOCK-EXT" 		ENVIRONMENT? .S', "( 0 -1 )");
+forth_ok('S" CORE-EXT" 			ENVIRONMENT? .S', "( -1 -1 )");
+forth_ok('S" BLOCK" 			ENVIRONMENT? .S', "( -1 -1 )");
+forth_ok('S" BLOCK-EXT" 		ENVIRONMENT? .S', "( -1 -1 )");
 forth_ok('S" DOUBLE" 			ENVIRONMENT? .S', "( 0 -1 )");
 forth_ok('S" DOUBLE-EXT" 		ENVIRONMENT? .S', "( 0 -1 )");
 forth_ok('S" EXCEPTION" 		ENVIRONMENT? .S', "( 0 -1 )");

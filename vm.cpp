@@ -23,6 +23,8 @@ VM::VM() {
 	number_output->init();
 	input = reinterpret_cast<Input*>(mem.alloc_bottom(sizeof(Input)));
 	input->init();
+	blocks = reinterpret_cast<Blocks*>(mem.alloc_bottom(sizeof(Blocks)));
+	blocks->init();
     
 	// user variables
 	user = reinterpret_cast<User*>(mem.alloc_bottom(sizeof(User)));
@@ -51,6 +53,7 @@ VM::VM() {
 
 VM::~VM() {
 	input->deinit();
+	blocks->deinit();
 }
 
 // pointer - address conversion
