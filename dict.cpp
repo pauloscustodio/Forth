@@ -335,16 +335,36 @@ void f_value() {
 	comma(pop());
 }
 
+void f_two_value() {
+	vm.dict->parse_create(idXDO2CONST, 0);
+	dcomma(dpop());
+}
+
 void f_to() {
 	Header* header = vm.dict->parse_find_existing_word();
 	assert(header != nullptr);
-	if (vm.user->STATE == STATE_COMPILE) {
-		comma(xtXLITERAL);
-		comma(header->body());
-		comma(xtSTORE);
+	int code = fetch(header->xt());
+	if (code == idXDOCONST) {			// single cell value
+		if (vm.user->STATE == STATE_COMPILE) {
+			comma(xtXLITERAL);
+			comma(header->body());
+			comma(xtSTORE);
+		}
+		else
+			store(header->body(), pop());
 	}
-	else
-		store(header->body(), pop());
+	else if (code == idXDO2CONST) {		// double cell value
+		if (vm.user->STATE == STATE_COMPILE) {
+			comma(xtXLITERAL);
+			comma(header->body());
+			comma(xtTWO_STORE);
+		}
+		else
+			dstore(header->body(), dpop());
+	}
+	else {
+		error(Error::InvalidDestinationToTO);
+	}
 }
 
 void f_constant() {

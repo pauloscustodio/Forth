@@ -40,6 +40,16 @@ forth_ok(' : x .( 123) ; x', "123");
 
 forth_ok(' .( '.('x' x 1000).')', 'x' x 1000);
 
+note 'Test S\\"';
+forth_ok(<<'END', <<'END');
+S\" hello \a \b \e \f \l \m \n \q \r \t \v \z \" \xff \\" DUMP
+END
+
+000f36e0  68 65 6c 6c 6f 20 07 20 08 20 1b 20 0c 20 0a 20   hello . . . . . 
+000f36f0  0d 0a 20 0a 20 22 20 0d 20 09 20 0b 20 00 20 22   .. . " . . . . "
+000f3700  20 ff 20 5c                                        . \            
+END
+
 note "Test FILL";
 forth_ok("PAD 10 BL FILL PAD 5 'x' FILL PAD 10 TYPE", "xxxxx     ");
 

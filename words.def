@@ -266,22 +266,15 @@ CODE("VARIABLE", VARIABLE, 0, f_variable())
 CODE("(DOVAR)", XDOVAR, F_HIDDEN, push(body))
 CODE("BUFFER:", BUFFER_COLON, 0, f_buffer_colon())
 
-CODE("2VARIABLE", TWO_VARIABLE, 0, f_2variable())
-
 CODE("VALUE", VALUE, 0, f_value())
+CODE("2VALUE", TWO_VALUE, 0, f_two_value())
 CODE("TO", TO, F_IMMEDIATE, f_to())
 
 CODE("CONSTANT", CONSTANT, 0, f_constant())
 CODE("(DOCONST)", XDOCONST, F_HIDDEN, push(fetch(body)))
 
-CODE("2CONSTANT", TWO_CONSTANT, 0, f_2constant())
-CODE("(DO2CONST)", XDO2CONST, F_HIDDEN, dpush(dfetch(body)))
-
 CODE("LITERAL", LITERAL, F_IMMEDIATE, comma(xtXLITERAL); comma(pop()))
 CODE("(LITERAL)", XLITERAL, F_HIDDEN, push(fetch(vm.ip)); vm.ip += CELL_SZ)
-
-CODE("2LITERAL", TWO_LITERAL, F_IMMEDIATE, comma(xtX2LITERAL); dcomma(dpop()))
-CODE("(2LITERAL)", X2LITERAL, F_HIDDEN, dpush(dfetch(vm.ip)); vm.ip += DCELL_SZ)
 
 CODE("DOES>", DOES, F_IMMEDIATE, f_does())
 CODE("(DOES>DEFINE)", XDOES_DEFINE, F_HIDDEN, f_xdoes_define())
@@ -371,7 +364,48 @@ CODE("OFF", OFF, 0, store(pop(), F_FALSE))
 
 
 // double
+CODE("2CONSTANT", TWO_CONSTANT, 0, f_2constant())
+CODE("(DO2CONST)", XDO2CONST, F_HIDDEN, dpush(dfetch(body)))
+
+CODE("2VARIABLE", TWO_VARIABLE, 0, f_2variable())
+
+CODE("2LITERAL", TWO_LITERAL, F_IMMEDIATE, comma(xtX2LITERAL); dcomma(dpop()))
+CODE("(2LITERAL)", X2LITERAL, F_HIDDEN, dpush(dfetch(vm.ip)); vm.ip += DCELL_SZ)
+
+CODE("D+", DPLUS, 0, dpush(dpop() + dpop()))
+CODE("D-", DMINUS, 0, dint b = dpop(); dpush(dpop() - b))
+
+CODE("D2*", D2MULT, 0, dpush(dpop() << 1))
+CODE("D2/", D2DIV, 0, dpush(dpop() >> 1))
+
+CODE("M*/", MSTARDIV, 0, f_m_star_slash())
+CODE("M+", MPLUS, 0, f_m_plus())
+
+CODE("D=", DEQUAL, 0, push(f_bool(dpop() == dpop())))
+CODE("D<>", DDIFFERENT, 0, push(f_bool(dpop() != dpop())))
+CODE("D<", DLESS, 0, dint b = dpop(); push(f_bool(dpop() < b)))
+CODE("D<=", DLESS_EQUAL, 0, dint b = dpop(); push(f_bool(dpop() <= b)))
+CODE("D>", DGREATER, 0, dint b = dpop(); push(f_bool(dpop() > b)))
+CODE("D>=", DGREATER_EQUAL, 0, dint b = dpop(); push(f_bool(dpop() >= b)))
+
+CODE("DU<", DU_LESS, 0, udint b = dpop(); push(f_bool((udint)dpop() < b)))
+CODE("DU<=", DU_LESS_EQUAL, 0, udint b = dpop(); push(f_bool((udint)dpop() <= b)))
+CODE("DU>", DU_GREATER, 0, udint b = dpop(); push(f_bool((udint)dpop() > b)))
+CODE("DU>=", DU_GREATER_EQUAL, 0, udint b = dpop(); push(f_bool((udint)dpop() >= b)))
+
+CODE("D0=", DZERO_EQUAL, 0, push(f_bool(dpop() == 0)))
+CODE("D0<>", DZERO_DIFFERENT, 0, push(f_bool(dpop() != 0)))
+CODE("D0<", DZERO_LESS, 0, push(f_bool(dpop() < 0)))
+CODE("D0<=", DZERO_LESS_EQUAL, 0, push(f_bool(dpop() <= 0)))
+CODE("D0>", DZERO_GREATER, 0, push(f_bool(dpop() > 0)))
+CODE("D0>=", DZERO_GREATER_EQUAL, 0, push(f_bool(dpop() >= 0)))
+
+CODE("D>S", DTOS, 0, push(dcell_lo(dpop())))
+
 CODE("DABS", DABS, 0, dpush(f_dabs(dpop())))
+CODE("DMAX", DMAX, 0, dpush(f_dmax(dpop(), dpop())))
+CODE("DMIN", DMIN, 0, dpush(f_dmin(dpop(), dpop())))
+CODE("DNEGATE", DNEGATE, 0, dpush(-dpop()))
 
 
 // files

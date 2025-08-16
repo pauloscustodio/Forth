@@ -32,5 +32,6 @@ X(NameTooLong, "Name too long")
 X(DivisionByZero, "Division by zero")
 X(InvalidBlockNumber, "Invalid block number")
 X(NoMoreFreeBlocks, "No more free blocks")
+X(InvalidDestinationToTO, "Invalid destination to TO")
 
 #undef X
