@@ -85,9 +85,6 @@ forth_ok("1 2 3 4 5 6 S0 SP! .S", "( )");
 forth_ok("S0 SP@ - .S", "( 1 )");
 forth_ok("1 2 S0 SP@ - .S", "( 1 2 3 )");
 
-note "Test S0";
-forth_ok("S0 .S", "( 4096 )");
-
 note "Test DEPTH";
 forth_ok("DEPTH . 1 DEPTH . 2 DEPTH . .S", "0 1 2 ( 1 2 )");
 

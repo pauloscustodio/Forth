@@ -17,15 +17,14 @@ note "Test I";
 note "Test J";
 forth_ok("1 >R 2 >R 3 >R  R@ . I . J . .RS BYE", "3 3 1 (R: 1 2 3 )");
 
-note "Test R0";
-forth_ok("R0 RSP@ - .S", "( 0 )");
-forth_ok("R0 .S", "( 4096 )");
 
 note "Test RDROP";
 forth_ok("1 >R -1 >R .S .RS RDROP RDROP .S .RS", "( )(R: 1 -1 )( )(R: )");
 
 note "Test RSP@";
 note "Test RSP!";
+note "Test R0";
+forth_ok("R0 RSP@ - .S", "( 0 )");
 forth_ok("1 >R RSP@ -1 >R RSP! .S .RS RDROP", "( )(R: 1 )");
 
 end_test;

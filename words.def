@@ -64,6 +64,15 @@ CODE("WITHIN", WITHIN, 0, f_within())
 
 
 // logical
+CODE("AND", AND, 0, push(pop()& pop()))
+CODE("OR", OR, 0, push(pop() | pop()))
+CODE("XOR", XOR, 0, push(pop() ^ pop()))
+CODE("INVERT", INVERT, 0, push(~pop()))
+CODE("LSHIFT", LSHIFT, 0, uint count = pop(); uint n = pop(); push(n << count))
+CODE("RSHIFT", RSHIFT, 0, uint count = pop(); uint n = pop(); push(n >> count))
+
+
+// comparison
 CODE("=", EQUAL, 0, push(f_bool(pop() == pop())))
 CODE("<>", DIFFERENT, 0, push(f_bool(pop() != pop())))
 CODE("<", LESS, 0, int b = pop(); push(f_bool(pop() < b)))
@@ -83,15 +92,6 @@ CODE("0>", ZERO_GREATER, 0, push(f_bool(pop() > 0)))
 CODE("0<=", ZERO_LESS_EQUAL, 0, push(f_bool(pop() <= 0)))
 CODE("0>=", ZERO_GREATER_EQUAL, 0, push(f_bool(pop() >= 0)))
 
-CODE("AND", AND, 0, push(pop()& pop()))
-CODE("OR", OR, 0, push(pop() | pop()))
-CODE("XOR", XOR, 0, push(pop() ^ pop()))
-CODE("INVERT", INVERT, 0, push(~pop()))
-CODE("LSHIFT", LSHIFT, 0, uint count = pop(); uint n = pop(); push(n << count))
-CODE("RSHIFT", RSHIFT, 0, uint count = pop(); uint n = pop(); push(n >> count))
-
-
-// comparison
 
 
 // memory
@@ -376,7 +376,6 @@ CODE("DABS", DABS, 0, dpush(f_dabs(dpop())))
 
 // files
 CODE("INCLUDED", INCLUDED, 0, f_included())
-
 
 
 #undef CONST

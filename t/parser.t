@@ -221,4 +221,10 @@ forth_ok(": x 123 ; x .S", "( 123 )");
 # compile double precision number
 forth_ok(": x 1.23 ; x .S", "( 123 0 )");
 
+note "Test DPL";
+forth_ok("123. DPL @ .S", "( 123 0 0 )");
+forth_ok("12.3 DPL @ .S", "( 123 0 1 )");
+forth_ok("1.23 DPL @ .S", "( 123 0 2 )");
+forth_ok(".123 DPL @ .S", "( 123 0 3 )");
+
 end_test;

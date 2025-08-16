@@ -23,8 +23,6 @@ ASTYLE	= astyle --style=attach --pad-oper --align-pointer=type \
 		  --break-closing-braces --remove-braces --attach-return-type \
 		  --max-code-length=80 --lineend=linux --formatted
 
-TASKS	?= 9
-
 all: $(PROJ)$(EXE)
 
 $(PROJ)$(EXE): $(OBJS) $(DEFS) Makefile $(wildcard *.pl)
@@ -36,7 +34,7 @@ clean:
 	$(RM) $(PROJ) $(PROJ)$(EXE) $(OBJS) $(DEPENDS) $(wildcard *.o *.d *.i *.exe *.orig *.core *.bak *~)
 
 test: $(PROJ)$(EXE)
-	perl -S prove --state=slow,save -j$(TASKS) t/*.t
+	perl -S prove --state=slow,save t/*.t
 
 astyle:
 	$(ASTYLE) *.cpp *.h
