@@ -29,5 +29,4 @@ dint f_dmin(dint a, dint b);
 bool within(uint x, uint a, uint b);
 void f_within();
 void f_um_mult();
-void f_m_star_slash();
 void f_m_plus();

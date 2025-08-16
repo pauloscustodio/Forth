@@ -29,6 +29,7 @@
     <ClInclude Include="..\..\input.h" />
     <ClInclude Include="..\..\interp.h" />
     <ClInclude Include="..\..\math.h" />
+    <ClInclude Include="..\..\math96.h" />
     <ClInclude Include="..\..\memory.h" />
     <ClInclude Include="..\..\output.h" />
     <ClInclude Include="..\..\parser.h" />
@@ -49,6 +50,7 @@
     <ClCompile Include="..\..\interp.cpp" />
     <ClCompile Include="..\..\main.cpp" />
     <ClCompile Include="..\..\math.cpp" />
+    <ClCompile Include="..\..\math96.cpp" />
     <ClCompile Include="..\..\memory.cpp" />
     <ClCompile Include="..\..\output.cpp" />
     <ClCompile Include="..\..\parser.cpp" />

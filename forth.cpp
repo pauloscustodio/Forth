@@ -11,6 +11,7 @@
 #include "forth.h"
 #include "interp.h"
 #include "math.h"
+#include "math96.h"
 #include "output.h"
 #include "parser.h"
 #include "tools.h"
@@ -42,7 +43,7 @@ int dcell_hi(dint x) {
 	return (x >> 32) & 0xffffffffLL;
 }
 
-dint dcell(int hi, int lo) {
+dint mk_dcell(int hi, int lo) {
 	return
 		((static_cast<udint>(hi) & 0xffffffffLL) << 32) |
 		(static_cast<udint>(lo) & 0xffffffffLL);

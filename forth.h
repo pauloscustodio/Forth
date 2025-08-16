@@ -77,7 +77,7 @@ int f_bool(bool f);
 int aligned(int x);
 int dcell_lo(dint x);
 int dcell_hi(dint x);
-dint dcell(int hi, int lo);
+dint mk_dcell(int hi, int lo);
 
 // user variables
 struct User {

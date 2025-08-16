@@ -162,17 +162,6 @@ void f_um_mult() {
     dpush(result);
 }
 
-void f_m_star_slash() {
-    dint n2 = pop();
-    dint n1 = pop();
-    dint d1 = dpop();
-
-    if (n2 == 0)
-        error(Error::DivisionByZero);
-
-    dpush(f_ddiv(d1 * n1, n2));
-}
-
 void f_m_plus() {
     dint n = pop();
     dint d = dpop();

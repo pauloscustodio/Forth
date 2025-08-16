@@ -48,7 +48,7 @@ void Mem::store(int addr, int value) {
 dint Mem::dfetch(int addr) {
 	int hi = fetch(addr);
 	int lo = fetch(addr + CELL_SZ);
-	return dcell(hi, lo);
+	return mk_dcell(hi, lo);
 }
 
 void Mem::dstore(int addr, dint value) {

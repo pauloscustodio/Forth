@@ -225,6 +225,18 @@ Block 29
 ***Calculated Characters per Line: 64 
 *
 End of Block word tests
+*****************
+You should see lines duplicated:
+     8970676912557384689
+     8970676912557384689 
+        8970676912557384689
+        8970676912557384689
+     -8522862768232894102
+     -8522862768232894102 
+          -8522862768232894102
+          -8522862768232894102
+**
+End of Double-Number word tests
 
 Forth tests completed 
 

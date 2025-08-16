@@ -15,7 +15,7 @@ void f_colon() {
     if (cs_ddepth() > 0)
         error(Error::CompilerNesting);
 
-    cs_dpush(dcell(POS_COLON_START, 0));
+    cs_dpush(mk_dcell(POS_COLON_START, 0));
     vm.dict->parse_create(idXDOCOL, F_SMUDGE);
     vm.user->STATE = STATE_COMPILE;
 
@@ -27,7 +27,7 @@ void f_colon_noname() {
     if (cs_ddepth() > 0)
         error(Error::CompilerNesting);
 
-    cs_dpush(dcell(POS_COLON_START, 0));
+    cs_dpush(mk_dcell(POS_COLON_START, 0));
     vm.dict->create("", F_SMUDGE, idXDOCOL);
     Header* header = reinterpret_cast<Header*>(
         mem_char_ptr(vm.dict->latest()));
@@ -74,7 +74,7 @@ static void comma_fwd_jump(int xt_jump, int pos) {
         error(Error::CompilerNesting);
 
     comma(xt_jump);
-    cs_dpush(dcell(pos, vm.dict->here()));
+    cs_dpush(mk_dcell(pos, vm.dict->here()));
     comma(0);
 
     if (vm.user->TRACE)
@@ -109,7 +109,7 @@ static void mark_target_back_jump(int pos) {
         error(Error::CompilerNesting);
 
     int addr = vm.dict->here();
-    cs_dpush(dcell(pos, addr));
+    cs_dpush(mk_dcell(pos, addr));
 
     if (vm.user->TRACE)
         vm.cs_stack->print();
@@ -264,7 +264,7 @@ void f_repeat() {
 }
 
 void f_do() {
-    cs_dpush(dcell(POS_DO_START, 0));  // mark start of loop
+    cs_dpush(mk_dcell(POS_DO_START, 0));  // mark start of loop
     comma_fwd_jump(xtXDO, POS_DO_FWD);
     mark_target_back_jump(POS_DO_BACK);
 }
@@ -278,7 +278,7 @@ void f_xdo() {
 }
 
 void f_query_do() {
-    cs_dpush(dcell(POS_DO_START, 0));  // mark start of loop
+    cs_dpush(mk_dcell(POS_DO_START, 0));  // mark start of loop
     comma_fwd_jump(xtXQUERY_DO, POS_DO_FWD);
     mark_target_back_jump(POS_DO_BACK);
 }
@@ -362,7 +362,7 @@ void f_xunloop() {
 }
 
 void f_case() {
-    cs_dpush(dcell(POS_CASE_START, 0));    // mark start of case
+    cs_dpush(mk_dcell(POS_CASE_START, 0));    // mark start of case
 
     if (vm.user->TRACE)
         vm.cs_stack->print();

@@ -61,13 +61,13 @@ void Stack::dpush(dint value) {
 dint Stack::dpop() {
 	int hi = pop();
 	int lo = pop();
-	return dcell(hi, lo);
+	return mk_dcell(hi, lo);
 }
 
 dint Stack::dpeek(int depth) const {
 	int hi = peek(2 * depth);
 	int lo = peek(2 * depth + 1);
-	return dcell(hi, lo);
+	return mk_dcell(hi, lo);
 }
 
 // e.g. roll(1)
