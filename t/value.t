@@ -17,7 +17,7 @@ forth_ok("HEX 123456712345678. 2VALUE xx : x 1111111122222222. TO xx ; x .S xx .
 		"( )( 22222222 11111111 )");
 
 # error
-forth_nok("CREATE xx 20 TO xx", "\nError: Invalid destination to TO\n");
-forth_nok("CREATE xx : x 20 TO xx ; x", "\nError: Invalid destination to TO\n");
+forth_nok("CREATE xx 20 TO xx", "\nError: invalid name argument\n");
+forth_nok("CREATE xx : x 20 TO xx ; x", "\nError: invalid name argument\n");
 
 end_test;

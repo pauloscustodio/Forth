@@ -36,7 +36,7 @@ VM::VM() {
 		Error::ReturnStackUnderflow, Error::ReturnStackOverflow);
 	cs_stack = reinterpret_cast<Stack*>(mem.alloc_top(sizeof(Stack)));
 	cs_stack->init('C', 
-		Error::StructStackUnderflow, Error::StructStackOverflow);
+		Error::ControlFlowStackUnderflow, Error::ControlFlowStackOverflow);
 	stack = reinterpret_cast<Stack*>(mem.alloc_top(sizeof(Stack)));
 	stack->init('\0', 
 		Error::StackUnderflow, Error::StackOverflow);

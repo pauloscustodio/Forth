@@ -78,7 +78,7 @@ int Dict::create(const char* name, int size, int flags, int code) {
 
 int Dict::create(const CString* name, int flags, int code) {
 	if (name->size() > MAX_NAME_SZ)
-		error(Error::NameTooLong, name->to_string());
+		error(Error::DefinitionNameTooLong, name->to_string());
 
 	align();
 	int name_addr = alloc_cstring(name);
@@ -363,7 +363,7 @@ void f_to() {
 			dstore(header->body(), dpop());
 	}
 	else {
-		error(Error::InvalidDestinationToTO);
+		error(Error::InvalidNameArgument);
 	}
 }
 

@@ -29,7 +29,7 @@ forth_ok("-1. D2/ D.",			"-1 ");
 note 'Test M*/';
 forth_ok("2. 6 3 M*/ .S", "( 4 0 )");
 forth_ok("5. -7 11 M*/ .S", "( -4 -1 )");
-forth_nok("2. 6 0 M*/", "\nError: Division by zero\n");
+forth_nok("2. 6 0 M*/", "\nError: division by zero\n");
 
 note 'Test M+';
 forth_ok("1. 2 M+ .S", "( 3 0 )");

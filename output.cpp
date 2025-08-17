@@ -47,7 +47,7 @@ void NumberOutput::add_digits() {
 
 void NumberOutput::add_char(char c) {
     if (ptr_ < 1)
-        error(Error::NumberOutputOverflow);
+        error(Error::PicturedNumericOutputStringOverflow);
     else
         buffer_[--ptr_] = c;
 }

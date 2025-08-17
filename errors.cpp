@@ -22,11 +22,15 @@ using namespace std;
         exit(EXIT_SUCCESS);
     else {
         switch (err) {
-#define X(id, message) case Error::id: output_error(message, arg); break;
+#define X(code, id, message) case Error::id: output_error(message, arg); break;
 #include "errors.def"
         default:
             output_error("Unknown error", std::to_string(static_cast<int>(err)));
             break;
         }
     }
+}
+
+void error(int err, const string& arg) {
+	error(static_cast<Error>(err), arg);
 }

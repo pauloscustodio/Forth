@@ -57,7 +57,7 @@ forth_ok(("0" x 1000)." .S", "( 0 )");
 # not a number
 forth_ok(" BL WORD abc COUNT NUMBER? .S DROP DPL @ .S", "( 0 )( 0 )");
 forth_nok("BL WORD abc COUNT NUMBER  .S DROP DPL @ .S", 
-		  "\nError: Invalid number: abc\n");
+		  "\nError: invalid numeric argument: abc\n");
 forth_ok("0. 1000 0            >NUMBER      .S", "( 0 0 1000 0 )");
 forth_ok("0. BL WORD abc COUNT >NUMBER TYPE .S", "abc( 0 0 )");
 forth_ok("0. BL WORD abc CONVERT 3 TYPE .S", "abc( 0 0 )");
@@ -66,21 +66,21 @@ forth_ok("0. BL WORD abc CONVERT 3 TYPE .S", "abc( 0 0 )");
 forth_ok("BL WORD 102 COUNT 2 BASE ! NUMBER? DECIMAL .S DROP DPL @ .S", 
 		 "( 0 )( 0 )");
 forth_nok("BL WORD 102 COUNT 2 BASE ! NUMBER  DECIMAL .S DROP DPL @ .S", 
-		  "\nError: Invalid number: 102\n");
+		  "\nError: invalid numeric argument: 102\n");
 forth_ok("0. BL WORD 102 COUNT 2 BASE ! >NUMBER DECIMAL TYPE .S", "2( 2 0 )");
 forth_ok("0. BL WORD 102 2 BASE ! CONVERT DECIMAL 1 TYPE .S", "2( 2 0 )");
 
 # wrong digit base 10
 forth_ok("BL WORD 10a COUNT NUMBER? .S DROP DPL @ .S", "( 0 )( 0 )");
 forth_nok("BL WORD 10a COUNT NUMBER  .S DROP DPL @ .S", 
-		  "\nError: Invalid number: 10a\n");
+		  "\nError: invalid numeric argument: 10a\n");
 forth_ok("0. BL WORD 10a COUNT >NUMBER TYPE .S", "a( 10 0 )");
 forth_ok("0. BL WORD 10a CONVERT 1 TYPE .S", "a( 10 0 )");
 
 # wrong digit base 16
 forth_ok("BL WORD 10g COUNT HEX NUMBER? DECIMAL .S DROP DPL @ .S", "( 0 )( 0 )");
 forth_nok("BL WORD 10g COUNT HEX NUMBER  DECIMAL .S DROP DPL @ .S", 
-		  "\nError: Invalid number: 10g\n");
+		  "\nError: invalid numeric argument: 10g\n");
 forth_ok("0. BL WORD 10g COUNT HEX >NUMBER DECIMAL TYPE .S", "g( 16 0 )");
 forth_ok("0. BL WORD 10g HEX CONVERT DECIMAL 1 TYPE .S", "g( 16 0 )");
 
@@ -194,7 +194,7 @@ for my $p (split(" ", ", . + - / :")) {
 	# no digits
 	forth_ok("BL WORD ${p}${p}${p} COUNT NUMBER? .S DROP DPL @ .S", "( 0 )( 0 )");
 	forth_nok("BL WORD ${p}${p}${p} COUNT NUMBER  .S DROP DPL @ .S", 
-			  "\nError: Invalid number: ${p}${p}${p}\n");
+			  "\nError: invalid numeric argument: ${p}${p}${p}\n");
 }
 
 # no sign, negative and positive double number

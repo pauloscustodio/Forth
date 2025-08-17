@@ -91,7 +91,7 @@ void f_execute(int xt) {
 #define CODE(word, name, flags, c_code) case id##name: { c_code; break; }
 #include "words.def"
 		default:
-			error(Error::InvalidWordXT, std::to_string(xt));
+			error(Error::InvalidMemoryAddress, std::to_string(xt));
 		}
 
 		if (vm.user->TRACE) {

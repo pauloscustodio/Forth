@@ -27,7 +27,7 @@ forth_ok('     C" 123"     COUNT TYPE', "123");
 forth_ok(' : x C" 123" ; x COUNT TYPE', "123");
 forth_ok(' : x C" '.('x' x 255).'" ; x COUNT TYPE', 'x' x 255);
 forth_nok(': x C" '.('x' x 256).'" ; x', 
-		  "\nError: Parsed string overflow: ".('x' x 256)."\n");
+		  "\nError: parsed string overflow: ".('x' x 256)."\n");
 
 note 'Test .(';
 forth_ok('     .( )    ', "");

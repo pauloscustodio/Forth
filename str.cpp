@@ -45,14 +45,14 @@ string LongString::to_string() const {
 
 int LongString::alloc_size(int num_chars) {
 	if (num_chars > BUFFER_SZ)
-		error(Error::BufferOverflow, std::to_string(num_chars));
+		error(Error::InputBufferOverflow, std::to_string(num_chars));
 
 	return aligned(sizeof(size_) + num_chars + 1); // count + chars + BL after string
 }
 
 void LongString::set_string(const char* str, int size) {
 	if (size > BUFFER_SZ)
-		error(Error::BufferOverflow, string(str, str + size));
+		error(Error::InputBufferOverflow, string(str, str + size));
 
 	size_ = size;
 	memcpy(str_, str, size);

@@ -143,7 +143,7 @@ fstream* Blocks::block_file() {
         }
 
         if (!*block_file_) 
-            error(Error::OpenFileError, BLOCKS_FILE);
+            error(Error::OpenFileException, BLOCKS_FILE);
     }
     return block_file_;
 }

@@ -71,7 +71,7 @@ static void comma_fwd_jump(int xt_jump, int pos) {
         pos != POS_LEAVE_FWD &&
         pos != POS_OF_FWD &&
         pos != POS_ENDOF_FWD)
-        error(Error::CompilerNesting);
+        error(Error::ControlStructureMismatch);
 
     comma(xt_jump);
     cs_dpush(mk_dcell(pos, vm.dict->here()));
@@ -83,7 +83,7 @@ static void comma_fwd_jump(int xt_jump, int pos) {
 
 static void resolve_fwd_jump() {
     if (cs_ddepth() < 1)
-        error(Error::CompilerNesting);
+        error(Error::ControlStructureMismatch);
 
     dint pos_patch = cs_dpeek();
     if (dcell_hi(pos_patch) != POS_IF_FWD &&
@@ -93,7 +93,7 @@ static void resolve_fwd_jump() {
         dcell_hi(pos_patch) != POS_LEAVE_FWD &&
         dcell_hi(pos_patch) != POS_OF_FWD &&
         dcell_hi(pos_patch) != POS_ENDOF_FWD)
-        error(Error::CompilerNesting);
+        error(Error::ControlStructureMismatch);
     cs_dpop();
 
     int dist = vm.dict->here() - dcell_lo(pos_patch);
@@ -106,7 +106,7 @@ static void resolve_fwd_jump() {
 static void mark_target_back_jump(int pos) {
     if (pos != POS_BEGIN_BACK &&
         pos != POS_DO_BACK)
-        error(Error::CompilerNesting);
+        error(Error::ControlStructureMismatch);
 
     int addr = vm.dict->here();
     cs_dpush(mk_dcell(pos, addr));
@@ -117,12 +117,12 @@ static void mark_target_back_jump(int pos) {
 
 static void resolve_back_jump(int xt_jump) {
     if (cs_ddepth() < 1)
-        error(Error::CompilerNesting);
+        error(Error::ControlStructureMismatch);
 
     dint pos_patch = cs_dpeek();
     if (dcell_hi(pos_patch) != POS_BEGIN_BACK &&
         dcell_hi(pos_patch) != POS_DO_BACK)
-        error(Error::CompilerNesting);
+        error(Error::ControlStructureMismatch);
     cs_dpop();
 
     comma(xt_jump);
@@ -223,14 +223,14 @@ void f_else() {
     // patch forward jump at IF, ELSE or WHILE
     dint save_fwd_jump = cs_dpop();
     if (!search_resolve_fwd_jump(POS_IF_FWD, POS_ELSE_FWD, POS_WHILE_FWD))
-        error(Error::CompilerNesting);
+        error(Error::ControlStructureMismatch);
     cs_dpush(save_fwd_jump);
 }
 
 void f_then() {
     // patch IF or ELSE or WHILE
     if (!search_resolve_fwd_jump(POS_IF_FWD, POS_ELSE_FWD, POS_WHILE_FWD))
-        error(Error::CompilerNesting);
+        error(Error::ControlStructureMismatch);
 }
 
 void f_begin() {
@@ -240,13 +240,13 @@ void f_begin() {
 void f_again() {
     // resolve jump to BEGIN
     if (!search_resolve_back_jump(xtBRANCH, POS_BEGIN_BACK))
-        error(Error::CompilerNesting);
+        error(Error::ControlStructureMismatch);
 }
 
 void f_until() {
     // resolve jump to BEGIN
     if (!search_resolve_back_jump(xtZBRANCH, POS_BEGIN_BACK))
-        error(Error::CompilerNesting);
+        error(Error::ControlStructureMismatch);
 }
 
 void f_while() {
@@ -256,11 +256,11 @@ void f_while() {
 void f_repeat() {
     // go back in the stack looking for BEGIN (there can be more than one WHILE)
     if (!search_resolve_back_jump(xtBRANCH, POS_BEGIN_BACK))
-        error(Error::CompilerNesting);
+        error(Error::ControlStructureMismatch);
 
     // fix WHILE
     if (!search_resolve_fwd_jump(POS_WHILE_FWD, POS_IF_FWD))
-        error(Error::CompilerNesting);
+        error(Error::ControlStructureMismatch);
 }
 
 void f_do() {
@@ -297,10 +297,10 @@ void f_xquery_do() {
 
 static void f_loop_plus_loop(int xt_jump) {
     if (!search_resolve_back_jump(xt_jump, POS_DO_BACK))
-        error(Error::CompilerNesting);
+        error(Error::ControlStructureMismatch);
 
     if (!resolve_all_fwd_jumps(POS_DO_START, POS_DO_FWD, POS_LEAVE_FWD))
-        error(Error::CompilerNesting);
+        error(Error::ControlStructureMismatch);
 }
 
 void f_loop() {
@@ -387,7 +387,7 @@ void f_endof() {
     comma_fwd_jump(xtBRANCH, POS_ENDOF_FWD);    // jump to ENDCASE
 
     if (!search_resolve_fwd_jump(POS_OF_FWD))
-        error(Error::CompilerNesting);
+        error(Error::ControlStructureMismatch);
 }
 
 void f_endcase() {

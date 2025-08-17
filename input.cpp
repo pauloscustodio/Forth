@@ -47,7 +47,7 @@ void Input::open_file(const string& filename) {
     
     input_file_->open(filename, ios::binary);
     if (!input_file_->is_open()) 
-        error(Error::OpenFileError, filename);
+        error(Error::OpenFileException, filename);
 
     source_id_ = 1; // file
     set_tib("", 0);
@@ -85,7 +85,7 @@ void Input::set_block(Block* block) {
 
 void Input::set_tib(const char* text, int size) {
     if (size > BUFFER_SZ)
-        error(Error::BufferOverflow);
+        error(Error::InputBufferOverflow);
 
     vm.user->NR_IN = size;
     vm.user->TO_IN = 0;
@@ -182,7 +182,7 @@ bool Input::restore_input() {
         if (save.is_open) {
             input_file_->open(*filename_, ios::binary);
             if (!input_file_->is_open())
-                error(Error::OpenFileError, *filename_);
+                error(Error::OpenFileException, *filename_);
 
             input_file_->seekg(save.fpos);
         }

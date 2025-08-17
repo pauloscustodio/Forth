@@ -52,7 +52,7 @@ forth_ok("-1234567890123. SWAP OVER DABS .S <# #S ROT SIGN #> TYPE",
 		 "( -288 1912276171 287 )-1234567890123");
 forth_ok("0. <# ".("#\n" x 256)." #> TYPE", "0" x 256);
 forth_nok("0. <# ".("#\n" x 257)." #> TYPE", 
-		  "\nError: Number output overflow\n");
+		  "\nError: pictured numeric output string overflow\n");
 
 note "Test SIGN";
 forth_ok('<#  127. TUCK DABS #S ROT SIGN #> TYPE .S', '127( )');

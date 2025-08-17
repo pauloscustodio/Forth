@@ -78,7 +78,7 @@ void Mem::move(int src, int dst, int size) {
 
 char* Mem::alloc_bottom(int size) {
 	if (bottom_ + size >= top_)
-		error(Error::MemoryOverflow);
+		error(Error::DictionaryOverflow);
 	char* ret = char_ptr(bottom_);
 	bottom_ += aligned(size);
 	return ret;
@@ -86,7 +86,7 @@ char* Mem::alloc_bottom(int size) {
 
 char* Mem::alloc_top(int size) {
 	if (bottom_ + size >= top_)
-		error(Error::MemoryOverflow);
+		error(Error::DictionaryOverflow);
 	top_ -= aligned(size);
 	return char_ptr(top_);
 }

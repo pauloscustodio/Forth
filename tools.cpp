@@ -105,6 +105,6 @@ void f_see() {
         dump_colon_definition(body);
         break;
     default:
-        error(Error::InvalidWordXT);
+        error(Error::InvalidMemoryAddress);
     }
 }

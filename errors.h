@@ -10,8 +10,9 @@
 using namespace std;
 
 enum class Error {
-#define X(id, message) id,
+#define X(code, id, message) id = code,
 #include "errors.def"
 };
 
 [[noreturn]] void error(Error err, const string& arg = "");
+[[noreturn]] void error(int err, const string& arg = "");

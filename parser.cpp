@@ -299,7 +299,7 @@ static int _number(bool do_error) {
     }
     else {
         if (do_error)
-            error(Error::InvalidNumber, string(mem_char_ptr(addr), mem_char_ptr(addr) + size));
+            error(Error::InvalidNumericArgument, string(mem_char_ptr(addr), mem_char_ptr(addr) + size));
         return 0;
     }
 }
