@@ -24,7 +24,6 @@ struct VM {
 
 	// abort error message
 	string* error_message;
-	int catch_result;
 
 	// memory
 	Mem mem;

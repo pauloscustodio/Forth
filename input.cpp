@@ -216,7 +216,7 @@ int Input::input_level() const {
 }
 
 void Input::restore_input(int level) {
-    while (level > input_level())
+    while (level < input_level())
         restore_input();
 }
 

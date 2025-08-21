@@ -14,7 +14,6 @@ VM vm;
 VM::VM() {
 	ip = 0;
 	error_message = new string();
-	catch_result = 0;
 
 	// bottom of memory
     wordbuf = reinterpret_cast<Wordbuf*>(mem.alloc_bottom(sizeof(Wordbuf)));

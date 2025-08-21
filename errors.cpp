@@ -9,7 +9,19 @@
 #include "vm.h"
 #include <iostream>
 #include <string>
+#include <exception>
 using namespace std;
+
+class ThrowException : public exception {
+public:
+    ThrowException(int code) : error_code(code) {}
+    virtual const char* what() const noexcept override {
+        return "Forth exception thrown";
+    }
+
+public:
+    int error_code;
+};
 
 [[noreturn]] static void output_error(const string& message, const string& arg = "") {
     cerr << endl << "Error: " << message;
@@ -58,11 +70,20 @@ void f_catch(int xt) {
     vm.except_stack->push(vm.stack->sp());
     vm.except_stack->push(vm.input->input_level());
     vm.except_stack->push(vm.ip);
-    vm.except_stack->push(vm.catch_result);
     
-    vm.catch_result = 0;
-    f_execute(xt);
-    push(vm.catch_result);
+	int catch_result = 0;
+    try {
+        f_execute(xt);
+    }
+    catch (ThrowException& e) {
+        vm.ip = vm.except_stack->pop(); // restore instruction pointer
+        vm.input->restore_input(vm.except_stack->pop());
+        vm.stack->set_sp(vm.except_stack->pop()); // restore data stack pointer
+        vm.r_stack->set_sp(vm.except_stack->pop()); // restore return stack pointer
+
+        catch_result = e.error_code;
+	}
+    push(catch_result);
 }
 
 void f_throw() {
@@ -78,17 +99,11 @@ void f_throw(int error_code) {
     if (error_code == 0)
         return;
 
-    if (vm.except_stack->depth() < 5)
+    if (vm.except_stack->depth() == 0) {
         exit_error(error_code, *vm.error_message);
+    }
     else {
-        vm.catch_result = vm.except_stack->pop();
-        vm.ip = vm.except_stack->pop(); // restore instruction pointer
-        int input_level = vm.except_stack->pop();
-        vm.input->restore_input(input_level);
-        vm.stack->set_sp(vm.except_stack->pop()); // restore data stack pointer
-        vm.r_stack->set_sp(vm.except_stack->pop()); // restore return stack pointer
-        
-		vm.catch_result = error_code;
+        throw ThrowException(error_code);
     }
 }
 

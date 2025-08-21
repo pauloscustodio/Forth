@@ -95,7 +95,6 @@ void f_execute(int xt) {
 		}
 
 		if (vm.user->TRACE) {
-			cout << BL;
 			vm.stack->print();
 			cout << endl;
 		}
