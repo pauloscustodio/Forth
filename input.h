@@ -54,6 +54,9 @@ public:
     void save_input_for_query();
     bool restore_input_if_query();
 
+    int input_level() const;
+    void restore_input(int level);
+
 private:
     string* filename_;          // name of the file being read
     ifstream* input_file_;      // open file

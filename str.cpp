@@ -72,15 +72,15 @@ void Wordbuf::init() {
 	ptr_ = 0;
 }
 
-CString* Wordbuf::append(const string& str) {
-	return append(str.c_str(), str.size());
+CString* Wordbuf::append_cstring(const string& str) {
+	return append_cstring(str.c_str(), str.size());
 }
 
-CString* Wordbuf::append(const char* str, size_t size) {
-	return append(str, static_cast<int>(size));
+CString* Wordbuf::append_cstring(const char* str, size_t size) {
+	return append_cstring(str, static_cast<int>(size));
 }
 
-CString* Wordbuf::append(const char* str, int size) {
+CString* Wordbuf::append_cstring(const char* str, int size) {
     if (size > MAX_CSTRING_SZ)
         error(Error::ParsedStringOverflow, string(str, str + size));
     
@@ -95,6 +95,29 @@ CString* Wordbuf::append(const char* str, int size) {
 	return cstring;
 }
 
+LongString* Wordbuf::append_long_string(const string& str) {
+	return append_long_string(str.c_str(), str.size());
+}
+
+
+LongString* Wordbuf::append_long_string(const char* str, size_t size) {
+	return append_long_string(str, static_cast<int>(size));
+}
+
+LongString* Wordbuf::append_long_string(const char* str, int size) {
+	if (size > BUFFER_SZ)
+		error(Error::InputBufferOverflow, string(str, str + size));
+
+	int alloc_size = LongString::alloc_size(size);
+	if (ptr_ + alloc_size > static_cast<int>(sizeof(data_)))
+		ptr_ = 0;
+	LongString* lstring = reinterpret_cast<LongString*>(data_ + ptr_);
+	ptr_ += alloc_size;
+
+	lstring->set_string(str, size);
+
+	return lstring;
+}
 
 static char to_lower(char c) {
 	return tolower(static_cast<unsigned char>(c));
@@ -153,21 +176,23 @@ void f_s_quote() {
 		comma(str_addr);
 	}
 	else {
-		push(mem_addr(message));
-		push(size);
+		LongString* lstring = vm.wordbuf->append_long_string(message, size);
+		push(mem_addr(lstring->str()));
+		push(lstring->size());
 	}
 }
 
 void f_s_backslash_quote() {
-	const LongString* message = parse_backslash_string();
+	string message = parse_backslash_string();
 	if (vm.user->STATE == STATE_COMPILE) {
-		int str_addr = vm.dict->alloc_string(message->str(), message->size());
+		int str_addr = vm.dict->alloc_string(message.c_str(), message.size());
 		comma(xtXS_QUOTE);
 		comma(str_addr);
 	}
 	else {
-		push(mem_addr(message->str()));
-		push(message->size());
+		LongString* lstring = vm.wordbuf->append_long_string(message);
+		push(mem_addr(lstring->str()));
+		push(lstring->size());
 	}
 }
 

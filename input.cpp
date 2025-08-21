@@ -211,6 +211,15 @@ bool Input::restore_input_if_query() {
     }
 }
 
+int Input::input_level() const {
+    return static_cast<int>(input_stack_->size());
+}
+
+void Input::restore_input(int level) {
+    while (level > input_level())
+        restore_input();
+}
+
 void f_source() {
     push(mem_addr(vm.input->buffer()));
     push(vm.user->NR_IN);

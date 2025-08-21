@@ -52,9 +52,13 @@ class Wordbuf {
 public:
     void init();
 
-    CString* append(const string& str);
-    CString* append(const char* str, size_t size);
-    CString* append(const char* str, int size);
+    CString* append_cstring(const string& str);
+    CString* append_cstring(const char* str, size_t size);
+    CString* append_cstring(const char* str, int size);
+    
+	LongString* append_long_string(const string& str);
+    LongString* append_long_string(const char* str, size_t size);
+    LongString* append_long_string(const char* str, int size);
 
 private:
     char data_[WORDBUF_SZ];

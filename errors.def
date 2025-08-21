@@ -93,5 +93,6 @@ X(-79, ReplacesException, "REPLACES exception")
 // The values {-4095...-256} shall be used only as assigned by a system.
 X(-256, InputBufferOverflow, "input buffer overflow")
 X(-257, ControlFlowStackUnderflow, "control-flow stack underflow")
+X(-258, ExceptionStackUnderflow, "exception stack underflow")
 
 #undef X

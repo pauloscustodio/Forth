@@ -78,11 +78,11 @@ const char* parse_word(int& size, char delimiter) {
 CString* parse_cword(char delimiter) {
     int size = 0;
     const char* word = parse_word(size, delimiter);
-    CString* cword = vm.wordbuf->append(word, size);
+    CString* cword = vm.wordbuf->append_cstring(word, size);
     return cword;
 }
 
-LongString* parse_backslash_string() {
+string parse_backslash_string() {
     const char* buffer = vm.input->buffer();
     string message;
     for (; vm.user->TO_IN < vm.user->NR_IN; ++vm.user->TO_IN) {
@@ -131,9 +131,7 @@ LongString* parse_backslash_string() {
             message.push_back(buffer[vm.user->TO_IN]);
         }
     }
-    
-    int addr = vm.dict->alloc_string(message.c_str(), message.size());
-    return reinterpret_cast<LongString*>(mem_char_ptr(addr));
+    return message;
 }
 
 bool parse_number(const string& text, bool& is_double, dint& value) {

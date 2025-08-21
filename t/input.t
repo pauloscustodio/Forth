@@ -7,7 +7,7 @@ forth_ok("SOURCE TYPE", "SOURCE TYPE");
 
 note "Test TIB";
 forth_ok("TIB 11 TYPE", "TIB 11 TYPE");
-forth_ok("TIB .S", "( 1576 )");
+forth_ok("TIB .S", "( 2600 )");
 
 note "Test #IN";
 forth_ok("#IN @ .S", "( 8 )");

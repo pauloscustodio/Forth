@@ -22,6 +22,10 @@ struct VM {
 	// instruction pointer
     int ip;		
 
+	// abort error message
+	string* error_message;
+	int catch_result;
+
 	// memory
 	Mem mem;
 
@@ -37,6 +41,7 @@ struct VM {
 	// stacks
 	Stack* r_stack;			// return stack
 	Stack* cs_stack;		// control stack
+	Stack* except_stack;	// exception stack
 	Stack* stack;			// data stack
 
 	// dictionary

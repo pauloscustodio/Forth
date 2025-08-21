@@ -26,7 +26,7 @@ static_assert(CELL_SZ * 2 == DCELL_SZ, "DCELL should be double of CELL");
 // size of the virtual machine
 static const int MEM_SZ = 256 * 1024 * CELL_SZ;
 static const int BUFFER_SZ = 1024;
-static const int WORDBUF_SZ = BUFFER_SZ;
+static const int WORDBUF_SZ = 2 * BUFFER_SZ;
 static const int PAD_SZ = 256;
 static const int STACK_SZ = 1024 * CELL_SZ;
 static const int MAX_CSTRING_SZ = 0xff;

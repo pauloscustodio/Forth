@@ -114,7 +114,7 @@ int Dict::alloc_cstring(const char* str, size_t size) {
 }
 
 int Dict::alloc_cstring(const char* str, int size) {
-	CString* str_str = vm.wordbuf->append(str, size);
+	CString* str_str = vm.wordbuf->append_cstring(str, size);
 	return alloc_cstring(str_str);
 }
 

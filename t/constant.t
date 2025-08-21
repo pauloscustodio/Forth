@@ -13,7 +13,7 @@ note "Test BL";
 forth_ok("BL .S", "( 32 )");
 
 note "Test PAD";
-forth_ok("PAD .S", "( 1028 )");
+forth_ok("PAD .S", "( 2052 )");
 
 note "Test FALSE";
 forth_ok("FALSE .S", "( 0 )");

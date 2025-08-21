@@ -333,9 +333,6 @@ CODE("ENDCASE", ENDCASE, F_IMMEDIATE, f_endcase())
 // main loop
 CODE("QUIT", QUIT, 0, f_quit())
 CODE("BYE", BYE, 0, exit(EXIT_SUCCESS))
-CODE("ABORT", ABORT, 0, exit(EXIT_FAILURE))
-CODE("ABORT\"", ABORT_QUOTE, F_IMMEDIATE, f_abort_quote())
-CODE("(ABORT\")", XABORT_QUOTE, F_HIDDEN, f_xabort_quote())
 
 
 // blocks
@@ -410,6 +407,14 @@ CODE("DNEGATE", DNEGATE, 0, dpush(-dpop()))
 
 // files
 CODE("INCLUDED", INCLUDED, 0, f_included())
+
+
+// exceptions
+CODE("THROW", THROW, 0, f_throw())
+CODE("CATCH", CATCH, 0, f_catch())
+CODE("ABORT", ABORT, 0, f_abort())
+CODE("ABORT\"", ABORT_QUOTE, F_IMMEDIATE, f_abort_quote())
+CODE("(ABORT\")", XABORT_QUOTE, F_HIDDEN, f_xabort_quote())
 
 
 #undef CONST

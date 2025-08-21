@@ -8,11 +8,12 @@
 
 #include "forth.h"
 #include "str.h"
+#include <string>
 using namespace std;
 
 const char* parse_word(int& size, char delimiter = BL);
 CString* parse_cword(char delimiter = BL);
-LongString* parse_backslash_string();
+string parse_backslash_string();
 
 bool parse_number(const string& text, bool& is_double, dint& value);
 bool parse_number(const char* text, size_t size, bool& is_double, dint& value);

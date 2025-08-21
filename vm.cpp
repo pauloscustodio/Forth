@@ -13,6 +13,8 @@ VM vm;
 
 VM::VM() {
 	ip = 0;
+	error_message = new string();
+	catch_result = 0;
 
 	// bottom of memory
     wordbuf = reinterpret_cast<Wordbuf*>(mem.alloc_bottom(sizeof(Wordbuf)));
@@ -34,11 +36,17 @@ VM::VM() {
 	r_stack = reinterpret_cast<Stack*>(mem.alloc_top(sizeof(Stack)));
 	r_stack->init('R', 
 		Error::ReturnStackUnderflow, Error::ReturnStackOverflow);
+
 	cs_stack = reinterpret_cast<Stack*>(mem.alloc_top(sizeof(Stack)));
 	cs_stack->init('C', 
 		Error::ControlFlowStackUnderflow, Error::ControlFlowStackOverflow);
+
+	except_stack = reinterpret_cast<Stack*>(mem.alloc_top(sizeof(Stack)));
+	except_stack->init('E',
+		Error::ExceptionStackUnderflow, Error::ExceptionStackOverflow);
+
 	stack = reinterpret_cast<Stack*>(mem.alloc_top(sizeof(Stack)));
-	stack->init('\0', 
+	stack->init('\0',
 		Error::StackUnderflow, Error::StackOverflow);
 
 	// use the remaing as dictionary space
@@ -52,6 +60,7 @@ VM::VM() {
 }
 
 VM::~VM() {
+	delete error_message;
 	input->deinit();
 	blocks->deinit();
 }

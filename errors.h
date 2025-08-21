@@ -14,5 +14,15 @@ enum class Error {
 #include "errors.def"
 };
 
-[[noreturn]] void error(Error err, const string& arg = "");
-[[noreturn]] void error(int err, const string& arg = "");
+void error(Error err, const string& arg = "");
+
+void f_catch();
+void f_catch(int xt);
+void f_throw();
+void f_throw(Error err);
+void f_throw(int error_code);
+
+// abort
+void f_abort();
+void f_abort_quote();
+void f_xabort_quote();

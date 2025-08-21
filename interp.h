@@ -24,6 +24,3 @@ void f_evaluate(const char* text, int size);
 // main loop
 void f_quit();
 
-// abort
-void f_abort_quote();
-void f_xabort_quote();

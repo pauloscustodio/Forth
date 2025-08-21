@@ -53,7 +53,7 @@ DOUBLE EXT:
     2ROT 2VALUE DU<
 
 EXCEPTION:
-  Missing:
+  Implemented:
     CATCH THROW
 
 EXCEPTION EXT:
