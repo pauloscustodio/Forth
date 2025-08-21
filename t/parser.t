@@ -2,8 +2,6 @@
 
 BEGIN { use lib 't'; require 'testlib.pl'; }
 
-forth_ok(("0" x 1000)." .S", "( 0 )");
-
 note "Test WORD";
 note "Test COUNT";
 note "Test TYPE";

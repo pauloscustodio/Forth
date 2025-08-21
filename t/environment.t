@@ -57,14 +57,18 @@ forth_ok('S" FILE" 				ENVIRONMENT? .S', "( 0 -1 )");
 forth_ok('S" FILE-EXT" 			ENVIRONMENT? .S', "( 0 -1 )");
 forth_ok('S" FLOATING" 			ENVIRONMENT? .S', "( 0 -1 )");
 forth_ok('S" FLOATING-EXT" 		ENVIRONMENT? .S', "( 0 -1 )");
+forth_ok('S" FLOATING-STACK" 	ENVIRONMENT? .S', "( 0 )");
+forth_ok('S" MAX_FLOAT" 		ENVIRONMENT? .S', "( 0 )");
 forth_ok('S" LOCALS" 			ENVIRONMENT? .S', "( 0 -1 )");
 forth_ok('S" LOCALS-EXT" 		ENVIRONMENT? .S', "( 0 -1 )");
+forth_ok('S" #LOCALS" 			ENVIRONMENT? .S', "( 0 )");
 forth_ok('S" MEMORY-ALLOC" 		ENVIRONMENT? .S', "( 0 -1 )");
 forth_ok('S" MEMORY-ALLOC-EXT" 	ENVIRONMENT? .S', "( 0 -1 )");
 forth_ok('S" TOOLS" 			ENVIRONMENT? .S', "( 0 -1 )");
 forth_ok('S" TOOLS-EXT" 		ENVIRONMENT? .S', "( 0 -1 )");
 forth_ok('S" SEARCH-ORDER" 		ENVIRONMENT? .S', "( 0 -1 )");
 forth_ok('S" SEARCH-ORDER-EXT" 	ENVIRONMENT? .S', "( 0 -1 )");
+forth_ok('S" WORDLISTS" 		ENVIRONMENT? .S', "( 0 )");
 forth_ok('S" STRING" 	 		ENVIRONMENT? .S', "( 0 -1 )");
 forth_ok('S" STRING-EXT" 		ENVIRONMENT? .S', "( 0 -1 )");
 

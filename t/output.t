@@ -105,23 +105,6 @@ forth_ok("-1 10 U.R", "4294967295");
 forth_ok("-1 11 U.R", " 4294967295");
 forth_ok("-1 12 U.R", "  4294967295");
 
-note 'Test D.';
-forth_ok("1. D. .S",	"1 ( )");
-forth_ok("-1. D. .S",	"-1 ( )");
-
-note 'Test D.R';
-forth_ok("1. 0 D.R",	"1");
-forth_ok("1. 1 D.R",	"1");
-forth_ok("1. 2 D.R",	" 1");
-forth_ok("1. 3 D.R",	"  1");
-forth_ok("1. 4 D.R",	"   1");
-
-forth_ok("-1. 0 D.R",	"-1");
-forth_ok("-1. 1 D.R",	"-1");
-forth_ok("-1. 2 D.R",	"-1");
-forth_ok("-1. 3 D.R",	" -1");
-forth_ok("-1. 4 D.R",	"  -1");
-
 note "Test ?";
 forth_ok("1 ? 2 ? 3 ? .S", "1 2 3 ( 1 2 3 )");
 

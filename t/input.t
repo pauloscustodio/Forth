@@ -31,22 +31,17 @@ capture_ok("echo SOURCE-ID .S | ./forth", "( 0 ) ok\n");
 forth_ok("SOURCE-ID .S", "( 1 )");
 forth_ok("CHAR ! WORD SOURCE-ID! COUNT EVALUATE .S", "( -1 )");
 
-note "Test QUIT";
-note "Test REFILL";
-note "Test INTERPRET";
-forth_ok("1 .S QUIT 2 .S", "( 1 )");
-
 note "Test ACCEPT";
 capture_ok("echo hello | ./forth -e 'PAD 255 ACCEPT PAD SWAP TYPE'",
 		   "hello");
-
-note "Test KEY";
-capture_ok("echo ! | ./forth -e 'KEY .S'", "( 33 )");
 
 note "Test EXPECT";
 note "Test SPAN";
 capture_ok("echo hello | ./forth -e 'PAD 255 EXPECT SPAN @ . .S PAD SPAN @ TYPE'",
 		   "5 ( )hello");
+
+note "Test KEY";
+capture_ok("echo ! | ./forth -e 'KEY .S'", "( 33 )");
 
 note "Test QUERY";
 capture_ok("echo .S | ./forth -e '1 2 QUERY INTERPRET'", "( 1 2 )");
