@@ -2,7 +2,8 @@ Forth
 -----
 
 This is a C++ implementation of a ANS 2012 Forth interpreter. It implements all
-the CORE, CORE-EXT, BLOCK and BLOCK-EXT words. 
+the CORE, CORE-EXT, BLOCK, BLOCK-EXT, DOUBLE, DOUBLE-EXT, EXCEPTION and 
+EXCEPTION-EXT words. 
 
 It is intended to be be used as a script interpreter, 
 i.e. calling ABORT exits the interpreter instead of restarting the QUIT loop.
