@@ -17,3 +17,8 @@ int f_key();
 int f_key_query();
 
 void f_page();
+
+void f_begin_structure();
+void f_plus_field();
+void f_xplus_field(int body);
+void f_end_structure();

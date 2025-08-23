@@ -416,6 +416,10 @@ CODE("AT-XY", AT_XY, 0, f_at_xy())
 CODE("KEY", KEY, 0, push(f_key()))
 CODE("KEY?", KEY_QUERY, 0, push(f_bool(f_key_query())))
 CODE("PAGE", PAGE, 0, f_page())
+CODE("BEGIN-STRUCTURE", BEGIN_STRUCTURE, 0, f_begin_structure())
+CODE("+FIELD", PLUS_FIELD, 0, f_plus_field())
+CODE("(+FIELD)", XPLUS_FIELD, F_HIDDEN, f_xplus_field(body))
+CODE("END-STRUCTURE", END_STRUCTURE, 0, f_end_structure())
 
 
 // files

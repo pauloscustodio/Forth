@@ -52,7 +52,7 @@ forth_ok('S" DOUBLE-EXT" 		ENVIRONMENT? .S', "( -1 -1 )");
 forth_ok('S" EXCEPTION" 		ENVIRONMENT? .S', "( -1 -1 )");
 forth_ok('S" EXCEPTION-EXT" 	ENVIRONMENT? .S', "( -1 -1 )");
 forth_ok('S" FACILITY" 			ENVIRONMENT? .S', "( -1 -1 )");
-forth_ok('S" FACILITY-EXT" 		ENVIRONMENT? .S', "( 0 -1 )");
+forth_ok('S" FACILITY-EXT" 		ENVIRONMENT? .S', "( -1 -1 )");
 forth_ok('S" FILE" 				ENVIRONMENT? .S', "( 0 -1 )");
 forth_ok('S" FILE-EXT" 			ENVIRONMENT? .S', "( 0 -1 )");
 forth_ok('S" FLOATING" 			ENVIRONMENT? .S', "( 0 -1 )");

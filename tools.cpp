@@ -275,6 +275,15 @@ void f_see() {
         dump_body_definition(body, size);
         break;
     }
+    case idXPLUS_FIELD: 
+        if (size == CELL_SZ) {
+            int offset = fetch(body);
+            cout << endl << "FIELD " << name << BL
+                << "OFFSET " << offset << endl;
+        }
+        if (size > CELL_SZ)
+            dump_body_definition(body + CELL_SZ, size - CELL_SZ);
+        break;
     default: {
         cout << endl << name << endl;
         dump_body_definition(body, size);

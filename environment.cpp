@@ -109,7 +109,7 @@ void f_environment_q(const string& query) {
         push(F_TRUE);
     }
     else if (case_insensitive_equal(query, "FACILITY-EXT")) {
-        push(F_FALSE);
+        push(F_TRUE);
         push(F_TRUE);
     }
     else if (case_insensitive_equal(query, "FILE")) {
