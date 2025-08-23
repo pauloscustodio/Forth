@@ -5,9 +5,10 @@
 //-----------------------------------------------------------------------------
 
 #ifndef _WIN32
-#include <unistd.h>
-#include <termios.h>
+#include <cstdio>
 #include <fcntl.h>
+#include <termios.h>
+#include <unistd.h>
 
 void init_console() {
 }
