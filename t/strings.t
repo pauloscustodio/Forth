@@ -54,9 +54,9 @@ forth_ok(<<'END', <<'END');
 : x S\" hello \a \b \e \f \l \m \n \q \r \t \v \z \" \xff \\" ; x DUMP
 END
 
-000ef6b0                                      68 65 6c 6c               hell
-000ef6c0  6f 20 07 20 08 20 1b 20 0c 20 0a 20 0d 0a 20 0a   o . . . . . .. .
-000ef6d0  20 22 20 0d 20 09 20 0b 20 00 20 22 20 ff 20 5c    " . . . . " . \
+000ef6c0                                      68 65 6c 6c               hell
+000ef6d0  6f 20 07 20 08 20 1b 20 0c 20 0a 20 0d 0a 20 0a   o . . . . . .. .
+000ef6e0  20 22 20 0d 20 09 20 0b 20 00 20 22 20 ff 20 5c    " . . . . " . \
 END
 
 note "Test FILL";

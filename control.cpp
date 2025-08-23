@@ -47,7 +47,7 @@ void f_semicolon() {
         error(Error::CompilerNesting);
     cs_dpop();
 
-    comma(xtXSEMICOLON);
+    comma(xtEXIT);
     Header* header = reinterpret_cast<Header*>(
         mem_char_ptr(vm.dict->latest()));
     header->flags.smudge = false;

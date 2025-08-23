@@ -253,7 +253,6 @@ CODE(":", COLON, 0, f_colon())
 CODE(":NONAME", COLON_NONAME, 0, f_colon_noname())
 CODE(";", SEMICOLON, F_IMMEDIATE, f_semicolon())
 CODE("(DOCOL)", XDOCOL, F_HIDDEN, r_push(vm.ip); vm.ip = body)
-CODE("(SEMICOLON)", XSEMICOLON, F_HIDDEN, if (r_depth() == 0) do_exit = true; else vm.ip = r_pop())
 
 CODE("[", LBRACKET, F_IMMEDIATE, vm.user->STATE = STATE_INTERPRET)
 CODE("]", RBRACKET, 0, vm.user->STATE = STATE_COMPILE)

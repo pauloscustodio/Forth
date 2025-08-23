@@ -19,6 +19,8 @@ struct Header {
 		bool hidden : 1;
 		bool immediate : 1;
 	} flags;
+	int size;			// size of body, filled by next header
+    int creator_xt;		// xt of word that created this word
 	int does;			// address of DOES> code
 	int code;			// primitive code
 
@@ -26,6 +28,7 @@ struct Header {
 	int xt() const;
 	int body() const;
 	static Header* header(int xt);
+	int get_size() const;
 };
 
 

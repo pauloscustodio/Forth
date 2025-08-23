@@ -1,3 +1,0 @@
-- store size of word so that SEE does not need (SEMICOLON)
-- show named labels instead of addresses in SEE
-- support all definition words in SEE

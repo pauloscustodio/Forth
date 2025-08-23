@@ -31,6 +31,12 @@ Header* Header::header(int xt) {
 	return reinterpret_cast<Header*>(mem_char_ptr(addr));
 }
 
+int Header::get_size() const {
+	if (size == 0)
+		return vm.dict->here() - body();
+	else
+		return size;
+}
 
 void Dict::init(int lo_mem, int hi_mem) {
 	lo_mem_ = lo_mem;
@@ -88,6 +94,16 @@ int Dict::create(const CString* name, int flags, int code) {
 int Dict::create_cont(int name_addr, int flags, int code) {
 	// store header
 	check_free_space(sizeof(Header));
+
+	// fill previous header size
+	if (latest_) {
+		Header* latest_header = reinterpret_cast<Header*>(
+			mem_char_ptr(latest_));
+		int latest_size = here_ - latest_header->body();
+		latest_header->size = latest_size; // fill size of previous header
+	}
+
+	// create new header
 	Header* header = reinterpret_cast<Header*>(mem_char_ptr(here_));
 	header->link = latest_;
 	latest_ = here_;
@@ -98,6 +114,8 @@ int Dict::create_cont(int name_addr, int flags, int code) {
 	header->flags.hidden = (flags & F_HIDDEN) ? true : false;
 	header->flags.immediate = (flags & F_IMMEDIATE) ? true : false;
 
+	header->size = 0; // size will be filled by next header
+    header->creator_xt = 0; // filled by defining word
 	header->does = 0;
 	header->code = code;
 
@@ -378,24 +396,29 @@ void f_2constant() {
 }
 
 void f_does() {
+    Header* header = reinterpret_cast<Header*>(mem_char_ptr(vm.dict->latest()));
 	comma(xtXDOES_DEFINE);                  // set this word as having DOES>
+    comma(header->xt());					// xt of creater word
 	comma(vm.dict->here() + 2 * CELL_SZ);	// location of run code
 	comma(xtEXIT);                          // exit from CREATE part
 	// run code starts here
 }
 
 void f_xdoes_define() {
+    int creator_xt = fetch(vm.ip);
+	vm.ip += CELL_SZ;
 	int run_code = fetch(vm.ip);
-	vm.ip += CELL_SZ;							// start of runtime code
+	vm.ip += CELL_SZ;						// start of runtime code
 
 	Header* def_word = reinterpret_cast<Header*>(mem_char_ptr(vm.dict->latest()));
+    def_word->creator_xt = creator_xt;		// store xt of creator word
 	def_word->does = run_code;				// start of DOES> code
 	def_word->code = idXDOES_RUN;			// new execution id
 }
 
 void f_xdoes_run(int body) {
-	push(body);                     // store parameter field on the stack
-	r_push(vm.ip);                     // save current ip
+	push(body);							// store parameter field on the stack
+	r_push(vm.ip);						// save current ip
 	Header* header = Header::header(body - CELL_SZ);
 	vm.ip = header->does;				// call code after DOES>
 }
