@@ -4,7 +4,7 @@
 // License: GPL3 https://www.gnu.org/licenses/gpl-3.0.html
 //-----------------------------------------------------------------------------
 
-#include "env.h"
+#include "environment.h"
 #include "forth.h"
 #include "vm.h"
 #include <iostream>

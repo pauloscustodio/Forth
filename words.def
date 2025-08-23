@@ -204,7 +204,6 @@ CODE("SOURCE-ID", SOURCE_ID, 0, push(vm.input->source_id()))
 
 CODE("REFILL", REFILL, 0, push(f_bool(f_refill())))
 CODE("ACCEPT", ACCEPT, 0, f_accept())
-CODE("KEY", KEY, 0, push(f_key()))
 
 VAR("SPAN", SPAN, 0, 0)
 CODE("EXPECT", EXPECT, 0, f_expect())
@@ -404,16 +403,23 @@ CODE("DMIN", DMIN, 0, dpush(f_dmin(dpop(), dpop())))
 CODE("DNEGATE", DNEGATE, 0, dpush(-dpop()))
 
 
-// files
-CODE("INCLUDED", INCLUDED, 0, f_included())
-
-
 // exceptions
 CODE("THROW", THROW, 0, f_throw())
 CODE("CATCH", CATCH, 0, f_catch())
 CODE("ABORT", ABORT, 0, f_abort())
 CODE("ABORT\"", ABORT_QUOTE, F_IMMEDIATE, f_abort_quote())
 CODE("(ABORT\")", XABORT_QUOTE, F_HIDDEN, f_xabort_quote())
+
+
+// facilty
+CODE("AT-XY", AT_XY, 0, f_at_xy())
+CODE("KEY", KEY, 0, push(f_key()))
+CODE("KEY?", KEY_QUERY, 0, push(f_bool(f_key_query())))
+CODE("PAGE", PAGE, 0, f_page())
+
+
+// files
+CODE("INCLUDED", INCLUDED, 0, f_included())
 
 
 #undef CONST

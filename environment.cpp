@@ -4,7 +4,7 @@
 // License: GPL3 https://www.gnu.org/licenses/gpl-3.0.html
 //-----------------------------------------------------------------------------
 
-#include "env.h"
+#include "environment.h"
 #include "forth.h"
 #include "str.h"
 #include "vm.h"
@@ -105,7 +105,7 @@ void f_environment_q(const string& query) {
         push(F_TRUE);
     }
     else if (case_insensitive_equal(query, "FACILITY")) {
-        push(F_FALSE);
+        push(F_TRUE);
         push(F_TRUE);
     }
     else if (case_insensitive_equal(query, "FACILITY-EXT")) {

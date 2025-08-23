@@ -62,7 +62,7 @@ EXCEPTION EXT:
     ABORT ABORT"
 
 FACILITY:
-  Missing:
+  Implemented:
     AT-XY KEY? PAGE
 
 FACILITY EXT:

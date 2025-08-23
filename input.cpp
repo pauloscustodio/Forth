@@ -253,12 +253,6 @@ void f_accept() {
         push(0);
 }
 
-int f_key() {
-    char c;
-    cin >> c;
-    return c;
-}
-
 void f_expect() {
     f_accept();
     vm.user->SPAN = pop();

@@ -5,8 +5,9 @@
 //-----------------------------------------------------------------------------
 
 #include "control.h"
-#include "env.h"
+#include "environment.h"
 #include "errors.h"
+#include "facility.h"
 #include "file.h"
 #include "forth.h"
 #include "interp.h"

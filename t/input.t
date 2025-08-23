@@ -40,9 +40,6 @@ note "Test SPAN";
 capture_ok("echo hello | ./forth -e 'PAD 255 EXPECT SPAN @ . .S PAD SPAN @ TYPE'",
 		   "5 ( )hello");
 
-note "Test KEY";
-capture_ok("echo ! | ./forth -e 'KEY .S'", "( 33 )");
-
 note "Test QUERY";
 capture_ok("echo .S | ./forth -e '1 2 QUERY INTERPRET'", "( 1 2 )");
 

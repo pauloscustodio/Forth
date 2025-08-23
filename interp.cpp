@@ -5,7 +5,7 @@
 //-----------------------------------------------------------------------------
 
 #include "dict.h"
-#include "env.h"
+#include "environment.h"
 #include "errors.h"
 #include "forth.h"
 #include "interp.h"

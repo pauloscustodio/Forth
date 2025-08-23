@@ -22,8 +22,9 @@
     <ClInclude Include="..\..\block.h" />
     <ClInclude Include="..\..\control.h" />
     <ClInclude Include="..\..\dict.h" />
-    <ClInclude Include="..\..\env.h" />
+    <ClInclude Include="..\..\environment.h" />
     <ClInclude Include="..\..\errors.h" />
+    <ClInclude Include="..\..\facility.h" />
     <ClInclude Include="..\..\file.h" />
     <ClInclude Include="..\..\forth.h" />
     <ClInclude Include="..\..\input.h" />
@@ -42,8 +43,11 @@
     <ClCompile Include="..\..\block.cpp" />
     <ClCompile Include="..\..\control.cpp" />
     <ClCompile Include="..\..\dict.cpp" />
-    <ClCompile Include="..\..\env.cpp" />
+    <ClCompile Include="..\..\environment.cpp" />
     <ClCompile Include="..\..\errors.cpp" />
+    <ClCompile Include="..\..\facility.cpp" />
+    <ClCompile Include="..\..\facility_posix.cpp" />
+    <ClCompile Include="..\..\facility_win32.cpp" />
     <ClCompile Include="..\..\file.cpp" />
     <ClCompile Include="..\..\forth.cpp" />
     <ClCompile Include="..\..\input.cpp" />

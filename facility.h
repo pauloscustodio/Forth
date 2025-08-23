@@ -1,0 +1,19 @@
+//-----------------------------------------------------------------------------
+// C++ implementation of a Forth interpreter
+// Copyright (c) Paulo Custodio, 2020-2025
+// License: GPL3 https://www.gnu.org/licenses/gpl-3.0.html
+//-----------------------------------------------------------------------------
+
+#pragma once
+
+using namespace std;
+
+void init_console();
+
+void f_at_xy();
+void f_at_xy(int x, int y);
+
+int f_key();
+int f_key_query();
+
+void f_page();

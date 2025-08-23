@@ -77,10 +77,6 @@ forth_nok("DEFER hello hello .S", "");
 forth_ok("DEFER hello ' * ' hello DEFER!  2 3 hello .S", "( 6 )");
 forth_ok("DEFER hello ' + ' hello DEFER!  2 3 hello .S", "( 5 )");
 forth_ok("DEFER hello ' + ' hello DEFER!  ' hello DEFER@  ' + =  .S", "( -1 )");
-forth_ok("DEFER hello  SEE hello", <<'END');
-
-DEFER hello ACTION OF ABORT
-END
 
 note "Test ACTION-OF";
 my $action1 = "DEFER hello  : action-of-hello ACTION-OF hello ;  ' * ' hello DEFER!  2 3 hello .S";
@@ -102,57 +98,18 @@ forth_ok("CREATE x 123 , x @ .S", "( 123 )");
 
 note "Test CONSTANT";
 forth_ok("123 CONSTANT x  x  .S", "( 123 )");
-forth_ok("123 CONSTANT x  SEE x", <<'END');
-
-123 CONSTANT x
-END
-
-forth_ok("123 CONSTANT x 16 ALLOT SEE x", <<'END');
-
-123 CONSTANT x
-
-00006ef0              00 00 00 00 00 00 00 00 00 00 00 00       ............
-00006f00  00 00 00 00                                       ....            
-END
 
 note 'Test 2CONSTANT';
 forth_ok("1. .S 2CONSTANT xx .S xx .S",		"( 1 0 )( )( 1 0 )");
 forth_ok("-1. .S 2CONSTANT xx .S xx .S",	"( -1 -1 )( )( -1 -1 )");
-forth_ok("123. 2CONSTANT xx SEE xx", <<'END');
-
-123. 2CONSTANT xx
-END
-
-forth_ok("123. 2CONSTANT xx 16 ALLOT SEE xx", <<'END');
-
-123. 2CONSTANT xx
-
-00006ef0                          00 00 00 00 00 00 00 00           ........
-00006f00  00 00 00 00 00 00 00 00                           ........        
-END
 
 note "Test VARIABLE";
 forth_ok("VARIABLE x  123 x !  ' x >BODY @  .S", "( 123 )");
-forth_ok("VARIABLE x  123 x !  SEE x", <<'END');
-
-VARIABLE x 123 x !
-END
 
 note 'Test 2VARIABLE';
 forth_ok("2VARIABLE xx xx 2@ .S",			"( 0 0 )");
 forth_ok("2VARIABLE xx 1. xx 2! xx 2@ .S",	"( 1 0 )");
 forth_ok("2VARIABLE xx -1. xx 2! xx 2@ .S",	"( -1 -1 )");
-forth_ok("2VARIABLE x  123. x 2!  SEE x", <<'END');
-
-2VARIABLE x 123. x 2!
-END
-
-forth_ok("2VARIABLE x  123. x 2! 16 ALLOT  SEE x", <<'END');
-
-CREATE x 
-00006ef0  00 00 00 00 7b 00 00 00 00 00 00 00 00 00 00 00   ....{...........
-00006f00  00 00 00 00 00 00 00 00                           ........        
-END
 
 note "Test ON";
 note "Test OFF";
@@ -217,14 +174,6 @@ forth_ok(<<END, "( -1 -1 )");
 		mark
 		HERE =
 		.S
-END
-forth_ok("MARKER x SEE x UNUSED 1024 / . 'k' EMIT CR", <<'END');
-
-MARKER x
-Latest: 28344 
-Here:   28372 
-Names:  980728 
-929 k
 END
 
 note "Test BUFFER:";

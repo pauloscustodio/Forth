@@ -4,6 +4,7 @@
 // License: GPL3 https://www.gnu.org/licenses/gpl-3.0.html
 //-----------------------------------------------------------------------------
 
+#include "facility.h"
 #include "forth.h"
 #include "str.h"
 #include "vm.h"
@@ -56,6 +57,8 @@ VM::VM() {
 
 	// reinit wordbuf to get predictable results in tests
 	wordbuf->init();
+
+	init_console();
 }
 
 VM::~VM() {

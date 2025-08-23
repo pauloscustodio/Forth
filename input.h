@@ -84,7 +84,6 @@ void f_source();
 void f_tib();
 bool f_refill();
 void f_accept();
-int f_key();
 void f_expect();
 void f_query();
 void f_save_input();
