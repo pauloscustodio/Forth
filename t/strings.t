@@ -51,12 +51,14 @@ END
 END
 
 forth_ok(<<'END', <<'END');
-: x S\" hello \a \b \e \f \l \m \n \q \r \t \v \z \" \xff \\" ; x DUMP
+: x S\" hello \a \b \e \f \l \m \n \q \r \t \v \z \" \xff \\" ; 
+x 2DUP PAD SWAP MOVE
+SWAP DROP PAD SWAP DUMP
 END
 
-000ef6b0              68 65 6c 6c 6f 20 07 20 08 20 1b 20       hello . . . 
-000ef6c0  0c 20 0a 20 0d 0a 20 0a 20 22 20 0d 20 09 20 0b   . . .. . " . . .
-000ef6d0  20 00 20 22 20 ff 20 5c                            . " . \        
+00000800              68 65 6c 6c 6f 20 07 20 08 20 1b 20       hello . . . 
+00000810  0c 20 0a 20 0d 0a 20 0a 20 22 20 0d 20 09 20 0b   . . .. . " . . .
+00000820  20 00 20 22 20 ff 20 5c                            . " . \        
 END
 
 note "Test FILL";

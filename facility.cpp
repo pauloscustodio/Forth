@@ -32,14 +32,22 @@ void f_begin_structure() {
     push(0);                        // initial offset is 0
 }
 
-void f_plus_field() {
-    int size = pop();
-    int offset = pop();
+static int field(int offset, int size, bool do_align) {
+    if (do_align)
+        offset = aligned(offset);
 
     vm.dict->parse_create(idXPLUS_FIELD, 0);
     comma(offset);                   // offset of field
 
     offset += size;
+
+    return offset;                   // new offset
+}
+
+void f_plus_field() {
+    int size = pop();
+    int offset = pop();
+    offset = field(offset, size, false);
     push(offset);                    // new offset
 }
 
@@ -48,6 +56,24 @@ void f_xplus_field(int body) {
     int offset = fetch(body);
     int field_addr = base_addr + offset;
     push(field_addr);
+}
+
+void f_cfield_colon() {
+    int offset = pop();
+    offset = field(offset, CHAR_SZ, false);
+    push(offset);                    // new offset
+}
+
+void f_field_colon() {
+    int offset = pop();
+    offset = field(offset, CELL_SZ, true);
+    push(offset);                    // new offset
+}
+
+void f_two_field_colon() {
+    int offset = pop();
+    offset = field(offset, DCELL_SZ, true);
+    push(offset);                    // new offset
 }
 
 void f_end_structure() {

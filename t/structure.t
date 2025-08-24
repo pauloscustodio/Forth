@@ -17,4 +17,23 @@ forth_ok(<<'END', "( ) ( 8 1000 1004 ) ");
 	.S
 END
 
+note "Test CFIELD:";
+note "Test FIELD:";
+note "Test 2FIELD:";
+forth_ok(<<'END', "( ) ( 20 1000 1004 1008 1012 ) ");
+	BEGIN-STRUCTURE s
+		CFIELD: s.char1
+		FIELD:  s.cell
+		CFIELD: s.char2
+		2FIELD: s.dcell
+	END-STRUCTURE
+	.S
+	s 
+	1000 s.char1
+	1000 s.cell
+	1000 s.char2
+	1000 s.dcell
+	.S
+END
+
 end_test;

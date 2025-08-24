@@ -21,4 +21,7 @@ void f_page();
 void f_begin_structure();
 void f_plus_field();
 void f_xplus_field(int body);
+void f_cfield_colon();
+void f_field_colon();
+void f_two_field_colon();
 void f_end_structure();
