@@ -12,7 +12,7 @@
 #include <termios.h>
 #include <unistd.h>
 
-void init_console() {
+void init_console_output() {
 }
 
 #endif

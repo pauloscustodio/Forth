@@ -55,52 +55,6 @@ uint32_t get_ekey() {
     int len = read(STDIN_FILENO, buf, sizeof(buf));
     tcsetattr(STDIN_FILENO, TCSANOW, &old_term);
 
-    if (len == 1) {
-        key_code = buf[0]; // regular key
-    }
-    else if (buf[0] == '\033' && buf[1] == '[') {
-        int i = 2;
-        int param1 = 0, param2 = 0;
-
-        // Parse first numeric parameter
-        while (i < len && buf[i] >= '0' && buf[i] <= '9') {
-            param1 = param1 * 10 + (buf[i] - '0');
-            i++;
-        }
-
-        if (buf[i] == ';') {
-            i++;
-            // Parse second numeric parameter (modifier)
-            while (i < len && buf[i] >= '0' && buf[i] <= '9') {
-                param2 = param2 * 10 + (buf[i] - '0');
-                i++;
-            }
-        }
-
-        char final = buf[i];
-        switch (final) {
-        case 'A': key_code = KEY_UP;    break;
-        case 'B': key_code = KEY_DOWN;  break;
-        case 'C': key_code = KEY_RIGHT; break;
-        case 'D': key_code = KEY_LEFT;  break;
-        case 'H': key_code = KEY_HOME;  break;
-        case 'F': key_code = KEY_END;   break;
-        }
-
-        // Modifier mapping based on xterm conventions
-        switch (param2) {
-        case 2: modifiers |= MOD_SHIFT; break;
-        case 3: modifiers |= MOD_ALT;   break;
-        case 4: modifiers |= MOD_SHIFT | MOD_ALT; break;
-        case 5: modifiers |= MOD_CTRL;  break;
-        case 6: modifiers |= MOD_SHIFT | MOD_CTRL; break;
-        case 7: modifiers |= MOD_ALT | MOD_CTRL; break;
-        case 8: modifiers |= MOD_SHIFT | MOD_ALT | MOD_CTRL; break;
-        }
-    }
-
-    return pack_ekey(key_code, modifiers);
-}
 if (len == 1) {
     key_code = buf[0]; // regular key
 }
@@ -169,6 +123,5 @@ else if (buf[0] == '\033' && buf[1] == '[') {
 
 return pack_ekey(key_code, modifiers);
 }
-
 
 #endif
