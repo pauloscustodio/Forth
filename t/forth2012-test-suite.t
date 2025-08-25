@@ -239,6 +239,8 @@ You should see lines duplicated:
 End of Double-Number word tests
 ***
 End of Exception word tests
+****
+End of Facility word tests
 
 Forth tests completed 
 

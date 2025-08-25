@@ -21,3 +21,7 @@ void f_cfield_colon();
 void f_field_colon();
 void f_two_field_colon();
 void f_end_structure();
+
+void f_ms();
+void f_ms(int milliseconds);
+void f_time_date();

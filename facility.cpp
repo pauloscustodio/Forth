@@ -6,7 +6,9 @@
 
 #include "facility.h"
 #include "vm.h"
+#include <chrono>
 #include <iostream>
+#include <thread>
 using namespace std;
 
 void f_at_xy() {
@@ -81,4 +83,25 @@ void f_end_structure() {
     int offset = pop();
     int addr = pop();
     store(addr, offset); // store size of structure
+}
+
+void f_ms() {
+    int milliseconds = pop();
+    f_ms(milliseconds);
+}
+
+void f_ms(int milliseconds) {
+    std::this_thread::sleep_for(std::chrono::milliseconds(milliseconds));
+}
+
+void f_time_date() {
+    auto now = std::chrono::system_clock::now();
+    std::time_t t = std::chrono::system_clock::to_time_t(now);
+    std::tm* tm = std::localtime(&t);
+    push(tm->tm_sec);        // seconds after the minute - [0, 60]
+    push(tm->tm_min);        // minutes after the hour - [0, 59]
+    push(tm->tm_hour);       // hours since midnight - [0, 23]
+    push(tm->tm_mday);       // day of the month - [1, 31]
+    push(tm->tm_mon + 1);    // months since January - [0, 11]
+    push(tm->tm_year + 1900);// years since 1900
 }

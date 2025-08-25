@@ -3,6 +3,7 @@
 BEGIN { use lib 't'; require 'testlib.pl'; }
 
 note "Test KEY?";
+note "Test MS";
 if ($ENV{HARNESS_ACTIVE}) {
     ok 1;
 } else {
@@ -13,7 +14,7 @@ if ($ENV{HARNESS_ACTIVE}) {
 				KEY? 0= 
 			WHILE
 				'.' EMIT
-				100000 0 DO LOOP
+				1000 MS
 			REPEAT
 			CR
 			." You pressed:" KEY EMIT CR
@@ -48,6 +49,7 @@ END
 }
 
 note "Test EKEY?";
+note "Test MS";
 if ($ENV{HARNESS_ACTIVE}) {
     ok 1;
 } else {
@@ -58,7 +60,7 @@ if ($ENV{HARNESS_ACTIVE}) {
 				EKEY? 0= 
 			WHILE
 				'.' EMIT
-				100000 0 DO LOOP
+				1000 MS
 			REPEAT
 			CR
 			." You pressed:" EKEY . CR
@@ -187,6 +189,20 @@ if ($ENV{HARNESS_ACTIVE}) {
 			." Press any key" KEY DROP CR
 		;
 		draw
+END
+	run_ok("./forth $test.fs");
+}
+
+note "Test TIME&DATE";
+if ($ENV{HARNESS_ACTIVE}) {
+    ok 1;
+} else {
+	path("$test.fs")->spew(<<'END');
+		." Date-time: "
+		TIME&DATE . . . ." - " . . . CR
+		.S
+		CR
+		." Press any key" KEY DROP CR
 END
 	run_ok("./forth $test.fs");
 }

@@ -99,14 +99,12 @@ uint32_t get_ekey() {
             break;
         case '~':
             switch (param1) {
-//        case 1:  key_code = KEY_HOME;   break;
             case 2:
                 key_code = KEY_INSERT;
                 break;
             case 3:
                 key_code = KEY_DELETE;
                 break;
-//        case 4:  key_code = KEY_END;    break;
             case 5:
                 key_code = KEY_PRIOR;
                 break;
