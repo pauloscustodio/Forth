@@ -25,21 +25,27 @@ using namespace std;
 typedef int32_t  cell;    /* one Forth cell (signed, 32-bit) */
 typedef uint32_t ucell;
 
-typedef struct { cell lo, hi; } dcell;   /* Forth double: lo first, then hi */
+typedef struct {
+    cell lo, hi;
+} dcell;   /* Forth double: lo first, then hi */
 
 /* ------- Unsigned helpers: 64-bit (2 words) & 96-bit (3 words) ------- */
-typedef struct { ucell lo, hi; } u64;    /* magnitude of a signed double */
-typedef struct { ucell lo, mid, hi; } u96;
+typedef struct {
+    ucell lo, hi;
+} u64;    /* magnitude of a signed double */
+typedef struct {
+    ucell lo, mid, hi;
+} u96;
 
 /* Add with carry (32-bit words) */
-static inline ucell addc32(ucell a, ucell b, ucell *carry) {
+static inline ucell addc32(ucell a, ucell b, ucell* carry) {
     uint64_t s = (uint64_t)a + b + *carry;
     *carry = (ucell)(s >> 32);
     return (ucell)s;
 }
 
 /* Sub with borrow (32-bit words) -- kept for completeness (not used in fixes) */
-static inline ucell subb32(ucell a, ucell b, ucell *borrow) {
+static inline ucell subb32(ucell a, ucell b, ucell* borrow) {
     uint64_t d = (uint64_t)a - b - *borrow;
     *borrow = (ucell)((d >> 63) & 1u); /* 1 if underflow */
     return (ucell)d;
@@ -101,7 +107,7 @@ static u96 u64_mul_u32(u64 A, ucell b) {
  *   q1 = (r<<32 | N.mid) / d; r = ...
  *   q0 = (r<<32 | N.lo)  / d; r = ...
  */
-static void u96_div_u32(u96 N, ucell d, u96 *Q, ucell *R) {
+static void u96_div_u32(u96 N, ucell d, u96* Q, ucell* R) {
     assert(d != 0);
     uint64_t r, q;
 
@@ -112,12 +118,14 @@ static void u96_div_u32(u96 N, ucell d, u96 *Q, ucell *R) {
 
     /* step 2: middle word */
     uint64_t m = (r << 32) | N.mid;
-    q = m / d;  r = m % d;
+    q = m / d;
+    r = m % d;
     Q->mid = (ucell)q;
 
     /* step 3: low word */
     uint64_t l = (r << 32) | N.lo;
-    q = l / d;  r = l % d;
+    q = l / d;
+    r = l % d;
     Q->lo = (ucell)q;
 
     *R = (ucell)r;
@@ -125,7 +133,8 @@ static void u96_div_u32(u96 N, ucell d, u96 *Q, ucell *R) {
 
 /* --------- Public API: M* (32x32 -> 64 signed) --------- */
 static dcell MSTAR(cell n1, cell n2) {
-    int64_t p = (int64_t)n1 * (int64_t)n2; /* standard C guarantees at least 64-bit here */
+    int64_t p = (int64_t)n1 * (int64_t)
+                n2; /* standard C guarantees at least 64-bit here */
     dcell r;
     r.lo = (cell)(p & 0xFFFFFFFFll);
     r.hi = (cell)((uint64_t)p >> 32);
@@ -163,7 +172,8 @@ static dcell MSTAR_SLASH(dcell d, cell n1, cell n2) {
     u96 N = u64_mul_u32(A, B);
 
     /* 2) 96/32 -> quotient Q (96), remainder R (32) */
-    u96 Q; ucell R;
+    u96 Q;
+    ucell R;
     u96_div_u32(N, D, &Q, &R);
 
     /* 3) Take low 64 bits of Q as magnitude result (Q.mid:Q.lo) */
@@ -193,8 +203,9 @@ void f_m_star_slash() {
     int n1 = pop();
     dint d = dpop();
 
-    if (n2 == 0)
+    if (n2 == 0) {
         error(Error::DivisionByZero);
+    }
 
     dcell d1;
     d1.lo = dcell_lo(d);

@@ -26,10 +26,12 @@ void f_dump(const char* mem, int size) {
     for (int p = addr_lo; p < addr_hi; p += 16) {
         cout << endl << hex << setfill('0') << setw(8) << p << BL << BL;
         for (int q = p; q < p + 16; ++q) {
-            if (q < addr || q >= addr + size)
+            if (q < addr || q >= addr + size) {
                 cout << BL << BL << BL;
-            else
+            }
+            else {
                 cout << hex << setfill('0') << setw(2) << cfetch(q) << BL;
+            }
         }
         cout << BL << BL;
         for (int q = p; q < p + 16; ++q) {
@@ -61,16 +63,16 @@ static vector<Line> disassemble(int body, int size) {
         Line line;
         line.addr = ptr;
 
-        int xt = fetch(ptr); 
+        int xt = fetch(ptr);
         ptr += CELL_SZ;
         Header* header = Header::header(xt);
         if (xt == xtXLITERAL) {
-            int value = fetch(ptr); 
+            int value = fetch(ptr);
             ptr += CELL_SZ;
             line.text = string(indent, ' ') + number_to_string(value);
         }
         else if (xt == xtX2LITERAL) {
-            dint value = dfetch(ptr); 
+            dint value = dfetch(ptr);
             ptr += DCELL_SZ;
             line.text = string(indent, ' ') + number_dot_to_string(value);
         }
@@ -84,28 +86,28 @@ static vector<Line> disassemble(int body, int size) {
             int str_addr = fetch(ptr);
             ptr += CELL_SZ;
             const LongString* message = reinterpret_cast<const LongString*>(
-                mem_char_ptr(str_addr));
+                                            mem_char_ptr(str_addr));
             line.text = string(indent, ' ') + ".\" " + message->to_string() + "\"";
         }
         else if (xt == xtXS_QUOTE) {
             int str_addr = fetch(ptr);
             ptr += CELL_SZ;
             const LongString* message = reinterpret_cast<const LongString*>(
-                mem_char_ptr(str_addr));
+                                            mem_char_ptr(str_addr));
             line.text = string(indent, ' ') + "S\" " + message->to_string() + "\"";
         }
         else if (xt == xtXABORT_QUOTE) {
-            int str_addr = fetch(ptr); 
+            int str_addr = fetch(ptr);
             ptr += CELL_SZ;
             const LongString* message = reinterpret_cast<const LongString*>(
-                mem_char_ptr(str_addr));
+                                            mem_char_ptr(str_addr));
             line.text = string(indent, ' ') + "ABORT\" " + message->to_string() + "\"";
         }
         else if (xt == xtXC_QUOTE) {
-            int str_addr = fetch(ptr); 
+            int str_addr = fetch(ptr);
             ptr += CELL_SZ;
             const CString* message = reinterpret_cast<const CString*>(
-                mem_char_ptr(str_addr));
+                                         mem_char_ptr(str_addr));
             line.text = string(indent, ' ') + "C\" " + message->to_string() + "\"";
         }
         else if (xt == xtXDOES_DEFINE) {
@@ -173,10 +175,13 @@ static void mark_labels(vector<Line>& lines) {
     for (auto& line : lines) {
         if (line.target_addr != 0) {
             auto it = find_if(lines.begin(), lines.end(),
-                [&line](const Line& l) { return l.addr == line.target_addr; });
+            [&line](const Line & l) {
+                return l.addr == line.target_addr;
+            });
             if (it != lines.end()) {
-                if (it->label_id == 0)
+                if (it->label_id == 0) {
                     it->label_id = label_id++;
+                }
                 line.text += " L" + to_string(it->label_id);
             }
         }
@@ -188,15 +193,16 @@ static void dump_colon_definition(int body, int size) {
     mark_labels(lines);
 
     for (const auto& line : lines) {
-        if (line.label_id != 0)
+        if (line.label_id != 0) {
             cout << "L" << line.label_id << ":" << endl;
+        }
         cout << "    " << line.text << endl;
     }
     cout << ";" << endl;
 }
 
 void dump_body_definition(int body, int size) {
-	f_dump(mem_char_ptr(body), size);
+    f_dump(mem_char_ptr(body), size);
 }
 
 void f_see() {
@@ -237,8 +243,9 @@ void f_see() {
         print_number(value);
         cout << "CONSTANT " << name << endl;
 
-        if (size > CELL_SZ)
+        if (size > CELL_SZ) {
             dump_body_definition(body + CELL_SZ, size - CELL_SZ);
+        }
         break;
     }
     case idXDO2CONST: {
@@ -247,27 +254,36 @@ void f_see() {
         print_number_dot(value);
         cout << "2CONSTANT " << name << endl;
 
-        if (size > DCELL_SZ)
+        if (size > DCELL_SZ) {
             dump_body_definition(body + DCELL_SZ, size - DCELL_SZ);
+        }
         break;
     }
     case idXMARKER:
         cout << endl << "MARKER " << name << endl
-            << "Latest: "; print_number(fetch(body)); cout << endl
-            << "Here:   "; print_number(fetch(body + CELL_SZ)); cout << endl
-            << "Names:  "; print_number(fetch(body + 2 * CELL_SZ)); cout << endl;
-        if (size > 3 * CELL_SZ)
+             << "Latest: ";
+        print_number(fetch(body));
+        cout << endl
+             << "Here:   ";
+        print_number(fetch(body + CELL_SZ));
+        cout << endl
+             << "Names:  ";
+        print_number(fetch(body + 2 * CELL_SZ));
+        cout << endl;
+        if (size > 3 * CELL_SZ) {
             dump_body_definition(body + 3 * CELL_SZ, size - 3 * CELL_SZ);
+        }
         break;
     case idXDEFER:
         if (size == CELL_SZ) {
             int action_xt = fetch(body);
             Header* action_header = Header::header(action_xt);
             cout << endl << "DEFER " << name << BL
-                << "ACTION OF " << action_header->name()->to_string() << endl;
+                 << "ACTION OF " << action_header->name()->to_string() << endl;
         }
-        if (size > CELL_SZ)
+        if (size > CELL_SZ) {
             dump_body_definition(body + CELL_SZ, size - CELL_SZ);
+        }
         break;
     case idXDOES_RUN: {
         Header* creator_header = Header::header(header->creator_xt);
@@ -275,14 +291,15 @@ void f_see() {
         dump_body_definition(body, size);
         break;
     }
-    case idXPLUS_FIELD: 
+    case idXPLUS_FIELD:
         if (size == CELL_SZ) {
             int offset = fetch(body);
             cout << endl << "FIELD " << name << BL
-                << "OFFSET " << offset << endl;
+                 << "OFFSET " << offset << endl;
         }
-        if (size > CELL_SZ)
+        if (size > CELL_SZ) {
             dump_body_definition(body + CELL_SZ, size - CELL_SZ);
+        }
         break;
     default: {
         cout << endl << name << endl;

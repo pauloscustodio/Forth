@@ -12,101 +12,108 @@
 using namespace std;
 
 void Stack::init(char prefix, Error err_underflow, Error err_overflow) {
-	memset(data_, 0, sizeof(data_));
-	sp_ = STACK_SZ;
-	prefix_ = prefix;
-	err_underflow_ = err_underflow;
-	err_overflow_ = err_overflow;
+    memset(data_, 0, sizeof(data_));
+    sp_ = STACK_SZ;
+    prefix_ = prefix;
+    err_underflow_ = err_underflow;
+    err_overflow_ = err_overflow;
 }
 
 void Stack::push(int value) {
-	if (sp_ <= 0)
-		error(err_overflow_);
-	else
-		data_[--sp_] = value;
+    if (sp_ <= 0) {
+        error(err_overflow_);
+    }
+    else {
+        data_[--sp_] = value;
+    }
 }
 
 int Stack::pop() {
-	if (sp_ >= STACK_SZ) {
-		error(err_underflow_);
-		return 0;
-	}
-	else {
-		return data_[sp_++];
-	}
+    if (sp_ >= STACK_SZ) {
+        error(err_underflow_);
+        return 0;
+    }
+    else {
+        return data_[sp_++];
+    }
 }
 
 int Stack::peek(int depth) const {
-	if (depth < 0) {
-		error(Error::InvalidMemoryAddress);
-		return 0;
-	}
-	else {
-		int idx = sp_ + depth;
-		if (idx >= STACK_SZ) {
-			error(err_underflow_);
-			return 0;
-		}
-		else {
-			return data_[idx];
-		}
-	}
+    if (depth < 0) {
+        error(Error::InvalidMemoryAddress);
+        return 0;
+    }
+    else {
+        int idx = sp_ + depth;
+        if (idx >= STACK_SZ) {
+            error(err_underflow_);
+            return 0;
+        }
+        else {
+            return data_[idx];
+        }
+    }
 }
 
 void Stack::dpush(dint value) {
-	push(dcell_lo(value));
-	push(dcell_hi(value));
+    push(dcell_lo(value));
+    push(dcell_hi(value));
 }
 
 dint Stack::dpop() {
-	int hi = pop();
-	int lo = pop();
-	return mk_dcell(hi, lo);
+    int hi = pop();
+    int lo = pop();
+    return mk_dcell(hi, lo);
 }
 
 dint Stack::dpeek(int depth) const {
-	int hi = peek(2 * depth);
-	int lo = peek(2 * depth + 1);
-	return mk_dcell(hi, lo);
+    int hi = peek(2 * depth);
+    int lo = peek(2 * depth + 1);
+    return mk_dcell(hi, lo);
 }
 
 // e.g. roll(1)
 // | 1 | 2 |    --> | 2 | 1 |
 // ^sp ^bot
 void Stack::roll(int depth) {
-	if (depth < 0)
-		error(Error::InvalidMemoryAddress);
-	else if (depth == 0)
-		; // ignore
-	else {
-		int bot = sp_ + depth;
-		if (bot >= STACK_SZ)
-			error(err_underflow_);
-		else {
-			int bot_value = data_[bot];
-			memmove(&data_[sp_ + 1], &data_[sp_], depth * CELL_SZ);
-			data_[sp_] = bot_value;
-		}
-	}
+    if (depth < 0) {
+        error(Error::InvalidMemoryAddress);
+    }
+    else if (depth == 0)
+        ; // ignore
+    else {
+        int bot = sp_ + depth;
+        if (bot >= STACK_SZ) {
+            error(err_underflow_);
+        }
+        else {
+            int bot_value = data_[bot];
+            memmove(&data_[sp_ + 1], &data_[sp_], depth * CELL_SZ);
+            data_[sp_] = bot_value;
+        }
+    }
 }
 
 void Stack::print() const {
-	cout << "(";
-	if (prefix_ != '\0')
-		cout << prefix_ << ":";
-	cout << " ";
-	for (int i = STACK_SZ - 1; i >= sp_; i--)
-		print_number(data_[i]);
-	cout << ") ";
+    cout << "(";
+    if (prefix_ != '\0') {
+        cout << prefix_ << ":";
+    }
+    cout << " ";
+    for (int i = STACK_SZ - 1; i >= sp_; i--) {
+        print_number(data_[i]);
+    }
+    cout << ") ";
 }
 
 void Stack::set_sp(int sp) {
-	if (sp < 0 || sp > STACK_SZ)
-		error(Error::InvalidMemoryAddress);
-	sp_ = sp;
+    if (sp < 0 || sp > STACK_SZ) {
+        error(Error::InvalidMemoryAddress);
+    }
+    sp_ = sp;
 }
 
 void Stack::clear() {
-	sp_ = STACK_SZ;
+    sp_ = STACK_SZ;
 }
 

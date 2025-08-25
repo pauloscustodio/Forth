@@ -12,82 +12,96 @@
 using namespace std;
 
 struct Header {
-	int link;			// address of previous header
-	int name_addr;		// address of name
-	struct {
-		bool smudge : 1;
-		bool hidden : 1;
-		bool immediate : 1;
-	} flags;
-	int size;			// size of body, filled by next header
+    int link;			// address of previous header
+    int name_addr;		// address of name
+    struct {
+        bool smudge : 1;
+        bool hidden : 1;
+        bool immediate : 1;
+    } flags;
+    int size;			// size of body, filled by next header
     int creator_xt;		// xt of word that created this word
-	int does;			// address of DOES> code
-	int code;			// primitive code
+    int does;			// address of DOES> code
+    int code;			// primitive code
 
-	CString* name() const;
-	int xt() const;
-	int body() const;
-	static Header* header(int xt);
-	int get_size() const;
+    CString* name() const;
+    int xt() const;
+    int body() const;
+    static Header* header(int xt);
+    int get_size() const;
 };
 
 
 class Dict {
 public:
-	void init(int lo_mem, int hi_mem);
-	void clear();
+    void init(int lo_mem, int hi_mem);
+    void clear();
 
-	int latest() const { return latest_; }
-	int here() const { return here_; }
-	int names() const { return names_; }
+    int latest() const {
+        return latest_;
+    }
+    int here() const {
+        return here_;
+    }
+    int names() const {
+        return names_;
+    }
 
-	void set_latest(int latest) { latest_ = latest; }
-	void set_here(int here) { here_ = here; }
-	void set_names(int names) { names_ = names; }
+    void set_latest(int latest) {
+        latest_ = latest;
+    }
+    void set_here(int here) {
+        here_ = here;
+    }
+    void set_names(int names) {
+        names_ = names;
+    }
 
-	void allot(int size);
-	int unused() const;
+    void allot(int size);
+    int unused() const;
 
-	int parse_create(int code, int flags); // return xt of word
+    int parse_create(int code, int flags); // return xt of word
 
-	int create(const string& name, int flags, int code); // return xt of word
-	int create(const char* name, size_t size, int flags, int code); // return xt of word
-	int create(const char* name, int size, int flags, int code); // return xt of word
-	int create(const CString* name, int flags, int code); // return xt of word
+    int create(const string& name, int flags, int code); // return xt of word
+    int create(const char* name, size_t size, int flags,
+               int code); // return xt of word
+    int create(const char* name, int size, int flags,
+               int code); // return xt of word
+    int create(const CString* name, int flags, int code); // return xt of word
 
-	int alloc_cstring(const string& str);
-	int alloc_cstring(const char* str, size_t size);
-	int alloc_cstring(const char* str, int size);
-	int alloc_cstring(const CString* str);
+    int alloc_cstring(const string& str);
+    int alloc_cstring(const char* str, size_t size);
+    int alloc_cstring(const char* str, int size);
+    int alloc_cstring(const CString* str);
 
-	int alloc_string(const string& str);
-	int alloc_string(const char* str, size_t size);
-	int alloc_string(const char* str, int size);
-	int alloc_string(const LongString* str);
+    int alloc_string(const string& str);
+    int alloc_string(const char* str, size_t size);
+    int alloc_string(const char* str, int size);
+    int alloc_string(const LongString* str);
 
-	void ccomma(int value);
-	void comma(int value);
-	void dcomma(dint value);
-	void align();
+    void ccomma(int value);
+    void comma(int value);
+    void dcomma(dint value);
+    void align();
 
-	Header* parse_find_word();
-	Header* parse_find_existing_word();
+    Header* parse_find_word();
+    Header* parse_find_existing_word();
 
-	Header* find_word(const string& name) const;
-	Header* find_word(const char* name, size_t size) const;
-	Header* find_word(const char* name, int size) const;
-	Header* find_word(const CString* name) const;
+    Header* find_word(const string& name) const;
+    Header* find_word(const char* name, size_t size) const;
+    Header* find_word(const char* name, int size) const;
+    Header* find_word(const CString* name) const;
 
-	vector<string> get_words() const;
+    vector<string> get_words() const;
 
 private:
     int lo_mem_, hi_mem_;// memory limits
-	int latest_;			// point to last defined word header
-	int here_;			// point to next free position at bottom of memory
-	int names_;			// point to last name created at top of memory
+    int latest_;			// point to last defined word header
+    int here_;			// point to next free position at bottom of memory
+    int names_;			// point to last name created at top of memory
 
-	void check_free_space(int size = 0) const;
-	int create_cont(int name_addr, int flags, int code);
+    void check_free_space(int size = 0) const;
+    int create_cont(int name_addr, int flags, int code);
 };
 
 

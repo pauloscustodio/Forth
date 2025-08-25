@@ -84,17 +84,20 @@ void f_interpret() {
         int size;
         const char* word = parse_word(size, BL);
         if (size == 0) {
-            if (vm.input->restore_input_if_query())
+            if (vm.input->restore_input_if_query()) {
                 continue;
-            else
+            }
+            else {
                 break;
+            }
         }
 
         interpret_word(word, size);
     }
 
-    if (vm.user->STATE == STATE_INTERPRET && g_interactive)
+    if (vm.user->STATE == STATE_INTERPRET && g_interactive) {
         cout << BL << "ok" << endl;
+    }
 }
 
 void f_evaluate() {
@@ -114,7 +117,7 @@ void f_evaluate(const char* text, size_t size) {
 void f_evaluate(const char* text, int size) {
     // save input context
     vm.input->save_input();
-    
+
     // parse string
     vm.user->BLK = 0;
     vm.input->set_text(text, size);
@@ -128,16 +131,18 @@ void f_quit() {
     vm.r_stack->clear();
     vm.user->STATE = STATE_INTERPRET;
     while (true) {
-        while (f_refill())
+        while (f_refill()) {
             f_interpret();
+        }
         if (vm.input->restore_input()) {
             f_interpret();  // skip first refill(), buffer is already setup
             continue;
         }
-        else
+        else {
             break;
+        }
     }
-    
+
     exit(EXIT_SUCCESS);
 }
 

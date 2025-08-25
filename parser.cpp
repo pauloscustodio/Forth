@@ -18,21 +18,26 @@ static bool is_space(char c) {
 
 // return digit value of character, or -1 if not a digit
 static int char_digit(char c) {
-    if (c >= '0' && c <= '9')
+    if (c >= '0' && c <= '9') {
         return c - '0';
-    else if (c >= 'A' && c <= 'Z')
+    }
+    else if (c >= 'A' && c <= 'Z') {
         return c - 'A' + 10;
-    else if (c >= 'a' && c <= 'z')
+    }
+    else if (c >= 'a' && c <= 'z') {
         return c - 'a' + 10;
-    else
-        return -1; // not a digit
+    }
+    else {
+        return -1;    // not a digit
+    }
 }
 
 static void skip_blanks() {
     const char* buffer = vm.input->buffer();
 
-    while (vm.user->TO_IN < vm.user->NR_IN  && is_space(buffer[vm.user->TO_IN]))
+    while (vm.user->TO_IN < vm.user->NR_IN  && is_space(buffer[vm.user->TO_IN])) {
         ++vm.user->TO_IN;
+    }
 }
 
 static int skip_to_delimiter(char delimiter) {
@@ -40,31 +45,36 @@ static int skip_to_delimiter(char delimiter) {
 
     int end = vm.user->TO_IN;
     if (delimiter == BL) {
-        while (vm.user->TO_IN < vm.user->NR_IN && !is_space(buffer[vm.user->TO_IN]))
+        while (vm.user->TO_IN < vm.user->NR_IN && !is_space(buffer[vm.user->TO_IN])) {
             ++vm.user->TO_IN;
-        
+        }
+
         end = vm.user->TO_IN;
 
-        if (vm.user->TO_IN < vm.user->NR_IN && is_space(buffer[vm.user->TO_IN]))
-            ++vm.user->TO_IN;		// skip delimiter
+        if (vm.user->TO_IN < vm.user->NR_IN && is_space(buffer[vm.user->TO_IN])) {
+            ++vm.user->TO_IN;    // skip delimiter
+        }
     }
     else {
-        while (vm.user->TO_IN < vm.user->NR_IN && buffer[vm.user->TO_IN] != delimiter)
+        while (vm.user->TO_IN < vm.user->NR_IN && buffer[vm.user->TO_IN] != delimiter) {
             ++vm.user->TO_IN;
-        
+        }
+
         end = vm.user->TO_IN;
 
-        if (vm.user->TO_IN < vm.user->NR_IN && buffer[vm.user->TO_IN] == delimiter)
-            ++vm.user->TO_IN;		// skip delimiter
-        
+        if (vm.user->TO_IN < vm.user->NR_IN && buffer[vm.user->TO_IN] == delimiter) {
+            ++vm.user->TO_IN;    // skip delimiter
+        }
+
     }
 
     return end;	// end of word, char before delimiter
 }
 
 const char* parse_word(int& size, char delimiter) {
-    if (delimiter == BL)
-        skip_blanks();	// skip blanks before word
+    if (delimiter == BL) {
+        skip_blanks();    // skip blanks before word
+    }
 
     const char* buffer = vm.input->buffer();
     int start = vm.user->TO_IN;
@@ -96,26 +106,55 @@ string parse_backslash_string() {
             ++vm.user->TO_IN;
             if (vm.user->TO_IN < vm.user->NR_IN) {
                 switch (buffer[vm.user->TO_IN]) {
-                case 'a': message.push_back('\a'); break;
-                case 'b': message.push_back('\b'); break;
-                case 'e': message.push_back('\x1B'); break;
-                case 'f': message.push_back('\f'); break;
-                case 'l': message.push_back('\n'); break;
-                case 'm': message.push_back('\r'); message.push_back('\n'); break;
-                case 'n': message.push_back('\n'); break;
-                case 'q': message.push_back('"'); break;
-                case 'r': message.push_back('\r'); break;
-                case 't': message.push_back('\t'); break;
-                case 'v': message.push_back('\v'); break;
-                case 'z': message.push_back('\0'); break;
-                case '"': message.push_back('"'); break;
-                case '\\': message.push_back('\\'); break;
+                case 'a':
+                    message.push_back('\a');
+                    break;
+                case 'b':
+                    message.push_back('\b');
+                    break;
+                case 'e':
+                    message.push_back('\x1B');
+                    break;
+                case 'f':
+                    message.push_back('\f');
+                    break;
+                case 'l':
+                    message.push_back('\n');
+                    break;
+                case 'm':
+                    message.push_back('\r');
+                    message.push_back('\n');
+                    break;
+                case 'n':
+                    message.push_back('\n');
+                    break;
+                case 'q':
+                    message.push_back('"');
+                    break;
+                case 'r':
+                    message.push_back('\r');
+                    break;
+                case 't':
+                    message.push_back('\t');
+                    break;
+                case 'v':
+                    message.push_back('\v');
+                    break;
+                case 'z':
+                    message.push_back('\0');
+                    break;
+                case '"':
+                    message.push_back('"');
+                    break;
+                case '\\':
+                    message.push_back('\\');
+                    break;
                 case 'x':
                     ++vm.user->TO_IN;
                     if (vm.user->TO_IN + 1 < vm.user->NR_IN &&
-                        isxdigit(buffer[vm.user->TO_IN]) &&
-                        isxdigit(buffer[vm.user->TO_IN + 1])
-                        ) {
+                            isxdigit(buffer[vm.user->TO_IN]) &&
+                            isxdigit(buffer[vm.user->TO_IN + 1])
+                       ) {
                         string hex_str = string(&buffer[vm.user->TO_IN], &buffer[vm.user->TO_IN + 2]);
                         ++vm.user->TO_IN;
                         int char_value = std::stoi(hex_str, nullptr, 16);
@@ -157,7 +196,9 @@ bool parse_number(const char* text, int size, bool& is_double, dint& value) {
     is_double = false;
     value = 0;
 
-    if (p >= end) return false;			// no number
+    if (p >= end) {
+        return false;    // no number
+    }
 
     // check sign before number prefix
     switch (*p) {
@@ -171,7 +212,9 @@ bool parse_number(const char* text, int size, bool& is_double, dint& value) {
         break;
     }
 
-    if (p >= end) return false;			// no number
+    if (p >= end) {
+        return false;    // no number
+    }
 
     // check base prefix
     switch (*p) {
@@ -196,7 +239,9 @@ bool parse_number(const char* text, int size, bool& is_double, dint& value) {
         break;
     }
 
-    if (p >= end) return false;			// no number
+    if (p >= end) {
+        return false;    // no number
+    }
 
     // check sign after number prefix
     switch (*p) {
@@ -210,7 +255,9 @@ bool parse_number(const char* text, int size, bool& is_double, dint& value) {
         break;
     }
 
-    if (p >= end) return false;			// no number
+    if (p >= end) {
+        return false;    // no number
+    }
 
     // collect digits
     int num_digits = 0, digit = 0;
@@ -229,17 +276,20 @@ bool parse_number(const char* text, int size, bool& is_double, dint& value) {
             break;
         default:
             digit = char_digit(c);
-            if (digit < 0 || digit >= base)
-                return false;		// digit not in BASE
+            if (digit < 0 || digit >= base) {
+                return false;    // digit not in BASE
+            }
 
             value = value * base + digit;
             num_digits++;
-            if (is_double)
+            if (is_double) {
                 vm.user->DPL++;
+            }
         }
     }
-    if (num_digits == 0)
-        return false;               // no digits found
+    if (num_digits == 0) {
+        return false;    // no digits found
+    }
 
     value *= sign;
     return true;
@@ -267,10 +317,12 @@ void f_parse_name() {
 int f_char(char delimiter) {
     int size = 0;
     const char* str = parse_word(size, delimiter);
-    if (size == 0)
+    if (size == 0) {
         return 0;
-    else
+    }
+    else {
         return *str;
+    }
 }
 
 void f_bracket_char(char delimiter) {
@@ -297,7 +349,8 @@ static int _number(bool do_error) {
     }
     else {
         if (do_error)
-            error(Error::InvalidNumericArgument, string(mem_char_ptr(addr), mem_char_ptr(addr) + size));
+            error(Error::InvalidNumericArgument, string(mem_char_ptr(addr),
+                    mem_char_ptr(addr) + size));
         return 0;
     }
 }
@@ -317,7 +370,7 @@ void f_to_number() {
     udint n = (udint)dpop();
     int digit;
     while (size > 0 && (digit = char_digit(cfetch(addr))) >= 0
-        && digit < vm.user->BASE) {
+            && digit < vm.user->BASE) {
         n = n * vm.user->BASE + digit;
         addr++;
         size--;

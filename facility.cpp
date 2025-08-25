@@ -33,8 +33,9 @@ void f_begin_structure() {
 }
 
 static int field(int offset, int size, bool do_align) {
-    if (do_align)
+    if (do_align) {
         offset = aligned(offset);
+    }
 
     vm.dict->parse_create(idXPLUS_FIELD, 0);
     comma(offset);                   // offset of field

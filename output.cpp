@@ -32,10 +32,12 @@ void NumberOutput::add_digit() {
     dpush(value);
 
     // output it
-    if (digit < 10)
+    if (digit < 10) {
         add_char('0' + digit);
-    else
+    }
+    else {
         add_char('A' + digit - 10);
+    }
 }
 
 void NumberOutput::add_digits() {
@@ -43,19 +45,23 @@ void NumberOutput::add_digits() {
     do {
         add_digit();
         value = dpeek();
-    } while (value != 0);
+    }
+    while (value != 0);
 }
 
 void NumberOutput::add_char(char c) {
-    if (ptr_ < 1)
+    if (ptr_ < 1) {
         error(Error::PicturedNumericOutputStringOverflow);
-    else
+    }
+    else {
         buffer_[--ptr_] = c;
+    }
 }
 
 void NumberOutput::add_sign(int sign) {
-    if (sign < 0)
+    if (sign < 0) {
         add_char('-');
+    }
 }
 
 void NumberOutput::add_string(const string& str) {
@@ -67,8 +73,9 @@ void NumberOutput::add_string(const char* str, size_t size) {
 }
 
 void NumberOutput::add_string(const char* str, int size) {
-    for (int i = size - 1; i >= 0; --i)
+    for (int i = size - 1; i >= 0; --i) {
         add_char(str[i]);
+    }
 }
 
 void NumberOutput::end() const {
@@ -104,7 +111,8 @@ static string print_dint_uint_aligned(int width, int sign) {
         vm.number_output->add_digit();
         width--;
         d = dpeek();
-    } while (d != 0);
+    }
+    while (d != 0);
 
     if (sign < 0) {
         vm.number_output->add_sign(sign);
@@ -125,7 +133,7 @@ static string print_dint_uint_aligned(int width, int sign) {
 string char_to_string(char c) {
     ostringstream oss;
     oss << c;
-    return oss.str(); 
+    return oss.str();
 }
 
 void print_char(char c) {
@@ -139,10 +147,12 @@ void print_string(const string& str) {
 }
 
 string spaces_to_string(int size) {
-    if (size < 1)
+    if (size < 1) {
         return "";
-    else
+    }
+    else {
         return string(size, BL);
+    }
 }
 
 void print_spaces(int size) {
@@ -155,8 +165,9 @@ string string_to_string(int addr, int size) {
 
 string string_to_string(const char* str, int size) {
     ostringstream oss;
-    for (int i = 0; i < size; ++i)
+    for (int i = 0; i < size; ++i) {
         oss << str[i];
+    }
     return oss.str();
 }
 

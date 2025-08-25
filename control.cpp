@@ -12,117 +12,133 @@
 using namespace std;
 
 void f_colon() {
-    if (cs_ddepth() > 0)
+    if (cs_ddepth() > 0) {
         error(Error::CompilerNesting);
+    }
 
     cs_dpush(mk_dcell(POS_COLON_START, 0));
     vm.dict->parse_create(idXDOCOL, F_SMUDGE);
     vm.user->STATE = STATE_COMPILE;
 
-    if (vm.user->TRACE)
+    if (vm.user->TRACE) {
         vm.cs_stack->print();
+    }
 }
 
 void f_colon_noname() {
-    if (cs_ddepth() > 0)
+    if (cs_ddepth() > 0) {
         error(Error::CompilerNesting);
+    }
 
     cs_dpush(mk_dcell(POS_COLON_START, 0));
     vm.dict->create("", F_SMUDGE, idXDOCOL);
     Header* header = reinterpret_cast<Header*>(
-        mem_char_ptr(vm.dict->latest()));
+                         mem_char_ptr(vm.dict->latest()));
     vm.user->STATE = STATE_COMPILE;
     push(header->xt());
 
-    if (vm.user->TRACE)
+    if (vm.user->TRACE) {
         vm.cs_stack->print();
+    }
 }
 
 void f_semicolon() {
-    if (cs_ddepth() != 1)
+    if (cs_ddepth() != 1) {
         error(Error::CompilerNesting);
+    }
 
     dint pos_addr = cs_dpeek();
-    if (dcell_hi(pos_addr) != POS_COLON_START)
+    if (dcell_hi(pos_addr) != POS_COLON_START) {
         error(Error::CompilerNesting);
+    }
     cs_dpop();
 
     comma(xtEXIT);
     Header* header = reinterpret_cast<Header*>(
-        mem_char_ptr(vm.dict->latest()));
+                         mem_char_ptr(vm.dict->latest()));
     header->flags.smudge = false;
     vm.user->STATE = STATE_INTERPRET;
 
-    if (vm.user->TRACE)
+    if (vm.user->TRACE) {
         vm.cs_stack->print();
+    }
 }
 
 void f_recurse() {
     Header* header = reinterpret_cast<Header*>(
-        mem_char_ptr(vm.dict->latest()));
+                         mem_char_ptr(vm.dict->latest()));
     comma(header->xt());
 }
 
 static void comma_fwd_jump(int xt_jump, int pos) {
     if (pos != POS_IF_FWD &&
-        pos != POS_ELSE_FWD &&
-        pos != POS_WHILE_FWD &&
-        pos != POS_DO_FWD &&
-        pos != POS_LEAVE_FWD &&
-        pos != POS_OF_FWD &&
-        pos != POS_ENDOF_FWD)
+            pos != POS_ELSE_FWD &&
+            pos != POS_WHILE_FWD &&
+            pos != POS_DO_FWD &&
+            pos != POS_LEAVE_FWD &&
+            pos != POS_OF_FWD &&
+            pos != POS_ENDOF_FWD) {
         error(Error::ControlStructureMismatch);
+    }
 
     comma(xt_jump);
     cs_dpush(mk_dcell(pos, vm.dict->here()));
     comma(0);
 
-    if (vm.user->TRACE)
+    if (vm.user->TRACE) {
         vm.cs_stack->print();
+    }
 }
 
 static void resolve_fwd_jump() {
-    if (cs_ddepth() < 1)
+    if (cs_ddepth() < 1) {
         error(Error::ControlStructureMismatch);
+    }
 
     dint pos_patch = cs_dpeek();
     if (dcell_hi(pos_patch) != POS_IF_FWD &&
-        dcell_hi(pos_patch) != POS_ELSE_FWD &&
-        dcell_hi(pos_patch) != POS_WHILE_FWD &&
-        dcell_hi(pos_patch) != POS_DO_FWD &&
-        dcell_hi(pos_patch) != POS_LEAVE_FWD &&
-        dcell_hi(pos_patch) != POS_OF_FWD &&
-        dcell_hi(pos_patch) != POS_ENDOF_FWD)
+            dcell_hi(pos_patch) != POS_ELSE_FWD &&
+            dcell_hi(pos_patch) != POS_WHILE_FWD &&
+            dcell_hi(pos_patch) != POS_DO_FWD &&
+            dcell_hi(pos_patch) != POS_LEAVE_FWD &&
+            dcell_hi(pos_patch) != POS_OF_FWD &&
+            dcell_hi(pos_patch) != POS_ENDOF_FWD) {
         error(Error::ControlStructureMismatch);
+    }
     cs_dpop();
 
     int dist = vm.dict->here() - dcell_lo(pos_patch);
     store(dcell_lo(pos_patch), dist);
 
-    if (vm.user->TRACE)
+    if (vm.user->TRACE) {
         vm.cs_stack->print();
+    }
 }
 
 static void mark_target_back_jump(int pos) {
     if (pos != POS_BEGIN_BACK &&
-        pos != POS_DO_BACK)
+            pos != POS_DO_BACK) {
         error(Error::ControlStructureMismatch);
+    }
 
     int addr = vm.dict->here();
     cs_dpush(mk_dcell(pos, addr));
 
-    if (vm.user->TRACE)
+    if (vm.user->TRACE) {
         vm.cs_stack->print();
+    }
 }
 
 static void resolve_back_jump(int xt_jump) {
-    if (cs_ddepth() < 1)
+    if (cs_ddepth() < 1) {
         error(Error::ControlStructureMismatch);
+    }
 
     dint pos_patch = cs_dpeek();
     if (dcell_hi(pos_patch) != POS_BEGIN_BACK &&
-        dcell_hi(pos_patch) != POS_DO_BACK)
+            dcell_hi(pos_patch) != POS_DO_BACK) {
         error(Error::ControlStructureMismatch);
+    }
     cs_dpop();
 
     comma(xt_jump);
@@ -136,8 +152,8 @@ static bool search_resolve_fwd_jump(int pos1, int pos2 = -1, int pos3 = -1) {
     while (cs_ddepth() > 0) {
         dint pos_target = cs_dpeek();
         if (dcell_hi(pos_target) == pos1 ||
-            dcell_hi(pos_target) == pos2 ||
-            dcell_hi(pos_target) == pos3) {
+                dcell_hi(pos_target) == pos2 ||
+                dcell_hi(pos_target) == pos3) {
             resolve_fwd_jump();
             resolved = true;
             break;
@@ -151,14 +167,15 @@ static bool search_resolve_fwd_jump(int pos1, int pos2 = -1, int pos3 = -1) {
         save.pop_back();
     }
 
-    if (vm.user->TRACE)
+    if (vm.user->TRACE) {
         vm.cs_stack->print();
+    }
 
     return resolved;
 }
 
-static bool resolve_all_fwd_jumps(int stop, 
-    int pos1, int pos2 = -1, int pos3 = -1) {
+static bool resolve_all_fwd_jumps(int stop,
+                                  int pos1, int pos2 = -1, int pos3 = -1) {
     bool resolved = false;
     while (cs_ddepth() > 0) {
         dint pos_target = cs_dpeek();
@@ -167,32 +184,33 @@ static bool resolve_all_fwd_jumps(int stop,
             break;
         }
         else if (dcell_hi(pos_target) == pos1 ||
-            dcell_hi(pos_target) == pos2 ||
-            dcell_hi(pos_target) == pos3) {
+                 dcell_hi(pos_target) == pos2 ||
+                 dcell_hi(pos_target) == pos3) {
             resolve_fwd_jump();
             resolved = true;
         }
         else {
-            resolved = false;   // other jumps unresolved 
+            resolved = false;   // other jumps unresolved
             break;
         }
     }
 
-    if (vm.user->TRACE)
+    if (vm.user->TRACE) {
         vm.cs_stack->print();
-    
+    }
+
     return resolved;
 }
 
-static bool search_resolve_back_jump(int jump_xt, 
-    int pos1, int pos2 = -1, int pos3 = -1) {
+static bool search_resolve_back_jump(int jump_xt,
+                                     int pos1, int pos2 = -1, int pos3 = -1) {
     vector<dint> save;
     bool resolved = false;
     while (cs_ddepth() > 0) {
         dint pos_target = cs_dpeek();
         if (dcell_hi(pos_target) == pos1 ||
-            dcell_hi(pos_target) == pos2 ||
-            dcell_hi(pos_target) == pos3) {
+                dcell_hi(pos_target) == pos2 ||
+                dcell_hi(pos_target) == pos3) {
             resolve_back_jump(jump_xt);
             resolved = true;
             break;
@@ -206,8 +224,9 @@ static bool search_resolve_back_jump(int jump_xt,
         save.pop_back();
     }
 
-    if (vm.user->TRACE)
+    if (vm.user->TRACE) {
         vm.cs_stack->print();
+    }
 
     return resolved;
 }
@@ -222,15 +241,17 @@ void f_else() {
 
     // patch forward jump at IF, ELSE or WHILE
     dint save_fwd_jump = cs_dpop();
-    if (!search_resolve_fwd_jump(POS_IF_FWD, POS_ELSE_FWD, POS_WHILE_FWD))
+    if (!search_resolve_fwd_jump(POS_IF_FWD, POS_ELSE_FWD, POS_WHILE_FWD)) {
         error(Error::ControlStructureMismatch);
+    }
     cs_dpush(save_fwd_jump);
 }
 
 void f_then() {
     // patch IF or ELSE or WHILE
-    if (!search_resolve_fwd_jump(POS_IF_FWD, POS_ELSE_FWD, POS_WHILE_FWD))
+    if (!search_resolve_fwd_jump(POS_IF_FWD, POS_ELSE_FWD, POS_WHILE_FWD)) {
         error(Error::ControlStructureMismatch);
+    }
 }
 
 void f_begin() {
@@ -239,14 +260,16 @@ void f_begin() {
 
 void f_again() {
     // resolve jump to BEGIN
-    if (!search_resolve_back_jump(xtBRANCH, POS_BEGIN_BACK))
+    if (!search_resolve_back_jump(xtBRANCH, POS_BEGIN_BACK)) {
         error(Error::ControlStructureMismatch);
+    }
 }
 
 void f_until() {
     // resolve jump to BEGIN
-    if (!search_resolve_back_jump(xtZBRANCH, POS_BEGIN_BACK))
+    if (!search_resolve_back_jump(xtZBRANCH, POS_BEGIN_BACK)) {
         error(Error::ControlStructureMismatch);
+    }
 }
 
 void f_while() {
@@ -255,12 +278,14 @@ void f_while() {
 
 void f_repeat() {
     // go back in the stack looking for BEGIN (there can be more than one WHILE)
-    if (!search_resolve_back_jump(xtBRANCH, POS_BEGIN_BACK))
+    if (!search_resolve_back_jump(xtBRANCH, POS_BEGIN_BACK)) {
         error(Error::ControlStructureMismatch);
+    }
 
     // fix WHILE
-    if (!search_resolve_fwd_jump(POS_WHILE_FWD, POS_IF_FWD))
+    if (!search_resolve_fwd_jump(POS_WHILE_FWD, POS_IF_FWD)) {
         error(Error::ControlStructureMismatch);
+    }
 }
 
 void f_do() {
@@ -291,16 +316,19 @@ void f_xquery_do() {
         r_push(start);
         vm.ip += CELL_SZ;
     }
-    else
+    else {
         vm.ip += fetch(vm.ip);
+    }
 }
 
 static void f_loop_plus_loop(int xt_jump) {
-    if (!search_resolve_back_jump(xt_jump, POS_DO_BACK))
+    if (!search_resolve_back_jump(xt_jump, POS_DO_BACK)) {
         error(Error::ControlStructureMismatch);
+    }
 
-    if (!resolve_all_fwd_jumps(POS_DO_START, POS_DO_FWD, POS_LEAVE_FWD))
+    if (!resolve_all_fwd_jumps(POS_DO_START, POS_DO_FWD, POS_LEAVE_FWD)) {
         error(Error::ControlStructureMismatch);
+    }
 }
 
 void f_loop() {
@@ -322,8 +350,8 @@ static void f_xloop_step(int step) {
     // (x^y)<0 is equivalent to (x<0) != (y<0)
     bool crossed =
         (((old_diff ^ (old_diff + step))    // is the limit crossed?
-            & (old_diff ^ step))            // is it a wrap-around?
-            < 0);
+          & (old_diff ^ step))            // is it a wrap-around?
+         < 0);
 
     if (!crossed) {     // loop
         vm.ip += fetch(vm.ip);
@@ -364,8 +392,9 @@ void f_xunloop() {
 void f_case() {
     cs_dpush(mk_dcell(POS_CASE_START, 0));    // mark start of case
 
-    if (vm.user->TRACE)
+    if (vm.user->TRACE) {
         vm.cs_stack->print();
+    }
 }
 
 void f_of() {
@@ -379,15 +408,17 @@ void f_xof() {
         push(a);                    // keep selector in stack
         vm.ip += fetch(vm.ip);
     }
-    else
-        vm.ip += CELL_SZ;           // drop selector and execute code
+    else {
+        vm.ip += CELL_SZ;    // drop selector and execute code
+    }
 }
 
 void f_endof() {
     comma_fwd_jump(xtBRANCH, POS_ENDOF_FWD);    // jump to ENDCASE
 
-    if (!search_resolve_fwd_jump(POS_OF_FWD))
+    if (!search_resolve_fwd_jump(POS_OF_FWD)) {
         error(Error::ControlStructureMismatch);
+    }
 }
 
 void f_endcase() {

@@ -21,8 +21,9 @@ int f_mod(int a, int b) {
     }
     else {
         int ret = a % b;
-        if (ret < 0)
+        if (ret < 0) {
             ret += b;
+        }
         return ret;
     }
 }
@@ -50,8 +51,9 @@ dint f_dmod(dint a, dint b) {
     }
     else {
         dint ret = a % b;
-        if (ret < 0)
+        if (ret < 0) {
             ret += b;
+        }
         return ret;
     }
 }
@@ -156,8 +158,8 @@ void f_within() {
 }
 
 void f_um_mult() {
-    udint b = static_cast<uint>(pop()); 
-    udint a = static_cast<uint>(pop()); 
+    udint b = static_cast<uint>(pop());
+    udint a = static_cast<uint>(pop());
     udint result = a * b;
     dpush(result);
 }

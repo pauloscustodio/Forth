@@ -29,26 +29,26 @@ using namespace std;
 
 // bool
 int f_bool(bool f) {
-	return f ? F_TRUE : F_FALSE;
+    return f ? F_TRUE : F_FALSE;
 }
 
 // alignment and double cells
 int aligned(int x) {
-	return (x + CELL_SZ - 1) & ~(CELL_SZ - 1);
+    return (x + CELL_SZ - 1) & ~(CELL_SZ - 1);
 }
 
 int dcell_lo(dint x) {
-	return x & 0xffffffffLL;
+    return x & 0xffffffffLL;
 }
 
 int dcell_hi(dint x) {
-	return (x >> 32) & 0xffffffffLL;
+    return (x >> 32) & 0xffffffffLL;
 }
 
 dint mk_dcell(int hi, int lo) {
-	return
-		((static_cast<udint>(hi) & 0xffffffffLL) << 32) |
-		(static_cast<udint>(lo) & 0xffffffffLL);
+    return
+        ((static_cast<udint>(hi) & 0xffffffffLL) << 32) |
+        (static_cast<udint>(lo) & 0xffffffffLL);
 }
 
 // user variables
@@ -58,54 +58,55 @@ void User::init() {
 }
 
 void create_dictionary() {
-	// first pass: define all xtWORDs, second pass: redefine all using real xtWORDs
-	for (int pass = 1; pass <= 2; ++pass) {
-		vm.dict->clear();
+    // first pass: define all xtWORDs, second pass: redefine all using real xtWORDs
+    for (int pass = 1; pass <= 2; ++pass) {
+        vm.dict->clear();
 
 #define CONST(word, name, flags, value) xt##name = vm.dict->create(word, flags, id##name);
 #define VAR(word, name, flags, value)   xt##name = vm.dict->create(word, flags, id##name);
 #define CODE(word, name, flags, c_code) xt##name = vm.dict->create(word, flags, id##name);
 #include "words.def"
-	}
+    }
 
 #define FORTH(word, name, flags, text)  xt##name = vm.dict->create(word, flags, idXDOCOL); compile(text);
 #include "words.def"
 }
 
 void f_execute(int xt) {
-	bool do_exit = false;
-	int old_ip = vm.ip;
-	vm.ip = 0;
-	while (true) {
-		if (vm.user->TRACE) {
-			Header* header = Header::header(xt);
-			CString* name = header->name();
-			cout << string(2 * (1 + r_depth()), '>') << BL
-				<< name->to_string() << BL;
-		}
+    bool do_exit = false;
+    int old_ip = vm.ip;
+    vm.ip = 0;
+    while (true) {
+        if (vm.user->TRACE) {
+            Header* header = Header::header(xt);
+            CString* name = header->name();
+            cout << string(2 * (1 + r_depth()), '>') << BL
+                 << name->to_string() << BL;
+        }
 
-		int code = fetch(xt);
-		int body = xt + CELL_SZ;			// point to data area, if any
+        int code = fetch(xt);
+        int body = xt + CELL_SZ;			// point to data area, if any
 
-		switch (code) {
+        switch (code) {
 #define CONST(word, name, flags, value) case id##name: push(value); break;
 #define VAR(word, name, flags, value)   case id##name: push(mem_addr(&vm.user->name)); break;
 #define CODE(word, name, flags, c_code) case id##name: { c_code; break; }
 #include "words.def"
-		default:
-			error(Error::InvalidMemoryAddress, std::to_string(xt));
-		}
+        default:
+            error(Error::InvalidMemoryAddress, std::to_string(xt));
+        }
 
-		if (vm.user->TRACE) {
-			vm.stack->print();
-			cout << endl;
-		}
+        if (vm.user->TRACE) {
+            vm.stack->print();
+            cout << endl;
+        }
 
-		if (vm.ip == 0 || do_exit)	// ip did not change, exit
-			break;
+        if (vm.ip == 0 || do_exit) {	// ip did not change, exit
+            break;
+        }
 
-		xt = fetch(vm.ip);
-		vm.ip += CELL_SZ;	    // else fetch next xt from ip
-	}
-	vm.ip = old_ip;
+        xt = fetch(vm.ip);
+        vm.ip += CELL_SZ;	    // else fetch next xt from ip
+    }
+    vm.ip = old_ip;
 }

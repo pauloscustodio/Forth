@@ -17,8 +17,8 @@ char** g_argv = nullptr;
 bool g_interactive = false;
 
 void f_environment_q() {
-    int size = pop(); 
-    int addr = pop(); 
+    int size = pop();
+    int addr = pop();
     char* query = mem_char_ptr(addr);
     f_environment_q(query, size);
 }

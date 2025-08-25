@@ -23,19 +23,23 @@ public:
     int error_code;
 };
 
-[[noreturn]] static void output_error(const string& message, const string& arg = "") {
+[[noreturn]] static void output_error(const string& message,
+                                      const string& arg = "") {
     cerr << endl << "Error: " << message;
-    if (!arg.empty())
+    if (!arg.empty()) {
         cerr << ": " << arg;
+    }
     cerr << endl;
     exit(EXIT_FAILURE);
 }
 
 [[noreturn]] static void exit_error(Error err, const string& arg = "") {
-    if (err == Error::None)
+    if (err == Error::None) {
         exit(EXIT_SUCCESS);
-    else if (err == Error::Abort)
+    }
+    else if (err == Error::Abort) {
         exit(EXIT_FAILURE);
+    }
     else if (err == Error::AbortQuote) {
         cerr << endl << "Aborted: " << *vm.error_message << endl;
         exit(EXIT_FAILURE);
@@ -70,8 +74,8 @@ void f_catch(int xt) {
     vm.except_stack->push(vm.stack->sp());
     vm.except_stack->push(vm.input->input_level());
     vm.except_stack->push(vm.ip);
-    
-	int catch_result = 0;
+
+    int catch_result = 0;
     try {
         f_execute(xt);
     }
@@ -82,22 +86,23 @@ void f_catch(int xt) {
         vm.r_stack->set_sp(vm.except_stack->pop()); // restore return stack pointer
 
         catch_result = e.error_code;
-	}
+    }
     push(catch_result);
 }
 
 void f_throw() {
     int error_code = pop();
-	f_throw(error_code);
+    f_throw(error_code);
 }
 
 void f_throw(Error err) {
-	f_throw(static_cast<int>(err));
+    f_throw(static_cast<int>(err));
 }
 
 void f_throw(int error_code) {
-    if (error_code == 0)
+    if (error_code == 0) {
         return;
+    }
 
     if (vm.except_stack->depth() == 0) {
         exit_error(error_code, *vm.error_message);
@@ -110,7 +115,7 @@ void f_throw(int error_code) {
 void f_abort() {
     vm.stack->clear();
     vm.error_message->clear();
-	f_throw(Error::Abort);
+    f_throw(Error::Abort);
 }
 
 void f_abort_quote() {
@@ -120,7 +125,7 @@ void f_abort_quote() {
         int str_addr = vm.dict->alloc_string(message, size);
         comma(xtXABORT_QUOTE);
         comma(str_addr);
-	}
+    }
     else {
         int err_code = pop();
         if (err_code != 0) {
@@ -132,11 +137,12 @@ void f_abort_quote() {
 }
 
 void f_xabort_quote() {
-    int str_addr = fetch(vm.ip); vm.ip += CELL_SZ;
+    int str_addr = fetch(vm.ip);
+    vm.ip += CELL_SZ;
 
     int err_code = pop();
     if (err_code != 0) {
-		LongString* str = reinterpret_cast<LongString*>(mem_char_ptr(str_addr));
+        LongString* str = reinterpret_cast<LongString*>(mem_char_ptr(str_addr));
         vm.stack->clear();
         *vm.error_message = str->to_string();
         f_throw(Error::AbortQuote);

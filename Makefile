@@ -20,7 +20,7 @@ OBJS 	= $(SRCS:.cpp=.o)
 DEPENDS	= $(SRCS:.cpp=.d)
 
 ASTYLE	= astyle --style=attach --pad-oper --align-pointer=type \
-		  --break-closing-braces --remove-braces --attach-return-type \
+		  --break-closing-braces --add-braces --attach-return-type \
 		  --max-code-length=80 --lineend=linux --formatted
 
 all: $(PROJ)$(EXE)

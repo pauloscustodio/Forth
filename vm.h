@@ -16,35 +16,35 @@
 using namespace std;
 
 struct VM {
-	VM();
-	virtual ~VM();
+    VM();
+    virtual ~VM();
 
-	// instruction pointer
-    int ip;		
+    // instruction pointer
+    int ip;
 
-	// abort error message
-	string* error_message;
+    // abort error message
+    string* error_message;
 
-	// memory
-	Mem mem;
+    // memory
+    Mem mem;
 
-	// input
+    // input
     Wordbuf* wordbuf;		// word buffer
-	NumberOutput* number_output;	// HOLD buffer
-	Pad* pad;				// pad
-	Input* input;			// input buffer
-	Blocks* blocks;			// buffered block I/O
+    NumberOutput* number_output;	// HOLD buffer
+    Pad* pad;				// pad
+    Input* input;			// input buffer
+    Blocks* blocks;			// buffered block I/O
 
-	User* user;				// user variables
+    User* user;				// user variables
 
-	// stacks
-	Stack* r_stack;			// return stack
-	Stack* cs_stack;		// control stack
-	Stack* except_stack;	// exception stack
-	Stack* stack;			// data stack
+    // stacks
+    Stack* r_stack;			// return stack
+    Stack* cs_stack;		// control stack
+    Stack* except_stack;	// exception stack
+    Stack* stack;			// data stack
 
-	// dictionary
-	Dict* dict;
+    // dictionary
+    Dict* dict;
 };
 
 extern VM vm;
@@ -91,14 +91,14 @@ void r_dpush(dint value);
 dint r_dpop();
 dint r_dpeek(int depth = 0);
 
-enum { 
-	POS_COLON_START, POS_BEGIN_START, POS_DO_START, POS_CASE_START,
+enum {
+    POS_COLON_START, POS_BEGIN_START, POS_DO_START, POS_CASE_START,
 
-	POS_BEGIN_BACK, POS_DO_BACK, 
+    POS_BEGIN_BACK, POS_DO_BACK,
 
-	POS_IF_FWD, POS_ELSE_FWD, POS_WHILE_FWD,
-	POS_DO_FWD, POS_LEAVE_FWD, 
-	POS_OF_FWD, POS_ENDOF_FWD,
+    POS_IF_FWD, POS_ELSE_FWD, POS_WHILE_FWD,
+    POS_DO_FWD, POS_LEAVE_FWD,
+    POS_OF_FWD, POS_ENDOF_FWD,
 };
 
 void cs_dpush(dint pos_addr);

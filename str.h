@@ -12,8 +12,12 @@ using namespace std;
 
 class CString {
 public:
-    int size() const { return size_; }
-    const char* str() const { return str_; }
+    int size() const {
+        return size_;
+    }
+    const char* str() const {
+        return str_;
+    }
 
     string to_string() const;
     static int alloc_size(int num_chars);
@@ -31,8 +35,12 @@ private:
 
 class LongString {
 public:
-    int size() const { return size_; }
-    const char* str() const { return str_; }
+    int size() const {
+        return size_;
+    }
+    const char* str() const {
+        return str_;
+    }
 
     string to_string() const;
     static int alloc_size(int num_chars);
@@ -55,8 +63,8 @@ public:
     CString* append_cstring(const string& str);
     CString* append_cstring(const char* str, size_t size);
     CString* append_cstring(const char* str, int size);
-    
-	LongString* append_long_string(const string& str);
+
+    LongString* append_long_string(const string& str);
     LongString* append_long_string(const char* str, size_t size);
     LongString* append_long_string(const char* str, int size);
 
@@ -67,8 +75,10 @@ private:
 
 
 bool case_insensitive_equal(const string& a, const string& b);
-bool case_insensitive_equal(const char* a_str, int a_size, const char* b_str, int b_size);
-bool case_insensitive_equal(const char* a_str, size_t a_size, const char* b_str, size_t b_size);
+bool case_insensitive_equal(const char* a_str, int a_size, const char* b_str,
+                            int b_size);
+bool case_insensitive_equal(const char* a_str, size_t a_size, const char* b_str,
+                            size_t b_size);
 
 void f_count();
 void f_dot_quote();
