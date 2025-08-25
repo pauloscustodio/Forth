@@ -11,6 +11,7 @@
 #include "file.h"
 #include "forth.h"
 #include "interp.h"
+#include "kbd_input.h"
 #include "math.h"
 #include "math96.h"
 #include "output.h"

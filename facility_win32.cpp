@@ -4,24 +4,18 @@
 // License: GPL3 https://www.gnu.org/licenses/gpl-3.0.html
 //-----------------------------------------------------------------------------
 
+#include "facility.h"
+
 #ifdef _WIN32
 #include <conio.h>
 #include <windows.h>
 
-void init_console() {
+void init_console_output() {
     HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
     DWORD dwMode = 0;
     GetConsoleMode(hOut, &dwMode);
     dwMode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
     SetConsoleMode(hOut, dwMode);
-}
-
-int f_key() {
-    return _getch();
-}
-
-int f_key_query() {
-    return _kbhit();
 }
 
 #endif

@@ -6,6 +6,7 @@
 
 #include "facility.h"
 #include "forth.h"
+#include "kbd_input.h"
 #include "str.h"
 #include "vm.h"
 using namespace std;
@@ -58,7 +59,8 @@ VM::VM() {
 	// reinit wordbuf to get predictable results in tests
 	wordbuf->init();
 
-	init_console();
+	init_console_output();
+	init_console_input();
 }
 
 VM::~VM() {

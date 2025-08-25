@@ -8,14 +8,10 @@
 
 using namespace std;
 
-void init_console();
+void init_console_output();
 
 void f_at_xy();
 void f_at_xy(int x, int y);
-
-int f_key();
-int f_key_query();
-
 void f_page();
 
 void f_begin_structure();

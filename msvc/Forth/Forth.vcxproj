@@ -29,6 +29,7 @@
     <ClInclude Include="..\..\forth.h" />
     <ClInclude Include="..\..\input.h" />
     <ClInclude Include="..\..\interp.h" />
+    <ClInclude Include="..\..\kbd_input.h" />
     <ClInclude Include="..\..\math.h" />
     <ClInclude Include="..\..\math96.h" />
     <ClInclude Include="..\..\memory.h" />
@@ -52,6 +53,9 @@
     <ClCompile Include="..\..\forth.cpp" />
     <ClCompile Include="..\..\input.cpp" />
     <ClCompile Include="..\..\interp.cpp" />
+    <ClCompile Include="..\..\kbd_input.cpp" />
+    <ClCompile Include="..\..\kbd_input_posix.cpp" />
+    <ClCompile Include="..\..\kbd_input_win32.cpp" />
     <ClCompile Include="..\..\main.cpp" />
     <ClCompile Include="..\..\math.cpp" />
     <ClCompile Include="..\..\math96.cpp" />

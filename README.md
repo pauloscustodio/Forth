@@ -16,6 +16,8 @@ It was inspired by the excelent [pforth](https://github.com/philburk/pforth).
 
 See [ANS Forth Standard Introduction](https://forth-standard.org/standard/intro)
 
+It should compile and run on any C++14 compiler on Windows and POSIX systems (Linux, macOS, MSYS2).
+
 Why another Forth interpreter? Just for fun!
 
 Implemented WORDS:
@@ -71,12 +73,12 @@ FACILITY:
 
 FACILITY EXT:
   Implemented:
-    +FIELD BEGIN-STRUCTURE CFIELD: END-STRUCTURE FIELD:
+    +FIELD BEGIN-STRUCTURE CFIELD: EKEY EKEY>CHAR EKEY>FKEY EKEY? EMIT?
+    END-STRUCTURE FIELD: K-ALT-MASK K-CTRL-MASK K-DELETE K-DOWN K-END K-F1
+    K-F10 K-F11 K-F12 K-F2 K-F3 K-F4 K-F5 K-F6 K-F7 K-F8 K-F9 K-HOME
+    K-INSERT K-LEFT K-NEXT K-PRIOR K-RIGHT K-SHIFT-MASK K-UP
   Missing:
-    EKEY EKEY>CHAR EKEY>FKEY EKEY? EMIT? K-ALT-MASK K-CTRL-MASK K-DELETE
-    K-DOWN K-END K-F1 K-F10 K-F11 K-F12 K-F2 K-F3 K-F4 K-F5 K-F6 K-F7 K-F8
-    K-F9 K-HOME K-INSERT K-LEFT K-NEXT K-PRIOR K-RIGHT K-SHIFT-MASK K-UP MS
-    TIME&DATE
+    MS TIME&DATE
 
 FILE:
   Implemented:
