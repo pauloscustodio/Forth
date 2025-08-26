@@ -6,8 +6,9 @@ the
 CORE, CORE-EXT, 
 BLOCK, BLOCK-EXT, 
 DOUBLE, DOUBLE-EXT, 
-EXCEPTION, EXCEPTION-EXT and
-FACILITY words. 
+EXCEPTION, EXCEPTION-EXT,
+FACILITY and FACILITY-EXT
+words. 
 
 It is intended to be be used as a script interpreter, 
 i.e. calling ABORT exits the interpreter instead of restarting the QUIT loop.
