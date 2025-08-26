@@ -31,9 +31,18 @@ END
 
 note "Test (";
 forth_ok("1 ( 2 3)4 .S", "( 1 4 )");
-forth_ok(<<'END', "( 1 4 )");
+forth_ok(<<'END', "( 1 7 )");
 		1 ( 2 3
-		4 ( 5 6)
+		4   5 6 ) 7
+		.S
+END
+path("$test.inc")->spew(<<'END');
+21 (
+22
+23
+END
+forth_ok(<<END, "( 1 21 )");
+		1 S" $test.inc" INCLUDED
 		.S
 END
 

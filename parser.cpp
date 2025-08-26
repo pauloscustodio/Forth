@@ -40,7 +40,8 @@ static void skip_blanks() {
     }
 }
 
-static int skip_to_delimiter(char delimiter) {
+static int skip_to_delimiter(char delimiter, bool& found) {
+    found = false;
     const char* buffer = vm.input->buffer();
 
     int end = vm.user->TO_IN;
@@ -52,6 +53,7 @@ static int skip_to_delimiter(char delimiter) {
         end = vm.user->TO_IN;
 
         if (vm.user->TO_IN < vm.user->NR_IN && is_space(buffer[vm.user->TO_IN])) {
+            found = true;
             ++vm.user->TO_IN;    // skip delimiter
         }
     }
@@ -63,6 +65,7 @@ static int skip_to_delimiter(char delimiter) {
         end = vm.user->TO_IN;
 
         if (vm.user->TO_IN < vm.user->NR_IN && buffer[vm.user->TO_IN] == delimiter) {
+            found = true;
             ++vm.user->TO_IN;    // skip delimiter
         }
 
@@ -78,7 +81,8 @@ const char* parse_word(int& size, char delimiter) {
 
     const char* buffer = vm.input->buffer();
     int start = vm.user->TO_IN;
-    int end = skip_to_delimiter(delimiter);
+    bool found;
+    int end = skip_to_delimiter(delimiter, found);
 
     size = end - start;
     const char* word = &buffer[start];
@@ -393,7 +397,25 @@ void f_convert() {
 }
 
 void f_open_paren() {
-    skip_to_delimiter(')');
+    if (vm.input->source_id() != 0) {
+        bool found = false;
+        while (!found) {
+            skip_to_delimiter(')', found);
+            if (found) {
+                break;
+            }
+            if (vm.input->refill()) {
+                continue;
+            }
+            else {
+                break;
+            }
+        }
+    }
+    else {
+        bool found;
+        skip_to_delimiter(')', found);
+    }
 }
 
 void f_backslash() {
@@ -401,7 +423,8 @@ void f_backslash() {
         vm.user->TO_IN = (vm.user->TO_IN + BLOCK_COLS - 1) & ~(BLOCK_COLS - 1);
     }
     else {
-        skip_to_delimiter(CR);
+        bool found;
+        skip_to_delimiter(CR, found);
     }
 }
 
