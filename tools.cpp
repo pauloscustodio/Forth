@@ -15,7 +15,7 @@ using namespace std;
 void f_dump() {
     int size = pop();
     int addr = pop();
-    const char* mem = mem_char_ptr(addr);
+    const char* mem = mem_char_ptr(addr, size);
     f_dump(mem, size);
 }
 
@@ -202,7 +202,7 @@ static void dump_colon_definition(int body, int size) {
 }
 
 void dump_body_definition(int body, int size) {
-    f_dump(mem_char_ptr(body), size);
+    f_dump(mem_char_ptr(body, size), size);
 }
 
 void f_see() {

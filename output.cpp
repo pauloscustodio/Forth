@@ -99,7 +99,7 @@ static string print_dint_uint(int sign) {
     vm.number_output->end();
     int size = pop();
     int addr = pop();
-    char* str = mem_char_ptr(addr);
+    char* str = mem_char_ptr(addr, size);
     return string(str, str + size);
 }
 
@@ -126,7 +126,7 @@ static string print_dint_uint_aligned(int width, int sign) {
     vm.number_output->end();
     int size = pop();
     int addr = pop();
-    char* str = mem_char_ptr(addr);
+    char* str = mem_char_ptr(addr, size);
     return string(str, str + size);
 }
 
@@ -160,7 +160,7 @@ void print_spaces(int size) {
 }
 
 string string_to_string(int addr, int size) {
-    return string_to_string(mem_char_ptr(addr), size);
+    return string_to_string(mem_char_ptr(addr, size), size);
 }
 
 string string_to_string(const char* str, int size) {
@@ -172,7 +172,7 @@ string string_to_string(const char* str, int size) {
 }
 
 void print_string(int addr, int size) {
-    print_string(mem_char_ptr(addr), size);
+    print_string(mem_char_ptr(addr, size), size);
 }
 
 void print_string(const char* str, int size) {

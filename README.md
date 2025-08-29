@@ -17,7 +17,7 @@ It was inspired by the excelent [pforth](https://github.com/philburk/pforth).
 
 See [ANS Forth Standard Introduction](https://forth-standard.org/standard/intro)
 
-It should compile and run on any C++14 compiler on Windows and POSIX systems (Linux, macOS, MSYS2).
+It should compile and run on any C++17 compiler on Windows and POSIX systems (Linux, macOS, MSYS2).
 
 Why another Forth interpreter? Just for fun!
 
@@ -81,11 +81,9 @@ FACILITY EXT:
 
 FILE:
   Implemented:
-    ( INCLUDED S" SOURCE-ID
-  Missing:
-    BIN CLOSE-FILE CREATE-FILE DELETE-FILE FILE-POSITION FILE-SIZE
-    INCLUDE-FILE OPEN-FILE R/O R/W READ-FILE READ-LINE REPOSITION-FILE
-    RESIZE-FILE W/O WRITE-FILE WRITE-LINE
+    ( BIN CLOSE-FILE CREATE-FILE DELETE-FILE FILE-POSITION FILE-SIZE
+    INCLUDE-FILE INCLUDED OPEN-FILE R/O R/W READ-FILE READ-LINE
+    REPOSITION-FILE RESIZE-FILE S" SOURCE-ID W/O WRITE-FILE WRITE-LINE
 
 FILE EXT:
   Implemented:

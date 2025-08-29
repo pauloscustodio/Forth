@@ -16,8 +16,6 @@ void Pad::init() {
 }
 
 void Input::init() {
-    filename_ = new string;
-    input_file_ = new ifstream();
     source_id_ = 0;
     buffer_ = tib_;
     memset(tib_, BL, sizeof(tib_));
@@ -26,38 +24,26 @@ void Input::init() {
 }
 
 void Input::deinit() {
-    delete filename_;
-    delete input_file_;
     delete input_stack_;
 }
 
-void Input::open_file(const char* filename, int size) {
-    open_file(string(filename, filename + size));
-}
-
-void Input::open_file(const char* filename, size_t size) {
-    open_file(string(filename, filename + size));
-}
-
 void Input::open_file(const string& filename) {
-    *filename_ = filename;
-
-    if (input_file_->is_open()) {
-        input_file_->close();
-    }
-
-    input_file_->open(filename, ios::binary);
-    if (!input_file_->is_open()) {
+    source_id_ = vm.files->open(filename, ios::in | ios::binary);
+    if (source_id_ == 0) {
         error(Error::OpenFileException, filename);
     }
+    set_tib("", 0);
+}
 
-    source_id_ = 1; // file
+void Input::open_file(int source_id) {
+    source_id_ = source_id;
     set_tib("", 0);
 }
 
 void Input::open_terminal() {
-    if (input_file_->is_open()) {
-        input_file_->close();
+    Error error_code = Error::None;
+    if (source_id_ > 0) {
+        vm.files->close(source_id_, error_code);
     }
 
     source_id_ = 0; // terminal
@@ -65,8 +51,9 @@ void Input::open_terminal() {
 }
 
 void Input::set_text(const char* text, int size) {
-    if (input_file_->is_open()) {
-        input_file_->close();
+    Error error_code = Error::None;
+    if (source_id_ > 0) {
+        vm.files->close(source_id_, error_code);
     }
 
     source_id_ = -1; // string
@@ -91,12 +78,13 @@ void Input::set_tib(const char* text, int size) {
     if (size > BUFFER_SZ) {
         error(Error::InputBufferOverflow);
     }
-
-    vm.user->NR_IN = size;
-    vm.user->TO_IN = 0;
-    memcpy(tib_, text, size);
-    tib_[size] = BL; // BL after the string
-    buffer_ = tib_;
+    else {
+        vm.user->NR_IN = size;
+        vm.user->TO_IN = 0;
+        memcpy(tib_, text, size);
+        tib_[size] = BL; // BL after the string
+        buffer_ = tib_;
+    }
 }
 
 void Input::set_tib(const char* text, size_t size) {
@@ -134,14 +122,33 @@ bool Input::refill() {
     }
     else if (source_id_ == 0) {         // input from terminal
         ok = static_cast<bool>(std::getline(cin, line));
+        if (line.size() > BUFFER_SZ) {
+            error(Error::InputBufferOverflow);
+        }
+
+        vm.user->NR_IN = static_cast<int>(line.size());
+        vm.user->TO_IN = 0;
+        memcpy(tib_, line.c_str(), line.size());
+        tib_[vm.user->NR_IN] = BL; // BL after the string
+        buffer_ = tib_;
     }
     else {                              // input from file
-        ok = static_cast<bool>(std::getline(*input_file_, line));
-    }
+        Error error_code = Error::None;
+        bool found_eof = false;
+        int num_read = vm.files->read_line(source_id_, tib_, BUFFER_SZ, found_eof,
+                                           error_code);
+        if (found_eof) {
+            vm.files->close(source_id_, error_code);
+        }
+        ok = num_read > 0 || !found_eof;
 
-    set_tib(line);
-    vm.user->NR_IN = static_cast<int>(line.size());
-    vm.user->TO_IN = 0;
+        vm.user->NR_IN = num_read;
+        vm.user->TO_IN = 0;
+        tib_[num_read] = BL; // BL after the string
+        buffer_ = tib_;
+
+        line = string(tib_, tib_ + num_read);
+    }
 
     if (ok && vm.user->TRACE) {
         cout << endl << "> " << line << endl;
@@ -153,17 +160,6 @@ bool Input::refill() {
 // save input context
 void Input::save_input() {
     SaveInput save;
-    save.filename = *filename_;
-    if (input_file_->is_open()) {
-        save.is_open = true;
-        save.fpos = input_file_->tellg();
-        input_file_->close();
-    }
-    else {
-        save.is_open = false;
-        save.fpos = 0;
-    }
-
     save.source_id = source_id_;
     save.blk = vm.user->BLK;
     save.tib = string(tib_, tib_ + vm.user->NR_IN);
@@ -179,22 +175,9 @@ bool Input::restore_input() {
         return false;
     }
     else {
-        if (input_file_->is_open()) {
-            input_file_->close();
-        }
-
         SaveInput save = input_stack_->back();
         input_stack_->pop_back();
 
-        *filename_ = save.filename;
-        if (save.is_open) {
-            input_file_->open(*filename_, ios::binary);
-            if (!input_file_->is_open()) {
-                error(Error::OpenFileException, *filename_);
-            }
-
-            input_file_->seekg(save.fpos);
-        }
         source_id_ = save.source_id;
         vm.user->BLK = save.blk;
         set_tib(save.tib);
@@ -247,7 +230,7 @@ bool f_refill() {
 void f_accept() {
     int max_size = pop();
     int addr = pop();
-    char* buffer = mem_char_ptr(addr);
+    char* buffer = mem_char_ptr(addr, max_size);
 
     string line;
     if (std::getline(cin, line)) {

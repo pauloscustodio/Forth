@@ -33,6 +33,10 @@ char* Mem::char_ptr(int addr, int size) {
 }
 
 int* Mem::int_ptr(int addr, int size) {
+    if ((addr % CELL_SZ) != 0) {
+        error(Error::AddressAlignmentException);
+        return 0;
+    }
     addr = check_addr(addr, size);
     return reinterpret_cast<int*>(data_ + addr);
 }
@@ -103,10 +107,6 @@ int Mem::check_addr(int addr, int size) const {
         error(Error::InvalidMemoryAddress);
         return 0;
     }
-    else if (size > CHAR_SZ && (addr % CELL_SZ) != 0) {
-        error(Error::AddressAlignmentException);
-        return 0;
-    }
     else {
         return addr;
     }
@@ -116,18 +116,18 @@ void f_fill() {
     int c = pop();
     int n = pop();
     int addr = pop();
-    memset(mem_char_ptr(addr), c, n);
+    memset(mem_char_ptr(addr, n), c, n);
 }
 
 void f_erase() {
     int n = pop();
     int addr = pop();
-    memset(mem_char_ptr(addr), 0, n);
+    memset(mem_char_ptr(addr, n), 0, n);
 }
 
 void f_move() {
     int n = pop();
     int dst = pop();
     int src = pop();
-    memmove(mem_char_ptr(dst), mem_char_ptr(src), n);
+    memmove(mem_char_ptr(dst, n), mem_char_ptr(src, n), n);
 }

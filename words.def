@@ -225,7 +225,7 @@ CODE("<#", LESS_HASH, 0, vm.number_output->start())
 CODE("#", HASH, 0, vm.number_output->add_digit())
 CODE("#S", HASH_S, 0, vm.number_output->add_digits())
 CODE("HOLD", HOLD, 0, vm.number_output->add_char(pop()))
-CODE("HOLDS", HOLDS, 0, int size = pop(); int addr = pop(); vm.number_output->add_string(mem_char_ptr(addr), size))
+CODE("HOLDS", HOLDS, 0, int size = pop(); int addr = pop(); vm.number_output->add_string(mem_char_ptr(addr, size), size))
 CODE("SIGN", SIGN, 0, vm.number_output->add_sign(pop()))
 CODE("#>", HASH_GREATER, 0, vm.number_output->end())
 
@@ -462,7 +462,25 @@ CODE("TIME&DATE", TIME_DATE, 0, f_time_date())
 
 
 // files
+CODE("R/O", R_O, 0, f_r_o())
+CODE("W/O", W_O, 0, f_w_o())
+CODE("R/W", R_W, 0, f_r_w())
+CODE("BIN", BIN, 0, f_bin())
+
+CODE("CREATE-FILE", CREATE_FILE, 0, f_create_file())
+CODE("OPEN-FILE", OPEN_FILE, 0, f_open_file())
+CODE("READ-FILE", READ_FILE, 0, f_read_file())
+CODE("WRITE-FILE", WRITE_FILE, 0, f_write_file())
+CODE("READ-LINE", READ_LINE, 0, f_read_line())
+CODE("WRITE-LINE", WRITE_LINE, 0, f_write_line())
+CODE("FILE-POSITION", FILE_POSITION, 0, f_file_position())
+CODE("REPOSITION-FILE", REPOSITION_FILE, 0, f_reposition_file())
+CODE("FILE-SIZE", FILE_SIZE, 0, f_file_size())
+CODE("RESIZE-FILE", RESIZE_FILE, 0, f_resize_file())
+CODE("CLOSE-FILE", CLOSE_FILE, 0, f_close_file())
+CODE("DELETE-FILE", DELETE_FILE, 0, f_delete_file())
 CODE("INCLUDED", INCLUDED, 0, f_included())
+CODE("INCLUDE-FILE", INCLUDE_FILE, 0, f_include_file())
 
 
 #undef CONST

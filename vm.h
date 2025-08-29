@@ -8,6 +8,7 @@
 
 #include "block.h"
 #include "dict.h"
+#include "file.h"
 #include "input.h"
 #include "memory.h"
 #include "output.h"
@@ -45,6 +46,9 @@ struct VM {
 
     // dictionary
     Dict* dict;
+
+    // files
+    Files* files;           // system files
 };
 
 extern VM vm;
