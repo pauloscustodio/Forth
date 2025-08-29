@@ -1,0 +1,46 @@
+name: Build on Windows MSYS2
+
+on:
+  push:
+  pull_request:
+    branches: [ master ]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: msys2 {0}
+
+    steps:
+    - name: Checkout from git
+      uses: actions/checkout@v4
+
+    - name: Setup msys2
+      uses: msys2/setup-msys2@v2
+      with:
+        update: true
+        install: |
+          base-devel
+          perl
+          perl-modules
+          mingw-w64-x86_64-gcc
+          git
+
+    - name: Install perl prerequisites
+      run: |
+        cpan App::cpanminus
+        cpanm -f Test::Harness
+        cpanm App::Prove Modern::Perl Path::Tiny Test::More 
+
+    - name: Build
+      run: |
+        make
+
+    - name: Run tests
+      run: |
+        make test

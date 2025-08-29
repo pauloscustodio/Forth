@@ -1,6 +1,12 @@
 Forth
 -----
 
+[![Build on Ubuntu](https://github.com/pauloscustodio/Forth/actions/workflows/ubuntu.yml/badge.svg)](https://github.com/pauloscustodio/Forth/actions/workflows/ubuntu.yml)
+[![Build on MacOS](https://github.com/pauloscustodio/Forth/actions/workflows/macos.yml/badge.svg)](https://github.com/pauloscustodio/Forth/actions/workflows/macos.yml)
+[![Build on Windows Msbuild](https://github.com/pauloscustodio/Forth/actions/workflows/msbuild.yml/badge.svg)](https://github.com/pauloscustodio/Forth/actions/workflows/msbuild.yml)
+[![Build on Windows MSYS2](https://github.com/pauloscustodio/Forth/actions/workflows/msys2.yml/badge.svg)](https://github.com/pauloscustodio/Forth/actions/workflows/msys2.yml)
+[![Build on Windows Cygwin](https://github.com/pauloscustodio/Forth/actions/workflows/cygwin.yml/badge.svg)](https://github.com/pauloscustodio/Forth/actions/workflows/cygwin.yml)
+
 This is a C++ implementation of a ANS 2012 Forth interpreter. It implements all
 the 
 CORE, CORE-EXT, 
@@ -18,7 +24,8 @@ It was inspired by the excelent [pforth](https://github.com/philburk/pforth).
 
 See [ANS Forth Standard Introduction](https://forth-standard.org/standard/intro)
 
-It should compile and run on any C++17 compiler on Windows and POSIX systems (Linux, macOS, MSYS2).
+It should compile and run on any C++17 compiler on Windows and POSIX systems 
+(Linux, macOS, Windows MSYS2, Cygwin and Msbuild).
 
 Why another Forth interpreter? Just for fun!
 

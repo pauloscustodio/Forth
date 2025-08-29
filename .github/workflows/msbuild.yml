@@ -1,0 +1,55 @@
+name: Build on Windows Msbuild
+
+on:
+  push:
+  pull_request:
+    branches: [ master ]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        config: [Debug, Release]
+        platform: [x86, x64]
+    defaults:
+      run:
+        shell: cmd
+
+    steps:
+    - name: Run build
+      run: |
+        echo "Building in ${{ matrix.platform }}-${{ matrix.config }} mode"
+
+    - name: Checkout from git
+      uses: actions/checkout@v4
+
+    - name: Install choco packages
+      run: |
+        choco install diffutils
+
+    - name: Find MSBuild
+      uses: microsoft/setup-msbuild@v2
+      with:
+        msbuild-architecture: x64
+
+    - name: Install perl prerequisites
+      run: |
+        perl -S cpan App::cpanminus
+        perl -S cpanm App::Prove Modern::Perl Path::Tiny Test::More Test::Harness 
+
+    - name: Build
+      run: |
+        msbuild msvc\Forth.sln -t:rebuild -property:Platform=${{ matrix.platform }} -property:Configuration=${{ matrix.config }} -property:OutDir=${{ matrix.platform }}\${{ matrix.config }}\
+
+    - name: Copy executable
+      run: |
+        copy /y msvc\Forth\${{ matrix.platform }}\${{ matrix.config }}\Forth.exe .
+
+    - name: Run tests
+      run: |
+        perl -S prove --state=slow,save t\*.t
