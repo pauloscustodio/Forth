@@ -185,4 +185,5 @@ forth_ok("HEX 123456712345678. 2VALUE xx : x 1111111122222222. TO xx ; x .S xx .
 forth_nok("CREATE xx 20 TO xx", "\nError: invalid name argument\n");
 forth_nok("CREATE xx : x 20 TO xx ; x", "\nError: invalid name argument\n");
 
+unlink "$test.inc";
 end_test;

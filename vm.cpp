@@ -62,12 +62,14 @@ VM::VM() {
 
     init_console_output();
     init_console_input();
+    files = new Files();
 }
 
 VM::~VM() {
     delete error_message;
     input->deinit();
     blocks->deinit();
+    delete files;
 }
 
 // pointer - address conversion

@@ -55,8 +55,8 @@ public:
     }
 }
 
-[[noreturn]] static void exit_error(int err_code, const string& arg = "") {
-    exit_error(static_cast<Error>(err_code), arg);
+[[noreturn]] static void exit_error(int error_code, const string& arg = "") {
+    exit_error(static_cast<Error>(error_code), arg);
 }
 
 void error(Error err, const string& arg) {
@@ -86,6 +86,9 @@ void f_catch(int xt) {
         vm.r_stack->set_sp(vm.except_stack->pop()); // restore return stack pointer
 
         catch_result = e.error_code;
+    }
+    catch (...) {
+        throw;
     }
     push(catch_result);
 }
@@ -127,8 +130,8 @@ void f_abort_quote() {
         comma(str_addr);
     }
     else {
-        int err_code = pop();
-        if (err_code != 0) {
+        int error_code = pop();
+        if (error_code != 0) {
             vm.stack->clear();
             *vm.error_message = string(message, size);
             f_throw(Error::AbortQuote);
@@ -140,8 +143,8 @@ void f_xabort_quote() {
     int str_addr = fetch(vm.ip);
     vm.ip += CELL_SZ;
 
-    int err_code = pop();
-    if (err_code != 0) {
+    int error_code = pop();
+    if (error_code != 0) {
         LongString* str = reinterpret_cast<LongString*>(mem_char_ptr(str_addr));
         vm.stack->clear();
         *vm.error_message = str->to_string();

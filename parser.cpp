@@ -340,7 +340,7 @@ static int _number(bool do_error) {
     int addr = pop();
     dint value;
     bool is_double;
-    if (parse_number(mem_char_ptr(addr), size, is_double, value)) {
+    if (parse_number(mem_char_ptr(addr, size), size, is_double, value)) {
         if (is_double) {
             push(dcell_lo(value));
             push(dcell_hi(value));
@@ -353,8 +353,8 @@ static int _number(bool do_error) {
     }
     else {
         if (do_error)
-            error(Error::InvalidNumericArgument, string(mem_char_ptr(addr),
-                    mem_char_ptr(addr) + size));
+            error(Error::InvalidNumericArgument, string(mem_char_ptr(addr, size),
+                    mem_char_ptr(addr, size) + size));
         return 0;
     }
 }
@@ -404,7 +404,7 @@ void f_open_paren() {
             if (found) {
                 break;
             }
-            if (vm.input->refill()) {
+            else if (vm.input->refill()) {
                 continue;
             }
             else {

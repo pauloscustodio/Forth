@@ -103,7 +103,7 @@ void f_interpret() {
 void f_evaluate() {
     int size = pop();
     int addr = pop();
-    f_evaluate(mem_char_ptr(addr), size);
+    f_evaluate(mem_char_ptr(addr, size), size);
 }
 
 void f_evaluate(const string& text) {

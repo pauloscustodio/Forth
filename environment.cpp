@@ -19,7 +19,7 @@ bool g_interactive = false;
 void f_environment_q() {
     int size = pop();
     int addr = pop();
-    char* query = mem_char_ptr(addr);
+    char* query = mem_char_ptr(addr, size);
     f_environment_q(query, size);
 }
 
@@ -113,11 +113,11 @@ void f_environment_q(const string& query) {
         push(F_TRUE);
     }
     else if (case_insensitive_equal(query, "FILE")) {
-        push(F_FALSE);
+        push(F_TRUE);
         push(F_TRUE);
     }
     else if (case_insensitive_equal(query, "FILE-EXT")) {
-        push(F_FALSE);
+        push(F_TRUE);
         push(F_TRUE);
     }
     else if (case_insensitive_equal(query, "FLOATING")) {
