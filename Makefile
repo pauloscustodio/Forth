@@ -12,7 +12,7 @@ else
   EXE 	=
 endif
 
-CXXFLAGS= -MMD -Wall -Wextra -Wpedantic -Werror -O3
+CXXFLAGS= -std=gnu++17 -MMD -Wall -Wextra -Wpedantic -Werror -O3
 
 SRCS 	= $(wildcard *.cpp)
 DEFS	= $(wildcard *.def)
