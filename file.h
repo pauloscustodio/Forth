@@ -29,6 +29,8 @@ public:
     int tell(int file_id, Error& error_code);
     int size(int file_id, Error& error_code);
     void resize(int file_id, int size, Error& error_code);
+    void flush(int file_id, Error& error_code);
+    string filename(int file_id);
 
 private:
     vector<fstream*> files_;
@@ -55,13 +57,39 @@ void f_file_position();
 void f_reposition_file();
 void f_file_size();
 void f_resize_file();
+void f_flush_file();
 void f_close_file();
 void f_delete_file();
+void f_rename_file();
 
 void f_include_file();
 void f_include_file(int file_id);
+
+void f_include();
 
 void f_included();
 void f_included(const string& filename);
 void f_included(const char* filename, int size);
 void f_included(const char* filename, size_t size);
+
+void f_require();
+void f_required();
+void f_required(const string& filename);
+void f_required(const char* filename, int size);
+void f_required(const char* filename, size_t size);
+
+enum ForthFileStatus {
+    FS_EXISTS = 0x00000001,
+    FS_REGULAR = 0x00000002,
+    FS_DIRECTORY = 0x00000004,
+    FS_SYMLINK = 0x00000008,
+    FS_READABLE = 0x00000010,
+    FS_WRITABLE = 0x00000020,
+    FS_EXECUTABLE = 0x00000040,
+    FS_ERROR = 0x80000000  // high bit for error
+};
+
+void f_file_status();
+void f_file_status(const string& filename);
+void f_file_status(const char* filename, int size);
+void f_file_status(const char* filename, size_t size);

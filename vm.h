@@ -14,6 +14,7 @@
 #include "output.h"
 #include "stack.h"
 #include "str.h"
+#include <set>
 using namespace std;
 
 struct VM {
@@ -49,6 +50,9 @@ struct VM {
 
     // files
     Files* files;           // system files
+
+    // included files
+    std::set<std::string> included_files;
 };
 
 extern VM vm;

@@ -6,6 +6,7 @@
 
 #include "file.h"
 #include "input.h"
+#include "parser.h"
 #include "vm.h"
 #include <filesystem>
 #include <iostream>
@@ -199,6 +200,28 @@ void Files::resize(int file_id, int size, Error& error_code) {
     }
 
     error_code = Error::ResizeException;
+}
+
+void Files::flush(int file_id, Error& error_code) {
+    error_code = Error::None;
+    if (file_id > 0 && file_id < static_cast<int>(files_.size())) {
+        fstream* file = files_[file_id];
+        if (file != nullptr && file->is_open()) {
+            file->flush();
+            return;
+        }
+    }
+
+    error_code = Error::FlushFileException;
+}
+
+string Files::filename(int file_id) {
+    if (file_id > 0 && file_id < static_cast<int>(files_.size())) {
+        return filenames_[file_id];
+    }
+    else {
+        return "";
+    }
 }
 
 int Files::next_file_id() {
@@ -399,6 +422,15 @@ void f_resize_file() {
     push(static_cast<int>(error_code));
 }
 
+void f_flush_file() {
+    int file_id = pop();
+
+    Error error_code = Error::None;
+    vm.files->flush(file_id, error_code);
+
+    push(static_cast<int>(error_code));
+}
+
 void f_close_file() {
     int file_id = pop();
 
@@ -428,6 +460,31 @@ void f_delete_file() {
     push(static_cast<int>(error_code));
 }
 
+void f_rename_file() {
+    int size2 = pop();
+    int filename_addr2 = pop();
+    const char* filename_str2 = mem_char_ptr(filename_addr2, size2);
+    string filename2(filename_str2, filename_str2 + size2);
+
+    int size1 = pop();
+    int filename_addr1 = pop();
+    const char* filename_str1 = mem_char_ptr(filename_addr1, size1);
+    string filename1(filename_str1, filename_str1 + size1);
+
+    Error error_code = Error::None;
+    try {
+        std::filesystem::rename(filename1, filename2);
+    }
+    catch (filesystem::filesystem_error&) {
+        error_code = Error::RenameFileException;
+    }
+    catch (...) {
+        throw;
+    }
+
+    push(static_cast<int>(error_code));
+}
+
 void f_include_file() {
     int file_id = pop();
     f_include_file(file_id);
@@ -440,7 +497,15 @@ void f_include_file(int file_id) {
     else {
         vm.input->save_input();
         vm.input->open_file(file_id);
+        string filename = vm.files->filename(file_id);
+        vm.included_files.insert(filename);
     }
+}
+
+void f_include() {
+    int size = 0;
+    const char* filename = parse_word(size, BL);
+    f_included(filename, size);
 }
 
 void f_included() {
@@ -458,6 +523,7 @@ void f_included(const string& filename) {
     else {
         vm.input->save_input();
         vm.input->open_file(file_id);
+        vm.included_files.insert(filename);
     }
 }
 
@@ -468,5 +534,97 @@ void f_included(const char* filename, int size) {
 
 void f_included(const char* filename, size_t size) {
     f_included(filename, static_cast<int>(size));
+}
+
+void f_require() {
+    int size = 0;
+    const char* filename = parse_word(size, BL);
+    f_required(filename, size);
+}
+
+void f_required() {
+    int size = pop();
+    int filename_addr = pop();
+    const char* filename_str = mem_char_ptr(filename_addr, size);
+    f_required(filename_str, size);
+}
+
+void f_required(const string& filename) {
+    auto it = vm.included_files.find(filename);
+    if (it == vm.included_files.end()) {    // not yet included
+        f_included(filename);
+    }
+}
+
+void f_required(const char* filename, int size) {
+    f_required(string(filename, filename + size));
+}
+
+void f_required(const char* filename, size_t size) {
+    f_required(filename, static_cast<int>(size));
+}
+
+static uint32_t get_forth_file_status(const std::string& path) {
+    namespace fs = std::filesystem;
+    std::error_code ec;
+    fs::file_status status = fs::status(path, ec);
+
+    if (ec) {
+        return FS_ERROR;
+    }
+
+    uint32_t result = 0;
+    if (fs::exists(status)) {
+        result |= FS_EXISTS;
+    }
+    if (fs::is_regular_file(status)) {
+        result |= FS_REGULAR;
+    }
+    if (fs::is_directory(status)) {
+        result |= FS_DIRECTORY;
+    }
+    if (fs::is_symlink(status)) {
+        result |= FS_SYMLINK;
+    }
+
+    fs::perms p = status.permissions();
+    if ((p & fs::perms::owner_read) != fs::perms::none) {
+        result |= FS_READABLE;
+    }
+    if ((p & fs::perms::owner_write) != fs::perms::none) {
+        result |= FS_WRITABLE;
+    }
+    if ((p & fs::perms::owner_exec) != fs::perms::none) {
+        result |= FS_EXECUTABLE;
+    }
+
+    return result;
+}
+
+void f_file_status() {
+    int size = pop();
+    int filename_addr = pop();
+    const char* filename_str = mem_char_ptr(filename_addr, size);
+    f_file_status(filename_str, size);
+}
+
+void f_file_status(const string& filename) {
+    uint32_t st = get_forth_file_status(filename);
+    if (st == FS_ERROR) {       // file does not exist
+        push(st);
+        push(static_cast<int>(Error::FileStatusException));
+    }
+    else {
+        push(st);
+        push(0);
+    }
+}
+
+void f_file_status(const char* filename, int size) {
+    f_file_status(string(filename, filename + size));
+}
+
+void f_file_status(const char* filename, size_t size) {
+    f_file_status(filename, static_cast<int>(size));
 }
 
