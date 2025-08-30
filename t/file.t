@@ -318,6 +318,24 @@ S" $test.dat" DELETE-FILE THROW
 END
 ok !-f "$test.dat", "file deleted";
 
+note "Test RENAME-FILE";
+path("$test.dat")->spew("hello world");
+forth_ok(<<END, "");
+S" $test.dat" S" $test.dat2" RENAME-FILE THROW
+END
+ok !-f "$test.dat", "file deleted";
+ok -f "$test.dat2", "file created";
+unlink "$test.dat2";
+
+note "Test FLUSH-FILE";
+unlink "$test.dat";
+forth_ok(<<END, "");
+S" $test.dat" W/O CREATE-FILE THROW CONSTANT file_id
+s" Hello world" file_id WRITE-FILE THROW
+file_id FLUSH-FILE THROW
+END
+is path("$test.dat")->slurp, "Hello world", "write file ok";
+
 note "Test INCLUDE-FILE";
 path("$test.inc")->spew("1 2 + .");
 forth_ok(<<END, "3 ( )");
@@ -338,6 +356,95 @@ END
 path("$test.0.fs")->spew("0 .");
 capture_ok("./forth $test.9.fs", "9 8 7 6 5 4 3 2 1 0 1 2 3 4 5 6 7 8 9 ");
 
+note "Test INCLUDE";
+path("$test.inc")->spew("1 2 + .");
+forth_ok(<<END, "3 ( )");
+INCLUDE $test.inc .S
+END
+
+note "Test REQUIRE";
+path("$test.inc")->spew("1 2 + .");
+forth_ok(<<END, "3 ( )");
+REQUIRE $test.inc
+REQUIRE $test.inc
+.S
+END
+
+note "Test REQUIRE";
+path("$test.inc")->spew("1 2 + .");
+forth_ok(<<END, "3 ( )");
+INCLUDE $test.inc
+REQUIRE $test.inc
+.S
+END
+
+note "Test REQUIRE";
+path("$test.inc")->spew("1 2 + .");
+forth_ok(<<END, "3 3 ( )");
+INCLUDE $test.inc
+INCLUDE $test.inc
+.S
+END
+
+note "Test REQUIRED";
+path("$test.inc")->spew("1 2 + .");
+forth_ok(<<END, "3 ( )");
+S" $test.inc" REQUIRED
+S" $test.inc" REQUIRED
+.S
+END
+
+note "Test REQUIRED";
+path("$test.inc")->spew("1 2 + .");
+forth_ok(<<END, "3 ( )");
+S" $test.inc" INCLUDED
+S" $test.inc" REQUIRED
+.S
+END
+
+note "Test REQUIRED";
+path("$test.inc")->spew("1 2 + .");
+forth_ok(<<END, "3 3 ( )");
+S" $test.inc" INCLUDED
+S" $test.inc" INCLUDED
+.S
+END
+
+note "Test FILE-STATUS";
+note "Test FS-EXISTS";
+note "Test FS-REGULAR";
+note "Test FS-DIRECTORY";
+note "Test FS-SYMLINK";			# not tested
+note "Test FS-READABLE";		# not tested
+note "Test FS-WRITABLE";		# not tested
+note "Test FS-EXECUTABLE";		# not tested
+
+path("$test.dat")->spew("hello");
+forth_ok(<<END, "-1 -1 0 ( ) ");
+S" $test.dat" FILE-STATUS THROW VALUE status
+status FS-EXISTS    AND 0= 0= .
+status FS-REGULAR   AND 0= 0= .
+status FS-DIRECTORY AND 0= 0= .
+.S
+END
+
+unlink "$test.dat";
+mkdir "$test.dat";
+forth_ok(<<END, "-1 0 -1 ( ) ");
+S" $test.dat" FILE-STATUS THROW VALUE status
+status FS-EXISTS    AND 0= 0= .
+status FS-REGULAR   AND 0= 0= .
+status FS-DIRECTORY AND 0= 0= .
+.S
+END
+
+rmdir "$test.dat";
+forth_nok(<<END, "\nError: FILE-STATUS exception\n");
+S" $test.dat" FILE-STATUS THROW
+END
+
 unlink "$test.dat", "$test.inc";
 unlink <$test.*.fs>;
+unlink <$test.*.dat>;
+rmdir <$test.*.dat>;
 end_test;
