@@ -12,7 +12,7 @@ rmdir "$test.dat";
 unlink "$test.dat";
 forth_ok(<<END, "0 2 ( )");
 S" $test.dat" W/O CREATE-FILE THROW CONSTANT file_id
-file_id FILE-POSITION THROW .
+file_id FILE-POSITION THROW D.
 file_id CLOSE-FILE THROW
 file_id .
 .S
@@ -24,7 +24,7 @@ is -s "$test.dat", 0, "file empty";
 path("$test.dat")->spew("Hello world");
 forth_ok(<<END, "0 2 ( )");
 S" $test.dat" W/O CREATE-FILE THROW CONSTANT file_id
-file_id FILE-POSITION THROW .
+file_id FILE-POSITION THROW D.
 file_id CLOSE-FILE THROW
 file_id .
 .S
@@ -51,27 +51,27 @@ forth_ok(<<END, "0 Hello!5  worl!10 d!11 !11 ( )");
 buffer_size BUFFER: buffer
 S" $test.dat" R/O OPEN-FILE THROW CONSTANT file_id
 
-file_id FILE-POSITION THROW .
+file_id FILE-POSITION THROW D.
 
 buffer buffer_size file_id READ-FILE THROW VALUE num_read
 buffer num_read TYPE 33 EMIT
 
-file_id FILE-POSITION THROW .
+file_id FILE-POSITION THROW D.
 
 buffer buffer_size file_id READ-FILE THROW TO num_read
 buffer num_read TYPE 33 EMIT
 
-file_id FILE-POSITION THROW .
+file_id FILE-POSITION THROW D.
 
 buffer buffer_size file_id READ-FILE THROW TO num_read
 buffer num_read TYPE 33 EMIT
 
-file_id FILE-POSITION THROW .
+file_id FILE-POSITION THROW D.
 
 buffer buffer_size file_id READ-FILE THROW TO num_read
 buffer num_read TYPE 33 EMIT
 
-file_id FILE-POSITION THROW .
+file_id FILE-POSITION THROW D.
 
 file_id CLOSE-FILE THROW
 .S
@@ -85,11 +85,11 @@ unlink "$test.dat";
 forth_ok(<<END, "0 6 11 ( )");
 S" $test.dat" W/O OPEN-FILE THROW CONSTANT file_id
 
-file_id FILE-POSITION THROW .
+file_id FILE-POSITION THROW D.
 S" hello " file_id WRITE-FILE THROW 
-file_id FILE-POSITION THROW .
+file_id FILE-POSITION THROW D.
 S" world"  file_id WRITE-FILE THROW 
-file_id FILE-POSITION THROW .
+file_id FILE-POSITION THROW D.
 
 file_id CLOSE-FILE THROW
 .S
@@ -119,13 +119,13 @@ forth_ok(<<END, "0 6 world!11 ( )");
 buffer_size BUFFER: buffer
 S" $test.dat" R/W OPEN-FILE THROW CONSTANT file_id
 
-file_id FILE-POSITION THROW .
+file_id FILE-POSITION THROW D.
 S" HELLO " file_id WRITE-FILE THROW
-file_id FILE-POSITION THROW .
+file_id FILE-POSITION THROW D.
 
 buffer buffer_size file_id READ-FILE THROW VALUE num_read
 buffer num_read TYPE 33 EMIT
-file_id FILE-POSITION THROW .
+file_id FILE-POSITION THROW D.
 
 file_id CLOSE-FILE THROW
 .S
@@ -143,10 +143,10 @@ forth_ok(<<END, "0 Hello !6 ( )");
 buffer_size BUFFER: buffer
 S" $test.dat" R/W OPEN-FILE THROW CONSTANT file_id
 
-file_id FILE-POSITION THROW .
+file_id FILE-POSITION THROW D.
 buffer buffer_size file_id READ-FILE THROW VALUE num_read
 buffer num_read TYPE 33 EMIT
-file_id FILE-POSITION THROW .
+file_id FILE-POSITION THROW D.
 
 S" WORLD" file_id WRITE-FILE THROW
 
@@ -234,7 +234,7 @@ buffer_size BUFFER: buffer
 : x
   S" $test.dat" R/O BIN OPEN-FILE THROW TO file_id
   BEGIN
-    file_id FILE-POSITION THROW .
+    file_id FILE-POSITION THROW D.
     buffer buffer_size file_id READ-LINE THROW
   WHILE ( eof flag )
     buffer SWAP TYPE 33 EMIT
@@ -245,17 +245,35 @@ buffer_size BUFFER: buffer
 x .S
 END
 
+note "Test READ-LINE";
+path("$test.dat")->spew_raw("hello");
+forth_ok(<<END, "0 ( 0 -1 ) 0 ( 5 -1 ) 5 ( 0 0 ) 5 ( )");
+5 CONSTANT buffer_size
+buffer_size BUFFER: buffer
+0 VALUE file_id
+S" $test.dat" R/O BIN OPEN-FILE THROW TO file_id
+file_id FILE-POSITION THROW D.
+buffer 0 file_id READ-LINE THROW .S 2DROP
+file_id FILE-POSITION THROW D.
+buffer buffer_size file_id READ-LINE THROW .S 2DROP
+file_id FILE-POSITION THROW D.
+buffer buffer_size file_id READ-LINE THROW .S 2DROP
+file_id FILE-POSITION THROW D.
+file_id CLOSE-FILE THROW
+.S
+END
+
 note "Test WRITE-LINE";
 note "Test FILE-POSITION";
 unlink "$test.dat";
 if ($^O eq 'MSWin32') {
 	forth_ok(<<END, "0 7 9 ( )");
 		S" $test.dat" W/O BIN OPEN-FILE THROW CONSTANT file_id
-		file_id FILE-POSITION THROW .
+		file_id FILE-POSITION THROW D.
 		S" hello" file_id WRITE-LINE THROW
-		file_id FILE-POSITION THROW .
+		file_id FILE-POSITION THROW D.
 		PAD 0 file_id WRITE-LINE THROW
-		file_id FILE-POSITION THROW .
+		file_id FILE-POSITION THROW D.
 		file_id CLOSE-FILE THROW
 		.S
 END
@@ -263,11 +281,11 @@ END
 else {
 	forth_ok(<<END, "0 6 7 ( )");
 		S" $test.dat" W/O BIN OPEN-FILE THROW CONSTANT file_id
-		file_id FILE-POSITION THROW .
+		file_id FILE-POSITION THROW D.
 		S" hello" file_id WRITE-LINE THROW
-		file_id FILE-POSITION THROW .
+		file_id FILE-POSITION THROW D.
 		PAD 0 file_id WRITE-LINE THROW
-		file_id FILE-POSITION THROW .
+		file_id FILE-POSITION THROW D.
 		file_id CLOSE-FILE THROW
 		.S
 END
@@ -277,7 +295,7 @@ note "Test REPOSITION-FILE";
 path("$test.dat")->spew("hello world");
 forth_ok(<<END, "world!");
 S" $test.dat" R/O OPEN-FILE THROW CONSTANT file_id
-6 file_id REPOSITION-FILE THROW
+6 0 file_id REPOSITION-FILE THROW
 PAD 5 file_id READ-FILE THROW PAD SWAP TYPE 33 EMIT
 file_id CLOSE-FILE THROW
 END
@@ -286,9 +304,9 @@ note "Test REPOSITION-FILE";
 unlink "$test.dat";
 forth_ok(<<END, "");
 S" $test.dat" W/O CREATE-FILE THROW CONSTANT file_id
-6 file_id REPOSITION-FILE THROW
+6 0 file_id REPOSITION-FILE THROW
 S" world" file_id WRITE-FILE THROW
-0 file_id REPOSITION-FILE THROW
+0 0 file_id REPOSITION-FILE THROW
 S" hello " file_id WRITE-FILE THROW
 file_id CLOSE-FILE THROW
 END

@@ -7,6 +7,7 @@
 #pragma once
 
 #include "errors.h"
+#include "forth.h"
 #include <fstream>
 #include <string>
 #include <vector>
@@ -20,13 +21,13 @@ public:
     // returns file id, 0 on failure
     int open(const string& filename, ios::openmode mode);
     bool close(int file_id, Error& error_code);
-    bool seek(int file_id, int pos, Error& error_code);
+    bool seek(int file_id, udint pos, Error& error_code);
     int read(int file_id, char* buffer, int size, Error& error_code);
     void write(int file_id, char* buffer, int size, Error& error_code);
     int read_line(int file_id, char* buffer, int size, bool& found_eof,
                   Error& error_code);
     void write_line(int file_id, char* buffer, int size, Error& error_code);
-    int tell(int file_id, Error& error_code);
+    udint tell(int file_id, Error& error_code);
     int size(int file_id, Error& error_code);
     void resize(int file_id, int size, Error& error_code);
     void flush(int file_id, Error& error_code);

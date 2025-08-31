@@ -56,7 +56,7 @@ bool Files::close(int file_id, Error& error_code) {
     return false;
 }
 
-bool Files::seek(int file_id, int pos, Error& error_code) {
+bool Files::seek(int file_id, udint pos, Error& error_code) {
     error_code = Error::None;
     if (file_id > 0 && file_id < static_cast<int>(files_.size())) {
         fstream* file = files_[file_id];
@@ -150,7 +150,7 @@ void Files::write_line(int file_id, char* buffer, int size, Error& error_code) {
     error_code = Error::WriteLineException;
 }
 
-int Files::tell(int file_id, Error& error_code) {
+udint Files::tell(int file_id, Error& error_code) {
     error_code = Error::None;
     if (file_id > 0 && file_id < static_cast<int>(files_.size())) {
         fstream* file = files_[file_id];
@@ -159,10 +159,10 @@ int Files::tell(int file_id, Error& error_code) {
                 file->clear(); // clear eofbit and failbit
             }
             if (file->tellg() != -1) {
-                return static_cast<int>(file->tellg());
+                return static_cast<udint>(file->tellg());
             }
             else if (file->tellp() != -1) {
-                return static_cast<int>(file->tellp());
+                return static_cast<udint>(file->tellp());
             }
         }
     }
@@ -257,7 +257,7 @@ bool Files::read_line(fstream* fs, char* buffer, int size, int& num_read) {
             buffer[num_read++] = ch;
         }
     }
-    return num_read > 0 || num_eol > 0;
+    return num_read > 0 || num_eol > 0 || num_read == size;
 }
 
 void Files::sync_write_file_pos(fstream* fs) {
@@ -386,15 +386,15 @@ void f_file_position() {
     int file_id = pop();
 
     Error error_code = Error::None;
-    int pos = vm.files->tell(file_id, error_code);
+    udint pos = vm.files->tell(file_id, error_code);
 
-    push(pos);
+    dpush(pos);
     push(static_cast<int>(error_code));
 }
 
 void f_reposition_file() {
     int file_id = pop();
-    int pos = pop();
+    udint pos = dpop();
 
     Error error_code = Error::None;
     vm.files->seek(file_id, pos, error_code);
