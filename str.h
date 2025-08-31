@@ -89,3 +89,4 @@ void f_xs_quote();
 void f_c_quote();
 void f_xc_quote();
 void f_dot_paren();
+void f_slash_string();

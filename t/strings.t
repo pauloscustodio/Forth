@@ -75,4 +75,8 @@ END
 note "Test MOVE";
 forth_ok("BL WORD hello COUNT PAD SWAP MOVE PAD 5 TYPE", "hello");
 
+note "Test /STRING";
+forth_ok('S" ABC" 2 /STRING TYPE .S', "C ( )");
+forth_ok('S" ABC" 2 /STRING -1 /STRING TYPE .S', "BC ( )");
+
 end_test;

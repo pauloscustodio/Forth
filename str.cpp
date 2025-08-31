@@ -247,3 +247,12 @@ void f_dot_paren() {
     print_string(message, size);
 }
 
+void f_slash_string() {
+    int n = pop();
+    int size = pop();
+    int addr = pop();
+
+    push(addr + n);
+    push(size - n);
+}
+
