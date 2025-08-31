@@ -16,7 +16,10 @@ class ThrowException : public exception {
 public:
     ThrowException(int code) : error_code(code) {}
     virtual const char* what() const noexcept override {
-        return "Forth exception thrown";
+        static std::string message;
+        message = std::string("Forth exception thrown with error code ") +
+                  std::to_string(error_code) + ": " + *vm.error_message;
+        return message.c_str();
     }
 
 public:
