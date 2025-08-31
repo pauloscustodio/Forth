@@ -106,6 +106,19 @@ void Stack::print() const {
     cout << ") ";
 }
 
+// so that we can debug <# ... #>
+void Stack::print_debug() const {
+    cout << "(";
+    if (prefix_ != '\0') {
+        cout << prefix_ << ":";
+    }
+    cout << " ";
+    for (int i = STACK_SZ - 1; i >= sp_; i--) {
+        cout << data_[i] << BL;
+    }
+    cout << ") ";
+}
+
 void Stack::set_sp(int sp) {
     if (sp < 0 || sp > STACK_SZ) {
         error(Error::InvalidMemoryAddress);

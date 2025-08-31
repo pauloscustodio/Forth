@@ -33,6 +33,7 @@ public:
     void clear();
 
     void print() const;
+    void print_debug() const;
 
 private:
     int data_[STACK_SZ];

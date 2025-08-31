@@ -46,7 +46,7 @@ void interpret_word(const char* word, int size) {
                         cout << ">>" << BL;
                         print_number(value);
                         cout << BL;
-                        vm.stack->print();
+                        vm.stack->print_debug();
                         cout << endl;
                     }
                 }
@@ -63,7 +63,7 @@ void interpret_word(const char* word, int size) {
                         cout << ">>" << BL;
                         print_number(dcell_lo(value));
                         cout << BL;
-                        vm.stack->print();
+                        vm.stack->print_debug();
                         cout << endl;
                     }
                 }

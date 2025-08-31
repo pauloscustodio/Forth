@@ -21,7 +21,7 @@ void f_colon() {
     vm.user->STATE = STATE_COMPILE;
 
     if (vm.user->TRACE) {
-        vm.cs_stack->print();
+        vm.cs_stack->print_debug();
     }
 }
 
@@ -38,7 +38,7 @@ void f_colon_noname() {
     push(header->xt());
 
     if (vm.user->TRACE) {
-        vm.cs_stack->print();
+        vm.cs_stack->print_debug();
     }
 }
 
@@ -60,7 +60,7 @@ void f_semicolon() {
     vm.user->STATE = STATE_INTERPRET;
 
     if (vm.user->TRACE) {
-        vm.cs_stack->print();
+        vm.cs_stack->print_debug();
     }
 }
 
@@ -86,7 +86,7 @@ static void comma_fwd_jump(int xt_jump, int pos) {
     comma(0);
 
     if (vm.user->TRACE) {
-        vm.cs_stack->print();
+        vm.cs_stack->print_debug();
     }
 }
 
@@ -111,7 +111,7 @@ static void resolve_fwd_jump() {
     store(dcell_lo(pos_patch), dist);
 
     if (vm.user->TRACE) {
-        vm.cs_stack->print();
+        vm.cs_stack->print_debug();
     }
 }
 
@@ -125,7 +125,7 @@ static void mark_target_back_jump(int pos) {
     cs_dpush(mk_dcell(pos, addr));
 
     if (vm.user->TRACE) {
-        vm.cs_stack->print();
+        vm.cs_stack->print_debug();
     }
 }
 
@@ -168,7 +168,7 @@ static bool search_resolve_fwd_jump(int pos1, int pos2 = -1, int pos3 = -1) {
     }
 
     if (vm.user->TRACE) {
-        vm.cs_stack->print();
+        vm.cs_stack->print_debug();
     }
 
     return resolved;
@@ -196,7 +196,7 @@ static bool resolve_all_fwd_jumps(int stop,
     }
 
     if (vm.user->TRACE) {
-        vm.cs_stack->print();
+        vm.cs_stack->print_debug();
     }
 
     return resolved;
@@ -225,7 +225,7 @@ static bool search_resolve_back_jump(int jump_xt,
     }
 
     if (vm.user->TRACE) {
-        vm.cs_stack->print();
+        vm.cs_stack->print_debug();
     }
 
     return resolved;
@@ -393,7 +393,7 @@ void f_case() {
     cs_dpush(mk_dcell(POS_CASE_START, 0));    // mark start of case
 
     if (vm.user->TRACE) {
-        vm.cs_stack->print();
+        vm.cs_stack->print_debug();
     }
 }
 
