@@ -9,12 +9,26 @@
 #include "math.h"
 #include "stack.h"
 #include "vm.h"
+#include <limits>
 using namespace std;
 
 int f_mod(int a, int b) {
     if (b == 0) {
         error(Error::DivisionByZero);
         return 0; // not reached
+    }
+    // Handle edge cases where negation does not change the value
+    else if (b == std::numeric_limits<int>::min()) {
+        // Only possible remainders are a or a + b, depending on sign
+        int ret = a % b;
+        if (ret < 0) {
+            ret += b;
+        }
+        return ret;
+    }
+    else if (a == std::numeric_limits<int>::min() && b == -1) {
+        // Avoid overflow
+        return 0;
     }
     else if (b < 0) {
         return -f_mod(-a, -b);
