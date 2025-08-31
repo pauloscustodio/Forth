@@ -610,7 +610,7 @@ void f_file_status() {
 
 void f_file_status(const string& filename) {
     uint32_t st = get_forth_file_status(filename);
-    if (st == FS_ERROR) {       // file does not exist
+    if ((st & FS_ERROR) != 0) {     // file does not exist
         push(st);
         push(static_cast<int>(Error::FileStatusException));
     }
