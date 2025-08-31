@@ -41,21 +41,11 @@ void Input::open_file(int source_id) {
 }
 
 void Input::open_terminal() {
-    Error error_code = Error::None;
-    if (source_id_ > 0) {
-        vm.files->close(source_id_, error_code);
-    }
-
     source_id_ = 0; // terminal
     set_tib("", 0);
 }
 
 void Input::set_text(const char* text, int size) {
-    Error error_code = Error::None;
-    if (source_id_ > 0) {
-        vm.files->close(source_id_, error_code);
-    }
-
     source_id_ = -1; // string
     vm.user->NR_IN = size;
     vm.user->TO_IN = 0;
@@ -137,9 +127,6 @@ bool Input::refill() {
         bool found_eof = false;
         int num_read = vm.files->read_line(source_id_, tib_, BUFFER_SZ, found_eof,
                                            error_code);
-        if (found_eof) {
-            vm.files->close(source_id_, error_code);
-        }
         ok = num_read > 0 || !found_eof;
 
         vm.user->NR_IN = num_read;
@@ -178,6 +165,11 @@ bool Input::restore_input() {
         SaveInput save = input_stack_->back();
         input_stack_->pop_back();
 
+        // close current file if any
+        if (source_id_ > 0) {
+            Error error_code = Error::None;
+            vm.files->close(source_id_, error_code);
+        }
         source_id_ = save.source_id;
         vm.user->BLK = save.blk;
         set_tib(save.tib);
