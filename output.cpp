@@ -10,7 +10,6 @@
 #include <cstring>
 #include <iostream>
 #include <sstream>
-using namespace std;
 
 void NumberOutput::init() {
     memset(buffer_, BL, sizeof(buffer_));
@@ -64,7 +63,7 @@ void NumberOutput::add_sign(int sign) {
     }
 }
 
-void NumberOutput::add_string(const string& str) {
+void NumberOutput::add_string(const std::string& str) {
     add_string(str.c_str(), static_cast<uint>(str.size()));
 }
 
@@ -87,7 +86,7 @@ void NumberOutput::end_print() const {
     print_string(str, size);
 }
 
-static string print_dint_uint(int sign) {
+static std::string print_dint_uint(int sign) {
     vm.number_output->start();
     vm.number_output->add_char(BL);
     vm.number_output->add_digits();
@@ -96,10 +95,10 @@ static string print_dint_uint(int sign) {
     uint size = pop();
     uint addr = pop();
     char* str = mem_char_ptr(addr, size);
-    return string(str, str + size);
+    return std::string(str, str + size);
 }
 
-static string print_dint_uint_aligned(int width, int sign) {
+static std::string print_dint_uint_aligned(int width, int sign) {
     vm.number_output->start();
 
     dint d;
@@ -123,31 +122,31 @@ static string print_dint_uint_aligned(int width, int sign) {
     uint size = pop();
     uint addr = pop();
     char* str = mem_char_ptr(addr, size);
-    return string(str, str + size);
+    return std::string(str, str + size);
 }
 
-string char_to_string(char c) {
-    ostringstream oss;
+std::string char_to_string(char c) {
+    std::ostringstream oss;
     oss << c;
     return oss.str();
 }
 
 void print_char(char c) {
-    cout << char_to_string(c);
+    std::cout << char_to_string(c);
 }
 
-void print_string(const string& str) {
+void print_string(const std::string& str) {
     for (char c : str) {
         print_char(c);
     }
 }
 
-string spaces_to_string(int count) {
+std::string spaces_to_string(int count) {
     if (count < 1) {
         return "";
     }
     else {
-        return string(count, BL);
+        return std::string(count, BL);
     }
 }
 
@@ -155,12 +154,12 @@ void print_spaces(int count) {
     print_string(spaces_to_string(count));
 }
 
-string string_to_string(uint addr, uint size) {
+std::string string_to_string(uint addr, uint size) {
     return string_to_string(mem_char_ptr(addr, size), size);
 }
 
-string string_to_string(const char* str, uint size) {
-    ostringstream oss;
+std::string string_to_string(const char* str, uint size) {
+    std::ostringstream oss;
     for (uint i = 0; i < size; ++i) {
         oss << str[i];
     }
@@ -175,7 +174,7 @@ void print_string(const char* str, uint size) {
     print_string(string_to_string(str, size));
 }
 
-string number_to_string(int value) {
+std::string number_to_string(int value) {
     dpush(f_dabs(value));
     int sign = value;
     return print_dint_uint(sign);
@@ -185,7 +184,7 @@ void print_number(int value) {
     print_string(number_to_string(value));
 }
 
-string number_to_string(dint value) {
+std::string number_to_string(dint value) {
     dpush(f_dabs(value));
     int sign = value < 0 ? -1 : 1;
     return print_dint_uint(sign);
@@ -195,8 +194,8 @@ void print_number(dint value) {
     print_string(number_to_string(value));
 }
 
-string number_dot_to_string(dint value) {
-    string number = number_to_string(value, 0);
+std::string number_dot_to_string(dint value) {
+    std::string number = number_to_string(value, 0);
     number.push_back('.');
     number.push_back(BL);
     return number;
@@ -206,7 +205,7 @@ void print_number_dot(dint value) {
     print_string(number_dot_to_string(value));
 }
 
-string number_to_string(int value, int width) {
+std::string number_to_string(int value, int width) {
     dpush(f_dabs(value));
     return print_dint_uint_aligned(width, value);
 }
@@ -215,7 +214,7 @@ void print_number(int value, int width) {
     print_string(number_to_string(value, width));
 }
 
-string number_to_string(dint value, int width) {
+std::string number_to_string(dint value, int width) {
     dpush(f_dabs(value));
     int sign = value < 0 ? -1 : 1;
     return print_dint_uint_aligned(width, sign);
@@ -225,7 +224,7 @@ void print_number(dint value, int width) {
     print_string(number_to_string(value, width));
 }
 
-string unsigned_number_to_string(uint value) {
+std::string unsigned_number_to_string(uint value) {
     push(value);    // lo
     push(0);        // hi
     return print_dint_uint(+1);
@@ -235,7 +234,7 @@ void print_unsigned_number(uint value) {
     print_string(unsigned_number_to_string(value));
 }
 
-string unsigned_number_to_string(uint value, int width) {
+std::string unsigned_number_to_string(uint value, int width) {
     push(value);
     push(0);
     return print_dint_uint_aligned(width, 1);

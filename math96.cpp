@@ -19,7 +19,6 @@
 #include "math96.h"
 #include "vm.h"
 #include <cassert>
-using namespace std;
 
 /* ------- Forth cell / double ------- */
 typedef int32_t  cell;    /* one Forth cell (signed, 32-bit) */

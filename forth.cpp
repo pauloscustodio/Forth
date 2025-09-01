@@ -18,7 +18,6 @@
 #include "parser.h"
 #include "tools.h"
 #include "vm.h"
-using namespace std;
 
 // define xtWORD for all words - execution token from dictionary
 #define CONST(word, name, flags, value) uint xt##name = 0;
@@ -80,8 +79,8 @@ void f_execute(uint xt) {
         if (vm.user->TRACE) {
             Header* header = Header::header(xt);
             CString* name = header->name();
-            cout << string(2 * (1 + r_depth()), '>') << BL
-                 << name->to_string() << BL;
+            std::cout << std::string(2 * (1 + r_depth()), '>') << BL
+                      << name->to_string() << BL;
         }
 
         uint code = fetch(xt);
@@ -98,7 +97,7 @@ void f_execute(uint xt) {
 
         if (vm.user->TRACE) {
             vm.stack->print_debug();
-            cout << endl;
+            std::cout << std::endl;
         }
 
         if (vm.ip == 0 || do_exit) {	// ip did not change, exit

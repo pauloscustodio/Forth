@@ -54,7 +54,7 @@ public:
     virtual ~Files();
 
     // returns file id, 0 on failure
-    uint open(const string& filename, ios::openmode mode);
+    uint open(const std::string& filename, std::ios::openmode mode);
     bool close(uint file_id, Error& error_code);
     uint read_bytes(uint file_id, char* buffer, uint size, Error& error_code);
     void write_bytes(uint file_id, const char* buffer, uint size,
@@ -67,10 +67,10 @@ public:
     udint size(uint file_id, Error& error_code);
     void resize(uint file_id, udint size, Error& error_code);
     void flush(uint file_id, Error& error_code);
-    string filename(uint file_id);
+    std::string filename(uint file_id);
 
 private:
-    vector<SyncStream*> files_;
+    std::vector<SyncStream*> files_;
 
     SyncStream* get_file(uint file_id);
     int next_file_id();
@@ -102,12 +102,12 @@ void f_include_file(uint file_id);
 void f_include();
 
 void f_included();
-void f_included(const string& filename);
+void f_included(const std::string& filename);
 void f_included(const char* filename, uint size);
 
 void f_require();
 void f_required();
-void f_required(const string& filename);
+void f_required(const std::string& filename);
 void f_required(const char* filename, uint size);
 
 enum ForthFileStatus {
@@ -122,5 +122,5 @@ enum ForthFileStatus {
 };
 
 void f_file_status();
-void f_file_status(const string& filename);
+void f_file_status(const std::string& filename);
 void f_file_status(const char* filename, uint size);

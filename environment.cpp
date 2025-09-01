@@ -10,7 +10,6 @@
 #include "vm.h"
 #include <string>
 #include <climits>
-using namespace std;
 
 int g_argc = 0;
 char** g_argv = nullptr;
@@ -23,7 +22,7 @@ void f_environment_q() {
     f_environment_q(query, size);
 }
 
-void f_environment_q(const string& query) {
+void f_environment_q(const std::string& query) {
     if (case_insensitive_equal(query, "/COUNTED-STRING")) {
         push(MAX_CSTRING_SZ);
         push(F_TRUE);
@@ -174,5 +173,5 @@ void f_environment_q(const string& query) {
 }
 
 void f_environment_q(const char* query, uint size) {
-    f_environment_q(string(query, query + size));
+    f_environment_q(std::string(query, query + size));
 }

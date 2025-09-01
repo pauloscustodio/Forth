@@ -12,9 +12,8 @@
 #include "output.h"
 #include "parser.h"
 #include "vm.h"
-using namespace std;
 
-void interpret_word(const string& word) {
+void interpret_word(const std::string& word) {
     interpret_word(word.c_str(), static_cast<uint>(word.size()));
 }
 
@@ -39,11 +38,11 @@ void interpret_word(const char* word, uint size) {
                     dpush(value);
 
                     if (vm.user->TRACE) {
-                        cout << ">>" << BL;
+                        std::cout << ">>" << BL;
                         print_number(value);
-                        cout << BL;
+                        std::cout << BL;
                         vm.stack->print_debug();
-                        cout << endl;
+                        std::cout << std::endl;
                     }
                 }
                 else {
@@ -56,11 +55,11 @@ void interpret_word(const char* word, uint size) {
                     push(dcell_lo(value));
 
                     if (vm.user->TRACE) {
-                        cout << ">>" << BL;
+                        std::cout << ">>" << BL;
                         print_number(dcell_lo(value));
-                        cout << BL;
+                        std::cout << BL;
                         vm.stack->print_debug();
-                        cout << endl;
+                        std::cout << std::endl;
                     }
                 }
                 else {
@@ -70,7 +69,7 @@ void interpret_word(const char* word, uint size) {
             }
         }
         else {
-            error(Error::UndefinedWord, string(word, word + size));
+            error(Error::UndefinedWord, std::string(word, word + size));
         }
     }
 }
@@ -92,7 +91,7 @@ void f_interpret() {
     }
 
     if (vm.user->STATE == STATE_INTERPRET && g_interactive) {
-        cout << BL << "ok" << endl;
+        std::cout << BL << "ok" << std::endl;
     }
 }
 
@@ -102,7 +101,7 @@ void f_evaluate() {
     f_evaluate(mem_char_ptr(addr, size), size);
 }
 
-void f_evaluate(const string& text) {
+void f_evaluate(const std::string& text) {
     f_evaluate(text.c_str(), static_cast<uint>(text.size()));
 }
 

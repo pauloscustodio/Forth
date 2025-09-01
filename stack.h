@@ -9,7 +9,6 @@
 #include "errors.h"
 #include "forth.h"
 #include <string>
-using namespace std;
 
 class Stack {
 public:

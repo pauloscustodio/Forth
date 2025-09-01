@@ -7,16 +7,15 @@
 #pragma once
 
 #include <string>
-using namespace std;
 
 // outer interpreter
-void interpret_word(const string& word);
+void interpret_word(const std::string& word);
 void interpret_word(const char* word, uint size);
 void f_interpret();
 
 // evaluate text
 void f_evaluate();
-void f_evaluate(const string& text);
+void f_evaluate(const std::string& text);
 void f_evaluate(const char* text, uint size);
 
 // main loop

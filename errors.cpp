@@ -10,9 +10,8 @@
 #include <iostream>
 #include <string>
 #include <exception>
-using namespace std;
 
-class ThrowException : public exception {
+class ThrowException : public std::exception {
 public:
     ThrowException(uint code) : error_code(code) {}
     virtual const char* what() const noexcept override {
@@ -26,17 +25,17 @@ public:
     int error_code;
 };
 
-[[noreturn]] static void output_error(const string& message,
-                                      const string& arg = "") {
-    cerr << endl << "Error: " << message;
+[[noreturn]] static void output_error(const std::string& message,
+                                      const std::string& arg = "") {
+    std::cerr << std::endl << "Error: " << message;
     if (!arg.empty()) {
-        cerr << ": " << arg;
+        std::cerr << ": " << arg;
     }
-    cerr << endl;
+    std::cerr << std::endl;
     exit(EXIT_FAILURE);
 }
 
-[[noreturn]] static void exit_error(Error err, const string& arg = "") {
+[[noreturn]] static void exit_error(Error err, const std::string& arg = "") {
     if (err == Error::None) {
         exit(EXIT_SUCCESS);
     }
@@ -44,7 +43,7 @@ public:
         exit(EXIT_FAILURE);
     }
     else if (err == Error::AbortQuote) {
-        cerr << endl << "Aborted: " << *vm.error_message << endl;
+        std::cerr << std::endl << "Aborted: " << *vm.error_message << std::endl;
         exit(EXIT_FAILURE);
     }
     else {
@@ -58,11 +57,12 @@ public:
     }
 }
 
-[[noreturn]] static void exit_error(int error_code, const string& arg = "") {
+[[noreturn]] static void exit_error(int error_code,
+                                    const std::string& arg = "") {
     exit_error(static_cast<Error>(error_code), arg);
 }
 
-void error(Error err, const string& arg) {
+void error(Error err, const std::string& arg) {
     *vm.error_message = arg;
     f_throw(err);
 }
@@ -136,7 +136,7 @@ void f_abort_quote() {
         int error_code = pop();
         if (error_code != 0) {
             vm.stack->clear();
-            *vm.error_message = string(message, size);
+            *vm.error_message = std::string(message, size);
             f_throw(Error::AbortQuote);
         }
     }

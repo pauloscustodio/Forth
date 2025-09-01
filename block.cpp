@@ -10,7 +10,6 @@
 #include "vm.h"
 #include <cassert>
 #include <cstring>
-using namespace std;
 
 void Block::init(int blk) {
     memset(this->block, BL, BLOCK_SZ);
@@ -27,10 +26,10 @@ void Blocks::deinit() {
 }
 
 int Blocks::num_blocks() {
-    fstream* fs = block_file();
+    std::fstream* fs = block_file();
 
-    fs->seekg(0, ios::end);
-    streampos end_pos = fs->tellg();
+    fs->seekg(0, std::ios::end);
+    std::streampos end_pos = fs->tellg();
     int num_blocks = static_cast<int>(end_pos / BLOCK_SZ);
     return num_blocks;
 }
@@ -87,22 +86,22 @@ void Blocks::f_list(int blk) {
     int save_base = vm.user->BASE;
     vm.user->BASE = 10;
 
-    cout << endl << "Block ";
+    std::cout << std::endl << "Block ";
     print_number(blk);
-    cout << endl;
+    std::cout << std::endl;
     for (int row = 0; row < BLOCK_ROWS; ++row) {
         print_number(row + 1, 2);
-        cout << BL;
+        std::cout << BL;
         for (int col = 0; col < BLOCK_COLS; ++col) {
             char c = block->block[row * BLOCK_COLS + col];
             if (is_print(c)) {
                 std::cout << c;
             }
             else {
-                cout << "?";
+                std::cout << "?";
             }
         }
-        cout << endl;
+        std::cout << std::endl;
     }
 
     vm.user->BASE = save_base;
@@ -136,18 +135,18 @@ void Blocks::f_update() {
     blocks_[last_block_].dirty = true;
 }
 
-fstream* Blocks::block_file() {
+std::fstream* Blocks::block_file() {
     if (block_file_ == nullptr) {
-        block_file_ = new fstream(BLOCKS_FILE,
-                                  ios::in | ios::out | ios::binary);
+        block_file_ = new std::fstream(BLOCKS_FILE,
+                                       std::ios::in | std::ios::out | std::ios::binary);
 
         // if the file doesn't exist, create it
         if (!block_file_->is_open()) {
             block_file_->open(BLOCKS_FILE,
-                              ios::out | ios::binary); // create the file
+                              std::ios::out | std::ios::binary); // create the file
             block_file_->close();
             block_file_->open(BLOCKS_FILE,
-                              ios::in | ios::out | ios::binary); // reopen for read/write
+                              std::ios::in | std::ios::out | std::ios::binary); // reopen for read/write
         }
 
         if (!*block_file_) {
@@ -160,8 +159,8 @@ fstream* Blocks::block_file() {
 bool Blocks::seek_block(int blk) {
     assert(blk > 0);
 
-    fstream* fs = block_file();
-    streampos fpos = blk * BLOCK_SZ;
+    std::fstream* fs = block_file();
+    std::streampos fpos = blk * BLOCK_SZ;
 
     fs->clear(); // clear any error flags
     fs->seekg(fpos);
@@ -227,7 +226,7 @@ bool Blocks::read_block(int index, int blk) {
 
     blocks_[index].init(blk); // clear with blanks
 
-    fstream* fs = block_file();
+    std::fstream* fs = block_file();
     if (!seek_block(blk)) {
         return false;    // seek failed
     }
@@ -248,7 +247,7 @@ bool Blocks::write_block(int index) {
     int blk = blocks_[index].blk;
     assert(blk > 0);
 
-    fstream* fs = block_file();
+    std::fstream* fs = block_file();
     if (!seek_block(blk)) {
         return false;    // seek failed
     }

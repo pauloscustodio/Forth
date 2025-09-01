@@ -9,7 +9,6 @@
 #include "forth.h"
 #include <iostream>
 #include <fstream>
-using namespace std;
 
 struct Block {
     char block[BLOCK_SZ]; // buffer
@@ -35,11 +34,11 @@ public:
     void f_update();
 
 private:
-    fstream* block_file_;               // file handle
+    std::fstream* block_file_;               // file handle
     Block blocks_[NUM_BLK_BUFFERS];     // block buffers
     int last_block_;                    // index of last block referenced
 
-    fstream* block_file();                  // get block file handle
+    std::fstream* block_file();                  // get block file handle
     bool seek_block(int blk);               // seek to block position
 
     int find_buffer_index(int blk) const;   // -1 if not found

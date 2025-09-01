@@ -6,8 +6,6 @@
 
 #pragma once
 
-using namespace std;
-
 class Mem {
 public:
     Mem();

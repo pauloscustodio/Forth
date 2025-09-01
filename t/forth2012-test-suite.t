@@ -246,5 +246,7 @@ Forth tests completed
 
 END
 
+# unlink test-generated files
+unlink "../../../fatest1.txt";
 unlink "blocks.fb";
 end_test;

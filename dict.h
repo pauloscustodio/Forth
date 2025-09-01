@@ -9,7 +9,6 @@
 #include "str.h"
 #include <string>
 #include <vector>
-using namespace std;
 
 struct Header {
     uint link;			// address of previous header
@@ -48,16 +47,16 @@ public:
 
     int parse_create(uint code, int flags); // return xt of word
 
-    int create(const string& name, int flags, uint code); // return xt of word
+    int create(const std::string& name, int flags, uint code); // return xt of word
     int create(const char* name, uint size, int flags,
                uint code); // return xt of word
     int create(const CString* name, int flags, uint code); // return xt of word
 
-    int alloc_cstring(const string& str);
+    int alloc_cstring(const std::string& str);
     int alloc_cstring(const char* str, uint size);
     int alloc_cstring(const CString* str);
 
-    int alloc_string(const string& str);
+    int alloc_string(const std::string& str);
     int alloc_string(const char* str, uint size);
     int alloc_string(const LongString* str);
 
@@ -69,11 +68,11 @@ public:
     Header* parse_find_word();
     Header* parse_find_existing_word();
 
-    Header* find_word(const string& name) const;
+    Header* find_word(const std::string& name) const;
     Header* find_word(const char* name, uint size) const;
     Header* find_word(const CString* name) const;
 
-    vector<string> get_words() const;
+    std::vector<std::string> get_words() const;
 
 private:
     uint lo_mem_, hi_mem_;// memory limits

@@ -9,7 +9,6 @@
 #include "errors.h"
 #include "vm.h"
 #include <vector>
-using namespace std;
 
 void f_colon() {
     if (cs_ddepth() > 0) {
@@ -147,7 +146,7 @@ static void resolve_back_jump(uint xt_jump) {
 }
 
 static bool search_resolve_fwd_jump(int pos1, int pos2 = -1, int pos3 = -1) {
-    vector<dint> save;
+    std::vector<dint> save;
     bool resolved = false;
     while (cs_ddepth() > 0) {
         dint pos_target = cs_dpeek();
@@ -204,7 +203,7 @@ static bool resolve_all_fwd_jumps(int stop,
 
 static bool search_resolve_back_jump(int jump_xt,
                                      int pos1, int pos2 = -1, int pos3 = -1) {
-    vector<dint> save;
+    std::vector<dint> save;
     bool resolved = false;
     while (cs_ddepth() > 0) {
         dint pos_target = cs_dpeek();

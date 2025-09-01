@@ -9,7 +9,6 @@
 #include "input.h"
 #include "vm.h"
 #include <cstring>
-using namespace std;
 
 void Pad::init() {
     memset(m_pad, BL, sizeof(m_pad));
@@ -19,7 +18,7 @@ void Input::init() {
     source_id_ = 0;
     buffer_ = tib_;
     memset(tib_, BL, sizeof(tib_));
-    input_stack_ = new vector<SaveInput>;
+    input_stack_ = new std::vector<SaveInput>;
     num_query_ = 0;
 }
 
@@ -27,8 +26,8 @@ void Input::deinit() {
     delete input_stack_;
 }
 
-void Input::open_file(const string& filename) {
-    source_id_ = vm.files->open(filename, ios::in | ios::binary);
+void Input::open_file(const std::string& filename) {
+    source_id_ = vm.files->open(filename, std::ios::in | std::ios::binary);
     if (source_id_ == 0) {
         error(Error::OpenFileException, filename);
     }
@@ -73,13 +72,13 @@ void Input::set_tib(const char* text, uint size) {
     }
 }
 
-void Input::set_tib(const string& text) {
+void Input::set_tib(const std::string& text) {
     set_tib(text.c_str(), static_cast<uint>(text.size()));
 }
 
 bool Input::refill() {
     bool ok = false;
-    string line;
+    std::string line;
 
     if (source_id_ < 0) {               // input from string
         return false;
@@ -94,16 +93,16 @@ bool Input::refill() {
             set_block(block);
 
             if (vm.user->TRACE) {
-                cout << endl << "> ";
+                std::cout << std::endl << "> ";
                 print_string(block->block, BLOCK_SZ);
-                cout << endl;
+                std::cout << std::endl;
             }
 
             return true;
         }
     }
     else if (source_id_ == 0) {         // input from terminal
-        ok = static_cast<bool>(std::getline(cin, line));
+        ok = static_cast<bool>(std::getline(std::cin, line));
         if (line.size() > BUFFER_SZ) {
             error(Error::InputBufferOverflow);
         }
@@ -126,11 +125,11 @@ bool Input::refill() {
         tib_[num_read] = BL; // BL after the string
         buffer_ = tib_;
 
-        line = string(tib_, tib_ + num_read);
+        line = std::string(tib_, tib_ + num_read);
     }
 
     if (ok && vm.user->TRACE) {
-        cout << endl << "> " << line << endl;
+        std::cout << std::endl << "> " << line << std::endl;
     }
 
     return ok;
@@ -141,7 +140,7 @@ void Input::save_input() {
     SaveInput save;
     save.source_id = source_id_;
     save.blk = vm.user->BLK;
-    save.tib = string(tib_, tib_ + vm.user->NR_IN);
+    save.tib = std::string(tib_, tib_ + vm.user->NR_IN);
     save.buffer = buffer_;
     save.nr_in = vm.user->NR_IN;
     save.to_in = vm.user->TO_IN;
@@ -216,8 +215,8 @@ void f_accept() {
     uint addr = pop();
     char* buffer = mem_char_ptr(addr, max_size);
 
-    string line;
-    if (std::getline(cin, line)) {
+    std::string line;
+    if (std::getline(std::cin, line)) {
         while (!line.empty() && (line.back() == '\n' || line.back() == '\r')) {
             line.pop_back();    // remove newline
         }

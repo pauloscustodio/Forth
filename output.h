@@ -8,7 +8,6 @@
 
 #include <string>
 #include "forth.h"
-using namespace std;
 
 class NumberOutput {
 public:
@@ -19,7 +18,7 @@ public:
     void add_digits();
     void add_char(char c);
     void add_sign(int sign);
-    void add_string(const string& str);
+    void add_string(const std::string& str);
     void add_string(const char* str, uint size);
     void end() const;
     void end_print() const;
@@ -29,36 +28,36 @@ private:
     int ptr_;
 };
 
-string char_to_string(char c);
+std::string char_to_string(char c);
 void print_char(char c);
-void print_string(const string& str);
+void print_string(const std::string& str);
 
-string spaces_to_string(int count);
+std::string spaces_to_string(int count);
 void print_spaces(int count);
 
-string string_to_string(uint addr, uint size);
-string string_to_string(const char* str, uint size);
+std::string string_to_string(uint addr, uint size);
+std::string string_to_string(const char* str, uint size);
 
 void print_string(uint addr, uint size);
 void print_string(const char* str, uint size);
 
-string number_to_string(int value);
+std::string number_to_string(int value);
 void print_number(int value);
 
-string number_to_string(dint value);
+std::string number_to_string(dint value);
 void print_number(dint value);
 
-string number_dot_to_string(dint value);
+std::string number_dot_to_string(dint value);
 void print_number_dot(dint value);
 
-string number_to_string(int value, int width);
+std::string number_to_string(int value, int width);
 void print_number(int value, int width);
 
-string number_to_string(dint value, int width);
+std::string number_to_string(dint value, int width);
 void print_number(dint value, int width);
 
-string unsigned_number_to_string(uint value);
+std::string unsigned_number_to_string(uint value);
 void print_unsigned_number(uint value);
 
-string unsigned_number_to_string(uint value, int width);
+std::string unsigned_number_to_string(uint value, int width);
 void print_unsigned_number(uint value, int width);

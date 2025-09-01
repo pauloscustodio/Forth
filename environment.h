@@ -8,12 +8,11 @@
 
 #include "forth.h"
 #include <string>
-using namespace std;
 
 extern int g_argc;
 extern char** g_argv;
 extern bool g_interactive;
 
 void f_environment_q();
-void f_environment_q(const string& query);
+void f_environment_q(const std::string& query);
 void f_environment_q(const char* query, uint size);

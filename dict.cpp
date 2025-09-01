@@ -11,7 +11,6 @@
 #include "vm.h"
 #include <cassert>
 #include <cstring>
-using namespace std;
 
 CString* Header::name() const {
     CString* name = reinterpret_cast<CString*>(mem_char_ptr(name_addr));
@@ -95,7 +94,7 @@ int Dict::parse_create(uint code, int flags) {
     return create(name, flags, code);
 }
 
-int Dict::create(const string& name, int flags, uint code) {
+int Dict::create(const std::string& name, int flags, uint code) {
     return create(name.c_str(), static_cast<uint>(name.size()), flags, code);
 }
 
@@ -147,7 +146,7 @@ int Dict::create_cont(int name_addr, int flags, uint code) {
     return header->xt(); // return xt of word
 }
 
-int Dict::alloc_cstring(const string& str) {
+int Dict::alloc_cstring(const std::string& str) {
     return alloc_cstring(str.c_str(), static_cast<uint>(str.size()));
 }
 
@@ -167,7 +166,7 @@ int Dict::alloc_cstring(const CString* str) {
     return names_;
 }
 
-int Dict::alloc_string(const string& str) {
+int Dict::alloc_string(const std::string& str) {
     return alloc_string(str.c_str(), static_cast<uint>(str.size()));
 }
 
@@ -228,7 +227,7 @@ Header* Dict::parse_find_existing_word() {
     return header;
 }
 
-Header* Dict::find_word(const string& name) const {
+Header* Dict::find_word(const std::string& name) const {
     return find_word(name.c_str(), static_cast<uint>(name.size()));
 }
 
@@ -257,8 +256,8 @@ Header* Dict::find_word(const CString* name) const {
     return find_word(name->str(), name->size());
 }
 
-vector<string> Dict::get_words() const {
-    vector<string> words;
+std::vector<std::string> Dict::get_words() const {
+    std::vector<std::string> words;
     int ptr = vm.dict->latest();
     while (ptr != 0) {
         Header* header = reinterpret_cast<Header*>(mem_char_ptr(ptr));
@@ -466,23 +465,23 @@ void f_xmarker(uint body) {
 }
 
 void f_words() {
-    vector<string> words = vm.dict->get_words();
+    std::vector<std::string> words = vm.dict->get_words();
     size_t col = 0;
     for (auto& word : words) {
         if (col + 1 + word.size() >= SCREEN_WIDTH) {
-            cout << endl << word;
+            std::cout << std::endl << word;
             col = word.size();
         }
         else if (col == 0) {
-            cout << word;
+            std::cout << word;
             col += word.size();
         }
         else {
-            cout << BL << word;
+            std::cout << BL << word;
             col += 1 + word.size();
         }
     }
-    cout << endl;
+    std::cout << std::endl;
 }
 
 void f_defer() {

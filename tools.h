@@ -6,8 +6,6 @@
 
 #pragma once
 
-using namespace std;
-
 void f_dump();
 void f_dump(const char* mem, uint size);
 

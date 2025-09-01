@@ -10,7 +10,6 @@
 #include "stack.h"
 #include "vm.h"
 #include <limits>
-using namespace std;
 
 int f_mod(int a, int b) {
     if (b == 0) {

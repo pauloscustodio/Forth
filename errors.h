@@ -8,14 +8,13 @@
 
 #include "forth.h"
 #include <string>
-using namespace std;
 
 enum class Error {
 #define X(code, id, message) id = code,
 #include "errors.def"
 };
 
-void error(Error err, const string& arg = "");
+void error(Error err, const std::string& arg = "");
 
 void f_catch();
 void f_catch(uint xt);

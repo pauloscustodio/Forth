@@ -7,7 +7,6 @@
 #pragma once
 
 #include "forth.h"
-using namespace std;
 
 int f_mod(int a, int b);
 int f_div(int a, int b);

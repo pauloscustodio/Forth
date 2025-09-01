@@ -8,7 +8,6 @@
 #include "forth.h"
 #include "parser.h"
 #include "vm.h"
-using namespace std;
 
 // ignore all control characters as spaces
 bool is_space(char c) {
@@ -99,9 +98,9 @@ CString* parse_cword(char delimiter) {
     return cword;
 }
 
-string parse_backslash_string() {
+std::string parse_backslash_string() {
     const char* buffer = vm.input->buffer();
-    string message;
+    std::string message;
     for (; vm.user->TO_IN < vm.user->NR_IN; ++vm.user->TO_IN) {
         if (buffer[vm.user->TO_IN] == '\"') {
             ++vm.user->TO_IN;
@@ -162,7 +161,8 @@ string parse_backslash_string() {
                             isxdigit(buffer[vm.user->TO_IN]) &&
                             isxdigit(buffer[vm.user->TO_IN + 1])
                        ) {
-                        string hex_str = string(&buffer[vm.user->TO_IN], &buffer[vm.user->TO_IN + 2]);
+                        std::string hex_str = std::string(&buffer[vm.user->TO_IN],
+                                                          &buffer[vm.user->TO_IN + 2]);
                         ++vm.user->TO_IN;
                         int char_value = std::stoi(hex_str, nullptr, 16);
                         message.push_back(char_value);
@@ -180,7 +180,7 @@ string parse_backslash_string() {
     return message;
 }
 
-bool parse_number(const string& text, bool& is_double, dint& value) {
+bool parse_number(const std::string& text, bool& is_double, dint& value) {
     return parse_number(text.c_str(), static_cast<uint>(text.size()), is_double,
                         value);
 }
@@ -353,7 +353,7 @@ static int _number(bool do_error) {
     }
     else {
         if (do_error)
-            error(Error::InvalidNumericArgument, string(mem_char_ptr(addr, size),
+            error(Error::InvalidNumericArgument, std::string(mem_char_ptr(addr, size),
                     mem_char_ptr(addr, size) + size));
         return 0;
     }

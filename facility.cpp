@@ -9,7 +9,6 @@
 #include <chrono>
 #include <iostream>
 #include <thread>
-using namespace std;
 
 void f_at_xy() {
     int y = pop();
@@ -18,11 +17,11 @@ void f_at_xy() {
 }
 
 void f_at_xy(int x, int y) {
-    cout << "\033[" << (y + 1) << ";" << (x + 1) << "H";
+    std::cout << "\033[" << (y + 1) << ";" << (x + 1) << "H";
 }
 
 void f_page() {
-    cout << "\033[2J\033[H";
+    std::cout << "\033[2J\033[H";
 }
 
 void f_begin_structure() {
