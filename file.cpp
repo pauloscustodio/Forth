@@ -13,74 +13,94 @@
 using namespace std;
 
 Files::Files() {
-    files_.push_back(nullptr); // file id 0 is invalid
-    filenames_.push_back("");
+    files_.push_back(File()); // file id 0 is invalid
 }
 
 Files::~Files() {
     for (auto& file : files_) {
-        delete file;
+        delete file.fs;
     }
 }
 
 int Files::open(const string& filename, ios::openmode mode) {
     int file_id = next_file_id();
-    fstream* file = new fstream(filename, mode);
-    if (!file->is_open()) {
-        delete file;
+    fstream* fs = new fstream(filename, mode);
+    if (!fs->is_open()) {
+        delete fs;
         return 0;
     }
     else {
+        File file;
+        file.fs = fs;
+        file.filename = filename;
+        file.mode = mode;
+        file.last_seek = 0;
+        file.last_op = File::OP_NONE;
         files_[file_id] = file;
-        filenames_[file_id] = filename;
         return file_id;
+    }
+}
+
+Files::File& Files::get_file(int file_id) {
+    if (file_id > 0 && file_id < static_cast<int>(files_.size())) {
+        return files_[file_id];
+    }
+    else {
+        return files_[0];
+    }
+}
+
+Files::File& Files::get_file_for_reading(int file_id) {
+    File& file = get_file(file_id);
+    if (file.fs != nullptr && file.fs->is_open() && file.open_for_reading()) {
+        if (file.last_op != File::OP_READ) { // switch to reading
+            file.fs->flush();
+            file.last_op = File::OP_READ;
+        }
+        return file;
+    }
+    else {
+        return files_[0];
+    }
+}
+
+Files::File& Files::get_file_for_writing(int file_id) {
+    File& file = get_file(file_id);
+    if (file.fs != nullptr && file.fs->is_open() && file.open_for_writing()) {
+        if (file.last_op != File::OP_WRITE) { // switch to writing
+            file.fs->flush();
+            file.last_op = File::OP_WRITE;
+        }
+        return file;
+    }
+    else {
+        return files_[0];
     }
 }
 
 bool Files::close(int file_id, Error& error_code) {
     error_code = Error::None;
-    if (file_id > 0 && file_id < static_cast<int>(files_.size())) {
-        fstream* file = files_[file_id];
-        if (file != nullptr) {
-            if (file->is_open()) {
-                file->close();
-            }
-            delete file;
-            files_[file_id] = nullptr;
-            filenames_[file_id] = "";
-            return true;
+    File& file = get_file(file_id);
+    if (file.fs != nullptr) {
+        if (file.fs->is_open()) {
+            file.fs->close();
         }
+        delete file.fs;
+        files_[file_id] = File();
+        return true;
     }
 
     error_code = Error::CloseFileException;
     return false;
 }
 
-bool Files::seek(int file_id, udint pos, Error& error_code) {
-    error_code = Error::None;
-    if (file_id > 0 && file_id < static_cast<int>(files_.size())) {
-        fstream* file = files_[file_id];
-        if (file != nullptr && file->is_open()) {
-            file->seekg(pos, ios::beg);
-            file->seekp(pos, ios::beg);
-            return true;
-        }
-    }
-
-    error_code = Error::RepositionFileException;
-    return false;
-}
-
 int Files::read(int file_id, char* buffer, int size, Error& error_code) {
     error_code = Error::None;
-    if (file_id > 0 && file_id < static_cast<int>(files_.size())) {
-        fstream* file = files_[file_id];
-        if (file != nullptr && file->is_open()) {
-            file->read(buffer, size);
-            if (!file->bad()) {
-                sync_write_file_pos(file);
-                return static_cast<int>(file->gcount());
-            }
+    File& file = get_file_for_reading(file_id);
+    if (file.fs != nullptr) {
+        file.fs->read(buffer, size);
+        if (!file.fs->bad()) {
+            return static_cast<int>(file.fs->gcount());
         }
     }
 
@@ -90,150 +110,15 @@ int Files::read(int file_id, char* buffer, int size, Error& error_code) {
 
 void Files::write(int file_id, char* buffer, int size, Error& error_code) {
     error_code = Error::None;
-    if (file_id > 0 && file_id < static_cast<int>(files_.size())) {
-        fstream* file = files_[file_id];
-        if (file != nullptr && file->is_open()) {
-            file->write(buffer, size);
-            if (!file->bad()) {
-                sync_read_file_pos(file);
-                return;
-            }
+    File& file = get_file_for_writing(file_id);
+    if (file.fs != nullptr) {
+        file.fs->write(buffer, size);
+        if (!file.fs->bad()) {
+            return;
         }
     }
 
     error_code = Error::WriteFileException;
-}
-
-int Files::read_line(int file_id, char* buffer, int size, bool& found_eof,
-                     Error& error_code) {
-    found_eof = false;
-    error_code = Error::None;
-
-    if (file_id > 0 && file_id < static_cast<int>(files_.size())) {
-        fstream* file = files_[file_id];
-        if (file != nullptr && file->is_open()) {
-            int num_read = 0;
-            bool read_ok = read_line(file, buffer, size, num_read);
-            if (!file->bad()) {
-                sync_write_file_pos(file);
-                if (!read_ok) {
-                    found_eof = true;
-                }
-                return num_read;
-            }
-        }
-    }
-
-    found_eof = true;
-    error_code = Error::ReadLineException;
-    return 0;
-}
-
-void Files::write_line(int file_id, char* buffer, int size, Error& error_code) {
-    error_code = Error::None;
-    if (file_id > 0 && file_id < static_cast<int>(files_.size())) {
-        fstream* file = files_[file_id];
-        if (file != nullptr && file->is_open()) {
-            file->write(buffer, size);
-            if (!file->bad()) {
-                file->write("\n", 1);
-                if (!file->bad()) {
-                    sync_read_file_pos(file);
-                    if (!file->bad()) {
-                        return;
-                    }
-                }
-            }
-        }
-    }
-
-    error_code = Error::WriteLineException;
-}
-
-udint Files::tell(int file_id, Error& error_code) {
-    error_code = Error::None;
-    if (file_id > 0 && file_id < static_cast<int>(files_.size())) {
-        fstream* file = files_[file_id];
-        if (file != nullptr && file->is_open()) {
-            if (file->eof()) {
-                file->clear(); // clear eofbit and failbit
-            }
-            if (file->tellg() != -1) {
-                return static_cast<udint>(file->tellg());
-            }
-            else if (file->tellp() != -1) {
-                return static_cast<udint>(file->tellp());
-            }
-        }
-    }
-
-    error_code = Error::FilePositionException;
-    return -1;
-}
-
-int Files::size(int file_id, Error& error_code) {
-    error_code = Error::None;
-    if (file_id > 0 && file_id < static_cast<int>(files_.size())) {
-        fstream* file = files_[file_id];
-        streampos current = file->tellg();
-        file->seekg(0, ios::end);
-        streampos size = file->tellg();
-        file->seekg(current); // restore position
-        return static_cast<int>(size);
-
-    }
-
-    error_code = Error::FileSizeException;
-    return -1;
-}
-
-void Files::resize(int file_id, int size, Error& error_code) {
-    error_code = Error::None;
-    if (file_id > 0 && file_id < static_cast<int>(files_.size())) {
-        fstream* file = files_[file_id];
-        string filename = filenames_[file_id];
-        if (!filename.empty()) {
-            file->flush();
-            filesystem::resize_file(filename, size);
-            return;
-        }
-    }
-
-    error_code = Error::ResizeException;
-}
-
-void Files::flush(int file_id, Error& error_code) {
-    error_code = Error::None;
-    if (file_id > 0 && file_id < static_cast<int>(files_.size())) {
-        fstream* file = files_[file_id];
-        if (file != nullptr && file->is_open()) {
-            file->flush();
-            return;
-        }
-    }
-
-    error_code = Error::FlushFileException;
-}
-
-string Files::filename(int file_id) {
-    if (file_id > 0 && file_id < static_cast<int>(files_.size())) {
-        return filenames_[file_id];
-    }
-    else {
-        return "";
-    }
-}
-
-int Files::next_file_id() {
-    for (int file_id = 1; file_id < static_cast<int>(files_.size()); ++file_id) {
-        if (files_[file_id] == nullptr) {
-            return file_id;
-        }
-    }
-    int file_id = static_cast<int>(files_.size());
-    files_.push_back(nullptr);
-    filenames_.push_back("");
-    return file_id;
 }
 
 bool Files::read_line(fstream* fs, char* buffer, int size, int& num_read) {
@@ -260,27 +145,165 @@ bool Files::read_line(fstream* fs, char* buffer, int size, int& num_read) {
     return num_read > 0 || num_eol > 0 || num_read == size;
 }
 
-void Files::sync_write_file_pos(fstream* fs) {
-    if (fs->eof()) {
-        fs->clear(); // clear eofbit and failbit
+int Files::read_line(int file_id, char* buffer, int size, bool& found_eof,
+                     Error& error_code) {
+    found_eof = false;
+    error_code = Error::None;
+
+    File& file = get_file_for_reading(file_id);
+    if (file.fs != nullptr) {
+        int num_read = 0;
+        bool read_ok = read_line(file.fs, buffer, size, num_read);
+        if (!file.fs->bad()) {
+            if (!read_ok) {
+                found_eof = true;
+            }
+            return num_read;
+        }
     }
 
-    streampos pos = fs->tellg();
-    fs->seekp(pos); // sync write pointer to match read pointer
+    found_eof = true;
+    error_code = Error::ReadLineException;
+    return 0;
 }
 
-void Files::sync_read_file_pos(fstream* fs) {
-    // synchronize read pointer with write pointer
-    fs->flush(); // ensure data is written
-
-    if (fs->eof()) {
-        fs->clear(); // clear eofbit and failbit
+void Files::write_line(int file_id, char* buffer, int size, Error& error_code) {
+    error_code = Error::None;
+    File& file = get_file_for_writing(file_id);
+    if (file.fs != nullptr) {
+        string line(buffer, buffer + size);
+        line.push_back('\n');
+        file.fs->write(line.c_str(), line.size());
+        if (!file.fs->bad()) {
+            return;
+        }
     }
 
-    // Move read pointer to match write pointer
-    streampos pos = fs->tellp();
-    fs->seekg(pos);
+    error_code = Error::WriteLineException;
+}
 
+
+bool Files::seek(int file_id, udint pos, Error& error_code) {
+    error_code = Error::None;
+    File& file = get_file(file_id);
+    if (file.fs != nullptr && file.fs->is_open()) {
+        file.last_seek = pos;
+        if (file.open_for_reading()) {
+            file.fs->seekg(pos, ios::beg);
+        }
+        if (file.open_for_writing()) {
+            file.fs->seekp(pos, ios::beg);
+        }
+        return true;
+    }
+
+    error_code = Error::RepositionFileException;
+    return false;
+}
+
+udint Files::tell(int file_id, Error& error_code) {
+    error_code = Error::None;
+    File& file = get_file(file_id);
+    if (file.fs != nullptr && file.fs->is_open()) {
+        file.fs->clear(); // clear eofbit and failbit
+
+        if (file.last_op == File::OP_READ) {
+            return static_cast<udint>(file.fs->tellg());
+        }
+        else if (file.last_op == File::OP_WRITE) {
+            return static_cast<udint>(file.fs->tellp());
+        }
+        else {
+            return file.last_seek;   // last seeked position, or 0 after open
+        }
+    }
+
+    error_code = Error::FilePositionException;
+    return -1;
+}
+
+udint Files::size(int file_id, Error& error_code) {
+    error_code = Error::None;
+    File& file = get_file(file_id);
+    if (file.fs != nullptr && file.fs->is_open()) {
+        file.fs->clear(); // clear eofbit and failbit
+
+        if (file.open_for_reading()) {
+            streampos current = file.fs->tellg();
+            file.fs->seekg(0, ios::end);
+            streampos size = file.fs->tellg();
+            file.fs->seekg(current); // restore position
+            return static_cast<udint>(size);
+        }
+        else if (file.open_for_writing()) {
+            streampos current = file.fs->tellp();
+            file.fs->seekp(0, ios::end);
+            streampos size = file.fs->tellp();
+            file.fs->seekp(current); // restore position
+            return static_cast<udint>(size);
+        }
+    }
+
+    error_code = Error::FileSizeException;
+    return -1;
+}
+void Files::resize(int file_id, udint size, Error& error_code) {
+    error_code = Error::None;
+    File& file = get_file(file_id);
+    if (file.fs != nullptr && !file.filename.empty()) {
+        file.fs->flush();
+        std::streampos get_pos = file.open_for_reading() ? file.fs->tellg() :
+                                 std::streampos();
+        std::streampos put_pos = file.open_for_writing() ? file.fs->tellp() :
+                                 std::streampos();
+        file.fs->close();
+
+        filesystem::resize_file(file.filename, size);
+
+        // open with original mode except ios::trunc, add ios::in and ios::out
+        // to keep current contents of file
+        std::ios::openmode mode = (file.mode & ~ios::trunc) | ios::in | ios::out;
+
+        file.fs->open(file.filename, mode);
+        if (file.fs->is_open()) {
+            if (file.open_for_reading()) {
+                file.fs->seekg(get_pos);
+            }
+            if (file.open_for_writing()) {
+                file.fs->seekp(put_pos);
+            }
+            return;
+        }
+    }
+
+    error_code = Error::ResizeException;
+}
+
+void Files::flush(int file_id, Error& error_code) {
+    error_code = Error::None;
+    File& file = get_file(file_id);
+    if (file.fs != nullptr && file.fs->is_open()) {
+        file.fs->flush();
+        return;
+    }
+
+    error_code = Error::FlushFileException;
+}
+
+string Files::filename(int file_id) {
+    File& file = get_file(file_id);
+    return file.filename;
+}
+
+int Files::next_file_id() {
+    for (int file_id = 1; file_id < static_cast<int>(files_.size()); ++file_id) {
+        if (files_[file_id].fs == nullptr) {
+            return file_id;
+        }
+    }
+    int file_id = static_cast<int>(files_.size());
+    files_.push_back(File());
+    return file_id;
 }
 
 void f_r_o() {
@@ -406,15 +429,15 @@ void f_file_size() {
     int file_id = pop();
 
     Error error_code = Error::None;
-    int size = vm.files->size(file_id, error_code);
+    udint size = vm.files->size(file_id, error_code);
 
-    push(size);
+    dpush(size);
     push(static_cast<int>(error_code));
 }
 
 void f_resize_file() {
     int file_id = pop();
-    int size = pop();
+    udint size = dpop();
 
     Error error_code = Error::None;
     vm.files->resize(file_id, size, error_code);
@@ -446,18 +469,10 @@ void f_delete_file() {
     const char* filename_str = mem_char_ptr(filename_addr, size);
     string filename(filename_str, filename_str + size);
 
-    Error error_code = Error::None;
-    try {
-        filesystem::remove(filename);
-    }
-    catch (filesystem::filesystem_error&) {
-        error_code = Error::DeleteFileException;
-    }
-    catch (...) {
-        throw;
-    }
+    std::error_code ec;
+    bool deleted = filesystem::remove(filename, ec);
 
-    push(static_cast<int>(error_code));
+    push(deleted ? 0 : static_cast<int>(Error::DeleteFileException));
 }
 
 void f_rename_file() {
@@ -472,14 +487,10 @@ void f_rename_file() {
     string filename1(filename_str1, filename_str1 + size1);
 
     Error error_code = Error::None;
-    try {
-        std::filesystem::rename(filename1, filename2);
-    }
-    catch (filesystem::filesystem_error&) {
+    std::error_code ec;
+    std::filesystem::rename(filename1, filename2, ec);
+    if (ec) {
         error_code = Error::RenameFileException;
-    }
-    catch (...) {
-        throw;
     }
 
     push(static_cast<int>(error_code));

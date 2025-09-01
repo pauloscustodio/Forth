@@ -21,26 +21,40 @@ public:
     // returns file id, 0 on failure
     int open(const string& filename, ios::openmode mode);
     bool close(int file_id, Error& error_code);
-    bool seek(int file_id, udint pos, Error& error_code);
     int read(int file_id, char* buffer, int size, Error& error_code);
     void write(int file_id, char* buffer, int size, Error& error_code);
     int read_line(int file_id, char* buffer, int size, bool& found_eof,
                   Error& error_code);
     void write_line(int file_id, char* buffer, int size, Error& error_code);
+    bool seek(int file_id, udint pos, Error& error_code);
     udint tell(int file_id, Error& error_code);
-    int size(int file_id, Error& error_code);
-    void resize(int file_id, int size, Error& error_code);
+    udint size(int file_id, Error& error_code);
+    void resize(int file_id, udint size, Error& error_code);
     void flush(int file_id, Error& error_code);
     string filename(int file_id);
 
 private:
-    vector<fstream*> files_;
-    vector<string>   filenames_;
+    struct File {
+        fstream* fs{ nullptr };
+        string filename;
+        ios::openmode mode;
+        std::streampos last_seek;
+        enum { OP_NONE, OP_READ, OP_WRITE } last_op{ OP_NONE };
 
+        bool open_for_reading() const {
+            return (mode & ios::in) != 0;
+        }
+        bool open_for_writing() const {
+            return (mode & ios::out) != 0;
+        }
+    };
+    vector<File> files_;
+
+    File& get_file(int file_id);
+    File& get_file_for_reading(int file_id);
+    File& get_file_for_writing(int file_id);
     int next_file_id();
     bool read_line(fstream* fs, char* buffer, int size, int& num_read);
-    void sync_write_file_pos(fstream* fs);
-    void sync_read_file_pos(fstream* fs);
 };
 
 void f_r_o();

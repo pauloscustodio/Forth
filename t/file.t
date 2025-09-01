@@ -165,19 +165,19 @@ forth_nok(<<END, "\nError: FILE-SIZE exception\n");
 END
 forth_nok(<<END, "\nError: OPEN-FILE exception\n");
 S" $test.1.dat" R/O OPEN-FILE THROW CONSTANT file_id
-file_id FILE-SIZE THROW .
+file_id FILE-SIZE THROW D.
 file_id CLOSE-FILE THROW
 .S
 END
 forth_ok(<<END, "0 ( )");
 S" $test.2.dat" R/O OPEN-FILE THROW CONSTANT file_id
-file_id FILE-SIZE THROW .
+file_id FILE-SIZE THROW D.
 file_id CLOSE-FILE THROW
 .S
 END
 forth_ok(<<END, "1024 ( )");
 S" $test.3.dat" R/O OPEN-FILE THROW CONSTANT file_id
-file_id FILE-SIZE THROW .
+file_id FILE-SIZE THROW D.
 file_id CLOSE-FILE THROW
 .S
 END
@@ -317,22 +317,22 @@ unlink "$test.dat";
 forth_ok(<<END, "");
 S" $test.dat" W/O CREATE-FILE THROW CONSTANT file_id
 S" hello world" file_id WRITE-FILE THROW
-5 file_id RESIZE-FILE THROW
+5. file_id RESIZE-FILE THROW
 file_id CLOSE-FILE THROW
 END
 is path("$test.dat")->slurp, "hello", "write file ok";
 
 note "Test DELETE-FILE";
 path("$test.dat")->spew("hello world");
-forth_ok(<<END, "");
-S" $test.dat" DELETE-FILE THROW
+forth_ok(<<END, "( 0 )");
+S" $test.dat" DELETE-FILE .S
 END
 ok !-f "$test.dat", "file deleted";
 
 note "Test DELETE-FILE";
 unlink "$test.dat";
-forth_ok(<<END, "");
-S" $test.dat" DELETE-FILE THROW
+forth_ok(<<END, "( -64 )");	# DeleteFileException
+S" $test.dat" DELETE-FILE .S
 END
 ok !-f "$test.dat", "file deleted";
 
