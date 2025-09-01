@@ -21,6 +21,11 @@ jobs:
         update: true
         install: git mingw-w64-ucrt-x86_64-gcc
 
+    - name: Install Modern::Perl
+      run: |
+        curl -L https://cpanmin.us | perl - App::cpanminus
+        cpanm Modern::Perl
+
     - name: Run tests
       shell: bash
       run: |
