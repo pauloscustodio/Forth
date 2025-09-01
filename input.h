@@ -11,7 +11,6 @@
 #include <fstream>
 #include <iostream>
 #include <vector>
-using namespace std;
 
 class Pad {
 public:
@@ -35,7 +34,7 @@ public:
         return buffer_;
     }
 
-    void open_file(const string& filename);
+    void open_file(const std::string& filename);
     void open_file(int source_id);
 
     void open_terminal();
@@ -47,7 +46,7 @@ public:
 
     void set_tib(const char* text, int size);
     void set_tib(const char* text, size_t size);
-    void set_tib(const string& text);
+    void set_tib(const std::string& text);
 
     bool refill();
 
@@ -70,13 +69,13 @@ private:
     struct SaveInput {
         int source_id;
         int blk;
-        string tib;
+        std::string tib;
         const char* buffer;
         int nr_in;
         int to_in;
     };
 
-    vector<SaveInput>* input_stack_;    // stack of saved inputs
+    std::vector<SaveInput>* input_stack_;    // stack of saved inputs
 };
 
 void f_source();

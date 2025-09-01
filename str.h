@@ -8,7 +8,6 @@
 
 #include "forth.h"
 #include <string>
-using namespace std;
 
 class CString {
 public:
@@ -19,13 +18,13 @@ public:
         return str_;
     }
 
-    string to_string() const;
+    std::string to_string() const;
     static int alloc_size(int num_chars);
 
     // user must allocate alloc_size() bytes
     void set_cstring(const char* str, int size);
     void set_cstring(const char* str, size_t size);
-    void set_cstring(const string& str);
+    void set_cstring(const std::string& str);
 
 private:
     uchar size_;     // size of string
@@ -42,13 +41,13 @@ public:
         return str_;
     }
 
-    string to_string() const;
+    std::string to_string() const;
     static int alloc_size(int num_chars);
 
     // user must allocate alloc_size() bytes
     void set_string(const char* str, int size);
     void set_string(const char* str, size_t size);
-    void set_string(const string& str);
+    void set_string(const std::string& str);
 
 private:
     int size_;      // size of string
@@ -60,11 +59,11 @@ class Wordbuf {
 public:
     void init();
 
-    CString* append_cstring(const string& str);
+    CString* append_cstring(const std::string& str);
     CString* append_cstring(const char* str, size_t size);
     CString* append_cstring(const char* str, int size);
 
-    LongString* append_long_string(const string& str);
+    LongString* append_long_string(const std::string& str);
     LongString* append_long_string(const char* str, size_t size);
     LongString* append_long_string(const char* str, int size);
 
@@ -74,7 +73,7 @@ private:
 };
 
 
-bool case_insensitive_equal(const string& a, const string& b);
+bool case_insensitive_equal(const std::string& a, const std::string& b);
 bool case_insensitive_equal(const char* a_str, int a_size, const char* b_str,
                             int b_size);
 bool case_insensitive_equal(const char* a_str, size_t a_size, const char* b_str,

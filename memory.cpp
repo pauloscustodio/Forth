@@ -9,7 +9,6 @@
 #include "memory.h"
 #include "vm.h"
 #include <cstring>
-using namespace std;
 
 Mem::Mem() {
     memset(data_, 0, sizeof(data_));

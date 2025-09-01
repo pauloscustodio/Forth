@@ -9,7 +9,6 @@
 #include "stack.h"
 #include <cstring>
 #include <iostream>
-using namespace std;
 
 void Stack::init(char prefix, Error err_underflow, Error err_overflow) {
     memset(data_, 0, sizeof(data_));
@@ -95,28 +94,28 @@ void Stack::roll(int depth) {
 }
 
 void Stack::print() const {
-    cout << "(";
+    std::cout << "(";
     if (prefix_ != '\0') {
-        cout << prefix_ << ":";
+        std::cout << prefix_ << ":";
     }
-    cout << " ";
+    std::cout << " ";
     for (int i = STACK_SZ - 1; i >= sp_; i--) {
         print_number(data_[i]);
     }
-    cout << ") ";
+    std::cout << ") ";
 }
 
 // so that we can debug <# ... #>
 void Stack::print_debug() const {
-    cout << "(";
+    std::cout << "(";
     if (prefix_ != '\0') {
-        cout << prefix_ << ":";
+        std::cout << prefix_ << ":";
     }
-    cout << " ";
+    std::cout << " ";
     for (int i = STACK_SZ - 1; i >= sp_; i--) {
-        cout << data_[i] << BL;
+        std::cout << data_[i] << BL;
     }
-    cout << ") ";
+    std::cout << ") ";
 }
 
 void Stack::set_sp(int sp) {

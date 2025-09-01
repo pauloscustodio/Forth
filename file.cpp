@@ -10,7 +10,6 @@
 #include "vm.h"
 #include <filesystem>
 #include <iostream>
-using namespace std;
 
 Files::Files() {
     files_.push_back(File()); // file id 0 is invalid
@@ -22,9 +21,9 @@ Files::~Files() {
     }
 }
 
-int Files::open(const string& filename, ios::openmode mode) {
+int Files::open(const std::string& filename, std::ios::openmode mode) {
     int file_id = next_file_id();
-    fstream* fs = new fstream(filename, mode);
+    std::fstream* fs = new std::fstream(filename, mode);
     if (!fs->is_open()) {
         delete fs;
         return 0;
@@ -121,7 +120,7 @@ void Files::write(int file_id, char* buffer, int size, Error& error_code) {
     error_code = Error::WriteFileException;
 }
 
-bool Files::read_line(fstream* fs, char* buffer, int size, int& num_read) {
+bool Files::read_line(std::fstream* fs, char* buffer, int size, int& num_read) {
     char ch;
     num_read = 0;
     int num_eol = 0;
@@ -171,7 +170,7 @@ void Files::write_line(int file_id, char* buffer, int size, Error& error_code) {
     error_code = Error::None;
     File& file = get_file_for_writing(file_id);
     if (file.fs != nullptr) {
-        string line(buffer, buffer + size);
+        std::string line(buffer, buffer + size);
         line.push_back('\n');
         file.fs->write(line.c_str(), line.size());
         if (!file.fs->bad()) {
@@ -189,10 +188,10 @@ bool Files::seek(int file_id, udint pos, Error& error_code) {
     if (file.fs != nullptr && file.fs->is_open()) {
         file.last_seek = pos;
         if (file.open_for_reading()) {
-            file.fs->seekg(pos, ios::beg);
+            file.fs->seekg(pos, std::ios::beg);
         }
         if (file.open_for_writing()) {
-            file.fs->seekp(pos, ios::beg);
+            file.fs->seekp(pos, std::ios::beg);
         }
         return true;
     }
@@ -229,16 +228,16 @@ udint Files::size(int file_id, Error& error_code) {
         file.fs->clear(); // clear eofbit and failbit
 
         if (file.open_for_reading()) {
-            streampos current = file.fs->tellg();
-            file.fs->seekg(0, ios::end);
-            streampos size = file.fs->tellg();
+            std::streampos current = file.fs->tellg();
+            file.fs->seekg(0, std::ios::end);
+            std::streampos size = file.fs->tellg();
             file.fs->seekg(current); // restore position
             return static_cast<udint>(size);
         }
         else if (file.open_for_writing()) {
-            streampos current = file.fs->tellp();
-            file.fs->seekp(0, ios::end);
-            streampos size = file.fs->tellp();
+            std::streampos current = file.fs->tellp();
+            file.fs->seekp(0, std::ios::end);
+            std::streampos size = file.fs->tellp();
             file.fs->seekp(current); // restore position
             return static_cast<udint>(size);
         }
@@ -258,11 +257,12 @@ void Files::resize(int file_id, udint size, Error& error_code) {
                                  std::streampos();
         file.fs->close();
 
-        filesystem::resize_file(file.filename, size);
+        std::filesystem::resize_file(file.filename, size);
 
         // open with original mode except ios::trunc, add ios::in and ios::out
         // to keep current contents of file
-        std::ios::openmode mode = (file.mode & ~ios::trunc) | ios::in | ios::out;
+        std::ios::openmode mode = (file.mode & ~std::ios::trunc) | std::ios::in |
+                                  std::ios::out;
 
         file.fs->open(file.filename, mode);
         if (file.fs->is_open()) {
@@ -290,7 +290,7 @@ void Files::flush(int file_id, Error& error_code) {
     error_code = Error::FlushFileException;
 }
 
-string Files::filename(int file_id) {
+std::string Files::filename(int file_id) {
     File& file = get_file(file_id);
     return file.filename;
 }
@@ -307,29 +307,29 @@ int Files::next_file_id() {
 }
 
 void f_r_o() {
-    push(ios::in);
+    push(std::ios::in);
 }
 
 void f_w_o() {
-    push(ios::out | ios::trunc);
+    push(std::ios::out | std::ios::trunc);
 }
 
 void f_r_w() {
-    push(ios::in | ios::out);
+    push(std::ios::in | std::ios::out);
 }
 
 void f_bin() {
-    push(pop() | ios::binary);
+    push(pop() | std::ios::binary);
 }
 
-static void open_create(ios::openmode base_mode, Error error_code) {
+static void open_create(std::ios::openmode base_mode, Error error_code) {
     int mode = pop();
     int size = pop();
     int filename_addr = pop();
     char* filename_ptr = mem_char_ptr(filename_addr, size);
-    string filename = string(filename_ptr, filename_ptr + size);
+    std::string filename = std::string(filename_ptr, filename_ptr + size);
     int file_id = vm.files->open(filename,
-                                 base_mode | static_cast<ios::openmode>(mode));
+                                 base_mode | static_cast<std::ios::openmode>(mode));
     if (file_id == 0) {
         push(0);        // file_id
         push(static_cast<int>(error_code));
@@ -345,11 +345,11 @@ static void open_create(ios::openmode base_mode, Error error_code) {
 }
 
 void f_create_file() {
-    open_create(ios::out | ios::trunc, Error::CreateFileException);
+    open_create(std::ios::out | std::ios::trunc, Error::CreateFileException);
 }
 
 void f_open_file() {
-    open_create(static_cast<ios::openmode>(0), Error::OpenFileException);
+    open_create(static_cast<std::ios::openmode>(0), Error::OpenFileException);
 }
 
 void f_read_file() {
@@ -467,10 +467,10 @@ void f_delete_file() {
     int size = pop();
     int filename_addr = pop();
     const char* filename_str = mem_char_ptr(filename_addr, size);
-    string filename(filename_str, filename_str + size);
+    std::string filename(filename_str, filename_str + size);
 
     std::error_code ec;
-    bool deleted = filesystem::remove(filename, ec);
+    bool deleted = std::filesystem::remove(filename, ec);
 
     push(deleted ? 0 : static_cast<int>(Error::DeleteFileException));
 }
@@ -479,12 +479,12 @@ void f_rename_file() {
     int size2 = pop();
     int filename_addr2 = pop();
     const char* filename_str2 = mem_char_ptr(filename_addr2, size2);
-    string filename2(filename_str2, filename_str2 + size2);
+    std::string filename2(filename_str2, filename_str2 + size2);
 
     int size1 = pop();
     int filename_addr1 = pop();
     const char* filename_str1 = mem_char_ptr(filename_addr1, size1);
-    string filename1(filename_str1, filename_str1 + size1);
+    std::string filename1(filename_str1, filename_str1 + size1);
 
     Error error_code = Error::None;
     std::error_code ec;
@@ -508,7 +508,7 @@ void f_include_file(int file_id) {
     else {
         vm.input->save_input();
         vm.input->open_file(file_id);
-        string filename = vm.files->filename(file_id);
+        std::string filename = vm.files->filename(file_id);
         vm.included_files.insert(filename);
     }
 }
@@ -526,8 +526,8 @@ void f_included() {
     f_included(filename_str, size);
 }
 
-void f_included(const string& filename) {
-    int file_id = vm.files->open(filename, ios::in | ios::binary);
+void f_included(const std::string& filename) {
+    int file_id = vm.files->open(filename, std::ios::in | std::ios::binary);
     if (file_id == 0) {
         error(Error::OpenFileException, filename);
     }
@@ -539,7 +539,7 @@ void f_included(const string& filename) {
 }
 
 void f_included(const char* filename, int size) {
-    string filename_str(filename, filename + size);
+    std::string filename_str(filename, filename + size);
     f_included(filename_str);
 }
 
@@ -560,7 +560,7 @@ void f_required() {
     f_required(filename_str, size);
 }
 
-void f_required(const string& filename) {
+void f_required(const std::string& filename) {
     auto it = vm.included_files.find(filename);
     if (it == vm.included_files.end()) {    // not yet included
         f_included(filename);
@@ -568,7 +568,7 @@ void f_required(const string& filename) {
 }
 
 void f_required(const char* filename, int size) {
-    f_required(string(filename, filename + size));
+    f_required(std::string(filename, filename + size));
 }
 
 void f_required(const char* filename, size_t size) {
@@ -619,7 +619,7 @@ void f_file_status() {
     f_file_status(filename_str, size);
 }
 
-void f_file_status(const string& filename) {
+void f_file_status(const std::string& filename) {
     uint32_t st = get_forth_file_status(filename);
     if ((st & FS_ERROR) != 0) {     // file does not exist
         push(st);
@@ -632,7 +632,7 @@ void f_file_status(const string& filename) {
 }
 
 void f_file_status(const char* filename, int size) {
-    f_file_status(string(filename, filename + size));
+    f_file_status(std::string(filename, filename + size));
 }
 
 void f_file_status(const char* filename, size_t size) {

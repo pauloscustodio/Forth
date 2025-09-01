@@ -9,10 +9,9 @@
 #include "str.h"
 #include "vm.h"
 #include <cstring>
-using namespace std;
 
-string CString::to_string() const {
-    return string(str_, str_ + size_);
+std::string CString::to_string() const {
+    return std::string(str_, str_ + size_);
 }
 
 int CString::alloc_size(int num_chars) {
@@ -25,7 +24,7 @@ int CString::alloc_size(int num_chars) {
 
 void CString::set_cstring(const char* str, int size) {
     if (size > MAX_CSTRING_SZ) {
-        error(Error::ParsedStringOverflow, string(str, str + size));
+        error(Error::ParsedStringOverflow, std::string(str, str + size));
     }
 
     size_ = static_cast<uchar>(size);
@@ -37,12 +36,12 @@ void CString::set_cstring(const char* str, size_t size) {
     set_cstring(str, static_cast<int>(size));
 }
 
-void CString::set_cstring(const string& str) {
+void CString::set_cstring(const std::string& str) {
     set_cstring(str.c_str(), str.size());
 }
 
-string LongString::to_string() const {
-    return string(str_, str_ + size_);
+std::string LongString::to_string() const {
+    return std::string(str_, str_ + size_);
 }
 
 int LongString::alloc_size(int num_chars) {
@@ -56,7 +55,7 @@ int LongString::alloc_size(int num_chars) {
 
 void LongString::set_string(const char* str, int size) {
     if (size > BUFFER_SZ) {
-        error(Error::InputBufferOverflow, string(str, str + size));
+        error(Error::InputBufferOverflow, std::string(str, str + size));
     }
 
     size_ = size;
@@ -68,7 +67,7 @@ void LongString::set_string(const char* str, size_t size) {
     set_string(str, static_cast<int>(size));
 }
 
-void LongString::set_string(const string& str) {
+void LongString::set_string(const std::string& str) {
     set_string(str.c_str(), str.size());
 }
 
@@ -77,7 +76,7 @@ void Wordbuf::init() {
     ptr_ = 0;
 }
 
-CString* Wordbuf::append_cstring(const string& str) {
+CString* Wordbuf::append_cstring(const std::string& str) {
     return append_cstring(str.c_str(), str.size());
 }
 
@@ -87,7 +86,7 @@ CString* Wordbuf::append_cstring(const char* str, size_t size) {
 
 CString* Wordbuf::append_cstring(const char* str, int size) {
     if (size > MAX_CSTRING_SZ) {
-        error(Error::ParsedStringOverflow, string(str, str + size));
+        error(Error::ParsedStringOverflow, std::string(str, str + size));
     }
 
     int alloc_size = CString::alloc_size(size);
@@ -102,7 +101,7 @@ CString* Wordbuf::append_cstring(const char* str, int size) {
     return cstring;
 }
 
-LongString* Wordbuf::append_long_string(const string& str) {
+LongString* Wordbuf::append_long_string(const std::string& str) {
     return append_long_string(str.c_str(), str.size());
 }
 
@@ -113,7 +112,7 @@ LongString* Wordbuf::append_long_string(const char* str, size_t size) {
 
 LongString* Wordbuf::append_long_string(const char* str, int size) {
     if (size > BUFFER_SZ) {
-        error(Error::InputBufferOverflow, string(str, str + size));
+        error(Error::InputBufferOverflow, std::string(str, str + size));
     }
 
     int alloc_size = LongString::alloc_size(size);
@@ -132,7 +131,7 @@ static char to_lower(char c) {
     return tolower(static_cast<unsigned char>(c));
 }
 
-bool case_insensitive_equal(const string& a, const string& b) {
+bool case_insensitive_equal(const std::string& a, const std::string& b) {
     return case_insensitive_equal(a.c_str(), a.size(), b.c_str(), b.size());
 }
 
@@ -199,7 +198,7 @@ void f_s_quote() {
 }
 
 void f_s_backslash_quote() {
-    string message = parse_backslash_string();
+    std::string message = parse_backslash_string();
     if (vm.user->STATE == STATE_COMPILE) {
         int str_addr = vm.dict->alloc_string(message.c_str(), message.size());
         comma(xtXS_QUOTE);

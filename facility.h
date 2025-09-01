@@ -6,8 +6,6 @@
 
 #pragma once
 
-using namespace std;
-
 void init_console_output();
 
 void f_at_xy();

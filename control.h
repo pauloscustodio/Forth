@@ -6,8 +6,6 @@
 
 #pragma once
 
-using namespace std;
-
 void f_colon();
 void f_colon_noname();
 void f_semicolon();

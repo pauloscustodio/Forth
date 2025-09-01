@@ -6,7 +6,6 @@
 
 #include "kbd_input.h"
 #include "vm.h"
-using namespace std;
 
 // Pack key_code and modifiers into a 32-bit ekey
 uint32_t pack_ekey(uint32_t key_code, uint32_t modifiers) {

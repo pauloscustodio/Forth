@@ -7,7 +7,6 @@
 #pragma once
 
 #include <cstdint>
-using namespace std;
 
 // Modifier masks (high byte)
 static const uint32_t MOD_SHIFT = 0x01000000;

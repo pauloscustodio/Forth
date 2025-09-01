@@ -9,7 +9,6 @@
 #include "str.h"
 #include <string>
 #include <vector>
-using namespace std;
 
 struct Header {
     int link;			// address of previous header
@@ -62,19 +61,19 @@ public:
 
     int parse_create(int code, int flags); // return xt of word
 
-    int create(const string& name, int flags, int code); // return xt of word
+    int create(const std::string& name, int flags, int code); // return xt of word
     int create(const char* name, size_t size, int flags,
                int code); // return xt of word
     int create(const char* name, int size, int flags,
                int code); // return xt of word
     int create(const CString* name, int flags, int code); // return xt of word
 
-    int alloc_cstring(const string& str);
+    int alloc_cstring(const std::string& str);
     int alloc_cstring(const char* str, size_t size);
     int alloc_cstring(const char* str, int size);
     int alloc_cstring(const CString* str);
 
-    int alloc_string(const string& str);
+    int alloc_string(const std::string& str);
     int alloc_string(const char* str, size_t size);
     int alloc_string(const char* str, int size);
     int alloc_string(const LongString* str);
@@ -87,12 +86,12 @@ public:
     Header* parse_find_word();
     Header* parse_find_existing_word();
 
-    Header* find_word(const string& name) const;
+    Header* find_word(const std::string& name) const;
     Header* find_word(const char* name, size_t size) const;
     Header* find_word(const char* name, int size) const;
     Header* find_word(const CString* name) const;
 
-    vector<string> get_words() const;
+    std::vector<std::string> get_words() const;
 
 private:
     int lo_mem_, hi_mem_;// memory limits

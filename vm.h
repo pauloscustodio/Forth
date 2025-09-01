@@ -15,7 +15,6 @@
 #include "stack.h"
 #include "str.h"
 #include <set>
-using namespace std;
 
 struct VM {
     VM();
@@ -25,7 +24,7 @@ struct VM {
     int ip;
 
     // abort error message
-    string* error_message;
+    std::string* error_message;
 
     // memory
     Mem mem;

@@ -8,7 +8,6 @@
 
 #include <cstdint>
 #include <string>
-using namespace std;
 
 // types
 typedef uint8_t uchar;
@@ -48,7 +47,7 @@ static const int STATE_INTERPRET = 0;
 static const int STATE_COMPILE = 1;
 
 // blocks
-static const string BLOCKS_FILE = "blocks.fb";
+static const std::string BLOCKS_FILE = "blocks.fb";
 static const int BLOCK_SZ = 1024;
 static const int BLOCK_ROWS = 16;
 static const int BLOCK_COLS = 64;

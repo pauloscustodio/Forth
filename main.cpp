@@ -9,12 +9,11 @@
 #include "vm.h"
 #include <iostream>
 #include <cstring>
-using namespace std;
 
 const char* FORTH_ENV = "FORTH";
 
 static void die_usage() {
-    cerr << "Usage: forth [-e forth] [-t] [source [args...]]" << endl;
+    std::cerr << "Usage: forth [-e forth] [-t] [source [args...]]" << std::endl;
     exit(EXIT_FAILURE);
 }
 

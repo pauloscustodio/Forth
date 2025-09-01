@@ -10,7 +10,6 @@
 
 #include <cstdint>
 #include <climits>
-using namespace std;
 
 void f_m_star();
 void f_m_star_slash();

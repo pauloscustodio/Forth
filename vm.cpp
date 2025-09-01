@@ -9,13 +9,12 @@
 #include "kbd_input.h"
 #include "str.h"
 #include "vm.h"
-using namespace std;
 
 VM vm;
 
 VM::VM() {
     ip = 0;
-    error_message = new string();
+    error_message = new std::string();
 
     // bottom of memory
     wordbuf = reinterpret_cast<Wordbuf*>(mem.alloc_bottom(sizeof(Wordbuf)));
