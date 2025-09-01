@@ -21,13 +21,24 @@ jobs:
         update: true
         install: git mingw-w64-ucrt-x86_64-gcc
 
+    - name: Setup local::lib for user-space Perl modules
+      run: |
+        curl -L https://cpanmin.us | perl - --self-upgrade
+        perl -Mlocal::lib >> $GITHUB_ENV
+        echo 'PERL5LIB=$HOME/perl5/lib/perl5' >> $GITHUB_ENV
+        echo 'PATH=$HOME/perl5/bin:$PATH' >> $GITHUB_ENV
+        echo 'PERL_LOCAL_LIB_ROOT=$HOME/perl5' >> $GITHUB_ENV
+        echo 'PERL_MB_OPT=--install_base $HOME/perl5' >> $GITHUB_ENV
+        echo 'PERL_MM_OPT=INSTALL_BASE=$HOME/perl5' >> $GITHUB_ENV
+
     - name: Install Modern::Perl
       run: |
-        curl -L https://cpanmin.us | perl - App::cpanminus
+        source $GITHUB_ENV
         cpanm Modern::Perl
 
     - name: Run tests
       shell: bash
       run: |
+        source $GITHUB_ENV
         echo "Running tests on ${{ matrix.os }}"
         make test
