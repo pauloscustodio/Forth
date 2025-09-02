@@ -26,6 +26,12 @@ jobs:
         export PATH=/usr/local/bin:$PATH
         cpanm App::Prove Modern::Perl Path::Tiny Test::More 
 
+    - name: Build
+      shell: bash
+      run: |
+        export PATH=/usr/local/bin:$PATH
+        make
+
     - name: Run tests
       shell: bash
       run: |

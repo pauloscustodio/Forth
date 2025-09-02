@@ -42,7 +42,14 @@ jobs:
         cpan App::cpanminus
         cpanm local::lib
         eval $(perl -Mlocal::lib)
+        cpanm -f Test::Harness
         cpanm App::Prove Modern::Perl Path::Tiny Test::More 
+
+    - name: Build
+      shell: bash
+      run: |
+        eval $(perl -Mlocal::lib)
+        make
 
     - name: Run tests
       shell: bash
