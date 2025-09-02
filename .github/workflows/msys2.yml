@@ -33,21 +33,25 @@ jobs:
         update: true
         install: |
           base-devel
+          perl-modules
           mingw64/mingw-w64-x86_64-gcc
           git
 
     - name: Install perl prerequisites
       run: |
-        cpan App::cpanminus
-        cpanm --notest Test::Harness
-        cpanm App::Prove Modern::Perl Path::Tiny Test::More 
+        cpan local::lib
+        eval $(perl -Mlocal::lib)
+        cpan -f Test::Harness
+        cpan App::Prove Modern::Perl Path::Tiny Test::More 
 
     - name: Build
       shell: bash
       run: |
+        eval $(perl -Mlocal::lib)
         make
 
     - name: Run tests
       shell: bash
       run: |
+        eval $(perl -Mlocal::lib)
         make test
