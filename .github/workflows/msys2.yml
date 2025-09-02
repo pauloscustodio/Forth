@@ -41,7 +41,7 @@ jobs:
       run: |
         cpan App::cpanminus
         cpanm --notest Test::Harness
-        cpanm App::Prove Modern::Perl Path::Tiny Test::More 
+        cpanm --verbose App::Prove Modern::Perl Path::Tiny Test::More 
 
     - name: Build
       shell: bash
