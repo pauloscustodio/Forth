@@ -1,0 +1,33 @@
+name: Build on MacOS
+
+on:
+  push:
+  pull_request:
+    branches: [ master ]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+    - name: Checkout from git
+      uses: actions/checkout@v4
+
+    - name: Install homebrew dependencies
+      run: |
+        brew install perl dos2unix make
+
+    - name: Install perl prerequisites
+      run: |
+        export PATH=/usr/local/bin:$PATH
+        cpan App::Prove Modern::Perl Path::Tiny Test::More 
+
+    - name: Run tests
+      shell: bash
+      run: |
+        export PATH=/usr/local/bin:$PATH
+        make test
