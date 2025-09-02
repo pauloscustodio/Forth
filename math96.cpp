@@ -44,11 +44,13 @@ static inline ucell addc32(ucell a, ucell b, ucell* carry) {
 }
 
 /* Sub with borrow (32-bit words) -- kept for completeness (not used in fixes) */
+#if 0
 static inline ucell subb32(ucell a, ucell b, ucell* borrow) {
     uint64_t d = (uint64_t)a - b - *borrow;
     *borrow = (ucell)((d >> 63) & 1u); /* 1 if underflow */
     return (ucell)d;
 }
+#endif
 
 /* Convert signed dcell to unsigned magnitude u64 (two's complement abs)
    FIXED: propagate carry from low to high correctly. */
