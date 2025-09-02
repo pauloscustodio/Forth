@@ -1,0 +1,51 @@
+name: Build on MSYS2
+
+on:
+  push:
+  pull_request:
+    branches: [ master ]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: msys2 {0}
+
+    steps:
+    - name: Checkout from git
+      uses: actions/checkout@v4
+
+    - name: Cache multiple paths
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/perl5
+        key: ${{ runner.os }}-cache1
+
+    - name: Setup msys2
+      uses: msys2/setup-msys2@v2
+      with:
+        update: true
+        install: |
+          base-devel
+          perl-modules
+          mingw64/mingw-w64-x86_64-gcc
+          git
+
+    - name: Install perl prerequisites
+      run: |
+        cpan App::cpanminus
+        cpanm local::lib
+        eval $(perl -Mlocal::lib)
+        cpanm App::Prove Modern::Perl Path::Tiny Test::More 
+
+    - name: Run tests
+      shell: bash
+      run: |
+        eval $(perl -Mlocal::lib)
+        make test
