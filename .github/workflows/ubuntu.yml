@@ -30,7 +30,7 @@ jobs:
 
     - name: Install apt dependencies
       run: |
-        sudo apt install -y cpanminus libmodern-perl-perl liblocal-lib-perl libpath-tiny-perl
+        sudo apt install -y cpanminus dos2unix libmodern-perl-perl liblocal-lib-perl libpath-tiny-perl
 
     - name: Install perl prerequisites
       run: |
