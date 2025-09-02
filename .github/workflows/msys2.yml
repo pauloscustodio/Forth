@@ -33,7 +33,6 @@ jobs:
         update: true
         install: |
           base-devel
-          perl-modules
           mingw64/mingw-w64-x86_64-gcc
           git
 
@@ -41,7 +40,7 @@ jobs:
       run: |
         cpan App::cpanminus
         cpanm --notest Test::Harness
-        cpanm --verbose App::Prove Modern::Perl Path::Tiny Test::More 
+        cpanm App::Prove Modern::Perl Path::Tiny Test::More 
 
     - name: Build
       shell: bash
