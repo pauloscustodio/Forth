@@ -11,6 +11,161 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <cassert>
+
+class SyncStream {
+public:
+    enum class operation { none, read, write };
+    enum class eol_type { lf, crlf, cr };
+
+    explicit SyncStream(const std::string& filename, std::ios::openmode mode)
+        : file_stream(filename, mode | std::ios::binary),
+        last_op(operation::none),
+        is_rw_mode((mode& std::ios::in) && (mode& std::ios::out)) {
+        assert(file_stream.is_open());
+    }
+
+    std::vector<char> read_bytes(size_t count) {
+        flush_if_needed(operation::read);
+        sync_read_pos();
+        std::vector<char> buffer(count);
+        file_stream.read(buffer.data(), count);
+        last_op = operation::read;
+        sync_write_pos();
+        return buffer;
+    }
+
+    char read_char() {
+        flush_if_needed(operation::read);
+        sync_read_pos();
+        char c;
+        file_stream.get(c);
+        last_op = operation::read;
+        sync_write_pos();
+        return c;
+    }
+
+    char peek_char() {
+        flush_if_needed(operation::read);
+        sync_read_pos();
+        char c = file_stream.peek();
+        last_op = operation::read;
+        return c;
+    }
+
+    std::string read_line() {
+        flush_if_needed(operation::read);
+        sync_read_pos();
+
+        std::string line;
+        char c;
+
+        while (file_stream.get(c)) {
+            if (c == '\n') {
+                break; // LF
+            }
+            else if (c == '\r') {
+                char next = file_stream.peek();
+                if (next == '\n') {
+                    file_stream.get(); // consume '\n'
+                }
+                break; // CR or CRLF
+            }
+            else {
+                line += c;
+            }
+        }
+
+        last_op = operation::read;
+        sync_write_pos();
+        return line;
+    }
+
+    void write_bytes(const std::vector<char>& data) {
+        flush_if_needed(operation::write);
+        sync_write_pos();
+        file_stream.write(data.data(), data.size());
+        last_op = operation::write;
+        sync_read_pos();
+    }
+
+    void write_char(char c) {
+        flush_if_needed(operation::write);
+        sync_write_pos();
+        file_stream.put(c);
+        last_op = operation::write;
+        sync_read_pos();
+    }
+
+    void write_line(const std::string& line, eol_type eol = eol_type::lf) {
+        flush_if_needed(operation::write);
+        sync_write_pos();
+
+        file_stream.write(line.c_str(), line.size());
+
+        switch (eol) {
+        case eol_type::lf:
+            file_stream.put('\n');
+            break;
+        case eol_type::crlf:
+            file_stream.put('\r');
+            file_stream.put('\n');
+            break;
+        case eol_type::cr:
+            file_stream.put('\r');
+            break;
+        }
+
+        last_op = operation::write;
+        sync_read_pos();
+    }
+
+    void seek(std::streampos pos) {
+        file_stream.clear();
+        file_stream.seekg(pos);
+        file_stream.seekp(pos);
+    }
+
+    std::streampos tell() {
+        if (!file_stream.good()) {
+            file_stream.clear();
+        }
+        std::streampos pos = file_stream.tellg();
+        if (pos == -1) {
+            file_stream.seekg(0, std::ios::end);
+            pos = file_stream.tellg();
+        }
+        return pos;
+    }
+
+    void flush() { file_stream.flush(); }
+    void close() { file_stream.close(); }
+    bool is_open() const { return file_stream.is_open(); }
+
+private:
+    std::fstream file_stream;
+    operation last_op;
+    bool is_rw_mode;
+
+    void sync_read_pos() {
+        auto pos = file_stream.tellp();
+        file_stream.seekg(pos);
+    }
+
+    void sync_write_pos() {
+        auto pos = file_stream.tellg();
+        file_stream.seekp(pos);
+    }
+
+    void flush_if_needed(operation next_op) {
+        if (is_rw_mode && last_op == operation::write && next_op == operation::read) {
+            file_stream.flush();
+        }
+        if (is_rw_mode && next_op == operation::read) {
+            file_stream.flush();
+        }
+    }
+};
 
 class Files {
 public:
@@ -37,7 +192,7 @@ private:
         std::fstream* fs{ nullptr };
         std::string filename;
         std::ios::openmode mode;
-        std::streampos last_seek;
+        std::streampos fpos;
         enum { OP_NONE, OP_READ, OP_WRITE } last_op{ OP_NONE };
 
         bool open_for_reading() const {

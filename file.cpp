@@ -33,7 +33,7 @@ int Files::open(const std::string& filename, std::ios::openmode mode) {
         file.fs = fs;
         file.filename = filename;
         file.mode = mode;
-        file.last_seek = 0;
+        file.fpos = 0;
         file.last_op = File::OP_NONE;
         files_[file_id] = file;
         return file_id;
@@ -54,6 +54,7 @@ Files::File& Files::get_file_for_reading(int file_id) {
     if (file.fs != nullptr && file.fs->is_open() && file.open_for_reading()) {
         if (file.last_op != File::OP_READ) { // switch to reading
             file.fs->flush();
+            file.fs->seekg(file.fpos);
             file.last_op = File::OP_READ;
         }
         return file;
@@ -68,6 +69,7 @@ Files::File& Files::get_file_for_writing(int file_id) {
     if (file.fs != nullptr && file.fs->is_open() && file.open_for_writing()) {
         if (file.last_op != File::OP_WRITE) { // switch to writing
             file.fs->flush();
+            file.fs->seekp(file.fpos);
             file.last_op = File::OP_WRITE;
         }
         return file;
@@ -99,6 +101,11 @@ int Files::read(int file_id, char* buffer, int size, Error& error_code) {
     if (file.fs != nullptr) {
         file.fs->read(buffer, size);
         if (!file.fs->bad()) {
+            file.fs->clear(); // clear eofbit and failbit
+            if (file.fs->eof()) {   // tellg() is -1 after eof in g++
+                file.fs->seekg(0, std::ios::end);
+            }
+            file.fpos = file.fs->tellg();
             return static_cast<int>(file.fs->gcount());
         }
     }
@@ -113,6 +120,8 @@ void Files::write(int file_id, char* buffer, int size, Error& error_code) {
     if (file.fs != nullptr) {
         file.fs->write(buffer, size);
         if (!file.fs->bad()) {
+            file.fs->clear(); // clear eofbit and failbit
+            file.fpos = file.fs->tellp();
             return;
         }
     }
@@ -157,6 +166,11 @@ int Files::read_line(int file_id, char* buffer, int size, bool& found_eof,
             if (!read_ok) {
                 found_eof = true;
             }
+            file.fs->clear(); // clear eofbit and failbit
+            if (file.fs->eof()) {   // tellg() is -1 after eof in g++
+                file.fs->seekg(0, std::ios::end);
+            }
+            file.fpos = file.fs->tellg();
             return num_read;
         }
     }
@@ -174,6 +188,8 @@ void Files::write_line(int file_id, char* buffer, int size, Error& error_code) {
         line.push_back('\n');
         file.fs->write(line.c_str(), line.size());
         if (!file.fs->bad()) {
+            file.fs->clear(); // clear eofbit and failbit
+            file.fpos = file.fs->tellp();
             return;
         }
     }
@@ -186,7 +202,7 @@ bool Files::seek(int file_id, udint pos, Error& error_code) {
     error_code = Error::None;
     File& file = get_file(file_id);
     if (file.fs != nullptr && file.fs->is_open()) {
-        file.last_seek = pos;
+        file.fpos = pos;
         if (file.open_for_reading()) {
             file.fs->seekg(pos, std::ios::beg);
         }
@@ -204,17 +220,7 @@ udint Files::tell(int file_id, Error& error_code) {
     error_code = Error::None;
     File& file = get_file(file_id);
     if (file.fs != nullptr && file.fs->is_open()) {
-        file.fs->clear(); // clear eofbit and failbit
-
-        if (file.last_op == File::OP_READ) {
-            return static_cast<udint>(file.fs->tellg());
-        }
-        else if (file.last_op == File::OP_WRITE) {
-            return static_cast<udint>(file.fs->tellp());
-        }
-        else {
-            return file.last_seek;   // last seeked position, or 0 after open
-        }
+        return file.fpos;   // last seeked position, or 0 after open
     }
 
     error_code = Error::FilePositionException;
@@ -250,11 +256,6 @@ void Files::resize(int file_id, udint size, Error& error_code) {
     error_code = Error::None;
     File& file = get_file(file_id);
     if (file.fs != nullptr && !file.filename.empty()) {
-        file.fs->flush();
-        std::streampos get_pos = file.open_for_reading() ? file.fs->tellg() :
-                                 std::streampos();
-        std::streampos put_pos = file.open_for_writing() ? file.fs->tellp() :
-                                 std::streampos();
         file.fs->close();
 
         std::filesystem::resize_file(file.filename, size);
@@ -267,10 +268,10 @@ void Files::resize(int file_id, udint size, Error& error_code) {
         file.fs->open(file.filename, mode);
         if (file.fs->is_open()) {
             if (file.open_for_reading()) {
-                file.fs->seekg(get_pos);
+                file.fs->seekg(file.fpos);
             }
             if (file.open_for_writing()) {
-                file.fs->seekp(put_pos);
+                file.fs->seekp(file.fpos);
             }
             return;
         }
