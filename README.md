@@ -1,6 +1,10 @@
 Forth
 -----
 
+[![Build on Ubuntu](https://github.com/pauloscustodio/Forth/actions/workflows/ubuntu.yml/badge.svg?branch=master)](https://github.com/pauloscustodio/Forth/actions/workflows/ubuntu.yml)
+
+[![Build on MacOS](https://github.com/pauloscustodio/Forth/actions/workflows/macos.yml/badge.svg?branch=master)](https://github.com/pauloscustodio/Forth/actions/workflows/macos.yml)
+
 This is a C++ implementation of a ANS 2012 Forth interpreter. It implements all
 the 
 CORE, CORE-EXT, 
