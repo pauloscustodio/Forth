@@ -27,21 +27,21 @@ GS1 .S
 END
 
 note "Test SOURCE-ID";
-capture_ok("echo SOURCE-ID .S | ./forth", "( 0 ) ok\n");
+capture_ok("echo SOURCE-ID .S | forth", "( 0 ) ok\n");
 forth_ok("SOURCE-ID .S", "( 1 )");
 forth_ok("CHAR ! WORD SOURCE-ID! COUNT EVALUATE .S", "( -1 )");
 
 note "Test ACCEPT";
-capture_ok("echo hello | ./forth -e 'PAD 255 ACCEPT PAD SWAP TYPE'",
+capture_ok('echo hello | forth -e "PAD 255 ACCEPT PAD SWAP TYPE"',
 		   "hello");
 
 note "Test EXPECT";
 note "Test SPAN";
-capture_ok("echo hello | ./forth -e 'PAD 255 EXPECT SPAN @ . .S PAD SPAN @ TYPE'",
+capture_ok('echo hello | forth -e "PAD 255 EXPECT SPAN @ . .S PAD SPAN @ TYPE"',
 		   "5 ( )hello");
 
 note "Test QUERY";
-capture_ok("echo .S | ./forth -e '1 2 QUERY INTERPRET'", "( 1 2 )");
+capture_ok('echo .S | forth -e "1 2 QUERY INTERPRET"', "( 1 2 )");
 
 note "Test SAVE-INPUT";
 note "Test RESTORE-INPUT";

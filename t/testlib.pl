@@ -7,16 +7,23 @@
 use Modern::Perl;
 use Path::Tiny;
 use Test::More;
+use Config;
 
+# create $test variable unique to each test script
 use vars qw($test);
 $test = 'test_'.(path($0)->basename) =~ s/\.\w+$//r;
+
+# add current working directory to start of PATH so that our executable is tested
+my $cwd = path('.')->absolute;
+my $path_separator = $Config{path_sep};
+$ENV{PATH} = $cwd.$path_separator.$ENV{PATH};
 
 sub forth_ok {
 	my($fth, $exp_out) = @_;
 	local $Test::Builder::Level = $Test::Builder::Level + 1; 
 	
 	path("$test.fs")->spew($fth);
-	capture_ok("./forth $test.fs", $exp_out);
+	capture_ok("forth $test.fs", $exp_out);
 	check_die();
 }
 
@@ -25,7 +32,7 @@ sub forth_nok {
 	local $Test::Builder::Level = $Test::Builder::Level + 1; 
 	
 	path("$test.fs")->spew($fth);
-	capture_nok("./forth $test.fs", $exp_err);
+	capture_nok("forth $test.fs", $exp_err);
 	check_die();
 }
 
