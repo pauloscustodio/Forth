@@ -39,7 +39,6 @@ jobs:
 
     - name: Build
       run: |
-        perl -MModern::Perl -e 1
         make
 
     - name: Run tests
