@@ -35,7 +35,7 @@ END
 die if !Test::More->builder->is_passing;
 
 # check that all words are tested
-run_ok("./forth -e WORDS > ${test}.out");
+run_ok("forth -e WORDS > ${test}.out");
 my %words; $words{$_}=1 for sort split(' ', path("${test}.out")->slurp);
 
 my %untested = %words;

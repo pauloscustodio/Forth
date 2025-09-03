@@ -22,7 +22,7 @@ if ($ENV{HARNESS_ACTIVE}) {
 		;
 		test-key
 END
-	run_ok("./forth $test.fs");
+	run_ok("forth $test.fs");
 }
 
 note "Test KEY";
@@ -45,7 +45,7 @@ if ($ENV{HARNESS_ACTIVE}) {
 		HEX 
 		test-key
 END
-	run_ok("./forth $test.fs");
+	run_ok("forth $test.fs");
 }
 
 note "Test EKEY?";
@@ -69,7 +69,7 @@ if ($ENV{HARNESS_ACTIVE}) {
 		HEX
 		test-key
 END
-	run_ok("./forth $test.fs");
+	run_ok("forth $test.fs");
 }
 
 note "Test EKEY";
@@ -159,7 +159,7 @@ if ($ENV{HARNESS_ACTIVE}) {
 		HEX 
 		test-key
 END
-	run_ok("./forth $test.fs");
+	run_ok("forth $test.fs");
 }
 
 note "Test AT-XY";
@@ -190,7 +190,7 @@ if ($ENV{HARNESS_ACTIVE}) {
 		;
 		draw
 END
-	run_ok("./forth $test.fs");
+	run_ok("forth $test.fs");
 }
 
 note "Test TIME&DATE";
@@ -204,7 +204,7 @@ if ($ENV{HARNESS_ACTIVE}) {
 		CR
 		." Press any key" KEY DROP CR
 END
-	run_ok("./forth $test.fs");
+	run_ok("forth $test.fs");
 }
 
 end_test;

@@ -6,7 +6,7 @@ chdir "t/forth2012-test-suite/src" or die;
 
 note "runtests.fth";
 path("$test.fs")->spew('S" runtests.fth" INCLUDED');
-capture_ok("echo hello | ../../../forth $test.fs", <<'END');
+capture_ok("echo hello | forth $test.fs", <<'END');
 
 Running ANS Forth and Forth 2012 test programs, version 0.13.4
 
