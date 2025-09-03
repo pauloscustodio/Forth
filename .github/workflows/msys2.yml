@@ -20,13 +20,6 @@ jobs:
     - name: Checkout from git
       uses: actions/checkout@v4
 
-    - name: Cache multiple paths
-      uses: actions/cache@v4
-      with:
-        path: |
-          ~/perl5
-        key: ${{ runner.os }}-cache1
-
     - name: Setup msys2
       uses: msys2/setup-msys2@v2
       with:
@@ -35,7 +28,7 @@ jobs:
           base-devel
           perl
           perl-modules
-          mingw64/mingw-w64-x86_64-gcc
+          mingw-w64-x86_64-gcc
           git
 
     - name: Install perl prerequisites
@@ -44,11 +37,13 @@ jobs:
         cpan App::Prove Modern::Perl Path::Tiny Test::More 
 
     - name: Build
-      shell: bash
       run: |
+        source /etc/profile
+        mingw64_shell
         make
 
     - name: Run tests
-      shell: bash
       run: |
+        source /etc/profile
+        mingw64_shell
         make test
