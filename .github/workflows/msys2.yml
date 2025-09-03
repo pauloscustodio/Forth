@@ -27,23 +27,20 @@ jobs:
         install: |
           base-devel
           perl
-          perl-modules
           mingw-w64-x86_64-gcc
           git
 
     - name: Install perl prerequisites
       run: |
-        cpan -f Test::Harness
-        cpan App::Prove Modern::Perl Path::Tiny Test::More 
+        cpan App::cpanminus
+        cpanm -f Test::Harness
+        cpanm App::Prove Modern::Perl Path::Tiny Test::More 
 
     - name: Build
       run: |
-        source /etc/profile
-        mingw64_shell
+        perl -MModern::Perl -e 1
         make
 
     - name: Run tests
       run: |
-        source /etc/profile
-        mingw64_shell
         make test
