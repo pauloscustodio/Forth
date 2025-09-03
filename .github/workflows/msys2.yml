@@ -40,18 +40,18 @@ jobs:
     - name: Install perl prerequisites
       run: |
         cpan local::lib
-        eval $(perl -Mlocal::lib)
+        eval "$(perl -I$HOME/perl5/lib/perl5 -Mlocal::lib)"
         cpan -f Test::Harness
         cpan App::Prove Modern::Perl Path::Tiny Test::More 
 
     - name: Build
       shell: bash
       run: |
-        eval $(perl -Mlocal::lib)
+        eval "$(perl -I$HOME/perl5/lib/perl5 -Mlocal::lib)"
         make
 
     - name: Run tests
       shell: bash
       run: |
-        eval $(perl -Mlocal::lib)
+        eval "$(perl -I$HOME/perl5/lib/perl5 -Mlocal::lib)"
         make test
