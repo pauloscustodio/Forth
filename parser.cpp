@@ -8,11 +8,14 @@
 #include "forth.h"
 #include "parser.h"
 #include "vm.h"
-#include <cctype>
 
 // ignore all control characters as spaces
-static bool is_space(char c) {
+bool is_space(char c) {
     return c >= 0 && c <= BL;
+}
+
+bool is_print(char c) {
+    return c >= BL && c < 0x7f;
 }
 
 // return digit value of character, or -1 if not a digit

@@ -6,9 +6,9 @@
 
 #include "block.h"
 #include "errors.h"
+#include "parser.h"
 #include "vm.h"
 #include <cassert>
-#include <cctype>
 #include <cstring>
 
 void Block::init(int blk) {
@@ -94,7 +94,7 @@ void Blocks::f_list(int blk) {
         std::cout << BL;
         for (int col = 0; col < BLOCK_COLS; ++col) {
             char c = block->block[row * BLOCK_COLS + col];
-            if (isprint(c)) {
+            if (is_print(c)) {
                 std::cout << c;
             }
             else {
