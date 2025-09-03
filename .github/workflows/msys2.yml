@@ -27,6 +27,7 @@ jobs:
         install: |
           base-devel
           perl
+          perl-modules
           mingw-w64-x86_64-gcc
           git
 
