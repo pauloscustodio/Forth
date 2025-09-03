@@ -21,10 +21,10 @@
 using namespace std;
 
 // define xtWORD for all words - execution token from dictionary
-#define CONST(word, name, flags, value) int xt##name = 0;
-#define VAR(word, name, flags, value)   int xt##name = 0;
-#define CODE(word, name, flags, c_code) int xt##name = 0;
-#define FORTH(word, name, flags, text)  int xt##name = 0;
+#define CONST(word, name, flags, value) uint xt##name = 0;
+#define VAR(word, name, flags, value)   uint xt##name = 0;
+#define CODE(word, name, flags, c_code) uint xt##name = 0;
+#define FORTH(word, name, flags, text)  uint xt##name = 0;
 #include "words.def"
 
 // bool
@@ -72,7 +72,7 @@ void create_dictionary() {
 #include "words.def"
 }
 
-void f_execute(int xt) {
+void f_execute(uint xt) {
     bool do_exit = false;
     int old_ip = vm.ip;
     vm.ip = 0;
@@ -84,8 +84,8 @@ void f_execute(int xt) {
                  << name->to_string() << BL;
         }
 
-        int code = fetch(xt);
-        int body = xt + CELL_SZ;			// point to data area, if any
+        uint code = fetch(xt);
+        uint body = xt + CELL_SZ;			// point to data area, if any
 
         switch (code) {
 #define CONST(word, name, flags, value) case id##name: push(value); break;

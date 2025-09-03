@@ -12,71 +12,53 @@
 using namespace std;
 
 struct Header {
-    int link;			// address of previous header
-    int name_addr;		// address of name
+    uint link;			// address of previous header
+    uint name_addr;		// address of name
     struct {
         bool smudge : 1;
         bool hidden : 1;
         bool immediate : 1;
     } flags;
-    int size;			// size of body, filled by next header
-    int creator_xt;		// xt of word that created this word
-    int does;			// address of DOES> code
-    int code;			// primitive code
+    uint size;			// size of body, filled by next header
+    uint creator_xt;		// xt of word that created this word
+    uint does;			// address of DOES> code
+    uint code;			// primitive code
 
     CString* name() const;
-    int xt() const;
-    int body() const;
-    static Header* header(int xt);
-    int get_size() const;
+    uint xt() const;
+    uint body() const;
+    static Header* header(uint xt);
+    uint get_size() const;
 };
 
 
 class Dict {
 public:
-    void init(int lo_mem, int hi_mem);
+    void init(uint lo_mem, uint hi_mem);
     void clear();
+    uint latest() const;
+    uint here() const;
+    uint names() const;
+    void set_latest(uint latest);
+    void set_here(uint here);
+    void set_names(uint names);
 
-    int latest() const {
-        return latest_;
-    }
-    int here() const {
-        return here_;
-    }
-    int names() const {
-        return names_;
-    }
-
-    void set_latest(int latest) {
-        latest_ = latest;
-    }
-    void set_here(int here) {
-        here_ = here;
-    }
-    void set_names(int names) {
-        names_ = names;
-    }
-
-    void allot(int size);
+    void allot(uint size);
     int unused() const;
 
-    int parse_create(int code, int flags); // return xt of word
+    int parse_create(uint code, int flags); // return xt of word
 
-    int create(const string& name, int flags, int code); // return xt of word
-    int create(const char* name, size_t size, int flags,
-               int code); // return xt of word
-    int create(const char* name, int size, int flags,
-               int code); // return xt of word
-    int create(const CString* name, int flags, int code); // return xt of word
+    int create(const string& name, int flags, uint code); // return xt of word
+    int create(const char* name, uint size, int flags,
+               uint code); // return xt of word
+    int create(const CString* name, int flags, uint code); // return xt of word
 
     int alloc_cstring(const string& str);
-    int alloc_cstring(const char* str, size_t size);
-    int alloc_cstring(const char* str, int size);
+    int alloc_cstring(const char* str, uint size);
     int alloc_cstring(const CString* str);
 
     int alloc_string(const string& str);
-    int alloc_string(const char* str, size_t size);
-    int alloc_string(const char* str, int size);
+    int alloc_string(const char* str, uint size);
     int alloc_string(const LongString* str);
 
     void ccomma(int value);
@@ -88,24 +70,23 @@ public:
     Header* parse_find_existing_word();
 
     Header* find_word(const string& name) const;
-    Header* find_word(const char* name, size_t size) const;
-    Header* find_word(const char* name, int size) const;
+    Header* find_word(const char* name, uint size) const;
     Header* find_word(const CString* name) const;
 
     vector<string> get_words() const;
 
 private:
-    int lo_mem_, hi_mem_;// memory limits
-    int latest_;			// point to last defined word header
-    int here_;			// point to next free position at bottom of memory
-    int names_;			// point to last name created at top of memory
+    uint lo_mem_, hi_mem_;// memory limits
+    uint latest_;			// point to last defined word header
+    uint here_;			// point to next free position at bottom of memory
+    uint names_;			// point to last name created at top of memory
 
-    void check_free_space(int size = 0) const;
-    int create_cont(int name_addr, int flags, int code);
+    void check_free_space(uint size = 0) const;
+    int create_cont(int name_addr, int flags, uint code);
 };
 
 
-void f_find(int addr);	// search dictionary, word max size 255
+void f_find(uint addr);	// search dictionary, word max size 255
 
 int f_tick();
 void f_bracket_tick();
@@ -127,17 +108,17 @@ void f_constant();
 void f_2constant();
 void f_does();
 void f_xdoes_define();
-void f_xdoes_run(int body);
+void f_xdoes_run(uint body);
 
 void f_marker();
-void f_xmarker(int body);
+void f_xmarker(uint body);
 
 void f_words();
 
 void f_defer();
-void f_xdefer(int body);
+void f_xdefer(uint body);
 void f_defer_fetch();
-void f_defer_fetch(int xt);
+void f_defer_fetch(uint xt);
 void f_defer_store();
 void f_action_of();
 void f_is();

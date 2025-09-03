@@ -11,7 +11,42 @@
 #include <fstream>
 #include <string>
 #include <vector>
-using namespace std;
+#include <cassert>
+
+class SyncStream {
+public:
+    enum class Operation { NONE, READ, WRITE };
+    enum class EolType { LF, CRLF, CR };
+
+    explicit SyncStream(const std::string& filename, std::ios::openmode mode);
+    bool is_open() const;
+    bool good() const;
+    bool bad() const;
+    const std::string& filename() const;
+    uint read_bytes(char* buffer, uint size);
+    char read_char();
+    char peek_char();
+    uint read_line(char* buffer, uint size, bool& found_eof);
+    void write_bytes(const char* buffer, uint size);
+    void write_char(char c);
+    void write_line(const char* buffer, uint size, EolType eol = EolType::LF);
+    void seek(udint pos, std::ios_base::seekdir dir = std::ios_base::beg);
+    udint tell();
+    void flush();
+    void close();
+    void resize(udint size);
+
+private:
+    std::string filename_;
+    std::fstream file_stream_;
+    Operation last_op_;
+    bool is_rw_mode_;
+    std::ios::openmode mode_;
+
+    void sync_read_pos();
+    void sync_write_pos();
+    void flush_if_needed(Operation next_op);
+};
 
 class Files {
 public:
@@ -19,42 +54,26 @@ public:
     virtual ~Files();
 
     // returns file id, 0 on failure
-    int open(const string& filename, ios::openmode mode);
-    bool close(int file_id, Error& error_code);
-    int read(int file_id, char* buffer, int size, Error& error_code);
-    void write(int file_id, char* buffer, int size, Error& error_code);
-    int read_line(int file_id, char* buffer, int size, bool& found_eof,
-                  Error& error_code);
-    void write_line(int file_id, char* buffer, int size, Error& error_code);
-    bool seek(int file_id, udint pos, Error& error_code);
-    udint tell(int file_id, Error& error_code);
-    udint size(int file_id, Error& error_code);
-    void resize(int file_id, udint size, Error& error_code);
-    void flush(int file_id, Error& error_code);
-    string filename(int file_id);
+    uint open(const string& filename, ios::openmode mode);
+    bool close(uint file_id, Error& error_code);
+    uint read_bytes(uint file_id, char* buffer, uint size, Error& error_code);
+    void write_bytes(uint file_id, const char* buffer, uint size,
+                     Error& error_code);
+    uint read_line(uint file_id, char* buffer, uint size,
+                   bool& found_eof, Error& error_code);
+    void write_line(uint file_id, char* buffer, uint size, Error& error_code);
+    bool seek(uint file_id, udint pos, Error& error_code);
+    udint tell(uint file_id, Error& error_code);
+    udint size(uint file_id, Error& error_code);
+    void resize(uint file_id, udint size, Error& error_code);
+    void flush(uint file_id, Error& error_code);
+    string filename(uint file_id);
 
 private:
-    struct File {
-        fstream* fs{ nullptr };
-        string filename;
-        ios::openmode mode;
-        std::streampos last_seek;
-        enum { OP_NONE, OP_READ, OP_WRITE } last_op{ OP_NONE };
+    vector<SyncStream*> files_;
 
-        bool open_for_reading() const {
-            return (mode & ios::in) != 0;
-        }
-        bool open_for_writing() const {
-            return (mode & ios::out) != 0;
-        }
-    };
-    vector<File> files_;
-
-    File& get_file(int file_id);
-    File& get_file_for_reading(int file_id);
-    File& get_file_for_writing(int file_id);
+    SyncStream* get_file(uint file_id);
     int next_file_id();
-    bool read_line(fstream* fs, char* buffer, int size, int& num_read);
 };
 
 void f_r_o();
@@ -78,20 +97,18 @@ void f_delete_file();
 void f_rename_file();
 
 void f_include_file();
-void f_include_file(int file_id);
+void f_include_file(uint file_id);
 
 void f_include();
 
 void f_included();
 void f_included(const string& filename);
-void f_included(const char* filename, int size);
-void f_included(const char* filename, size_t size);
+void f_included(const char* filename, uint size);
 
 void f_require();
 void f_required();
 void f_required(const string& filename);
-void f_required(const char* filename, int size);
-void f_required(const char* filename, size_t size);
+void f_required(const char* filename, uint size);
 
 enum ForthFileStatus {
     FS_EXISTS = 0x00000001,
@@ -106,5 +123,4 @@ enum ForthFileStatus {
 
 void f_file_status();
 void f_file_status(const string& filename);
-void f_file_status(const char* filename, int size);
-void f_file_status(const char* filename, size_t size);
+void f_file_status(const char* filename, uint size);

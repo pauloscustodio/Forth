@@ -45,15 +45,11 @@ void Input::open_terminal() {
     set_tib("", 0);
 }
 
-void Input::set_text(const char* text, int size) {
+void Input::set_text(const char* text, uint size) {
     source_id_ = -1; // string
     vm.user->NR_IN = size;
     vm.user->TO_IN = 0;
     buffer_ = text;
-}
-
-void Input::set_text(const char* text, size_t size) {
-    set_text(text, static_cast<int>(size));
 }
 
 void Input::set_block(Block* block) {
@@ -64,7 +60,7 @@ void Input::set_block(Block* block) {
     source_id_ = 0;
 }
 
-void Input::set_tib(const char* text, int size) {
+void Input::set_tib(const char* text, uint size) {
     if (size > BUFFER_SZ) {
         error(Error::InputBufferOverflow);
     }
@@ -77,12 +73,8 @@ void Input::set_tib(const char* text, int size) {
     }
 }
 
-void Input::set_tib(const char* text, size_t size) {
-    set_tib(text, static_cast<int>(size));
-}
-
 void Input::set_tib(const string& text) {
-    set_tib(text.c_str(), text.size());
+    set_tib(text.c_str(), static_cast<uint>(text.size()));
 }
 
 bool Input::refill() {
@@ -125,8 +117,8 @@ bool Input::refill() {
     else {                              // input from file
         Error error_code = Error::None;
         bool found_eof = false;
-        int num_read = vm.files->read_line(source_id_, tib_, BUFFER_SZ, found_eof,
-                                           error_code);
+        uint num_read = vm.files->read_line(source_id_, tib_, BUFFER_SZ,
+                                            found_eof, error_code);
         ok = num_read > 0 || !found_eof;
 
         vm.user->NR_IN = num_read;
@@ -220,8 +212,8 @@ bool f_refill() {
 }
 
 void f_accept() {
-    int max_size = pop();
-    int addr = pop();
+    uint max_size = pop();
+    uint addr = pop();
     char* buffer = mem_char_ptr(addr, max_size);
 
     string line;
@@ -230,7 +222,7 @@ void f_accept() {
             line.pop_back();    // remove newline
         }
 
-        int size = static_cast<int>(line.size());
+        uint size = static_cast<uint>(line.size());
         if (size > max_size) {
             size = max_size;
         }

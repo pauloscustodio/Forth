@@ -22,7 +22,7 @@ int main(int argc, char* argv[]) {
     // parse env variable
     const char* envp = getenv(FORTH_ENV);
     if (envp != nullptr) {
-        vm.input->set_text(envp, strlen(envp));
+        vm.input->set_text(envp, static_cast<uint>(strlen(envp)));
         f_execute(xtINTERPRET);
     }
 
@@ -42,7 +42,7 @@ int main(int argc, char* argv[]) {
             else {
                 g_argc--;
                 g_argv++;
-                vm.input->set_text(g_argv[0], strlen(g_argv[0]));
+                vm.input->set_text(g_argv[0], static_cast<uint>(strlen(g_argv[0])));
                 f_execute(xtINTERPRET);
                 did_forth = true;
             }

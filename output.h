@@ -20,8 +20,7 @@ public:
     void add_char(char c);
     void add_sign(int sign);
     void add_string(const string& str);
-    void add_string(const char* str, size_t size);
-    void add_string(const char* str, int size);
+    void add_string(const char* str, uint size);
     void end() const;
     void end_print() const;
 
@@ -34,14 +33,14 @@ string char_to_string(char c);
 void print_char(char c);
 void print_string(const string& str);
 
-string spaces_to_string(int size);
-void print_spaces(int size);
+string spaces_to_string(int count);
+void print_spaces(int count);
 
-string string_to_string(int addr, int size);
-string string_to_string(const char* str, int size);
+string string_to_string(uint addr, uint size);
+string string_to_string(const char* str, uint size);
 
-void print_string(int addr, int size);
-void print_string(const char* str, int size);
+void print_string(uint addr, uint size);
+void print_string(const char* str, uint size);
 
 string number_to_string(int value);
 void print_number(int value);

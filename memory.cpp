@@ -17,22 +17,23 @@ Mem::Mem() {
     top_ = static_cast<int>(sizeof(data_));
 }
 
-int Mem::addr(const char* ptr) const {
-    int addr = check_addr(ptr - data_);
+uint Mem::addr(const char* ptr) const {
+    uint addr = check_addr(static_cast<uint>(ptr - data_));
     return addr;
 }
 
-int Mem::addr(const int* ptr) const {
-    int addr = check_addr(reinterpret_cast<const char*>(ptr) - data_);
+uint Mem::addr(const int* ptr) const {
+    uint addr = check_addr(static_cast<uint>(reinterpret_cast<const char*>
+                           (ptr) - data_));
     return addr;
 }
 
-char* Mem::char_ptr(int addr, int size) {
+char* Mem::char_ptr(uint addr, uint size) {
     addr = check_addr(addr, size);
     return data_ + addr;
 }
 
-int* Mem::int_ptr(int addr, int size) {
+int* Mem::int_ptr(uint addr, uint size) {
     if ((addr % CELL_SZ) != 0) {
         error(Error::AddressAlignmentException);
         return 0;
@@ -41,46 +42,46 @@ int* Mem::int_ptr(int addr, int size) {
     return reinterpret_cast<int*>(data_ + addr);
 }
 
-int Mem::fetch(int addr) {
+int Mem::fetch(uint addr) {
     return *int_ptr(addr, CELL_SZ);
 }
 
-void Mem::store(int addr, int value) {
+void Mem::store(uint addr, int value) {
     *int_ptr(addr, CELL_SZ) = value;
 }
 
-dint Mem::dfetch(int addr) {
+dint Mem::dfetch(uint addr) {
     int hi = fetch(addr);
     int lo = fetch(addr + CELL_SZ);
     return mk_dcell(hi, lo);
 }
 
-void Mem::dstore(int addr, dint value) {
+void Mem::dstore(uint addr, dint value) {
     store(addr, dcell_hi(value));
     store(addr + CELL_SZ, dcell_lo(value));
 }
 
-int Mem::cfetch(int addr) {
+int Mem::cfetch(uint addr) {
     return static_cast<uchar>(data_[check_addr(addr, CHAR_SZ)]);
 }
 
-void Mem::cstore(int addr, int value) {
+void Mem::cstore(uint addr, int value) {
     data_[check_addr(addr, CHAR_SZ)] = value;
 }
 
-void Mem::fill(int addr, int size, char c) {
+void Mem::fill(uint addr, uint size, char c) {
     memset(char_ptr(addr), c, size);
 }
 
-void Mem::erase(int addr, int size) {
+void Mem::erase(uint addr, uint size) {
     fill(addr, size, 0);
 }
 
-void Mem::move(int src, int dst, int size) {
+void Mem::move(int src, int dst, uint size) {
     memmove(char_ptr(dst), char_ptr(src), size);
 }
 
-char* Mem::alloc_bottom(int size) {
+char* Mem::alloc_bottom(uint size) {
     if (bottom_ + size >= top_) {
         error(Error::DictionaryOverflow);
     }
@@ -89,7 +90,7 @@ char* Mem::alloc_bottom(int size) {
     return ret;
 }
 
-char* Mem::alloc_top(int size) {
+char* Mem::alloc_top(uint size) {
     if (bottom_ + size >= top_) {
         error(Error::DictionaryOverflow);
     }
@@ -97,13 +98,8 @@ char* Mem::alloc_top(int size) {
     return char_ptr(top_);
 }
 
-
-int Mem::check_addr(ptrdiff_t addr, int size) const {
-    return check_addr(static_cast<int>(addr), size);
-}
-
-int Mem::check_addr(int addr, int size) const {
-    if (addr < 0 || addr + size > static_cast<int>(sizeof(data_))) {
+int Mem::check_addr(uint addr, uint size) const {
+    if (addr + size > static_cast<int>(sizeof(data_))) {
         error(Error::InvalidMemoryAddress);
         return 0;
     }
@@ -115,13 +111,13 @@ int Mem::check_addr(int addr, int size) const {
 void f_fill() {
     int c = pop();
     int n = pop();
-    int addr = pop();
+    uint addr = pop();
     memset(mem_char_ptr(addr, n), c, n);
 }
 
 void f_erase() {
     int n = pop();
-    int addr = pop();
+    uint addr = pop();
     memset(mem_char_ptr(addr, n), 0, n);
 }
 

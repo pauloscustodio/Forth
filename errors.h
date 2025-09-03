@@ -6,6 +6,7 @@
 
 #pragma once
 
+#include "forth.h"
 #include <string>
 using namespace std;
 
@@ -17,7 +18,7 @@ enum class Error {
 void error(Error err, const string& arg = "");
 
 void f_catch();
-void f_catch(int xt);
+void f_catch(uint xt);
 void f_throw();
 void f_throw(Error err);
 void f_throw(int error_code);

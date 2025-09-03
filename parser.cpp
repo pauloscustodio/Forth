@@ -77,15 +77,15 @@ static int skip_to_delimiter(char delimiter, bool& found) {
     return end;	// end of word, char before delimiter
 }
 
-const char* parse_word(int& size, char delimiter) {
+const char* parse_word(uint& size, char delimiter) {
     if (delimiter == BL) {
         skip_blanks();    // skip blanks before word
     }
 
     const char* buffer = vm.input->buffer();
-    int start = vm.user->TO_IN;
+    uint start = vm.user->TO_IN;
     bool found;
-    int end = skip_to_delimiter(delimiter, found);
+    uint end = skip_to_delimiter(delimiter, found);
 
     size = end - start;
     const char* word = &buffer[start];
@@ -93,7 +93,7 @@ const char* parse_word(int& size, char delimiter) {
 }
 
 CString* parse_cword(char delimiter) {
-    int size = 0;
+    uint size = 0;
     const char* word = parse_word(size, delimiter);
     CString* cword = vm.wordbuf->append_cstring(word, size);
     return cword;
@@ -181,11 +181,8 @@ string parse_backslash_string() {
 }
 
 bool parse_number(const string& text, bool& is_double, dint& value) {
-    return parse_number(text.c_str(), text.size(), is_double, value);
-}
-
-bool parse_number(const char* text, size_t size, bool& is_double, dint& value) {
-    return parse_number(text, static_cast<int>(size), is_double, value);
+    return parse_number(text.c_str(), static_cast<uint>(text.size()), is_double,
+                        value);
 }
 
 // parse number with optional sign (+-)
@@ -193,7 +190,7 @@ bool parse_number(const char* text, size_t size, bool& is_double, dint& value) {
 // skip punctuation ( , . + - / : )
 // if punctuation found, set DPL to number of digits after last punctuation, return double cell
 // return true if ok, false if error
-bool parse_number(const char* text, int size, bool& is_double, dint& value) {
+bool parse_number(const char* text, uint size, bool& is_double, dint& value) {
     // init output vars
     int sign = 1;
     int base = vm.user->BASE;
@@ -308,21 +305,21 @@ int f_word(char delimiter) {
 }
 
 void f_parse(char delimiter) {
-    int size;
+    uint size;
     const char* word = parse_word(size, delimiter);
     push(mem_addr(word));
     push(size);
 }
 
 void f_parse_name() {
-    int size;
+    uint size;
     const char* word = parse_word(size, BL);
     push(mem_addr(word));
     push(size);
 }
 
 int f_char(char delimiter) {
-    int size = 0;
+    uint size = 0;
     const char* str = parse_word(size, delimiter);
     if (size == 0) {
         return 0;
@@ -339,8 +336,8 @@ void f_bracket_char(char delimiter) {
 }
 
 static int _number(bool do_error) {
-    int size = pop();
-    int addr = pop();
+    uint size = pop();
+    uint addr = pop();
     dint value;
     bool is_double;
     if (parse_number(mem_char_ptr(addr, size), size, is_double, value)) {
@@ -372,8 +369,8 @@ void f_number() {
 }
 
 void f_to_number() {
-    int size = pop();
-    int addr = pop();
+    uint size = pop();
+    uint addr = pop();
     udint n = (udint)dpop();
     int digit;
     while (size > 0 && (digit = char_digit(cfetch(addr))) >= 0
@@ -388,7 +385,7 @@ void f_to_number() {
 }
 
 void f_convert() {
-    int addr = pop() + 1;
+    uint addr = pop() + 1;
     udint n = (udint)dpop();
     int digit;
     while ((digit = char_digit(cfetch(addr))) >= 0 && digit < vm.user->BASE) {

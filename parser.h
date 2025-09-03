@@ -14,13 +14,12 @@ using namespace std;
 bool is_space(char c);
 bool is_print(char c);
 
-const char* parse_word(int& size, char delimiter = BL);
+const char* parse_word(uint& size, char delimiter = BL);
 CString* parse_cword(char delimiter = BL);
 string parse_backslash_string();
 
 bool parse_number(const string& text, bool& is_double, dint& value);
-bool parse_number(const char* text, size_t size, bool& is_double, dint& value);
-bool parse_number(const char* text, int size, bool& is_double, dint& value);
+bool parse_number(const char* text, uint size, bool& is_double, dint& value);
 
 int f_word(char delimiter);
 void f_parse(char delimiter);

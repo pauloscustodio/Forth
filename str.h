@@ -12,7 +12,7 @@ using namespace std;
 
 class CString {
 public:
-    int size() const {
+    uint size() const {
         return size_;
     }
     const char* str() const {
@@ -23,8 +23,7 @@ public:
     static int alloc_size(int num_chars);
 
     // user must allocate alloc_size() bytes
-    void set_cstring(const char* str, int size);
-    void set_cstring(const char* str, size_t size);
+    void set_cstring(const char* str, uint size);
     void set_cstring(const string& str);
 
 private:
@@ -35,7 +34,7 @@ private:
 
 class LongString {
 public:
-    int size() const {
+    uint size() const {
         return size_;
     }
     const char* str() const {
@@ -46,12 +45,11 @@ public:
     static int alloc_size(int num_chars);
 
     // user must allocate alloc_size() bytes
-    void set_string(const char* str, int size);
-    void set_string(const char* str, size_t size);
+    void set_string(const char* str, uint size);
     void set_string(const string& str);
 
 private:
-    int size_;      // size of string
+    uint size_;      // size of string
     char str_[1];   // flexible array member
 };
 
@@ -61,12 +59,10 @@ public:
     void init();
 
     CString* append_cstring(const string& str);
-    CString* append_cstring(const char* str, size_t size);
-    CString* append_cstring(const char* str, int size);
+    CString* append_cstring(const char* str, uint size);
 
     LongString* append_long_string(const string& str);
-    LongString* append_long_string(const char* str, size_t size);
-    LongString* append_long_string(const char* str, int size);
+    LongString* append_long_string(const char* str, uint size);
 
 private:
     char data_[WORDBUF_SZ];
@@ -75,10 +71,9 @@ private:
 
 
 bool case_insensitive_equal(const string& a, const string& b);
-bool case_insensitive_equal(const char* a_str, int a_size, const char* b_str,
-                            int b_size);
-bool case_insensitive_equal(const char* a_str, size_t a_size, const char* b_str,
-                            size_t b_size);
+bool case_insensitive_equal(
+    const char* a_str, uint a_size,
+    const char* b_str, uint b_size);
 
 void f_count();
 void f_dot_quote();

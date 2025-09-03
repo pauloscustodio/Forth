@@ -6,6 +6,7 @@
 
 #pragma once
 
+#include "forth.h"
 #include <string>
 using namespace std;
 
@@ -15,5 +16,4 @@ extern bool g_interactive;
 
 void f_environment_q();
 void f_environment_q(const string& query);
-void f_environment_q(const char* query, size_t size);
-void f_environment_q(const char* query, int size);
+void f_environment_q(const char* query, uint size);

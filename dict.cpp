@@ -18,20 +18,20 @@ CString* Header::name() const {
     return name;
 }
 
-int Header::xt() const {
+uint Header::xt() const {
     return mem_addr(&this->code);
 }
 
-int Header::body() const {
+uint Header::body() const {
     return xt() + CELL_SZ;
 }
 
-Header* Header::header(int xt) {
-    int addr = xt - offsetof(Header, code);
+Header* Header::header(uint xt) {
+    uint addr = xt - offsetof(Header, code);
     return reinterpret_cast<Header*>(mem_char_ptr(addr));
 }
 
-int Header::get_size() const {
+uint Header::get_size() const {
     if (size == 0) {
         return vm.dict->here() - body();
     }
@@ -40,7 +40,7 @@ int Header::get_size() const {
     }
 }
 
-void Dict::init(int lo_mem, int hi_mem) {
+void Dict::init(uint lo_mem, uint hi_mem) {
     lo_mem_ = lo_mem;
     hi_mem_ = hi_mem;
     clear();
@@ -54,7 +54,31 @@ void Dict::clear() {
     latest_ = 0;
 }
 
-void Dict::allot(int size) {
+uint Dict::latest() const {
+    return latest_;
+}
+
+uint Dict::here() const {
+    return here_;
+}
+
+uint Dict::names() const {
+    return names_;
+}
+
+void Dict::set_latest(uint latest) {
+    latest_ = latest;
+}
+
+void Dict::set_here(uint here) {
+    here_ = here;
+}
+
+void Dict::set_names(uint names) {
+    names_ = names;
+}
+
+void Dict::allot(uint size) {
     check_free_space(size);
     here_ += size;
 }
@@ -63,7 +87,7 @@ int Dict::unused() const {
     return names_ - here_;
 }
 
-int Dict::parse_create(int code, int flags) {
+int Dict::parse_create(uint code, int flags) {
     const CString* name = parse_cword(BL);
     if (name->size() == 0) {
         error(Error::AttemptToUseZeroLengthStringAsName);
@@ -71,21 +95,17 @@ int Dict::parse_create(int code, int flags) {
     return create(name, flags, code);
 }
 
-int Dict::create(const string& name, int flags, int code) {
-    return create(name.c_str(), name.size(), flags, code);
+int Dict::create(const string& name, int flags, uint code) {
+    return create(name.c_str(), static_cast<uint>(name.size()), flags, code);
 }
 
-int Dict::create(const char* name, size_t size, int flags, int code) {
-    return create(name, static_cast<int>(size), flags, code);
-}
-
-int Dict::create(const char* name, int size, int flags, int code) {
+int Dict::create(const char* name, uint size, int flags, uint code) {
     align();
     int name_addr = alloc_cstring(name, size);
     return create_cont(name_addr, flags, code);
 }
 
-int Dict::create(const CString* name, int flags, int code) {
+int Dict::create(const CString* name, int flags, uint code) {
     if (name->size() > MAX_NAME_SZ) {
         error(Error::DefinitionNameTooLong, name->to_string());
     }
@@ -95,7 +115,7 @@ int Dict::create(const CString* name, int flags, int code) {
     return create_cont(name_addr, flags, code);
 }
 
-int Dict::create_cont(int name_addr, int flags, int code) {
+int Dict::create_cont(int name_addr, int flags, uint code) {
     // store header
     check_free_space(sizeof(Header));
 
@@ -103,7 +123,7 @@ int Dict::create_cont(int name_addr, int flags, int code) {
     if (latest_) {
         Header* latest_header = reinterpret_cast<Header*>(
                                     mem_char_ptr(latest_));
-        int latest_size = here_ - latest_header->body();
+        uint latest_size = here_ - latest_header->body();
         latest_header->size = latest_size; // fill size of previous header
     }
 
@@ -128,14 +148,10 @@ int Dict::create_cont(int name_addr, int flags, int code) {
 }
 
 int Dict::alloc_cstring(const string& str) {
-    return alloc_cstring(str.c_str(), str.size());
+    return alloc_cstring(str.c_str(), static_cast<uint>(str.size()));
 }
 
-int Dict::alloc_cstring(const char* str, size_t size) {
-    return alloc_cstring(str, static_cast<int>(size));
-}
-
-int Dict::alloc_cstring(const char* str, int size) {
+int Dict::alloc_cstring(const char* str, uint size) {
     CString* str_str = vm.wordbuf->append_cstring(str, size);
     return alloc_cstring(str_str);
 }
@@ -152,14 +168,10 @@ int Dict::alloc_cstring(const CString* str) {
 }
 
 int Dict::alloc_string(const string& str) {
-    return alloc_string(str.c_str(), str.size());
+    return alloc_string(str.c_str(), static_cast<uint>(str.size()));
 }
 
-int Dict::alloc_string(const char* str, size_t size) {
-    return alloc_string(str, static_cast<int>(size));
-}
-
-int Dict::alloc_string(const char* str, int size) {
+int Dict::alloc_string(const char* str, uint size) {
     int alloc_size = LongString::alloc_size(size);
 
     check_free_space(alloc_size);
@@ -217,14 +229,10 @@ Header* Dict::parse_find_existing_word() {
 }
 
 Header* Dict::find_word(const string& name) const {
-    return find_word(name.c_str(), name.size());
+    return find_word(name.c_str(), static_cast<uint>(name.size()));
 }
 
-Header* Dict::find_word(const char* name, size_t size) const {
-    return find_word(name, static_cast<int>(size));
-}
-
-Header* Dict::find_word(const char* name, int size) const {
+Header* Dict::find_word(const char* name, uint size) const {
     int ptr = vm.dict->latest();
     while (ptr != 0) {
         Header* header = reinterpret_cast<Header*>(mem_char_ptr(ptr));
@@ -266,13 +274,13 @@ vector<string> Dict::get_words() const {
     return words;
 }
 
-void Dict::check_free_space(int size) const {
+void Dict::check_free_space(uint size) const {
     if (here_ + size >= names_) {
         error(Error::DictionaryOverflow);
     }
 }
 
-void f_find(int addr) {
+void f_find(uint addr) {
     CString* word = reinterpret_cast<CString*>(mem_char_ptr(addr));
     Header* header = vm.dict->find_word(word->str(), word->size());
     if (header == nullptr) {
@@ -280,7 +288,7 @@ void f_find(int addr) {
         push(0);
     }
     else {
-        int xt = header->xt();
+        uint xt = header->xt();
         if (header->flags.immediate) {
             push(xt);
             push(1);
@@ -299,7 +307,7 @@ int f_tick() {
 }
 
 void f_bracket_tick() {
-    int xt = f_tick();
+    uint xt = f_tick();
     comma(xtXLITERAL);
     comma(xt);
 }
@@ -320,7 +328,7 @@ void f_postpone() {
 }
 
 void f_bracket_compile() {
-    int xt = f_tick();
+    uint xt = f_tick();
     comma(xt);
 }
 
@@ -344,7 +352,7 @@ void f_create() {
 
 void f_buffer_colon() {
     vm.dict->parse_create(idXDOVAR, 0);
-    int size = pop();
+    uint size = pop();
     vm.dict->allot(size);
 }
 
@@ -371,7 +379,7 @@ void f_two_value() {
 void f_to() {
     Header* header = vm.dict->parse_find_existing_word();
     assert(header != nullptr);
-    int code = fetch(header->xt());
+    uint code = fetch(header->xt());
     if (code == idXDOCONST) {			// single cell value
         if (vm.user->STATE == STATE_COMPILE) {
             comma(xtXLITERAL);
@@ -428,7 +436,7 @@ void f_xdoes_define() {
     def_word->code = idXDOES_RUN;			// new execution id
 }
 
-void f_xdoes_run(int body) {
+void f_xdoes_run(uint body) {
     push(body);							// store parameter field on the stack
     r_push(vm.ip);						// save current ip
     Header* header = Header::header(body - CELL_SZ);
@@ -447,7 +455,7 @@ void f_marker() {
     comma(save_names);
 }
 
-void f_xmarker(int body) {
+void f_xmarker(uint body) {
     int save_latest = fetch(body);
     int save_here = fetch(body + CELL_SZ);
     int save_names = fetch(body + 2 * CELL_SZ);
@@ -482,25 +490,25 @@ void f_defer() {
     comma(xtABORT);
 }
 
-void f_xdefer(int body) {
-    int xt = fetch(body);
+void f_xdefer(uint body) {
+    uint xt = fetch(body);
     f_execute(xt);
 }
 
 void f_defer_fetch() {
-    int xt = pop();
+    uint xt = pop();
     f_defer_fetch(xt);
 }
 
-void f_defer_fetch(int xt) {
-    int body = xt + CELL_SZ;
+void f_defer_fetch(uint xt) {
+    uint body = xt + CELL_SZ;
     push(fetch(body));
 }
 
 void f_defer_store() {
-    int xt_self = pop();
-    int xt_action = pop();
-    int body = xt_self + CELL_SZ;
+    uint xt_self = pop();
+    uint xt_action = pop();
+    uint body = xt_self + CELL_SZ;
     store(body, xt_action);
 }
 

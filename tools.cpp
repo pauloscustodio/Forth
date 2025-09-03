@@ -14,19 +14,19 @@
 using namespace std;
 
 void f_dump() {
-    int size = pop();
-    int addr = pop();
+    uint size = pop();
+    uint addr = pop();
     const char* mem = mem_char_ptr(addr, size);
     f_dump(mem, size);
 }
 
-void f_dump(const char* mem, int size) {
-    int addr = mem_addr(mem);
-    int addr_lo = addr & ~0xF;
-    int addr_hi = (addr + size + 15) & ~0xF;
-    for (int p = addr_lo; p < addr_hi; p += 16) {
+void f_dump(const char* mem, uint size) {
+    uint addr = mem_addr(mem);
+    uint addr_lo = addr & ~0xF;
+    uint addr_hi = (addr + size + 15) & ~0xF;
+    for (uint p = addr_lo; p < addr_hi; p += 16) {
         cout << endl << hex << setfill('0') << setw(8) << p << BL << BL;
-        for (int q = p; q < p + 16; ++q) {
+        for (uint q = p; q < p + 16; ++q) {
             if (q < addr || q >= addr + size) {
                 cout << BL << BL << BL;
             }
@@ -35,7 +35,7 @@ void f_dump(const char* mem, int size) {
             }
         }
         cout << BL << BL;
-        for (int q = p; q < p + 16; ++q) {
+        for (uint q = p; q < p + 16; ++q) {
             if (q < addr || q >= addr + size) {
                 cout << BL;
             }
@@ -49,22 +49,22 @@ void f_dump(const char* mem, int size) {
 }
 
 struct Line {
-    int label_id{ 0 };
-    int addr{ 0 };
-    int target_addr{ 0 };
+    uint label_id{ 0 };
+    uint addr{ 0 };
+    uint target_addr{ 0 };
     string text;
 };
 
-static vector<Line> disassemble(int body, int size) {
+static vector<Line> disassemble(uint body, uint size) {
     vector<Line> lines;
 
-    int ptr = body;
+    uint ptr = body;
     int indent = 0;
     while (ptr < body + size) {
         Line line;
         line.addr = ptr;
 
-        int xt = fetch(ptr);
+        uint xt = fetch(ptr);
         ptr += CELL_SZ;
         Header* header = Header::header(xt);
         if (xt == xtXLITERAL) {
@@ -189,7 +189,7 @@ static void mark_labels(vector<Line>& lines) {
     }
 }
 
-static void dump_colon_definition(int body, int size) {
+static void dump_colon_definition(uint body, uint size) {
     vector<Line> lines = disassemble(body, size);
     mark_labels(lines);
 
@@ -202,17 +202,17 @@ static void dump_colon_definition(int body, int size) {
     cout << ";" << endl;
 }
 
-void dump_body_definition(int body, int size) {
+void dump_body_definition(uint body, uint size) {
     f_dump(mem_char_ptr(body, size), size);
 }
 
 void f_see() {
     Header* header = vm.dict->parse_find_existing_word();
     assert(header != nullptr);
-    int xt = header->xt();
-    int size = header->get_size();
-    int body = xt + CELL_SZ;
-    int code = header->code;
+    uint xt = header->xt();
+    uint size = header->get_size();
+    uint body = xt + CELL_SZ;
+    uint code = header->code;
     string name = header->name()->to_string();
 
     switch (code) {
@@ -294,7 +294,7 @@ void f_see() {
     }
     case idXPLUS_FIELD:
         if (size == CELL_SZ) {
-            int offset = fetch(body);
+            uint offset = fetch(body);
             cout << endl << "FIELD " << name << BL
                  << "OFFSET " << offset << endl;
         }

@@ -70,7 +70,7 @@ void f_recurse() {
     comma(header->xt());
 }
 
-static void comma_fwd_jump(int xt_jump, int pos) {
+static void comma_fwd_jump(uint xt_jump, int pos) {
     if (pos != POS_IF_FWD &&
             pos != POS_ELSE_FWD &&
             pos != POS_WHILE_FWD &&
@@ -121,7 +121,7 @@ static void mark_target_back_jump(int pos) {
         error(Error::ControlStructureMismatch);
     }
 
-    int addr = vm.dict->here();
+    uint addr = vm.dict->here();
     cs_dpush(mk_dcell(pos, addr));
 
     if (vm.user->TRACE) {
@@ -129,7 +129,7 @@ static void mark_target_back_jump(int pos) {
     }
 }
 
-static void resolve_back_jump(int xt_jump) {
+static void resolve_back_jump(uint xt_jump) {
     if (cs_ddepth() < 1) {
         error(Error::ControlStructureMismatch);
     }
@@ -321,7 +321,7 @@ void f_xquery_do() {
     }
 }
 
-static void f_loop_plus_loop(int xt_jump) {
+static void f_loop_plus_loop(uint xt_jump) {
     if (!search_resolve_back_jump(xt_jump, POS_DO_BACK)) {
         error(Error::ControlStructureMismatch);
     }

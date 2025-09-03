@@ -23,7 +23,7 @@ int CString::alloc_size(int num_chars) {
     return aligned(1 + num_chars + 1); // count + chars + BL after string
 }
 
-void CString::set_cstring(const char* str, int size) {
+void CString::set_cstring(const char* str, uint size) {
     if (size > MAX_CSTRING_SZ) {
         error(Error::ParsedStringOverflow, string(str, str + size));
     }
@@ -33,12 +33,8 @@ void CString::set_cstring(const char* str, int size) {
     str_[size] = BL; // BL after the string
 }
 
-void CString::set_cstring(const char* str, size_t size) {
-    set_cstring(str, static_cast<int>(size));
-}
-
 void CString::set_cstring(const string& str) {
-    set_cstring(str.c_str(), str.size());
+    set_cstring(str.c_str(), static_cast<uint>(str.size()));
 }
 
 string LongString::to_string() const {
@@ -54,7 +50,7 @@ int LongString::alloc_size(int num_chars) {
                    1); // count + chars + BL after string
 }
 
-void LongString::set_string(const char* str, int size) {
+void LongString::set_string(const char* str, uint size) {
     if (size > BUFFER_SZ) {
         error(Error::InputBufferOverflow, string(str, str + size));
     }
@@ -64,12 +60,8 @@ void LongString::set_string(const char* str, int size) {
     str_[size] = BL; // BL after the string
 }
 
-void LongString::set_string(const char* str, size_t size) {
-    set_string(str, static_cast<int>(size));
-}
-
 void LongString::set_string(const string& str) {
-    set_string(str.c_str(), str.size());
+    set_string(str.c_str(), static_cast<uint>(str.size()));
 }
 
 void Wordbuf::init() {
@@ -78,14 +70,10 @@ void Wordbuf::init() {
 }
 
 CString* Wordbuf::append_cstring(const string& str) {
-    return append_cstring(str.c_str(), str.size());
+    return append_cstring(str.c_str(), static_cast<uint>(str.size()));
 }
 
-CString* Wordbuf::append_cstring(const char* str, size_t size) {
-    return append_cstring(str, static_cast<int>(size));
-}
-
-CString* Wordbuf::append_cstring(const char* str, int size) {
+CString* Wordbuf::append_cstring(const char* str, uint size) {
     if (size > MAX_CSTRING_SZ) {
         error(Error::ParsedStringOverflow, string(str, str + size));
     }
@@ -103,15 +91,10 @@ CString* Wordbuf::append_cstring(const char* str, int size) {
 }
 
 LongString* Wordbuf::append_long_string(const string& str) {
-    return append_long_string(str.c_str(), str.size());
+    return append_long_string(str.c_str(), static_cast<uint>(str.size()));
 }
 
-
-LongString* Wordbuf::append_long_string(const char* str, size_t size) {
-    return append_long_string(str, static_cast<int>(size));
-}
-
-LongString* Wordbuf::append_long_string(const char* str, int size) {
+LongString* Wordbuf::append_long_string(const char* str, uint size) {
     if (size > BUFFER_SZ) {
         error(Error::InputBufferOverflow, string(str, str + size));
     }
@@ -133,15 +116,16 @@ static char to_lower(char c) {
 }
 
 bool case_insensitive_equal(const string& a, const string& b) {
-    return case_insensitive_equal(a.c_str(), a.size(), b.c_str(), b.size());
+    return case_insensitive_equal(a.c_str(), static_cast<uint>(a.size()),
+                                  b.c_str(), static_cast<uint>(b.size()));
 }
 
-bool case_insensitive_equal(const char* a_str, int a_size, const char* b_str,
-                            int b_size) {
+bool case_insensitive_equal(const char* a_str, uint a_size, const char* b_str,
+                            uint b_size) {
     if (a_size != b_size) {
         return false;
     }
-    for (int i = 0; i < a_size; ++i) {
+    for (uint i = 0; i < a_size; ++i) {
         if (to_lower(a_str[i]) != to_lower(b_str[i])) {
             return false;
         }
@@ -149,21 +133,15 @@ bool case_insensitive_equal(const char* a_str, int a_size, const char* b_str,
     return true;
 }
 
-bool case_insensitive_equal(const char* a_str, size_t a_size, const char* b_str,
-                            size_t b_size) {
-    return case_insensitive_equal(a_str, static_cast<int>(a_size), b_str,
-                                  static_cast<int>(b_size));
-}
-
 void f_count() {
-    int addr = pop();
+    uint addr = pop();
     int len = cfetch(addr++);
     push(addr);
     push(len);
 }
 
 void f_dot_quote() {
-    int size;
+    uint size;
     const char* message = parse_word(size, '"');
     if (vm.user->STATE == STATE_COMPILE) {
         int str_addr = vm.dict->alloc_string(message, size);
@@ -184,7 +162,7 @@ void f_xdot_quote() {
 }
 
 void f_s_quote() {
-    int size;
+    uint size;
     const char* message = parse_word(size, '"');
     if (vm.user->STATE == STATE_COMPILE) {
         int str_addr = vm.dict->alloc_string(message, size);
@@ -201,7 +179,8 @@ void f_s_quote() {
 void f_s_backslash_quote() {
     string message = parse_backslash_string();
     if (vm.user->STATE == STATE_COMPILE) {
-        int str_addr = vm.dict->alloc_string(message.c_str(), message.size());
+        int str_addr = vm.dict->alloc_string(message.c_str(),
+                                             static_cast<uint>(message.size()));
         comma(xtXS_QUOTE);
         comma(str_addr);
     }
@@ -242,15 +221,15 @@ void f_xc_quote() {
 }
 
 void f_dot_paren() {
-    int size;
+    uint size;
     const char* message = parse_word(size, ')');
     print_string(message, size);
 }
 
 void f_slash_string() {
     int n = pop();
-    int size = pop();
-    int addr = pop();
+    uint size = pop();
+    uint addr = pop();
 
     push(addr + n);
     push(size - n);

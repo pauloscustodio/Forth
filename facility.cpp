@@ -27,14 +27,14 @@ void f_page() {
 
 void f_begin_structure() {
     vm.dict->parse_create(idXDOCONST, 0);
-    int addr = vm.dict->here();     // address to store size of structure
+    uint addr = vm.dict->here();     // address to store size of structure
     comma(0);                       // reserve space for size
 
     push(addr);                     // push address of size
     push(0);                        // initial offset is 0
 }
 
-static int field(int offset, int size, bool do_align) {
+static int field(uint offset, uint size, bool do_align) {
     if (do_align) {
         offset = aligned(offset);
     }
@@ -48,40 +48,40 @@ static int field(int offset, int size, bool do_align) {
 }
 
 void f_plus_field() {
-    int size = pop();
-    int offset = pop();
+    uint size = pop();
+    uint offset = pop();
     offset = field(offset, size, false);
     push(offset);                    // new offset
 }
 
-void f_xplus_field(int body) {
+void f_xplus_field(uint body) {
     int base_addr = pop();
-    int offset = fetch(body);
+    uint offset = fetch(body);
     int field_addr = base_addr + offset;
     push(field_addr);
 }
 
 void f_cfield_colon() {
-    int offset = pop();
+    uint offset = pop();
     offset = field(offset, CHAR_SZ, false);
     push(offset);                    // new offset
 }
 
 void f_field_colon() {
-    int offset = pop();
+    uint offset = pop();
     offset = field(offset, CELL_SZ, true);
     push(offset);                    // new offset
 }
 
 void f_two_field_colon() {
-    int offset = pop();
+    uint offset = pop();
     offset = field(offset, DCELL_SZ, true);
     push(offset);                    // new offset
 }
 
 void f_end_structure() {
-    int offset = pop();
-    int addr = pop();
+    uint offset = pop();
+    uint addr = pop();
     store(addr, offset); // store size of structure
 }
 

@@ -15,21 +15,17 @@
 using namespace std;
 
 void interpret_word(const string& word) {
-    interpret_word(word.c_str(), word.size());
+    interpret_word(word.c_str(), static_cast<uint>(word.size()));
 }
 
-void interpret_word(const char* word, size_t size) {
-    interpret_word(word, static_cast<int>(size));
-}
-
-void interpret_word(const char* word, int size) {
+void interpret_word(const char* word, uint size) {
     if (size > 0) {
         bool is_double = false;
         dint value = 0;
 
         Header* header = vm.dict->find_word(word, size);
         if (header) {	// word found
-            int xt = header->xt();
+            uint xt = header->xt();
             if (header->flags.immediate || vm.user->STATE == STATE_INTERPRET) {
                 f_execute(xt);
             }
@@ -81,7 +77,7 @@ void interpret_word(const char* word, int size) {
 
 void f_interpret() {
     while (true) {
-        int size;
+        uint size;
         const char* word = parse_word(size, BL);
         if (size == 0) {
             if (vm.input->restore_input_if_query()) {
@@ -101,20 +97,16 @@ void f_interpret() {
 }
 
 void f_evaluate() {
-    int size = pop();
-    int addr = pop();
+    uint size = pop();
+    uint addr = pop();
     f_evaluate(mem_char_ptr(addr, size), size);
 }
 
 void f_evaluate(const string& text) {
-    f_evaluate(text.c_str(), text.size());
+    f_evaluate(text.c_str(), static_cast<uint>(text.size()));
 }
 
-void f_evaluate(const char* text, size_t size) {
-    f_evaluate(text, static_cast<int>(size));
-}
-
-void f_evaluate(const char* text, int size) {
+void f_evaluate(const char* text, uint size) {
     // save input context
     vm.input->save_input();
 

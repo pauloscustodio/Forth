@@ -65,14 +65,10 @@ void NumberOutput::add_sign(int sign) {
 }
 
 void NumberOutput::add_string(const string& str) {
-    add_string(str.c_str(), str.size());
+    add_string(str.c_str(), static_cast<uint>(str.size()));
 }
 
-void NumberOutput::add_string(const char* str, size_t size) {
-    add_string(str, static_cast<int>(size));
-}
-
-void NumberOutput::add_string(const char* str, int size) {
+void NumberOutput::add_string(const char* str, uint size) {
     for (int i = size - 1; i >= 0; --i) {
         add_char(str[i]);
     }
@@ -87,7 +83,7 @@ void NumberOutput::end() const {
 void NumberOutput::end_print() const {
     dpop();     // drop number
     const char* str = buffer_ + ptr_;
-    int size = static_cast<int>(sizeof(buffer_)) - ptr_;
+    uint size = static_cast<uint>(sizeof(buffer_)) - ptr_;
     print_string(str, size);
 }
 
@@ -97,8 +93,8 @@ static string print_dint_uint(int sign) {
     vm.number_output->add_digits();
     vm.number_output->add_sign(sign);
     vm.number_output->end();
-    int size = pop();
-    int addr = pop();
+    uint size = pop();
+    uint addr = pop();
     char* str = mem_char_ptr(addr, size);
     return string(str, str + size);
 }
@@ -124,8 +120,8 @@ static string print_dint_uint_aligned(int width, int sign) {
     }
 
     vm.number_output->end();
-    int size = pop();
-    int addr = pop();
+    uint size = pop();
+    uint addr = pop();
     char* str = mem_char_ptr(addr, size);
     return string(str, str + size);
 }
@@ -146,36 +142,36 @@ void print_string(const string& str) {
     }
 }
 
-string spaces_to_string(int size) {
-    if (size < 1) {
+string spaces_to_string(int count) {
+    if (count < 1) {
         return "";
     }
     else {
-        return string(size, BL);
+        return string(count, BL);
     }
 }
 
-void print_spaces(int size) {
-    print_string(spaces_to_string(size));
+void print_spaces(int count) {
+    print_string(spaces_to_string(count));
 }
 
-string string_to_string(int addr, int size) {
+string string_to_string(uint addr, uint size) {
     return string_to_string(mem_char_ptr(addr, size), size);
 }
 
-string string_to_string(const char* str, int size) {
+string string_to_string(const char* str, uint size) {
     ostringstream oss;
-    for (int i = 0; i < size; ++i) {
+    for (uint i = 0; i < size; ++i) {
         oss << str[i];
     }
     return oss.str();
 }
 
-void print_string(int addr, int size) {
+void print_string(uint addr, uint size) {
     print_string(mem_char_ptr(addr, size), size);
 }
 
-void print_string(const char* str, int size) {
+void print_string(const char* str, uint size) {
     print_string(string_to_string(str, size));
 }
 

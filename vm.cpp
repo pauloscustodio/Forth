@@ -73,48 +73,52 @@ VM::~VM() {
 }
 
 // pointer - address conversion
-int mem_addr(const char* ptr) {
+uint mem_addr(const char* ptr) {
     return vm.mem.addr(ptr);
 }
 
-int mem_addr(const int* ptr) {
+uint mem_addr(const int* ptr) {
     return vm.mem.addr(ptr);
 }
 
-int mem_addr(const CString* ptr) {
+uint mem_addr(const uint* ptr) {
+    return vm.mem.addr(reinterpret_cast<const int*>(ptr));
+}
+
+uint mem_addr(const CString* ptr) {
     return vm.mem.addr(reinterpret_cast<const char*>(ptr));
 }
 
-char* mem_char_ptr(int addr, int size) {
+char* mem_char_ptr(uint addr, uint size) {
     return vm.mem.char_ptr(addr, size);
 }
 
-int* mem_int_ptr(int addr, int size) {
+int* mem_int_ptr(uint addr, uint size) {
     return vm.mem.int_ptr(addr, size);
 }
 
 // access memory
-int fetch(int addr) {
+int fetch(uint addr) {
     return vm.mem.fetch(addr);
 }
 
-void store(int addr, int value) {
+void store(uint addr, int value) {
     vm.mem.store(addr, value);
 }
 
-dint dfetch(int addr) {
+dint dfetch(uint addr) {
     return vm.mem.dfetch(addr);
 }
 
-void dstore(int addr, dint value) {
+void dstore(uint addr, dint value) {
     vm.mem.dstore(addr, value);
 }
 
-int cfetch(int addr) {
+int cfetch(uint addr) {
     return vm.mem.cfetch(addr);
 }
 
-void cstore(int addr, int value) {
+void cstore(uint addr, int value) {
     vm.mem.cstore(addr, value);
 }
 

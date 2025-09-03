@@ -11,15 +11,13 @@ using namespace std;
 
 // outer interpreter
 void interpret_word(const string& word);
-void interpret_word(const char* word, size_t size);
-void interpret_word(const char* word, int size);
+void interpret_word(const char* word, uint size);
 void f_interpret();
 
 // evaluate text
 void f_evaluate();
 void f_evaluate(const string& text);
-void f_evaluate(const char* text, size_t size);
-void f_evaluate(const char* text, int size);
+void f_evaluate(const char* text, uint size);
 
 // main loop
 void f_quit();

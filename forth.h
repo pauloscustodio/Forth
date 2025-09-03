@@ -8,7 +8,6 @@
 
 #include <cstdint>
 #include <string>
-using namespace std;
 
 // types
 typedef uint8_t uchar;
@@ -48,7 +47,7 @@ static const int STATE_INTERPRET = 0;
 static const int STATE_COMPILE = 1;
 
 // blocks
-static const string BLOCKS_FILE = "blocks.fb";
+static const std::string BLOCKS_FILE = "blocks.fb";
 static const int BLOCK_SZ = 1024;
 static const int BLOCK_ROWS = 16;
 static const int BLOCK_COLS = 64;
@@ -64,10 +63,10 @@ enum {
 };
 
 // declare xtWORD for all words - execution token from dictionary
-#define CONST(word, name, flags, value) extern int xt##name;
-#define VAR(word, name, flags, value)   extern int xt##name;
-#define CODE(word, name, flags, c_code) extern int xt##name;
-#define FORTH(word, name, flags, text)  extern int xt##name;
+#define CONST(word, name, flags, value) extern uint xt##name;
+#define VAR(word, name, flags, value)   extern uint xt##name;
+#define CODE(word, name, flags, c_code) extern uint xt##name;
+#define FORTH(word, name, flags, text)  extern uint xt##name;
 #include "words.def"
 
 // bool
@@ -91,4 +90,4 @@ struct User {
 void create_dictionary();
 
 // inner interpreter
-void f_execute(int xt);
+void f_execute(uint xt);

@@ -215,7 +215,7 @@ CODE("RESTORE-INPUT", RESTORE_INPUT, 0, push(f_bool(f_restore_input())))
 
 
 // output
-CODE("TYPE", TYPE, 0, int size = pop(); int addr = pop(); print_string(addr, size))
+CODE("TYPE", TYPE, 0, uint size = pop(); uint addr = pop(); print_string(addr, size))
 CODE("EMIT", EMIT, 0, print_char(pop()))
 CODE("CR", CR, 0, print_char(CR))
 CODE("SPACE", SPACE, 0, print_char(BL))
@@ -225,7 +225,7 @@ CODE("<#", LESS_HASH, 0, vm.number_output->start())
 CODE("#", HASH, 0, vm.number_output->add_digit())
 CODE("#S", HASH_S, 0, vm.number_output->add_digits())
 CODE("HOLD", HOLD, 0, vm.number_output->add_char(pop()))
-CODE("HOLDS", HOLDS, 0, int size = pop(); int addr = pop(); vm.number_output->add_string(mem_char_ptr(addr, size), size))
+CODE("HOLDS", HOLDS, 0, uint size = pop(); uint addr = pop(); vm.number_output->add_string(mem_char_ptr(addr, size), size))
 CODE("SIGN", SIGN, 0, vm.number_output->add_sign(pop()))
 CODE("#>", HASH_GREATER, 0, vm.number_output->end())
 

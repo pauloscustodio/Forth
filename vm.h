@@ -58,20 +58,21 @@ struct VM {
 extern VM vm;
 
 // pointer - address conversion
-int mem_addr(const char* ptr);
-int mem_addr(const int* ptr);
-int mem_addr(const CString* ptr);
+uint mem_addr(const char* ptr);
+uint mem_addr(const int* ptr);
+uint mem_addr(const uint* ptr);
+uint mem_addr(const CString* ptr);
 
-char* mem_char_ptr(int addr, int size = 0);
-int* mem_int_ptr(int addr, int size = 0);
+char* mem_char_ptr(uint addr, uint size = 0);
+int* mem_int_ptr(uint addr, uint size = 0);
 
 // access memory
-int fetch(int addr);
-void store(int addr, int value);
-dint dfetch(int addr);
-void dstore(int addr, dint value);
-int cfetch(int addr);
-void cstore(int addr, int value);
+int fetch(uint addr);
+void store(uint addr, int value);
+dint dfetch(uint addr);
+void dstore(uint addr, dint value);
+int cfetch(uint addr);
+void cstore(uint addr, int value);
 
 // allot dictionary space
 void ccomma(int value);

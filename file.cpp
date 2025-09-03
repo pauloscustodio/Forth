@@ -12,81 +12,229 @@
 #include <iostream>
 using namespace std;
 
+SyncStream::SyncStream(const std::string& filename, std::ios::openmode mode)
+    : filename_(filename),
+      file_stream_(filename, mode | std::ios::binary),
+      last_op_(Operation::NONE),
+      is_rw_mode_((mode & std::ios::in) && (mode & std::ios::out)),
+      mode_(mode) {
+}
+
+bool SyncStream::is_open() const {
+    return file_stream_.is_open();
+}
+
+bool SyncStream::good() const {
+    return file_stream_.good();
+}
+
+bool SyncStream::bad() const {
+    return file_stream_.bad();
+}
+
+const std::string& SyncStream::filename() const {
+    return filename_;
+}
+
+uint SyncStream::read_bytes(char* buffer, uint size) {
+    flush_if_needed(Operation::READ);
+    sync_read_pos();
+    file_stream_.read(buffer, size);
+    last_op_ = Operation::READ;
+    sync_write_pos();
+    return static_cast<uint>(file_stream_.gcount());
+}
+
+char SyncStream::read_char() {
+    flush_if_needed(Operation::READ);
+    sync_read_pos();
+    char c;
+    file_stream_.get(c);
+    last_op_ = Operation::READ;
+    sync_write_pos();
+    return c;
+}
+
+char SyncStream::peek_char() {
+    flush_if_needed(Operation::READ);
+    sync_read_pos();
+    char c = file_stream_.peek();
+    last_op_ = Operation::READ;
+    return c;
+}
+
+uint SyncStream::read_line(char* buffer, uint size, bool& found_eof) {
+    flush_if_needed(Operation::READ);
+    sync_read_pos();
+
+    char c;
+    found_eof = size == 0 ? false : true;
+    uint num_read = 0;
+    while (num_read < size && file_stream_.get(c)) {
+        found_eof = false;
+        if (c == '\n') {
+            break; // LF
+        }
+        else if (c == '\r') {
+            char next = file_stream_.peek();
+            if (next == '\n') {
+                file_stream_.get(); // consume '\n'
+            }
+            break; // CR or CRLF
+        }
+        else {
+            buffer[num_read++] = c;
+        }
+    }
+
+    last_op_ = Operation::READ;
+    sync_write_pos();
+    return num_read;
+}
+
+void SyncStream::write_bytes(const char* buffer, uint size) {
+    flush_if_needed(Operation::WRITE);
+    sync_write_pos();
+    file_stream_.write(buffer, size);
+    last_op_ = Operation::WRITE;
+    sync_read_pos();
+}
+
+void SyncStream::write_char(char c) {
+    flush_if_needed(Operation::WRITE);
+    sync_write_pos();
+    file_stream_.put(c);
+    last_op_ = Operation::WRITE;
+    sync_read_pos();
+}
+
+void SyncStream::write_line(const char* buffer, uint size, EolType eol) {
+    flush_if_needed(Operation::WRITE);
+    sync_write_pos();
+
+    file_stream_.write(buffer, size);
+
+    switch (eol) {
+    case EolType::LF:
+        file_stream_.put('\n');
+        break;
+    case EolType::CRLF:
+        file_stream_.put('\r');
+        file_stream_.put('\n');
+        break;
+    case EolType::CR:
+        file_stream_.put('\r');
+        break;
+    }
+
+    last_op_ = Operation::WRITE;
+    sync_read_pos();
+}
+
+void SyncStream::seek(udint pos, std::ios_base::seekdir dir) {
+    file_stream_.clear();
+    file_stream_.seekg(pos, dir);
+    file_stream_.seekp(pos, dir);
+}
+
+udint SyncStream::tell() {
+    if (!file_stream_.good()) {
+        file_stream_.clear();
+    }
+    std::streampos pos = file_stream_.tellg();
+    if (pos == -1) {
+        file_stream_.seekg(0, std::ios::end);
+        pos = file_stream_.tellg();
+    }
+    return static_cast<udint>(pos);
+}
+
+void SyncStream::flush() {
+    file_stream_.flush();
+}
+
+void SyncStream::close() {
+    file_stream_.close();
+}
+
+void SyncStream::resize(udint size) {
+    streampos current = tell();
+    close();
+
+    std::filesystem::resize_file(filename_, size);
+
+    // reopen with original mode except ios::trunc, add ios::in and ios::out
+    // to keep current contents of file
+    std::ios::openmode mode = (mode_ & ~std::ios::trunc) | std::ios::in |
+                              std::ios::out;
+    file_stream_.open(filename_, mode);
+    last_op_ = Operation::NONE;
+
+    seek(current);
+}
+
+void SyncStream::sync_read_pos() {
+    auto pos = file_stream_.tellp();
+    file_stream_.seekg(pos);
+}
+
+void SyncStream::sync_write_pos() {
+    auto pos = file_stream_.tellg();
+    file_stream_.seekp(pos);
+}
+
+void SyncStream::flush_if_needed(Operation next_op) {
+    if (is_rw_mode_ && last_op_ == Operation::WRITE && next_op == Operation::READ) {
+        file_stream_.flush();
+    }
+    if (is_rw_mode_ && next_op == Operation::READ) {
+        file_stream_.flush();
+    }
+}
+
+//-----------------------------------------------------------------------------
+
 Files::Files() {
-    files_.push_back(File()); // file id 0 is invalid
+    files_.push_back(nullptr); // file id 0 is invalid
 }
 
 Files::~Files() {
     for (auto& file : files_) {
-        delete file.fs;
+        delete file;
     }
 }
 
-int Files::open(const string& filename, ios::openmode mode) {
-    int file_id = next_file_id();
-    fstream* fs = new fstream(filename, mode);
+uint Files::open(const string& filename, ios::openmode mode) {
+    SyncStream* fs = new SyncStream(filename, mode);
     if (!fs->is_open()) {
         delete fs;
         return 0;
     }
     else {
-        File file;
-        file.fs = fs;
-        file.filename = filename;
-        file.mode = mode;
-        file.last_seek = 0;
-        file.last_op = File::OP_NONE;
-        files_[file_id] = file;
+        uint file_id = next_file_id();
+        files_[file_id] = fs;
         return file_id;
     }
 }
 
-Files::File& Files::get_file(int file_id) {
-    if (file_id > 0 && file_id < static_cast<int>(files_.size())) {
+SyncStream* Files::get_file(uint file_id) {
+    if (file_id < files_.size()) {
         return files_[file_id];
     }
     else {
-        return files_[0];
+        return nullptr;
     }
 }
 
-Files::File& Files::get_file_for_reading(int file_id) {
-    File& file = get_file(file_id);
-    if (file.fs != nullptr && file.fs->is_open() && file.open_for_reading()) {
-        if (file.last_op != File::OP_READ) { // switch to reading
-            file.fs->flush();
-            file.last_op = File::OP_READ;
-        }
-        return file;
-    }
-    else {
-        return files_[0];
-    }
-}
-
-Files::File& Files::get_file_for_writing(int file_id) {
-    File& file = get_file(file_id);
-    if (file.fs != nullptr && file.fs->is_open() && file.open_for_writing()) {
-        if (file.last_op != File::OP_WRITE) { // switch to writing
-            file.fs->flush();
-            file.last_op = File::OP_WRITE;
-        }
-        return file;
-    }
-    else {
-        return files_[0];
-    }
-}
-
-bool Files::close(int file_id, Error& error_code) {
+bool Files::close(uint file_id, Error& error_code) {
     error_code = Error::None;
-    File& file = get_file(file_id);
-    if (file.fs != nullptr) {
-        if (file.fs->is_open()) {
-            file.fs->close();
+    SyncStream* fs = get_file(file_id);
+    if (fs != nullptr) {
+        if (fs->is_open()) {
+            fs->close();
         }
-        delete file.fs;
-        files_[file_id] = File();
+        delete fs;
+        files_[file_id] = nullptr;
         return true;
     }
 
@@ -94,26 +242,26 @@ bool Files::close(int file_id, Error& error_code) {
     return false;
 }
 
-int Files::read(int file_id, char* buffer, int size, Error& error_code) {
+uint Files::read_bytes(uint file_id, char* buffer, uint size,
+                       Error& error_code) {
     error_code = Error::None;
-    File& file = get_file_for_reading(file_id);
-    if (file.fs != nullptr) {
-        file.fs->read(buffer, size);
-        if (!file.fs->bad()) {
-            return static_cast<int>(file.fs->gcount());
-        }
+    SyncStream* fs = get_file(file_id);
+    if (fs != nullptr) {
+        uint num_read = fs->read_bytes(buffer, size);
+        return num_read;
     }
 
     error_code = Error::ReadFileException;
     return 0;
 }
 
-void Files::write(int file_id, char* buffer, int size, Error& error_code) {
+void Files::write_bytes(uint file_id, const char* buffer, uint size,
+                        Error& error_code) {
     error_code = Error::None;
-    File& file = get_file_for_writing(file_id);
-    if (file.fs != nullptr) {
-        file.fs->write(buffer, size);
-        if (!file.fs->bad()) {
+    SyncStream* fs = get_file(file_id);
+    if (fs != nullptr) {
+        fs->write_bytes(buffer, size);
+        if (!fs->bad()) {
             return;
         }
     }
@@ -121,43 +269,15 @@ void Files::write(int file_id, char* buffer, int size, Error& error_code) {
     error_code = Error::WriteFileException;
 }
 
-bool Files::read_line(fstream* fs, char* buffer, int size, int& num_read) {
-    char ch;
-    num_read = 0;
-    int num_eol = 0;
-    while (num_read < size && fs->get(ch)) {
-        if (ch == '\r') {
-            ++num_eol;
-            if (fs->peek() == '\n') {
-                fs->get();    // consume LF after CR
-                ++num_eol;
-            }
-            break;
-        }
-        else if (ch == '\n') {
-            ++num_eol;
-            break;
-        }
-        else {
-            buffer[num_read++] = ch;
-        }
-    }
-    return num_read > 0 || num_eol > 0 || num_read == size;
-}
-
-int Files::read_line(int file_id, char* buffer, int size, bool& found_eof,
-                     Error& error_code) {
+uint Files::read_line(uint file_id, char* buffer, uint size,
+                      bool& found_eof, Error& error_code) {
     found_eof = false;
     error_code = Error::None;
 
-    File& file = get_file_for_reading(file_id);
-    if (file.fs != nullptr) {
-        int num_read = 0;
-        bool read_ok = read_line(file.fs, buffer, size, num_read);
-        if (!file.fs->bad()) {
-            if (!read_ok) {
-                found_eof = true;
-            }
+    SyncStream* fs = get_file(file_id);
+    if (fs != nullptr) {
+        uint num_read = fs->read_line(buffer, size, found_eof);
+        if (!fs->bad()) {
             return num_read;
         }
     }
@@ -167,14 +287,13 @@ int Files::read_line(int file_id, char* buffer, int size, bool& found_eof,
     return 0;
 }
 
-void Files::write_line(int file_id, char* buffer, int size, Error& error_code) {
+void Files::write_line(uint file_id, char* buffer, uint size,
+                       Error& error_code) {
     error_code = Error::None;
-    File& file = get_file_for_writing(file_id);
-    if (file.fs != nullptr) {
-        string line(buffer, buffer + size);
-        line.push_back('\n');
-        file.fs->write(line.c_str(), line.size());
-        if (!file.fs->bad()) {
+    SyncStream* fs = get_file(file_id);
+    if (fs != nullptr) {
+        fs->write_line(buffer, size);
+        if (!fs->bad()) {
             return;
         }
     }
@@ -183,17 +302,11 @@ void Files::write_line(int file_id, char* buffer, int size, Error& error_code) {
 }
 
 
-bool Files::seek(int file_id, udint pos, Error& error_code) {
+bool Files::seek(uint file_id, udint pos, Error& error_code) {
     error_code = Error::None;
-    File& file = get_file(file_id);
-    if (file.fs != nullptr && file.fs->is_open()) {
-        file.last_seek = pos;
-        if (file.open_for_reading()) {
-            file.fs->seekg(pos, ios::beg);
-        }
-        if (file.open_for_writing()) {
-            file.fs->seekp(pos, ios::beg);
-        }
+    SyncStream* fs = get_file(file_id);
+    if (fs != nullptr) {
+        fs->seek(pos);
         return true;
     }
 
@@ -201,108 +314,67 @@ bool Files::seek(int file_id, udint pos, Error& error_code) {
     return false;
 }
 
-udint Files::tell(int file_id, Error& error_code) {
+udint Files::tell(uint file_id, Error& error_code) {
     error_code = Error::None;
-    File& file = get_file(file_id);
-    if (file.fs != nullptr && file.fs->is_open()) {
-        file.fs->clear(); // clear eofbit and failbit
-
-        if (file.last_op == File::OP_READ) {
-            return static_cast<udint>(file.fs->tellg());
-        }
-        else if (file.last_op == File::OP_WRITE) {
-            return static_cast<udint>(file.fs->tellp());
-        }
-        else {
-            return file.last_seek;   // last seeked position, or 0 after open
-        }
+    SyncStream* fs = get_file(file_id);
+    if (fs != nullptr) {
+        return fs->tell();
     }
 
     error_code = Error::FilePositionException;
     return -1;
 }
 
-udint Files::size(int file_id, Error& error_code) {
+udint Files::size(uint file_id, Error& error_code) {
     error_code = Error::None;
-    File& file = get_file(file_id);
-    if (file.fs != nullptr && file.fs->is_open()) {
-        file.fs->clear(); // clear eofbit and failbit
-
-        if (file.open_for_reading()) {
-            streampos current = file.fs->tellg();
-            file.fs->seekg(0, ios::end);
-            streampos size = file.fs->tellg();
-            file.fs->seekg(current); // restore position
-            return static_cast<udint>(size);
-        }
-        else if (file.open_for_writing()) {
-            streampos current = file.fs->tellp();
-            file.fs->seekp(0, ios::end);
-            streampos size = file.fs->tellp();
-            file.fs->seekp(current); // restore position
-            return static_cast<udint>(size);
-        }
+    SyncStream* fs = get_file(file_id);
+    if (fs != nullptr) {
+        streampos current = fs->tell();
+        fs->seek(0, std::ios::end);
+        streampos size = fs->tell();
+        fs->seek(current);
+        return static_cast<udint>(size);
     }
 
     error_code = Error::FileSizeException;
     return -1;
 }
-void Files::resize(int file_id, udint size, Error& error_code) {
+
+void Files::resize(uint file_id, udint size, Error& error_code) {
     error_code = Error::None;
-    File& file = get_file(file_id);
-    if (file.fs != nullptr && !file.filename.empty()) {
-        file.fs->flush();
-        std::streampos get_pos = file.open_for_reading() ? file.fs->tellg() :
-                                 std::streampos();
-        std::streampos put_pos = file.open_for_writing() ? file.fs->tellp() :
-                                 std::streampos();
-        file.fs->close();
-
-        filesystem::resize_file(file.filename, size);
-
-        // open with original mode except ios::trunc, add ios::in and ios::out
-        // to keep current contents of file
-        std::ios::openmode mode = (file.mode & ~ios::trunc) | ios::in | ios::out;
-
-        file.fs->open(file.filename, mode);
-        if (file.fs->is_open()) {
-            if (file.open_for_reading()) {
-                file.fs->seekg(get_pos);
-            }
-            if (file.open_for_writing()) {
-                file.fs->seekp(put_pos);
-            }
-            return;
-        }
+    SyncStream* fs = get_file(file_id);
+    if (fs != nullptr) {
+        fs->resize(size);
+        return;
     }
 
     error_code = Error::ResizeException;
 }
 
-void Files::flush(int file_id, Error& error_code) {
+void Files::flush(uint file_id, Error& error_code) {
     error_code = Error::None;
-    File& file = get_file(file_id);
-    if (file.fs != nullptr && file.fs->is_open()) {
-        file.fs->flush();
+    SyncStream* fs = get_file(file_id);
+    if (fs != nullptr) {
+        fs->flush();
         return;
     }
 
     error_code = Error::FlushFileException;
 }
 
-string Files::filename(int file_id) {
-    File& file = get_file(file_id);
-    return file.filename;
+string Files::filename(uint file_id) {
+    SyncStream* fs = get_file(file_id);
+    return fs ? fs->filename() : "";
 }
 
 int Files::next_file_id() {
-    for (int file_id = 1; file_id < static_cast<int>(files_.size()); ++file_id) {
-        if (files_[file_id].fs == nullptr) {
+    for (uint file_id = 1; file_id < files_.size(); ++file_id) {
+        if (files_[file_id] == nullptr) {
             return file_id;
         }
     }
-    int file_id = static_cast<int>(files_.size());
-    files_.push_back(File());
+    uint file_id = static_cast<uint>(files_.size());
+    files_.push_back(nullptr);
     return file_id;
 }
 
@@ -324,12 +396,12 @@ void f_bin() {
 
 static void open_create(ios::openmode base_mode, Error error_code) {
     int mode = pop();
-    int size = pop();
+    uint size = pop();
     int filename_addr = pop();
     char* filename_ptr = mem_char_ptr(filename_addr, size);
     string filename = string(filename_ptr, filename_ptr + size);
-    int file_id = vm.files->open(filename,
-                                 base_mode | static_cast<ios::openmode>(mode));
+    uint file_id = vm.files->open(filename,
+                                  base_mode | static_cast<ios::openmode>(mode));
     if (file_id == 0) {
         push(0);        // file_id
         push(static_cast<int>(error_code));
@@ -353,40 +425,40 @@ void f_open_file() {
 }
 
 void f_read_file() {
-    int file_id = pop();
-    int size = pop();
-    int addr = pop();
+    uint file_id = pop();
+    uint size = pop();
+    uint addr = pop();
     char* buffer = mem_char_ptr(addr, size);
 
     Error error_code = Error::None;
-    int num_read = vm.files->read(file_id, buffer, size, error_code);
+    int num_read = vm.files->read_bytes(file_id, buffer, size, error_code);
 
     push(num_read);
     push(static_cast<int>(error_code));
 }
 
 void f_write_file() {
-    int file_id = pop();
-    int size = pop();
-    int addr = pop();
+    uint file_id = pop();
+    uint size = pop();
+    uint addr = pop();
     char* buffer = mem_char_ptr(addr, size);
 
     Error error_code = Error::None;
-    vm.files->write(file_id, buffer, size, error_code);
+    vm.files->write_bytes(file_id, buffer, size, error_code);
 
     push(static_cast<int>(error_code));
 }
 
 void f_read_line() {
-    int file_id = pop();
-    int size = pop();
-    int addr = pop();
+    uint file_id = pop();
+    uint size = pop();
+    uint addr = pop();
     char* buffer = mem_char_ptr(addr, size);
 
     Error error_code = Error::None;
     bool found_eof = false;
-    int num_read = vm.files->read_line(file_id, buffer, size, found_eof,
-                                       error_code);
+    uint num_read = vm.files->read_line(file_id, buffer, size,
+                                        found_eof, error_code);
 
     push(num_read);
     push(f_bool(!found_eof));
@@ -394,9 +466,9 @@ void f_read_line() {
 }
 
 void f_write_line() {
-    int file_id = pop();
-    int size = pop();
-    int addr = pop();
+    uint file_id = pop();
+    uint size = pop();
+    uint addr = pop();
     char* buffer = mem_char_ptr(addr, size);
 
     Error error_code = Error::None;
@@ -406,7 +478,7 @@ void f_write_line() {
 }
 
 void f_file_position() {
-    int file_id = pop();
+    uint file_id = pop();
 
     Error error_code = Error::None;
     udint pos = vm.files->tell(file_id, error_code);
@@ -416,7 +488,7 @@ void f_file_position() {
 }
 
 void f_reposition_file() {
-    int file_id = pop();
+    uint file_id = pop();
     udint pos = dpop();
 
     Error error_code = Error::None;
@@ -426,7 +498,7 @@ void f_reposition_file() {
 }
 
 void f_file_size() {
-    int file_id = pop();
+    uint file_id = pop();
 
     Error error_code = Error::None;
     udint size = vm.files->size(file_id, error_code);
@@ -436,7 +508,7 @@ void f_file_size() {
 }
 
 void f_resize_file() {
-    int file_id = pop();
+    uint file_id = pop();
     udint size = dpop();
 
     Error error_code = Error::None;
@@ -446,7 +518,7 @@ void f_resize_file() {
 }
 
 void f_flush_file() {
-    int file_id = pop();
+    uint file_id = pop();
 
     Error error_code = Error::None;
     vm.files->flush(file_id, error_code);
@@ -455,7 +527,7 @@ void f_flush_file() {
 }
 
 void f_close_file() {
-    int file_id = pop();
+    uint file_id = pop();
 
     Error error_code = Error::None;
     vm.files->close(file_id, error_code);
@@ -464,7 +536,7 @@ void f_close_file() {
 }
 
 void f_delete_file() {
-    int size = pop();
+    uint size = pop();
     int filename_addr = pop();
     const char* filename_str = mem_char_ptr(filename_addr, size);
     string filename(filename_str, filename_str + size);
@@ -476,12 +548,12 @@ void f_delete_file() {
 }
 
 void f_rename_file() {
-    int size2 = pop();
+    uint size2 = pop();
     int filename_addr2 = pop();
     const char* filename_str2 = mem_char_ptr(filename_addr2, size2);
     string filename2(filename_str2, filename_str2 + size2);
 
-    int size1 = pop();
+    uint size1 = pop();
     int filename_addr1 = pop();
     const char* filename_str1 = mem_char_ptr(filename_addr1, size1);
     string filename1(filename_str1, filename_str1 + size1);
@@ -497,11 +569,11 @@ void f_rename_file() {
 }
 
 void f_include_file() {
-    int file_id = pop();
+    uint file_id = pop();
     f_include_file(file_id);
 }
 
-void f_include_file(int file_id) {
+void f_include_file(uint file_id) {
     if (file_id == 0) {
         error(Error::OpenFileException);
     }
@@ -514,20 +586,20 @@ void f_include_file(int file_id) {
 }
 
 void f_include() {
-    int size = 0;
+    uint size = 0;
     const char* filename = parse_word(size, BL);
     f_included(filename, size);
 }
 
 void f_included() {
-    int size = pop();
+    uint size = pop();
     int filename_addr = pop();
     const char* filename_str = mem_char_ptr(filename_addr, size);
     f_included(filename_str, size);
 }
 
 void f_included(const string& filename) {
-    int file_id = vm.files->open(filename, ios::in | ios::binary);
+    uint file_id = vm.files->open(filename, ios::in | ios::binary);
     if (file_id == 0) {
         error(Error::OpenFileException, filename);
     }
@@ -538,23 +610,19 @@ void f_included(const string& filename) {
     }
 }
 
-void f_included(const char* filename, int size) {
+void f_included(const char* filename, uint size) {
     string filename_str(filename, filename + size);
     f_included(filename_str);
 }
 
-void f_included(const char* filename, size_t size) {
-    f_included(filename, static_cast<int>(size));
-}
-
 void f_require() {
-    int size = 0;
+    uint size = 0;
     const char* filename = parse_word(size, BL);
     f_required(filename, size);
 }
 
 void f_required() {
-    int size = pop();
+    uint size = pop();
     int filename_addr = pop();
     const char* filename_str = mem_char_ptr(filename_addr, size);
     f_required(filename_str, size);
@@ -567,12 +635,8 @@ void f_required(const string& filename) {
     }
 }
 
-void f_required(const char* filename, int size) {
+void f_required(const char* filename, uint size) {
     f_required(string(filename, filename + size));
-}
-
-void f_required(const char* filename, size_t size) {
-    f_required(filename, static_cast<int>(size));
 }
 
 static uint32_t get_forth_file_status(const std::string& path) {
@@ -613,7 +677,7 @@ static uint32_t get_forth_file_status(const std::string& path) {
 }
 
 void f_file_status() {
-    int size = pop();
+    uint size = pop();
     int filename_addr = pop();
     const char* filename_str = mem_char_ptr(filename_addr, size);
     f_file_status(filename_str, size);
@@ -631,11 +695,7 @@ void f_file_status(const string& filename) {
     }
 }
 
-void f_file_status(const char* filename, int size) {
+void f_file_status(const char* filename, uint size) {
     f_file_status(string(filename, filename + size));
-}
-
-void f_file_status(const char* filename, size_t size) {
-    f_file_status(filename, static_cast<int>(size));
 }
 

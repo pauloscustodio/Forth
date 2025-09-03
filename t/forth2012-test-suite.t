@@ -246,4 +246,5 @@ Forth tests completed
 
 END
 
+unlink "blocks.fb";
 end_test;

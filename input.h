@@ -40,13 +40,11 @@ public:
 
     void open_terminal();
 
-    void set_text(const char* text, int size);
-    void set_text(const char* text, size_t size);
+    void set_text(const char* text, uint size);
 
     void set_block(Block* block);
 
-    void set_tib(const char* text, int size);
-    void set_tib(const char* text, size_t size);
+    void set_tib(const char* text, uint size);
     void set_tib(const string& text);
 
     bool refill();

@@ -14,7 +14,7 @@ using namespace std;
 
 class ThrowException : public exception {
 public:
-    ThrowException(int code) : error_code(code) {}
+    ThrowException(uint code) : error_code(code) {}
     virtual const char* what() const noexcept override {
         static std::string message;
         message = std::string("Forth exception thrown with error code ") +
@@ -68,11 +68,11 @@ void error(Error err, const string& arg) {
 }
 
 void f_catch() {
-    int xt = pop();
+    uint xt = pop();
     f_catch(xt);
 }
 
-void f_catch(int xt) {
+void f_catch(uint xt) {
     vm.except_stack->push(vm.r_stack->sp());
     vm.except_stack->push(vm.stack->sp());
     vm.except_stack->push(vm.input->input_level());
@@ -125,7 +125,7 @@ void f_abort() {
 }
 
 void f_abort_quote() {
-    int size;
+    uint size;
     const char* message = parse_word(size, '"');
     if (vm.user->STATE == STATE_COMPILE) {
         int str_addr = vm.dict->alloc_string(message, size);
