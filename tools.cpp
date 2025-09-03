@@ -4,6 +4,7 @@
 // License: GPL3 https://www.gnu.org/licenses/gpl-3.0.html
 //-----------------------------------------------------------------------------
 
+#include "parser.h"
 #include "tools.h"
 #include "vm.h"
 #include <algorithm>
@@ -40,7 +41,7 @@ void f_dump(const char* mem, int size) {
             }
             else {
                 char c = cfetch(q);
-                cout << (isprint(c) ? c : '.');
+                std::cout << (is_print(c) ? c : '.');
             }
         }
     }

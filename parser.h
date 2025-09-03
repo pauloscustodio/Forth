@@ -11,6 +11,9 @@
 #include <string>
 using namespace std;
 
+bool is_space(char c);
+bool is_print(char c);
+
 const char* parse_word(int& size, char delimiter = BL);
 CString* parse_cword(char delimiter = BL);
 string parse_backslash_string();
