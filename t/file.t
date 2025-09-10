@@ -185,42 +185,55 @@ unlink "$test.1.dat";
 unlink "$test.2.dat";
 unlink "$test.3.dat";
 
+# BIN is a noop, as all files are opened in binary mode
 note "Test BIN";
-unlink "$test.dat";
-forth_ok(<<END, "( )");
-S" $test.dat" W/O BIN CREATE-FILE THROW CONSTANT file_id
-S\\" \\n" file_id WRITE-FILE THROW
-file_id CLOSE-FILE THROW
-.S
+
+sub create_file { my($bin) = @_; return <<END; }
+	S" $test.dat" W/O $bin CREATE-FILE THROW CONSTANT file_id
+	S\\" \\n" file_id WRITE-FILE THROW
+	file_id CLOSE-FILE THROW
+	.S
 END
-if ($^O eq 'MSWin32') {
-	is path("$test.dat")->slurp_raw, "\r\n", "read end of line";
-	forth_ok(<<END, <<END);
-	S" $test.dat" R/O BIN OPEN-FILE THROW CONSTANT file_id
+
+sub dump_file { my($bin) = @_; return <<END; }
+	S" $test.dat" R/O $bin OPEN-FILE THROW CONSTANT file_id
 	PAD 256 file_id READ-FILE THROW 
 	PAD SWAP DUMP
 	file_id CLOSE-FILE THROW
 	.S
 END
 
-00000800              0d 0a                                     ..          
-( ) 
-END
-}
-else {
-	is path("$test.dat")->slurp_raw, "\n", "read end of line";
-	forth_ok(<<END, <<END);
-	S" $test.dat" R/O BIN OPEN-FILE THROW CONSTANT file_id
-	PAD 256 file_id READ-FILE THROW 
-	PAD SWAP DUMP
-	file_id CLOSE-FILE THROW
-	.S
-END
+# without BIN
+unlink "$test.dat";
+forth_ok(create_file(""), "( )");
+
+is path("$test.dat")->slurp_raw, "\n", "read end of line";
+forth_ok(dump_file(""), <<END);
 
 00000800              0a                                        .           
 ( ) 
 END
-}
+	forth_ok(dump_file("BIN"), <<END);
+
+00000800              0a                                        .           
+( ) 
+END
+
+# with BIN
+unlink "$test.dat";
+forth_ok(create_file("BIN"), "( )");
+is path("$test.dat")->slurp_raw, "\n", "read end of line";
+forth_ok(dump_file(""), <<END);
+
+00000800              0a                                        .           
+( ) 
+END
+forth_ok(dump_file("BIN"), <<END);
+
+00000800              0a                                        .           
+( ) 
+END
+
 unlink "$test.dat";
 
 note "Test READ-LINE";
@@ -265,31 +278,27 @@ END
 
 note "Test WRITE-LINE";
 note "Test FILE-POSITION";
+
+sub file_position { my($bin) = @_; return <<END; }
+		S" $test.dat" W/O $bin OPEN-FILE THROW CONSTANT file_id
+		file_id FILE-POSITION THROW D.
+		S" hello" file_id WRITE-LINE THROW
+		file_id FILE-POSITION THROW D.
+		PAD 0 file_id WRITE-LINE THROW
+		file_id FILE-POSITION THROW D.
+		file_id CLOSE-FILE THROW
+		.S
+END
+
+# without BIN
+
 unlink "$test.dat";
-if ($^O eq 'MSWin32') {
-	forth_ok(<<END, "0 7 9 ( )");
-		S" $test.dat" W/O BIN OPEN-FILE THROW CONSTANT file_id
-		file_id FILE-POSITION THROW D.
-		S" hello" file_id WRITE-LINE THROW
-		file_id FILE-POSITION THROW D.
-		PAD 0 file_id WRITE-LINE THROW
-		file_id FILE-POSITION THROW D.
-		file_id CLOSE-FILE THROW
-		.S
-END
-}
-else {
-	forth_ok(<<END, "0 6 7 ( )");
-		S" $test.dat" W/O BIN OPEN-FILE THROW CONSTANT file_id
-		file_id FILE-POSITION THROW D.
-		S" hello" file_id WRITE-LINE THROW
-		file_id FILE-POSITION THROW D.
-		PAD 0 file_id WRITE-LINE THROW
-		file_id FILE-POSITION THROW D.
-		file_id CLOSE-FILE THROW
-		.S
-END
-}
+forth_ok(file_position("BIN"), "0 6 7 ( )");
+
+# with BIN
+unlink "$test.dat";
+forth_ok(file_position("BIN"), "0 6 7 ( )");
+
 
 note "Test REPOSITION-FILE";
 path("$test.dat")->spew("hello world");

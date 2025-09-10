@@ -32,12 +32,12 @@ forth_ok("SOURCE-ID .S", "( 1 )");
 forth_ok("CHAR ! WORD SOURCE-ID! COUNT EVALUATE .S", "( -1 )");
 
 note "Test ACCEPT";
-capture_ok('echo hello | forth -e "PAD 255 ACCEPT PAD SWAP TYPE"',
+capture_ok('perl -E "say q(hello)" | forth -e "PAD 255 ACCEPT PAD SWAP TYPE"',
 		   "hello");
 
 note "Test EXPECT";
 note "Test SPAN";
-capture_ok('echo hello | forth -e "PAD 255 EXPECT SPAN @ . .S PAD SPAN @ TYPE"',
+capture_ok('perl -E "say q(hello)" | forth -e "PAD 255 EXPECT SPAN @ . .S PAD SPAN @ TYPE"',
 		   "5 ( )hello");
 
 note "Test QUERY";
