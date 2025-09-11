@@ -13,9 +13,6 @@
 VM vm;
 
 VM::VM() {
-    ip = 0;
-    error_message = new std::string();
-
     // bottom of memory
     wordbuf_data = mem.alloc_bottom(WORDBUF_SZ);
     wordbuf.init();
@@ -67,7 +64,6 @@ VM::VM() {
 }
 
 VM::~VM() {
-    delete error_message;
     input->deinit();
     blocks->deinit();
     delete files;

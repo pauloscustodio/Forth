@@ -21,10 +21,10 @@ struct VM {
     virtual ~VM();
 
     // instruction pointer
-    int ip;
+    int ip{ 0 };
 
     // abort error message
-    std::string* error_message;
+    std::string error_message;
 
     // word buffer
     char* wordbuf_data;

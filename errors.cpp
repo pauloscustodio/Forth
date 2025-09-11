@@ -17,7 +17,7 @@ public:
     virtual const char* what() const noexcept override {
         static std::string message;
         message = std::string("Forth exception thrown with error code ") +
-                  std::to_string(error_code) + ": " + *vm.error_message;
+                  std::to_string(error_code) + ": " + vm.error_message;
         return message.c_str();
     }
 
@@ -43,7 +43,7 @@ public:
         exit(EXIT_FAILURE);
     }
     else if (err == Error::AbortQuote) {
-        std::cerr << std::endl << "Aborted: " << *vm.error_message << std::endl;
+        std::cerr << std::endl << "Aborted: " << vm.error_message << std::endl;
         exit(EXIT_FAILURE);
     }
     else {
@@ -63,7 +63,7 @@ public:
 }
 
 void error(Error err, const std::string& arg) {
-    *vm.error_message = arg;
+    vm.error_message = arg;
     f_throw(err);
 }
 
@@ -111,7 +111,7 @@ void f_throw(int error_code) {
     }
 
     if (vm.except_stack->depth() == 0) {
-        exit_error(error_code, *vm.error_message);
+        exit_error(error_code, vm.error_message);
     }
     else {
         throw ThrowException(error_code);
@@ -120,7 +120,7 @@ void f_throw(int error_code) {
 
 void f_abort() {
     vm.stack->clear();
-    vm.error_message->clear();
+    vm.error_message.clear();
     f_throw(Error::Abort);
 }
 
@@ -136,7 +136,7 @@ void f_abort_quote() {
         int error_code = pop();
         if (error_code != 0) {
             vm.stack->clear();
-            *vm.error_message = std::string(message, size);
+            vm.error_message = std::string(message, size);
             f_throw(Error::AbortQuote);
         }
     }
@@ -150,7 +150,7 @@ void f_xabort_quote() {
     if (error_code != 0) {
         LongString* str = reinterpret_cast<LongString*>(mem_char_ptr(str_addr));
         vm.stack->clear();
-        *vm.error_message = str->to_string();
+        vm.error_message = str->to_string();
         f_throw(Error::AbortQuote);
     }
 }
