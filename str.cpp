@@ -10,11 +10,19 @@
 #include "vm.h"
 #include <cstring>
 
+uint CString::size() const {
+    return size_;
+}
+
+const char* CString::str() const {
+    return str_;
+}
+
 std::string CString::to_string() const {
     return std::string(str_, str_ + size_);
 }
 
-int CString::alloc_size(int num_chars) {
+uint CString::alloc_size(uint num_chars) {
     if (num_chars > MAX_CSTRING_SZ) {
         error(Error::ParsedStringOverflow, std::to_string(num_chars));
     }
@@ -40,7 +48,7 @@ std::string LongString::to_string() const {
     return std::string(str_, str_ + size_);
 }
 
-int LongString::alloc_size(int num_chars) {
+uint LongString::alloc_size(uint num_chars) {
     if (num_chars > BUFFER_SZ) {
         error(Error::InputBufferOverflow, std::to_string(num_chars));
     }
@@ -64,8 +72,8 @@ void LongString::set_string(const std::string& str) {
 }
 
 void Wordbuf::init() {
-    memset(data_, BL, sizeof(data_));
-    ptr_ = 0;
+    memset(vm.wordbuf_data, BL, WORDBUF_SZ);
+    vm.wordbuf_ptr = 0;
 }
 
 CString* Wordbuf::append_cstring(const std::string& str) {
@@ -77,12 +85,12 @@ CString* Wordbuf::append_cstring(const char* str, uint size) {
         error(Error::ParsedStringOverflow, std::string(str, str + size));
     }
 
-    int alloc_size = CString::alloc_size(size);
-    if (ptr_ + alloc_size > static_cast<int>(sizeof(data_))) {
-        ptr_ = 0;
+    uint alloc_size = CString::alloc_size(size);
+    if (vm.wordbuf_ptr + alloc_size > sizeof(vm.wordbuf_data)) {
+        vm.wordbuf_ptr = 0;
     }
-    CString* cstring = reinterpret_cast<CString*>(data_ + ptr_);
-    ptr_ += alloc_size;
+    CString* cstring = reinterpret_cast<CString*>(vm.wordbuf_data + vm.wordbuf_ptr);
+    vm.wordbuf_ptr += alloc_size;
 
     cstring->set_cstring(str, size);
 
@@ -98,12 +106,13 @@ LongString* Wordbuf::append_long_string(const char* str, uint size) {
         error(Error::InputBufferOverflow, std::string(str, str + size));
     }
 
-    int alloc_size = LongString::alloc_size(size);
-    if (ptr_ + alloc_size > static_cast<int>(sizeof(data_))) {
-        ptr_ = 0;
+    uint alloc_size = LongString::alloc_size(size);
+    if (vm.wordbuf_ptr + alloc_size > WORDBUF_SZ) {
+        vm.wordbuf_ptr = 0;
     }
-    LongString* lstring = reinterpret_cast<LongString*>(data_ + ptr_);
-    ptr_ += alloc_size;
+    LongString* lstring = reinterpret_cast<LongString*>(
+                              vm.wordbuf_data + vm.wordbuf_ptr);
+    vm.wordbuf_ptr += alloc_size;
 
     lstring->set_string(str, size);
 
@@ -169,7 +178,7 @@ void f_s_quote() {
         comma(str_addr);
     }
     else {
-        LongString* lstring = vm.wordbuf->append_long_string(message, size);
+        LongString* lstring = vm.wordbuf.append_long_string(message, size);
         push(mem_addr(lstring->str()));
         push(lstring->size());
     }
@@ -184,7 +193,7 @@ void f_s_backslash_quote() {
         comma(str_addr);
     }
     else {
-        LongString* lstring = vm.wordbuf->append_long_string(message);
+        LongString* lstring = vm.wordbuf.append_long_string(message);
         push(mem_addr(lstring->str()));
         push(lstring->size());
     }

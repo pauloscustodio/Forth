@@ -86,7 +86,7 @@ int Dict::unused() const {
     return names_ - here_;
 }
 
-int Dict::parse_create(uint code, int flags) {
+uint Dict::parse_create(uint code, int flags) {
     const CString* name = parse_cword(BL);
     if (name->size() == 0) {
         error(Error::AttemptToUseZeroLengthStringAsName);
@@ -94,27 +94,27 @@ int Dict::parse_create(uint code, int flags) {
     return create(name, flags, code);
 }
 
-int Dict::create(const std::string& name, int flags, uint code) {
+uint Dict::create(const std::string& name, int flags, uint code) {
     return create(name.c_str(), static_cast<uint>(name.size()), flags, code);
 }
 
-int Dict::create(const char* name, uint size, int flags, uint code) {
+uint Dict::create(const char* name, uint size, int flags, uint code) {
     align();
-    int name_addr = alloc_cstring(name, size);
+    uint name_addr = alloc_cstring(name, size);
     return create_cont(name_addr, flags, code);
 }
 
-int Dict::create(const CString* name, int flags, uint code) {
+uint Dict::create(const CString* name, int flags, uint code) {
     if (name->size() > MAX_NAME_SZ) {
         error(Error::DefinitionNameTooLong, name->to_string());
     }
 
     align();
-    int name_addr = alloc_cstring(name);
+    uint name_addr = alloc_cstring(name);
     return create_cont(name_addr, flags, code);
 }
 
-int Dict::create_cont(int name_addr, int flags, uint code) {
+uint Dict::create_cont(uint name_addr, int flags, uint code) {
     // store header
     check_free_space(sizeof(Header));
 
@@ -146,17 +146,17 @@ int Dict::create_cont(int name_addr, int flags, uint code) {
     return header->xt(); // return xt of word
 }
 
-int Dict::alloc_cstring(const std::string& str) {
+uint Dict::alloc_cstring(const std::string& str) {
     return alloc_cstring(str.c_str(), static_cast<uint>(str.size()));
 }
 
-int Dict::alloc_cstring(const char* str, uint size) {
-    CString* str_str = vm.wordbuf->append_cstring(str, size);
+uint Dict::alloc_cstring(const char* str, uint size) {
+    CString* str_str = vm.wordbuf.append_cstring(str, size);
     return alloc_cstring(str_str);
 }
 
-int Dict::alloc_cstring(const CString* str) {
-    int alloc_size = CString::alloc_size(str->size());
+uint Dict::alloc_cstring(const CString* str) {
+    uint alloc_size = CString::alloc_size(str->size());
 
     check_free_space(alloc_size);
 
@@ -166,12 +166,12 @@ int Dict::alloc_cstring(const CString* str) {
     return names_;
 }
 
-int Dict::alloc_string(const std::string& str) {
+uint Dict::alloc_string(const std::string& str) {
     return alloc_string(str.c_str(), static_cast<uint>(str.size()));
 }
 
-int Dict::alloc_string(const char* str, uint size) {
-    int alloc_size = LongString::alloc_size(size);
+uint Dict::alloc_string(const char* str, uint size) {
+    uint alloc_size = LongString::alloc_size(size);
 
     check_free_space(alloc_size);
 
@@ -182,7 +182,7 @@ int Dict::alloc_string(const char* str, uint size) {
     return names_;
 }
 
-int Dict::alloc_string(const LongString* str) {
+uint Dict::alloc_string(const LongString* str) {
     return alloc_string(str->str(), str->size());
 }
 

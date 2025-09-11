@@ -45,20 +45,20 @@ public:
     void allot(uint size);
     int unused() const;
 
-    int parse_create(uint code, int flags); // return xt of word
+    uint parse_create(uint code, int flags); // return xt of word
 
-    int create(const std::string& name, int flags, uint code); // return xt of word
-    int create(const char* name, uint size, int flags,
-               uint code); // return xt of word
-    int create(const CString* name, int flags, uint code); // return xt of word
+    uint create(const std::string& name, int flags, uint code); // return xt of word
+    uint create(const char* name, uint size, int flags,
+                uint code); // return xt of word
+    uint create(const CString* name, int flags, uint code); // return xt of word
 
-    int alloc_cstring(const std::string& str);
-    int alloc_cstring(const char* str, uint size);
-    int alloc_cstring(const CString* str);
+    uint alloc_cstring(const std::string& str);
+    uint alloc_cstring(const char* str, uint size);
+    uint alloc_cstring(const CString* str);
 
-    int alloc_string(const std::string& str);
-    int alloc_string(const char* str, uint size);
-    int alloc_string(const LongString* str);
+    uint alloc_string(const std::string& str);
+    uint alloc_string(const char* str, uint size);
+    uint alloc_string(const LongString* str);
 
     void ccomma(int value);
     void comma(int value);
@@ -81,7 +81,7 @@ private:
     uint names_;			// point to last name created at top of memory
 
     void check_free_space(uint size = 0) const;
-    int create_cont(int name_addr, int flags, uint code);
+    uint create_cont(uint name_addr, int flags, uint code);
 };
 
 

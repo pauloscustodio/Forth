@@ -94,7 +94,7 @@ const char* parse_word(uint& size, char delimiter) {
 CString* parse_cword(char delimiter) {
     uint size = 0;
     const char* word = parse_word(size, delimiter);
-    CString* cword = vm.wordbuf->append_cstring(word, size);
+    CString* cword = vm.wordbuf.append_cstring(word, size);
     return cword;
 }
 

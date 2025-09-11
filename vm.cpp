@@ -17,8 +17,9 @@ VM::VM() {
     error_message = new std::string();
 
     // bottom of memory
-    wordbuf = reinterpret_cast<Wordbuf*>(mem.alloc_bottom(sizeof(Wordbuf)));
-    wordbuf->init();
+    wordbuf_data = mem.alloc_bottom(WORDBUF_SZ);
+    wordbuf.init();
+
     pad = reinterpret_cast<Pad*>(mem.alloc_bottom(sizeof(Pad)));
     pad->init();
     number_output = reinterpret_cast<NumberOutput*>(mem.alloc_bottom(sizeof(
@@ -57,7 +58,7 @@ VM::VM() {
     dict->init(start_dict, end_dict);
 
     // reinit wordbuf to get predictable results in tests
-    wordbuf->init();
+    wordbuf.init();
 
     init_console_output();
     init_console_input();

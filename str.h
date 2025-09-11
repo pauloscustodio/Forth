@@ -11,15 +11,11 @@
 
 class CString {
 public:
-    uint size() const {
-        return size_;
-    }
-    const char* str() const {
-        return str_;
-    }
+    uint size() const;
+    const char* str() const;
 
     std::string to_string() const;
-    static int alloc_size(int num_chars);
+    static uint alloc_size(uint num_chars);
 
     // user must allocate alloc_size() bytes
     void set_cstring(const char* str, uint size);
@@ -41,7 +37,7 @@ public:
     }
 
     std::string to_string() const;
-    static int alloc_size(int num_chars);
+    static uint alloc_size(uint num_chars);
 
     // user must allocate alloc_size() bytes
     void set_string(const char* str, uint size);
@@ -63,9 +59,7 @@ public:
     LongString* append_long_string(const std::string& str);
     LongString* append_long_string(const char* str, uint size);
 
-private:
-    char data_[WORDBUF_SZ];
-    int ptr_;
+    // data stored in vm.wordbuf_data and pointed by vm.wordbuf_ptr
 };
 
 

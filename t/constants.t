@@ -15,7 +15,7 @@ forth_ok("R0 RSP@ - .S", "( 0 )");
 forth_ok("R0 .S", "( 4096 )");
 
 note "Test PAD";
-forth_ok("PAD .S", "( 2052 )");
+forth_ok("PAD .S", "( 2048 )");
 
 note "Test FALSE";
 forth_ok("FALSE .S", "( 0 )");

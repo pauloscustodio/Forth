@@ -26,11 +26,15 @@ struct VM {
     // abort error message
     std::string* error_message;
 
+    // word buffer
+    char* wordbuf_data;
+    uint wordbuf_ptr;
+    Wordbuf wordbuf;
+
     // memory
     Mem mem;
 
     // input
-    Wordbuf* wordbuf;		// word buffer
     NumberOutput* number_output;	// HOLD buffer
     Pad* pad;				// pad
     Input* input;			// input buffer
