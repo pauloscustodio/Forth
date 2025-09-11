@@ -20,9 +20,9 @@ VM::VM() {
     pad_data = mem.alloc_bottom(PAD_SZ);
     pad.init();
 
-    number_output = reinterpret_cast<NumberOutput*>(mem.alloc_bottom(sizeof(
-                        NumberOutput)));
-    number_output->init();
+    number_output_data = mem.alloc_bottom(NUMBER_OUTPUT_SZ);
+    number_output.init();
+
     input = reinterpret_cast<Input*>(mem.alloc_bottom(sizeof(Input)));
     input->init();
     blocks = reinterpret_cast<Blocks*>(mem.alloc_bottom(sizeof(Blocks)));

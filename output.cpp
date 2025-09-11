@@ -12,12 +12,12 @@
 #include <sstream>
 
 void NumberOutput::init() {
-    memset(buffer_, BL, sizeof(buffer_));
+    memset(vm.number_output_data, BL, NUMBER_OUTPUT_SZ);
     start();
 }
 
 void NumberOutput::start() {
-    ptr_ = static_cast<int>(sizeof(buffer_));
+    vm.number_output_ptr = NUMBER_OUTPUT_SZ;
 }
 
 void NumberOutput::add_digit() {
@@ -49,11 +49,11 @@ void NumberOutput::add_digits() {
 }
 
 void NumberOutput::add_char(char c) {
-    if (ptr_ < 1) {
+    if (vm.number_output_ptr < 1) {
         error(Error::PicturedNumericOutputStringOverflow);
     }
     else {
-        buffer_[--ptr_] = c;
+        vm.number_output_data[--vm.number_output_ptr] = c;
     }
 }
 
@@ -75,23 +75,23 @@ void NumberOutput::add_string(const char* str, uint size) {
 
 void NumberOutput::end() const {
     dpop();     // drop number
-    push(mem_addr(buffer_ + ptr_));
-    push(static_cast<int>(sizeof(buffer_)) - ptr_);
+    push(mem_addr(vm.number_output_data + vm.number_output_ptr));
+    push(NUMBER_OUTPUT_SZ - vm.number_output_ptr);
 }
 
 void NumberOutput::end_print() const {
     dpop();     // drop number
-    const char* str = buffer_ + ptr_;
-    uint size = static_cast<uint>(sizeof(buffer_)) - ptr_;
+    const char* str = vm.number_output_data + vm.number_output_ptr;
+    uint size = NUMBER_OUTPUT_SZ - vm.number_output_ptr;
     print_string(str, size);
 }
 
 static std::string print_dint_uint(int sign) {
-    vm.number_output->start();
-    vm.number_output->add_char(BL);
-    vm.number_output->add_digits();
-    vm.number_output->add_sign(sign);
-    vm.number_output->end();
+    vm.number_output.start();
+    vm.number_output.add_char(BL);
+    vm.number_output.add_digits();
+    vm.number_output.add_sign(sign);
+    vm.number_output.end();
     uint size = pop();
     uint addr = pop();
     char* str = mem_char_ptr(addr, size);
@@ -99,26 +99,26 @@ static std::string print_dint_uint(int sign) {
 }
 
 static std::string print_dint_uint_aligned(int width, int sign) {
-    vm.number_output->start();
+    vm.number_output.start();
 
     dint d;
     do {
-        vm.number_output->add_digit();
+        vm.number_output.add_digit();
         width--;
         d = dpeek();
     }
     while (d != 0);
 
     if (sign < 0) {
-        vm.number_output->add_sign(sign);
+        vm.number_output.add_sign(sign);
         width--;
     }
 
     while (width-- > 0) {
-        vm.number_output->add_char(BL);
+        vm.number_output.add_char(BL);
     }
 
-    vm.number_output->end();
+    vm.number_output.end();
     uint size = pop();
     uint addr = pop();
     char* str = mem_char_ptr(addr, size);

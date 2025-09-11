@@ -23,9 +23,7 @@ public:
     void end() const;
     void end_print() const;
 
-private:
-    char buffer_[PAD_SZ];
-    int ptr_;
+    // actual data in vm.number_output_data and vm.number_output_ptr
 };
 
 std::string char_to_string(char c);

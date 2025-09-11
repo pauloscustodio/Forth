@@ -27,19 +27,23 @@ struct VM {
     std::string error_message;
 
     // word buffer
-    char* wordbuf_data;
-    uint wordbuf_ptr;
+    char* wordbuf_data{ nullptr };
+    uint wordbuf_ptr{ 0 };
     Wordbuf wordbuf;
 
     // pad
-    char* pad_data;
+    char* pad_data{ nullptr };
     Pad pad;
+
+    // number output buffer
+    char* number_output_data{ nullptr };
+    uint number_output_ptr{ 0 };
+    NumberOutput number_output;
 
     // memory
     Mem mem;
 
     // input
-    NumberOutput* number_output;	// HOLD buffer
     Input* input;			// input buffer
     Blocks* blocks;			// buffered block I/O
 
