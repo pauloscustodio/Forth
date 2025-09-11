@@ -11,7 +11,7 @@
 #include <cstring>
 
 void Pad::init() {
-    memset(m_pad, BL, sizeof(m_pad));
+    memset(vm.pad_data, BL, PAD_SZ);
 }
 
 void Input::init() {

@@ -22,7 +22,7 @@
 
 // constants
 CONST("BL", BL, 0, BL)
-CODE("PAD", PAD, 0, push(mem_addr(vm.pad->pad())))
+CODE("PAD", PAD, 0, push(mem_addr(vm.pad_data)))
 CONST("FALSE", FALSE, 0, F_FALSE)
 CONST("TRUE", TRUE, 0, F_TRUE)
 

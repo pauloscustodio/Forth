@@ -20,8 +20,9 @@ VM::VM() {
     wordbuf_data = mem.alloc_bottom(WORDBUF_SZ);
     wordbuf.init();
 
-    pad = reinterpret_cast<Pad*>(mem.alloc_bottom(sizeof(Pad)));
-    pad->init();
+    pad_data = mem.alloc_bottom(PAD_SZ);
+    pad.init();
+
     number_output = reinterpret_cast<NumberOutput*>(mem.alloc_bottom(sizeof(
                         NumberOutput)));
     number_output->init();

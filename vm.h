@@ -31,12 +31,15 @@ struct VM {
     uint wordbuf_ptr;
     Wordbuf wordbuf;
 
+    // pad
+    char* pad_data;
+    Pad pad;
+
     // memory
     Mem mem;
 
     // input
     NumberOutput* number_output;	// HOLD buffer
-    Pad* pad;				// pad
     Input* input;			// input buffer
     Blocks* blocks;			// buffered block I/O
 

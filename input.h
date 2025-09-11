@@ -15,11 +15,8 @@
 class Pad {
 public:
     void init();
-    char* pad() {
-        return m_pad;
-    }
-private:
-    char m_pad[PAD_SZ];
+
+// pad buffer pointer by vm.pad_data
 };
 
 class Input {
