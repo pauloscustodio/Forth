@@ -35,7 +35,7 @@ static int char_digit(char c) {
 }
 
 static void skip_blanks() {
-    const char* buffer = vm.input->buffer();
+    const char* buffer = vm.input.buffer();
 
     while (vm.user->TO_IN < vm.user->NR_IN  && is_space(buffer[vm.user->TO_IN])) {
         ++vm.user->TO_IN;
@@ -44,7 +44,7 @@ static void skip_blanks() {
 
 static int skip_to_delimiter(char delimiter, bool& found) {
     found = false;
-    const char* buffer = vm.input->buffer();
+    const char* buffer = vm.input.buffer();
 
     int end = vm.user->TO_IN;
     if (delimiter == BL) {
@@ -81,7 +81,7 @@ const char* parse_word(uint& size, char delimiter) {
         skip_blanks();    // skip blanks before word
     }
 
-    const char* buffer = vm.input->buffer();
+    const char* buffer = vm.input.buffer();
     uint start = vm.user->TO_IN;
     bool found;
     uint end = skip_to_delimiter(delimiter, found);
@@ -99,7 +99,7 @@ CString* parse_cword(char delimiter) {
 }
 
 std::string parse_backslash_string() {
-    const char* buffer = vm.input->buffer();
+    const char* buffer = vm.input.buffer();
     std::string message;
     for (; vm.user->TO_IN < vm.user->NR_IN; ++vm.user->TO_IN) {
         if (buffer[vm.user->TO_IN] == '\"') {
@@ -397,14 +397,14 @@ void f_convert() {
 }
 
 void f_open_paren() {
-    if (vm.input->source_id() != 0) {
+    if (vm.input.source_id() != 0) {
         bool found = false;
         while (!found) {
             skip_to_delimiter(')', found);
             if (found) {
                 break;
             }
-            else if (vm.input->refill()) {
+            else if (vm.input.refill()) {
                 continue;
             }
             else {

@@ -577,8 +577,8 @@ void f_include_file(uint file_id) {
         error(Error::OpenFileException);
     }
     else {
-        vm.input->save_input();
-        vm.input->open_file(file_id);
+        vm.input.save_input();
+        vm.input.open_file(file_id);
         std::string filename = vm.files->filename(file_id);
         vm.included_files.insert(filename);
     }
@@ -603,8 +603,8 @@ void f_included(const std::string& filename) {
         error(Error::OpenFileException, filename);
     }
     else {
-        vm.input->save_input();
-        vm.input->open_file(file_id);
+        vm.input.save_input();
+        vm.input.open_file(file_id);
         vm.included_files.insert(filename);
     }
 }

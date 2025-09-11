@@ -22,14 +22,9 @@ public:
 class Input {
 public:
     void init();
-    void deinit();
 
-    int source_id() const {
-        return source_id_;
-    }
-    const char* buffer() const {
-        return buffer_;
-    }
+    int source_id() const;
+    const char* buffer() const;
 
     void open_file(const std::string& filename);
     void open_file(int source_id);
@@ -55,22 +50,21 @@ public:
     void restore_input(int level);
 
 private:
-    int source_id_;             // 0: terminal, >=1: file, -1: string
-    const char*
-    buffer_;        // current input buffer, tib_ or the string supplied to EVALUATE
-    char tib_[BUFFER_SZ + 1];   // input buffer +1 for BL
-    int num_query_;             // number of times f_query was called and save_input() called within
+    int source_id_;         // 0: terminal, >=1: file, -1: string
+    int num_query_;         // number of times f_query was called and save_input() called within
+
+    // data in vm.tib_data and vm.tib_ptr
 
     struct SaveInput {
         int source_id;
         int blk;
         std::string tib;
-        const char* buffer;
+        const char* tib_ptr;
         int nr_in;
         int to_in;
     };
 
-    std::vector<SaveInput>* input_stack_;    // stack of saved inputs
+    std::vector<SaveInput> input_stack_;    // stack of saved inputs
 };
 
 void f_source();

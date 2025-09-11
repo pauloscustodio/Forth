@@ -79,7 +79,7 @@ void f_interpret() {
         uint size;
         const char* word = parse_word(size, BL);
         if (size == 0) {
-            if (vm.input->restore_input_if_query()) {
+            if (vm.input.restore_input_if_query()) {
                 continue;
             }
             else {
@@ -107,15 +107,15 @@ void f_evaluate(const std::string& text) {
 
 void f_evaluate(const char* text, uint size) {
     // save input context
-    vm.input->save_input();
+    vm.input.save_input();
 
     // parse string
     vm.user->BLK = 0;
-    vm.input->set_text(text, size);
+    vm.input.set_text(text, size);
     f_execute(xtINTERPRET);
 
     // restore input context
-    vm.input->restore_input();
+    vm.input.restore_input();
 }
 
 void f_quit() {
@@ -125,7 +125,7 @@ void f_quit() {
         while (f_refill()) {
             f_interpret();
         }
-        if (vm.input->restore_input()) {
+        if (vm.input.restore_input()) {
             f_interpret();  // skip first refill(), buffer is already setup
             continue;
         }

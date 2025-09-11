@@ -21,7 +21,7 @@ int main(int argc, char* argv[]) {
     // parse env variable
     const char* envp = getenv(FORTH_ENV);
     if (envp != nullptr) {
-        vm.input->set_text(envp, static_cast<uint>(strlen(envp)));
+        vm.input.set_text(envp, static_cast<uint>(strlen(envp)));
         f_execute(xtINTERPRET);
     }
 
@@ -41,7 +41,7 @@ int main(int argc, char* argv[]) {
             else {
                 g_argc--;
                 g_argv++;
-                vm.input->set_text(g_argv[0], static_cast<uint>(strlen(g_argv[0])));
+                vm.input.set_text(g_argv[0], static_cast<uint>(strlen(g_argv[0])));
                 f_execute(xtINTERPRET);
                 did_forth = true;
             }
@@ -59,7 +59,7 @@ int main(int argc, char* argv[]) {
     // get script, if any
     if (g_argc == 0) {
         if (!did_forth) {
-            vm.input->open_terminal();
+            vm.input.open_terminal();
             g_interactive = true;
             f_execute(xtQUIT);
         }
@@ -69,7 +69,7 @@ int main(int argc, char* argv[]) {
         g_argc--;
         g_argv++;
 
-        vm.input->open_file(source);
+        vm.input.open_file(source);
         f_execute(xtQUIT);
     }
 

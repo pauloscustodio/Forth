@@ -200,7 +200,7 @@ VAR("#IN", NR_IN, 0, 0)
 CODE("SOURCE", SOURCE, 0, f_source())
 CODE("TIB", TIB, 0, f_tib())
 CODE("#TIB", NRTIB, 0, push(mem_addr(&vm.user->NR_IN)))
-CODE("SOURCE-ID", SOURCE_ID, 0, push(vm.input->source_id()))
+CODE("SOURCE-ID", SOURCE_ID, 0, push(vm.input.source_id()))
 
 CODE("REFILL", REFILL, 0, push(f_bool(f_refill())))
 CODE("ACCEPT", ACCEPT, 0, f_accept())

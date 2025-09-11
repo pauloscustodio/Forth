@@ -115,14 +115,14 @@ void Blocks::f_load(int blk) {
     Block* block = f_block(blk);
 
     // save input context
-    vm.input->save_input();
+    vm.input.save_input();
 
     // parse string
-    vm.input->set_block(block);
+    vm.input.set_block(block);
     f_execute(xtINTERPRET);
 
     // restore input context
-    vm.input->restore_input();
+    vm.input.restore_input();
 }
 
 void Blocks::f_thru(int first, int last) {

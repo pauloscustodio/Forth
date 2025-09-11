@@ -14,16 +14,21 @@ void Pad::init() {
     memset(vm.pad_data, BL, PAD_SZ);
 }
 
+//-----------------------------------------------------------------------------
+
 void Input::init() {
     source_id_ = 0;
-    buffer_ = tib_;
-    memset(tib_, BL, sizeof(tib_));
-    input_stack_ = new std::vector<SaveInput>;
+    vm.tib_ptr = vm.tib_data;
+    memset(vm.tib_data, BL, TIB_SZ);
     num_query_ = 0;
 }
 
-void Input::deinit() {
-    delete input_stack_;
+int Input::source_id() const {
+    return source_id_;
+}
+
+const char* Input::buffer() const {
+    return vm.tib_ptr;
 }
 
 void Input::open_file(const std::string& filename) {
@@ -48,14 +53,14 @@ void Input::set_text(const char* text, uint size) {
     source_id_ = -1; // string
     vm.user->NR_IN = size;
     vm.user->TO_IN = 0;
-    buffer_ = text;
+    vm.tib_ptr = text;
 }
 
 void Input::set_block(Block* block) {
     vm.user->BLK = block->blk;
     vm.user->NR_IN = BLOCK_SZ;
     vm.user->TO_IN = 0;
-    buffer_ = block->block;
+    vm.tib_ptr = block->block;
     source_id_ = 0;
 }
 
@@ -66,9 +71,9 @@ void Input::set_tib(const char* text, uint size) {
     else {
         vm.user->NR_IN = size;
         vm.user->TO_IN = 0;
-        memcpy(tib_, text, size);
-        tib_[size] = BL; // BL after the string
-        buffer_ = tib_;
+        memcpy(vm.tib_data, text, size);
+        vm.tib_data[size] = BL; // BL after the string
+        vm.tib_ptr = vm.tib_data;
     }
 }
 
@@ -109,23 +114,23 @@ bool Input::refill() {
 
         vm.user->NR_IN = static_cast<int>(line.size());
         vm.user->TO_IN = 0;
-        memcpy(tib_, line.c_str(), line.size());
-        tib_[vm.user->NR_IN] = BL; // BL after the string
-        buffer_ = tib_;
+        memcpy(vm.tib_data, line.c_str(), line.size());
+        vm.tib_data[vm.user->NR_IN] = BL; // BL after the string
+        vm.tib_ptr = vm.tib_data;
     }
     else {                              // input from file
         Error error_code = Error::None;
         bool found_eof = false;
-        uint num_read = vm.files->read_line(source_id_, tib_, BUFFER_SZ,
+        uint num_read = vm.files->read_line(source_id_, vm.tib_data, BUFFER_SZ,
                                             found_eof, error_code);
         ok = num_read > 0 || !found_eof;
 
         vm.user->NR_IN = num_read;
         vm.user->TO_IN = 0;
-        tib_[num_read] = BL; // BL after the string
-        buffer_ = tib_;
+        vm.tib_data[num_read] = BL; // BL after the string
+        vm.tib_ptr = vm.tib_data;
 
-        line = std::string(tib_, tib_ + num_read);
+        line = std::string(vm.tib_data, vm.tib_data + num_read);
     }
 
     if (ok && vm.user->TRACE) {
@@ -140,21 +145,21 @@ void Input::save_input() {
     SaveInput save;
     save.source_id = source_id_;
     save.blk = vm.user->BLK;
-    save.tib = std::string(tib_, tib_ + vm.user->NR_IN);
-    save.buffer = buffer_;
+    save.tib = std::string(vm.tib_data, vm.tib_data + vm.user->NR_IN);
+    save.tib_ptr = vm.tib_ptr;
     save.nr_in = vm.user->NR_IN;
     save.to_in = vm.user->TO_IN;
 
-    input_stack_->push_back(save);
+    input_stack_.push_back(save);
 }
 
 bool Input::restore_input() {
-    if (input_stack_->empty()) {
+    if (input_stack_.empty()) {
         return false;
     }
     else {
-        SaveInput save = input_stack_->back();
-        input_stack_->pop_back();
+        SaveInput save = input_stack_.back();
+        input_stack_.pop_back();
 
         // close current file if any
         if (source_id_ > 0) {
@@ -164,7 +169,7 @@ bool Input::restore_input() {
         source_id_ = save.source_id;
         vm.user->BLK = save.blk;
         set_tib(save.tib);
-        buffer_ = save.buffer;
+        vm.tib_ptr = save.tib_ptr;
         vm.user->NR_IN = save.nr_in;
         vm.user->TO_IN = save.to_in;
 
@@ -188,7 +193,7 @@ bool Input::restore_input_if_query() {
 }
 
 int Input::input_level() const {
-    return static_cast<int>(input_stack_->size());
+    return static_cast<int>(input_stack_.size());
 }
 
 void Input::restore_input(int level) {
@@ -198,16 +203,16 @@ void Input::restore_input(int level) {
 }
 
 void f_source() {
-    push(mem_addr(vm.input->buffer()));
+    push(mem_addr(vm.input.buffer()));
     push(vm.user->NR_IN);
 }
 
 void f_tib() {
-    push(mem_addr(vm.input->buffer()));
+    push(mem_addr(vm.input.buffer()));
 }
 
 bool f_refill() {
-    return vm.input->refill();
+    return vm.input.refill();
 }
 
 void f_accept() {
@@ -239,16 +244,16 @@ void f_expect() {
 }
 
 void f_query() {
-    vm.input->save_input_for_query();
-    vm.input->open_terminal();
-    vm.input->refill();
+    vm.input.save_input_for_query();
+    vm.input.open_terminal();
+    vm.input.refill();
 }
 
 void f_save_input() {
-    vm.input->save_input();
+    vm.input.save_input();
 }
 
 bool f_restore_input() {
-    return !vm.input->restore_input(); // true if cannot be restored
+    return !vm.input.restore_input(); // true if cannot be restored
 }
 

@@ -40,11 +40,15 @@ struct VM {
     uint number_output_ptr{ 0 };
     NumberOutput number_output;
 
+    // input buffer
+    char* tib_data{ nullptr };
+    const char* tib_ptr{ nullptr };   // tib_data or string being EVALUATE'd
+    Input input;			// input buffer
+
     // memory
     Mem mem;
 
     // input
-    Input* input;			// input buffer
     Blocks* blocks;			// buffered block I/O
 
     User* user;				// user variables

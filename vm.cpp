@@ -23,8 +23,9 @@ VM::VM() {
     number_output_data = mem.alloc_bottom(NUMBER_OUTPUT_SZ);
     number_output.init();
 
-    input = reinterpret_cast<Input*>(mem.alloc_bottom(sizeof(Input)));
-    input->init();
+    tib_data = mem.alloc_bottom(TIB_SZ);
+    input.init();
+
     blocks = reinterpret_cast<Blocks*>(mem.alloc_bottom(sizeof(Blocks)));
     blocks->init();
 
@@ -64,7 +65,6 @@ VM::VM() {
 }
 
 VM::~VM() {
-    input->deinit();
     blocks->deinit();
     delete files;
 }
