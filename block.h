@@ -37,12 +37,12 @@ public:
     void f_update();
 
 private:
-    std::fstream* block_file_;          // file handle
+    uint block_file_id_;                // file handle
     Block blocks_[NUM_BLK_BUFFERS];     // block buffers
     int last_block_;                    // index of last block referenced
 
-    std::fstream* block_file();         // get block file handle
-    bool seek_block(int blk);          // seek to block position
+    uint block_file_id();               // get block file handle
+    bool seek_block(int blk);           // seek to block position
 
     int find_buffer_index(int blk) const;   // -1 if not found
     int find_first_unused() const;      // -1 if not found

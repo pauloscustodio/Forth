@@ -55,6 +55,7 @@ public:
 
     // returns file id, 0 on failure
     uint open(const std::string& filename, std::ios::openmode mode);
+    uint open_or_create(const std::string& filename);
     bool close(uint file_id, Error& error_code);
     uint read_bytes(uint file_id, char* buffer, uint size, Error& error_code);
     void write_bytes(uint file_id, const char* buffer, uint size,

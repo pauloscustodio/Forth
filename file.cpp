@@ -216,6 +216,31 @@ uint Files::open(const std::string& filename, std::ios::openmode mode) {
     }
 }
 
+uint Files::open_or_create(const std::string& filename) {
+    // open r/w
+    uint file_id = open(filename, std::ios::in | std::ios::out | std::ios::binary);
+
+    // check if file exists
+    if (file_id == 0) {
+        // create the file
+        file_id = open(filename, std::ios::out | std::ios::binary);
+        if (file_id == 0) {
+            return 0;    // failed
+        }
+
+        Error error_code = Error::None;
+        close(file_id, error_code);
+        if (error_code != Error::None) {
+            return 0;
+        }
+
+        // reopen for r/w
+        file_id = open(filename, std::ios::in | std::ios::out | std::ios::binary);
+    }
+
+    return file_id; // 0 if last open failed
+}
+
 SyncStream* Files::get_file(uint file_id) {
     if (file_id < files_.size()) {
         return files_[file_id];

@@ -30,15 +30,24 @@ void Blocks::init() {
 }
 
 void Blocks::deinit() {
-    delete block_file_;
+    if (block_file_id_ != 0) {
+        Error error_code = Error::None;
+        vm.files.close(block_file_id_, error_code);
+        if (error_code != Error::None) {
+            error(error_code, BLOCKS_FILE);
+        }
+    }
 }
 
 int Blocks::num_blocks() {
-    std::fstream* fs = block_file();
+    uint file_id = block_file_id();
+    Error error_code = Error::None;
+    udint size = vm.files.size(file_id, error_code);
+    if (error_code != Error::None) {
+        error(error_code, BLOCKS_FILE);
+    }
 
-    fs->seekg(0, std::ios::end);
-    std::streampos end_pos = fs->tellg();
-    int num_blocks = static_cast<int>(end_pos / BLOCK_SZ);
+    int num_blocks = static_cast<int>(size / BLOCK_SZ);
     return num_blocks;
 }
 
@@ -144,41 +153,38 @@ void Blocks::f_update() {
     blocks_[last_block_].dirty = true;
 }
 
-std::fstream* Blocks::block_file() {
-    if (block_file_ == nullptr) {
-        block_file_ = new std::fstream(BLOCKS_FILE,
-                                       std::ios::in | std::ios::out | std::ios::binary);
+uint Blocks::block_file_id() {
+    if (block_file_id_ == 0) {
+        block_file_id_ = vm.files.open_or_create(BLOCKS_FILE);
 
-        // if the file doesn't exist, create it
-        if (!block_file_->is_open()) {
-            block_file_->open(BLOCKS_FILE,
-                              std::ios::out | std::ios::binary); // create the file
-            block_file_->close();
-            block_file_->open(BLOCKS_FILE,
-                              std::ios::in | std::ios::out | std::ios::binary); // reopen for read/write
-        }
-
-        if (!*block_file_) {
+        if (block_file_id_ == 0) {
             error(Error::OpenFileException, BLOCKS_FILE);
         }
     }
-    return block_file_;
+
+    return block_file_id_;
 }
 
 bool Blocks::seek_block(int blk) {
-    assert(blk > 0);
+    if (blk < 0) {
+        error(Error::InvalidBlockNumber);
+    }
 
-    std::fstream* fs = block_file();
+    uint file_id = block_file_id();
+    Error error_code = Error::None;
     std::streampos fpos = blk * BLOCK_SZ;
-
-    fs->clear(); // clear any error flags
-    fs->seekg(fpos);
-    if (!*fs) {
-        return false;    // failbit or badbit set
+    vm.files.seek(file_id, fpos, error_code);
+    if (error_code != Error::None) {
+        error(error_code, BLOCKS_FILE);
     }
 
     // verify actual position
-    if (fs->tellg() != fpos) {
+    std::streampos actual_pos = vm.files.tell(file_id, error_code);
+    if (error_code != Error::None) {
+        error(error_code, BLOCKS_FILE);
+    }
+
+    if (actual_pos != fpos) {
         return false;    // seek landed elsewhere (can happen on some devices)
     }
 
@@ -186,7 +192,9 @@ bool Blocks::seek_block(int blk) {
 }
 
 int Blocks::find_buffer_index(int blk) const {
-    assert(blk > 0);
+    if (blk < 0) {
+        error(Error::InvalidBlockNumber);
+    }
 
     for (int i = 0; i < NUM_BLK_BUFFERS; ++i) {
         if (blocks_[i].blk == blk) {
@@ -231,18 +239,26 @@ void Blocks::flush_block(int index) {
 
 bool Blocks::read_block(int index, int blk) {
     assert(index >= 0 && index < NUM_BLK_BUFFERS);
-    assert(blk > 0);
+    if (blk < 0) {
+        error(Error::InvalidBlockNumber);
+    }
 
     blocks_[index].init(index, blk); // clear with blanks
 
-    std::fstream* fs = block_file();
     if (!seek_block(blk)) {
         return false;    // seek failed
     }
 
-    fs->clear(); // clear any error flags
-    fs->read(blocks_[index].data(), BLOCK_SZ);
-    if (!*fs) {
+    uint file_id = block_file_id();
+    Error error_code = Error::None;
+    uint num_read = vm.files.read_bytes(file_id,
+                                        blocks_[index].data(), BLOCK_SZ,
+                                        error_code);
+    if (error_code != Error::None) {
+        error(error_code, BLOCKS_FILE);
+    }
+
+    if (num_read != BLOCK_SZ) {
         return false;    // read failed
     }
     else {
@@ -254,21 +270,24 @@ bool Blocks::write_block(int index) {
     assert(index >= 0 && index < NUM_BLK_BUFFERS);
 
     int blk = blocks_[index].blk;
-    assert(blk > 0);
+    if (blk < 0) {
+        error(Error::InvalidBlockNumber);
+    }
 
-    std::fstream* fs = block_file();
     if (!seek_block(blk)) {
         return false;    // seek failed
     }
 
-    fs->clear(); // clear any error flags
-    fs->write(blocks_[index].data(), BLOCK_SZ);
-    if (!*fs) {
-        return false;    // read failed
+    uint file_id = block_file_id();
+    Error error_code = Error::None;
+    vm.files.write_bytes(file_id,
+                         blocks_[index].data(), BLOCK_SZ,
+                         error_code);
+    if (error_code != Error::None) {
+        error(error_code, BLOCKS_FILE);
     }
-    else {
-        return true;
-    }
+
+    return true;
 }
 
 void f_block() {
