@@ -399,13 +399,13 @@ static void open_create(std::ios::openmode base_mode, Error error_code) {
     int filename_addr = pop();
     char* filename_ptr = mem_char_ptr(filename_addr, size);
     std::string filename = std::string(filename_ptr, filename_ptr + size);
-    uint file_id = vm.files->open(filename,
-                                  base_mode | static_cast<std::ios::openmode>(mode));
+    uint file_id = vm.files.open(filename,
+                                 base_mode | static_cast<std::ios::openmode>(mode));
     if (file_id == 0) {
         push(0);        // file_id
         push(static_cast<int>(error_code));
     }
-    else if (!vm.files->seek(file_id, 0, error_code)) {
+    else if (!vm.files.seek(file_id, 0, error_code)) {
         push(0);        // file_id
         push(static_cast<int>(error_code));
     }
@@ -430,7 +430,7 @@ void f_read_file() {
     char* buffer = mem_char_ptr(addr, size);
 
     Error error_code = Error::None;
-    int num_read = vm.files->read_bytes(file_id, buffer, size, error_code);
+    int num_read = vm.files.read_bytes(file_id, buffer, size, error_code);
 
     push(num_read);
     push(static_cast<int>(error_code));
@@ -443,7 +443,7 @@ void f_write_file() {
     char* buffer = mem_char_ptr(addr, size);
 
     Error error_code = Error::None;
-    vm.files->write_bytes(file_id, buffer, size, error_code);
+    vm.files.write_bytes(file_id, buffer, size, error_code);
 
     push(static_cast<int>(error_code));
 }
@@ -456,8 +456,8 @@ void f_read_line() {
 
     Error error_code = Error::None;
     bool found_eof = false;
-    uint num_read = vm.files->read_line(file_id, buffer, size,
-                                        found_eof, error_code);
+    uint num_read = vm.files.read_line(file_id, buffer, size,
+                                       found_eof, error_code);
 
     push(num_read);
     push(f_bool(!found_eof));
@@ -471,7 +471,7 @@ void f_write_line() {
     char* buffer = mem_char_ptr(addr, size);
 
     Error error_code = Error::None;
-    vm.files->write_line(file_id, buffer, size, error_code);
+    vm.files.write_line(file_id, buffer, size, error_code);
 
     push(static_cast<int>(error_code));
 }
@@ -480,7 +480,7 @@ void f_file_position() {
     uint file_id = pop();
 
     Error error_code = Error::None;
-    udint pos = vm.files->tell(file_id, error_code);
+    udint pos = vm.files.tell(file_id, error_code);
 
     dpush(pos);
     push(static_cast<int>(error_code));
@@ -491,7 +491,7 @@ void f_reposition_file() {
     udint pos = dpop();
 
     Error error_code = Error::None;
-    vm.files->seek(file_id, pos, error_code);
+    vm.files.seek(file_id, pos, error_code);
 
     push(static_cast<int>(error_code));
 }
@@ -500,7 +500,7 @@ void f_file_size() {
     uint file_id = pop();
 
     Error error_code = Error::None;
-    udint size = vm.files->size(file_id, error_code);
+    udint size = vm.files.size(file_id, error_code);
 
     dpush(size);
     push(static_cast<int>(error_code));
@@ -511,7 +511,7 @@ void f_resize_file() {
     udint size = dpop();
 
     Error error_code = Error::None;
-    vm.files->resize(file_id, size, error_code);
+    vm.files.resize(file_id, size, error_code);
 
     push(static_cast<int>(error_code));
 }
@@ -520,7 +520,7 @@ void f_flush_file() {
     uint file_id = pop();
 
     Error error_code = Error::None;
-    vm.files->flush(file_id, error_code);
+    vm.files.flush(file_id, error_code);
 
     push(static_cast<int>(error_code));
 }
@@ -529,7 +529,7 @@ void f_close_file() {
     uint file_id = pop();
 
     Error error_code = Error::None;
-    vm.files->close(file_id, error_code);
+    vm.files.close(file_id, error_code);
 
     push(static_cast<int>(error_code));
 }
@@ -579,7 +579,7 @@ void f_include_file(uint file_id) {
     else {
         vm.input.save_input();
         vm.input.open_file(file_id);
-        std::string filename = vm.files->filename(file_id);
+        std::string filename = vm.files.filename(file_id);
         vm.included_files.insert(filename);
     }
 }
@@ -598,7 +598,7 @@ void f_included() {
 }
 
 void f_included(const std::string& filename) {
-    uint file_id = vm.files->open(filename, std::ios::in | std::ios::binary);
+    uint file_id = vm.files.open(filename, std::ios::in | std::ios::binary);
     if (file_id == 0) {
         error(Error::OpenFileException, filename);
     }

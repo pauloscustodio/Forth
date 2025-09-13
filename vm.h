@@ -52,9 +52,8 @@ struct VM {
     // memory
     Mem mem;
 
-    // input
-
-    User* user;				// user variables
+    // user variables
+    User* user;
 
     // stacks
     Stack* r_stack;			// return stack
@@ -66,7 +65,7 @@ struct VM {
     Dict* dict;
 
     // files
-    Files* files;           // system files
+    Files files;            // system files
 
     // included files
     std::set<std::string> included_files;

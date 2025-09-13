@@ -32,7 +32,7 @@ const char* Input::buffer() const {
 }
 
 void Input::open_file(const std::string& filename) {
-    source_id_ = vm.files->open(filename, std::ios::in | std::ios::binary);
+    source_id_ = vm.files.open(filename, std::ios::in | std::ios::binary);
     if (source_id_ == 0) {
         error(Error::OpenFileException, filename);
     }
@@ -121,8 +121,8 @@ bool Input::refill() {
     else {                              // input from file
         Error error_code = Error::None;
         bool found_eof = false;
-        uint num_read = vm.files->read_line(source_id_, vm.tib_data, BUFFER_SZ,
-                                            found_eof, error_code);
+        uint num_read = vm.files.read_line(source_id_, vm.tib_data, BUFFER_SZ,
+                                           found_eof, error_code);
         ok = num_read > 0 || !found_eof;
 
         vm.user->NR_IN = num_read;
@@ -164,7 +164,7 @@ bool Input::restore_input() {
         // close current file if any
         if (source_id_ > 0) {
             Error error_code = Error::None;
-            vm.files->close(source_id_, error_code);
+            vm.files.close(source_id_, error_code);
         }
         source_id_ = save.source_id;
         vm.user->BLK = save.blk;
