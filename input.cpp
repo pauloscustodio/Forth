@@ -60,7 +60,7 @@ void Input::set_block(Block* block) {
     vm.user->BLK = block->blk;
     vm.user->NR_IN = BLOCK_SZ;
     vm.user->TO_IN = 0;
-    vm.tib_ptr = block->block;
+    vm.tib_ptr = block->data();
     source_id_ = 0;
 }
 
@@ -89,17 +89,17 @@ bool Input::refill() {
         return false;
     }
     else if (vm.user->BLK > 0) {        // input from block
-        if (vm.user->BLK + 1 >= vm.blocks->num_blocks()) {
+        if (vm.user->BLK + 1 >= vm.blocks.num_blocks()) {
             return false;
         }
         else {
             ++vm.user->BLK;
-            Block* block = vm.blocks->f_block(vm.user->BLK);
+            Block* block = vm.blocks.f_block(vm.user->BLK);
             set_block(block);
 
             if (vm.user->TRACE) {
                 std::cout << std::endl << "> ";
-                print_string(block->block, BLOCK_SZ);
+                print_string(block->data(), BLOCK_SZ);
                 std::cout << std::endl;
             }
 

@@ -11,11 +11,19 @@
 #include <cassert>
 #include <cstring>
 
-void Block::init(int blk) {
-    memset(this->block, BL, BLOCK_SZ);
+void Block::init(uint index, int blk) {
+    this->index = index;
     this->blk = blk;
     this->dirty = false;
+    memset(data(), BL, BLOCK_SZ);
 }
+
+char* Block::data() const {
+    assert(index < NUM_BLK_BUFFERS);
+    return vm.block_data + index * BLOCK_SZ;
+}
+
+//-----------------------------------------------------------------------------
 
 void Blocks::init() {
     f_empty_buffers();
@@ -60,7 +68,7 @@ Block* Blocks::f_block(int blk) {
 
 void Blocks::f_empty_buffers() {
     for (int i = 0; i < NUM_BLK_BUFFERS; ++i) {
-        blocks_[i].init(0);
+        blocks_[i].init(i, 0);
     }
 }
 
@@ -82,6 +90,7 @@ void Blocks::f_list(int blk) {
 
     vm.user->SCR = blk;
     Block* block = f_block(blk);
+    char* block_data = block->data();
 
     int save_base = vm.user->BASE;
     vm.user->BASE = 10;
@@ -93,7 +102,7 @@ void Blocks::f_list(int blk) {
         print_number(row + 1, 2);
         std::cout << BL;
         for (int col = 0; col < BLOCK_COLS; ++col) {
-            char c = block->block[row * BLOCK_COLS + col];
+            char c = block_data[row * BLOCK_COLS + col];
             if (is_print(c)) {
                 std::cout << c;
             }
@@ -224,7 +233,7 @@ bool Blocks::read_block(int index, int blk) {
     assert(index >= 0 && index < NUM_BLK_BUFFERS);
     assert(blk > 0);
 
-    blocks_[index].init(blk); // clear with blanks
+    blocks_[index].init(index, blk); // clear with blanks
 
     std::fstream* fs = block_file();
     if (!seek_block(blk)) {
@@ -232,7 +241,7 @@ bool Blocks::read_block(int index, int blk) {
     }
 
     fs->clear(); // clear any error flags
-    fs->read(blocks_[index].block, BLOCK_SZ);
+    fs->read(blocks_[index].data(), BLOCK_SZ);
     if (!*fs) {
         return false;    // read failed
     }
@@ -253,7 +262,7 @@ bool Blocks::write_block(int index) {
     }
 
     fs->clear(); // clear any error flags
-    fs->write(blocks_[index].block, BLOCK_SZ);
+    fs->write(blocks_[index].data(), BLOCK_SZ);
     if (!*fs) {
         return false;    // read failed
     }
@@ -264,39 +273,39 @@ bool Blocks::write_block(int index) {
 
 void f_block() {
     int blk = pop();
-    Block* block = vm.blocks->f_block(blk);
-    const char* buffer = block->block;
+    Block* block = vm.blocks.f_block(blk);
+    const char* buffer = block->data();
     push(mem_addr(buffer));
 }
 
 void f_save_buffers() {
-    vm.blocks->f_save_buffers();
+    vm.blocks.f_save_buffers();
 }
 
 void f_empty_buffers() {
-    vm.blocks->f_empty_buffers();
+    vm.blocks.f_empty_buffers();
 }
 
 void f_flush() {
-    vm.blocks->f_flush();
+    vm.blocks.f_flush();
 }
 
 void f_load() {
     int blk = pop();
-    vm.blocks->f_load(blk);
+    vm.blocks.f_load(blk);
 }
 
 void f_update() {
-    vm.blocks->f_update();
+    vm.blocks.f_update();
 }
 
 void f_list() {
     int blk = pop();
-    vm.blocks->f_list(blk);
+    vm.blocks.f_list(blk);
 }
 
 void f_thru() {
     int last = pop();
     int first = pop();
-    vm.blocks->f_thru(first, last);
+    vm.blocks.f_thru(first, last);
 }

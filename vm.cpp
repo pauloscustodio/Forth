@@ -26,8 +26,8 @@ VM::VM() {
     tib_data = mem.alloc_bottom(TIB_SZ);
     input.init();
 
-    blocks = reinterpret_cast<Blocks*>(mem.alloc_bottom(sizeof(Blocks)));
-    blocks->init();
+    block_data = mem.alloc_bottom(NUM_BLK_BUFFERS * BLOCK_SZ);
+    blocks.init();
 
     // user variables
     user = reinterpret_cast<User*>(mem.alloc_bottom(sizeof(User)));
@@ -65,7 +65,7 @@ VM::VM() {
 }
 
 VM::~VM() {
-    blocks->deinit();
+    blocks.deinit();
     delete files;
 }
 

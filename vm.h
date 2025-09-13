@@ -45,11 +45,14 @@ struct VM {
     const char* tib_ptr{ nullptr };   // tib_data or string being EVALUATE'd
     Input input;			// input buffer
 
+    // buffered block I/O
+    char* block_data{ nullptr };
+    Blocks blocks;
+
     // memory
     Mem mem;
 
     // input
-    Blocks* blocks;			// buffered block I/O
 
     User* user;				// user variables
 

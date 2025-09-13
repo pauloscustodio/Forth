@@ -11,11 +11,14 @@
 #include <fstream>
 
 struct Block {
-    char block[BLOCK_SZ]; // buffer
+    uint index;         // sequence number of block
     int blk;            // block numnber mapped to this buffer, 0 if none
     bool dirty;         // true if needs to be written to file
 
-    void init(int blk);
+    void init(uint index, int blk);
+    char* data() const;
+
+    // buffer stored in vm.block_data
 };
 
 class Blocks {
@@ -34,17 +37,17 @@ public:
     void f_update();
 
 private:
-    std::fstream* block_file_;               // file handle
+    std::fstream* block_file_;          // file handle
     Block blocks_[NUM_BLK_BUFFERS];     // block buffers
     int last_block_;                    // index of last block referenced
 
-    std::fstream* block_file();                  // get block file handle
-    bool seek_block(int blk);               // seek to block position
+    std::fstream* block_file();         // get block file handle
+    bool seek_block(int blk);          // seek to block position
 
     int find_buffer_index(int blk) const;   // -1 if not found
-    int find_first_unused() const;          // -1 if not found
-    int find_first_not_dirty() const;       // -1 if not found
-    void flush_block(int index);            // flush to file if dirty, init
+    int find_first_unused() const;      // -1 if not found
+    int find_first_not_dirty() const;   // -1 if not found
+    void flush_block(int index);        // flush to file if dirty, init
 
     bool read_block(int index, int blk);
     bool write_block(int index);
