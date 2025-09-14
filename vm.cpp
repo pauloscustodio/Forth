@@ -34,10 +34,6 @@ VM::VM() {
     user->init();
 
     // top of memory
-    cs_stack = reinterpret_cast<Stack*>(mem.alloc_top(sizeof(Stack)));
-    cs_stack->init('C',
-                   Error::ControlFlowStackUnderflow, Error::ControlFlowStackOverflow);
-
     except_stack = reinterpret_cast<Stack*>(mem.alloc_top(sizeof(Stack)));
     except_stack->init('E',
                        Error::ExceptionStackUnderflow, Error::ExceptionStackOverflow);
@@ -198,17 +194,22 @@ dint r_dpeek(int depth) {
 }
 
 void cs_dpush(dint pos_addr) {
-    vm.cs_stack->dpush(pos_addr);
+    vm.cs_stack.push(dcell_lo(pos_addr));
+    vm.cs_stack.push(dcell_hi(pos_addr));
 }
 
 dint cs_dpop() {
-    return vm.cs_stack->dpop();
+    int hi = vm.cs_stack.pop();
+    int lo = vm.cs_stack.pop();
+    return mk_dcell(hi, lo);
 }
 
 dint cs_dpeek(int depth) {
-    return vm.cs_stack->dpeek(depth);
+    int hi = vm.cs_stack.peek(2 * depth);
+    int lo = vm.cs_stack.peek(2 * depth + 1);
+    return mk_dcell(hi, lo);
 }
 
 int cs_ddepth() {
-    return vm.cs_stack->depth() / 2;
+    return vm.cs_stack.depth() / 2;
 }

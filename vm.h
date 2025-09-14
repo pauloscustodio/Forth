@@ -63,8 +63,12 @@ struct VM {
     DownwardStack<int> r_stack{ 'R',
         Error::ReturnStackUnderflow, Error::ReturnStackOverflow };
 
+    // control stack
+    DownwardStack<int> cs_stack{ 'C',
+        Error::ControlFlowStackUnderflow, Error::ControlFlowStackOverflow };
+
+
     // stacks
-    Stack* cs_stack;		// control stack
     Stack* except_stack;	// exception stack
 
     // dictionary
