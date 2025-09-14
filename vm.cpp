@@ -46,10 +46,6 @@ VM::VM() {
     except_stack->init('E',
                        Error::ExceptionStackUnderflow, Error::ExceptionStackOverflow);
 
-    stack = reinterpret_cast<Stack*>(mem.alloc_top(sizeof(Stack)));
-    stack->init('\0',
-                Error::StackUnderflow, Error::StackOverflow);
-
     // use the remaing as dictionary space
     dict = reinterpret_cast<Dict*>(mem.alloc_bottom(sizeof(Dict)));
     int start_dict = mem.addr(mem.alloc_bottom(0));
@@ -136,35 +132,40 @@ void align() {
 
 // stacks
 void push(int value) {
-    vm.stack->push(value);
+    vm.stack.push(value);
 }
 
 int pop() {
-    return vm.stack->pop();
+    return vm.stack.pop();
 }
 
 int peek(int depth) {
-    return vm.stack->peek(depth);
+    return vm.stack.peek(depth);
 }
 
 int depth() {
-    return vm.stack->depth();
+    return vm.stack.depth();
 }
 
 void roll(int depth) {
-    vm.stack->roll(depth);
+    vm.stack.roll(depth);
 }
 
 void dpush(dint value) {
-    vm.stack->dpush(value);
+    vm.stack.push(dcell_lo(value));
+    vm.stack.push(dcell_hi(value));
 }
 
 dint dpop() {
-    return vm.stack->dpop();
+    int hi = vm.stack.pop();
+    int lo = vm.stack.pop();
+    return mk_dcell(hi, lo);
 }
 
 dint dpeek(int depth) {
-    return vm.stack->dpeek(depth);
+    int hi = vm.stack.peek(2 * depth);
+    int lo = vm.stack.peek(2 * depth + 1);
+    return mk_dcell(hi, lo);
 }
 
 void r_push(int value) {

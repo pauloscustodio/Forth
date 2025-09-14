@@ -29,7 +29,7 @@ static const int TIB_SZ = BUFFER_SZ + CELL_SZ; // leave room for BL, align
 static const int WORDBUF_SZ = 2 * BUFFER_SZ;
 static const int PAD_SZ = 256;
 static const int NUMBER_OUTPUT_SZ = 256;
-static const int STACK_SZ = 1024 * CELL_SZ;
+static const int STACK_SZ = 64 * 1024;
 static const int MAX_CSTRING_SZ = 0xff;
 static const int MAX_NAME_SZ = 0x3f;
 

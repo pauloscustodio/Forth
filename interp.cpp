@@ -41,7 +41,7 @@ void interpret_word(const char* word, uint size) {
                         std::cout << ">>" << BL;
                         print_number(value);
                         std::cout << BL;
-                        vm.stack->print_debug();
+                        vm.stack.print_debug();
                         std::cout << std::endl;
                     }
                 }
@@ -58,7 +58,7 @@ void interpret_word(const char* word, uint size) {
                         std::cout << ">>" << BL;
                         print_number(dcell_lo(value));
                         std::cout << BL;
-                        vm.stack->print_debug();
+                        vm.stack.print_debug();
                         std::cout << std::endl;
                     }
                 }

@@ -55,11 +55,14 @@ struct VM {
     // user variables
     User* user;
 
+    // data stack
+    DownwardStack<int> stack{ '\0',
+        Error::StackUnderflow, Error::StackOverflow };
+
     // stacks
     Stack* r_stack;			// return stack
     Stack* cs_stack;		// control stack
     Stack* except_stack;	// exception stack
-    Stack* stack;			// data stack
 
     // dictionary
     Dict* dict;

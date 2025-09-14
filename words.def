@@ -130,8 +130,8 @@ CODE("2ROT", TWO_ROT, 0, dint c = dpop(); dint b = dpop(); dint a = dpop(); dpus
 CODE("-2ROT", MINUS_2ROT, 0, dint c = dpop(); dint b = dpop(); dint a = dpop(); dpush(c); dpush(a); dpush(b))
 
 CONST("S0", S0, 0, STACK_SZ)
-CODE("SP@", SPFETCH, 0, push(vm.stack->sp()))
-CODE("SP!", SPSTORE, 0, vm.stack->set_sp(pop()))
+CODE("SP@", SPFETCH, 0, push(vm.stack.sp()))
+CODE("SP!", SPSTORE, 0, vm.stack.set_sp(pop()))
 
 
 // return stack
@@ -348,7 +348,7 @@ CODE("THRU", THRU, 0, f_thru())
 
 
 // tools
-CODE(".S", DOT_S, 0, vm.stack->print())
+CODE(".S", DOT_S, 0, vm.stack.print())
 CODE(".RS", DOT_RS, 0, vm.r_stack->print())
 CODE("WORDS", WORDS, 0, f_words())
 CODE("ENVIRONMENT?", ENVIRONMENT_Q, 0, f_environment_q())

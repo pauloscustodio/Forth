@@ -39,8 +39,8 @@ forth_ok('S" MAX-D" 			ENVIRONMENT? .S', "( -1 2147483647 -1 )");
 forth_ok('S" MAX-N" 			ENVIRONMENT? .S', "( 2147483647 -1 )");
 forth_ok('S" MAX-U" 			ENVIRONMENT? .S', "( -1 -1 )");
 forth_ok('S" MAX-UD" 			ENVIRONMENT? .S', "( -1 -1 -1 )");
-forth_ok('S" RETURN-STACK-CELLS"ENVIRONMENT? .S', "( 4096 -1 )");
-forth_ok('S" STACK-CELLS" 		ENVIRONMENT? .S', "( 4096 -1 )");
+forth_ok('S" RETURN-STACK-CELLS"ENVIRONMENT? .S', "( 65536 -1 )");
+forth_ok('S" STACK-CELLS" 		ENVIRONMENT? .S', "( 65536 -1 )");
 
 # deprecated queries
 forth_ok('S" CORE" 				ENVIRONMENT? .S', "( -1 -1 )");

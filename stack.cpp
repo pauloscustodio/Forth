@@ -38,19 +38,13 @@ int Stack::pop() {
 }
 
 int Stack::peek(int depth) const {
-    if (depth < 0) {
-        error(Error::InvalidMemoryAddress);
+    int idx = sp_ + depth;
+    if (idx >= STACK_SZ) {
+        error(err_underflow_);
         return 0;
     }
     else {
-        int idx = sp_ + depth;
-        if (idx >= STACK_SZ) {
-            error(err_underflow_);
-            return 0;
-        }
-        else {
-            return data_[idx];
-        }
+        return data_[idx];
     }
 }
 
@@ -75,10 +69,7 @@ dint Stack::dpeek(int depth) const {
 // | 1 | 2 |    --> | 2 | 1 |
 // ^sp ^bot
 void Stack::roll(int depth) {
-    if (depth < 0) {
-        error(Error::InvalidMemoryAddress);
-    }
-    else if (depth == 0)
+    if (depth == 0)
         ; // ignore
     else {
         int bot = sp_ + depth;

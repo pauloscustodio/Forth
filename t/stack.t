@@ -2,6 +2,15 @@
 
 BEGIN { use lib 't'; require 'testlib.pl'; }
 
+# test stack growing
+my $fs = "";
+my $out = "";
+for my $i (1..100) {
+	$fs .= "$i SP@ . .S CR\n";
+	$out .= (64 * 1024 - $i)." ( ".join(" ", 1..$i).")\n"
+}
+forth_ok($fs, $out);
+
 note "Test DROP";
 forth_ok("1 DROP .S  1 2 DROP .S", "( )( 1 )");
 forth_nok("DROP", "\nError: stack underflow\n");

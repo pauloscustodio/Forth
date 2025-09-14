@@ -74,7 +74,7 @@ void f_catch() {
 
 void f_catch(uint xt) {
     vm.except_stack->push(vm.r_stack->sp());
-    vm.except_stack->push(vm.stack->sp());
+    vm.except_stack->push(vm.stack.sp());
     vm.except_stack->push(vm.input.input_level());
     vm.except_stack->push(vm.ip);
 
@@ -85,7 +85,7 @@ void f_catch(uint xt) {
     catch (ThrowException& e) {
         vm.ip = vm.except_stack->pop(); // restore instruction pointer
         vm.input.restore_input(vm.except_stack->pop());
-        vm.stack->set_sp(vm.except_stack->pop()); // restore data stack pointer
+        vm.stack.set_sp(vm.except_stack->pop()); // restore data stack pointer
         vm.r_stack->set_sp(vm.except_stack->pop()); // restore return stack pointer
 
         catch_result = e.error_code;
@@ -119,7 +119,7 @@ void f_throw(int error_code) {
 }
 
 void f_abort() {
-    vm.stack->clear();
+    vm.stack.clear();
     vm.error_message.clear();
     f_throw(Error::Abort);
 }
@@ -135,7 +135,7 @@ void f_abort_quote() {
     else {
         int error_code = pop();
         if (error_code != 0) {
-            vm.stack->clear();
+            vm.stack.clear();
             vm.error_message = std::string(message, size);
             f_throw(Error::AbortQuote);
         }
@@ -149,7 +149,7 @@ void f_xabort_quote() {
     int error_code = pop();
     if (error_code != 0) {
         LongString* str = reinterpret_cast<LongString*>(mem_char_ptr(str_addr));
-        vm.stack->clear();
+        vm.stack.clear();
         vm.error_message = str->to_string();
         f_throw(Error::AbortQuote);
     }

@@ -96,7 +96,7 @@ void f_execute(uint xt) {
         }
 
         if (vm.user->TRACE) {
-            vm.stack->print_debug();
+            vm.stack.print_debug();
             std::cout << std::endl;
         }
 
