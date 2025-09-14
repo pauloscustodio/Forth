@@ -57,6 +57,7 @@ public:
     void ccomma(int value);
     void comma(int value);
     void dcomma(dint value);
+    void fcomma(double value);
     void align();
 
     Header* parse_find_word();

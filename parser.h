@@ -20,6 +20,9 @@ std::string parse_backslash_string();
 bool parse_number(const std::string& text, bool& is_double, dint& value);
 bool parse_number(const char* text, uint size, bool& is_double, dint& value);
 
+bool parse_float(const std::string& text, double& value);
+bool parse_float(const char* text, uint size, double& value);
+
 int f_word(char delimiter);
 void f_parse(char delimiter);
 void f_parse_name();

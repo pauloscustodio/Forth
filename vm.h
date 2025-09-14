@@ -71,6 +71,10 @@ struct VM {
     DownwardStack<int> except_stack{ 'E',
         Error::ExceptionStackUnderflow, Error::ExceptionStackOverflow };
 
+    // floating point stack
+    DownwardStack<double> f_stack{ 'F',
+        Error::FloatStackUnderflow, Error::FloatStackOverflow };
+
     // dictionary
     uint dict_lo_mem, dict_hi_mem;    // memory limits for dictionary
     uint latest;		// point to last defined word header
@@ -102,6 +106,8 @@ int fetch(uint addr);
 void store(uint addr, int value);
 dint dfetch(uint addr);
 void dstore(uint addr, dint value);
+double ffetch(uint addr);
+void fstore(uint addr, double value);
 int cfetch(uint addr);
 void cstore(uint addr, int value);
 
@@ -109,6 +115,7 @@ void cstore(uint addr, int value);
 void ccomma(int value);
 void comma(int value);
 void dcomma(dint value);
+void fcomma(double value);
 void align();
 
 // stacks
@@ -145,3 +152,8 @@ void cs_dpush(dint pos_addr);
 dint cs_dpop();
 dint cs_dpeek(int depth = 0);
 int cs_ddepth();
+
+void f_push(double value);
+double f_pop();
+double f_peek(int depth = 0);
+int f_depth();

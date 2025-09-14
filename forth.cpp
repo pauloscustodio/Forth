@@ -97,6 +97,8 @@ void f_execute(uint xt) {
 
         if (vm.user->TRACE) {
             vm.stack.print_debug();
+            if (vm.f_stack.depth() > 0)
+                vm.f_stack.print_debug();
             std::cout << std::endl;
         }
 

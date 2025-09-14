@@ -350,6 +350,7 @@ CODE("THRU", THRU, 0, f_thru())
 // tools
 CODE(".S", DOT_S, 0, vm.stack.print())
 CODE(".RS", DOT_RS, 0, vm.r_stack.print())
+CODE(".FS", DOT_FS, 0, vm.f_stack.print_debug()) // always base 10
 CODE("WORDS", WORDS, 0, f_words())
 CODE("ENVIRONMENT?", ENVIRONMENT_Q, 0, f_environment_q())
 CODE("DUMP", DUMP, 0, f_dump())
@@ -497,6 +498,9 @@ CONST("FS-READABLE", FS_READABLE, 0, FS_READABLE)
 CONST("FS-WRITABLE", FS_WRITABLE, 0, FS_WRITABLE)
 CONST("FS-EXECUTABLE", FS_EXECUTABLE, 0, FS_EXECUTABLE)
 
+
+// floating point
+CODE("(FLITERAL)", XFLITERAL, F_HIDDEN, f_push(ffetch(vm.ip)); vm.ip += FCELL_SZ)
 
 // strings
 CODE("/STRING", SLASH_STRING, 0, f_slash_string())

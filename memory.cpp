@@ -35,10 +35,20 @@ char* Mem::char_ptr(uint addr, uint size) {
 int* Mem::int_ptr(uint addr, uint size) {
     if ((addr % CELL_SZ) != 0) {
         error(Error::AddressAlignmentException);
-        return 0;
+        return nullptr;
     }
     addr = check_addr(addr, size);
     return reinterpret_cast<int*>(data_ + addr);
+}
+
+double* Mem::float_ptr(uint addr, uint size)
+{
+    if ((addr % CELL_SZ) != 0) {
+        error(Error::AddressAlignmentException);
+        return nullptr;
+    }
+    addr = check_addr(addr, size);
+    return reinterpret_cast<double*>(data_ + addr);
 }
 
 int Mem::fetch(uint addr) {
@@ -58,6 +68,16 @@ dint Mem::dfetch(uint addr) {
 void Mem::dstore(uint addr, dint value) {
     store(addr, dcell_hi(value));
     store(addr + CELL_SZ, dcell_lo(value));
+}
+
+void Mem::fstore(uint addr, double value)
+{
+    *float_ptr(addr) = value;
+}
+
+double Mem::ffetch(uint addr)
+{
+    return *float_ptr(addr);
 }
 
 int Mem::cfetch(uint addr) {

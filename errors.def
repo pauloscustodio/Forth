@@ -94,5 +94,7 @@ X(-79, ReplacesException, "REPLACES exception")
 X(-256, InputBufferOverflow, "input buffer overflow")
 X(-257, ControlFlowStackUnderflow, "control-flow stack underflow")
 X(-258, ExceptionStackUnderflow, "exception stack underflow")
+X(-259, FloatStackUnderflow, "floating point stack underflow")
+X(-260, FloatStackOverflow, "floating point stack overflow")
 
 #undef X

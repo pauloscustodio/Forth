@@ -180,6 +180,46 @@ std::string parse_backslash_string() {
     return message;
 }
 
+static bool parse_sign(const char*& p, const char* end, int& sign) 
+{
+    bool found_sign = false;
+    while (p < end) {
+        switch (*p) {
+        case '-':
+            found_sign = true;
+            sign *= -1;
+            p++;
+            break;
+        case '+':
+            found_sign = true;
+            sign *= 1;
+            p++;
+            break;
+        default:
+            return found_sign;
+        }
+    }
+    return found_sign;
+}
+
+static int parse_digits(const char*& p, const char* end, int base, dint& value)
+{
+    int num_digits = 0;
+    while (p < end) {
+        int digit = char_digit(*p);
+        if (digit >= 0 && digit < base) {
+            ++p;
+            ++num_digits;
+            value = value * base + digit;
+        }
+        else {
+            break;
+        }
+    }
+
+    return num_digits;
+}
+
 bool parse_number(const std::string& text, bool& is_double, dint& value) {
     return parse_number(text.c_str(), static_cast<uint>(text.size()), is_double,
                         value);
@@ -191,6 +231,8 @@ bool parse_number(const std::string& text, bool& is_double, dint& value) {
 // if punctuation found, set DPL to number of digits after last punctuation, return double cell
 // return true if ok, false if error
 bool parse_number(const char* text, uint size, bool& is_double, dint& value) {
+    static const std::string punctuation = ",.+-/:";
+
     // init output vars
     int sign = 1;
     int base = vm.user->BASE;
@@ -200,21 +242,8 @@ bool parse_number(const char* text, uint size, bool& is_double, dint& value) {
     is_double = false;
     value = 0;
 
-    if (p >= end) {
-        return false;    // no number
-    }
-
     // check sign before number prefix
-    switch (*p) {
-    case '-':
-        sign *= -1;
-        p++;
-        break;
-    case '+':
-        sign *= 1;
-        p++;
-        break;
-    }
+    parse_sign(p, end, sign);
 
     if (p >= end) {
         return false;    // no number
@@ -243,60 +272,94 @@ bool parse_number(const char* text, uint size, bool& is_double, dint& value) {
         break;
     }
 
-    if (p >= end) {
-        return false;    // no number
-    }
-
     // check sign after number prefix
-    switch (*p) {
-    case '-':
-        sign *= -1;
-        p++;
-        break;
-    case '+':
-        sign *= 1;
-        p++;
-        break;
-    }
-
-    if (p >= end) {
-        return false;    // no number
-    }
+    parse_sign(p, end, sign);
 
     // collect digits
-    int num_digits = 0, digit = 0;
-    is_double = false;
+    bool found_digits = false;
     while (p < end) {
-        char c = *p++;
-        switch (c) {
-        case ',':
-        case '.':
-        case '+':
-        case '-':
-        case '/':
-        case ':':
-            vm.user->DPL = 0;
-            is_double = true;
-            break;
-        default:
-            digit = char_digit(c);
-            if (digit < 0 || digit >= base) {
-                return false;    // digit not in BASE
-            }
-
-            value = value * base + digit;
-            num_digits++;
+        int num_digits = parse_digits(p, end, base, value);
+        if (num_digits > 0) {
+            found_digits = true;
             if (is_double) {
-                vm.user->DPL++;
+                vm.user->DPL += num_digits;
             }
         }
+        else if (punctuation.find(*p) != std::string::npos) {
+            ++p;
+            vm.user->DPL = 0;
+            is_double = true;
+        }
+        else {
+            return false;    // digit not in BASE
+        }
     }
-    if (num_digits == 0) {
+
+    if (!found_digits) {
         return false;    // no digits found
     }
 
     value *= sign;
     return true;
+}
+
+bool parse_float(const std::string& text, double& value)
+{
+    return parse_float(text.c_str(), static_cast<uint>(text.size()), value);
+}
+
+bool parse_float(const char* text, uint size, double& value)
+{
+    value = 0.0;
+    if (vm.user->BASE != 10)
+        return false;
+
+    const char* p = text;
+    const char* end = text + size;
+    int sign = 1;
+    int exp_sign = 1;
+    dint dummy = 0;
+
+    // start with a sign, digits*, '.'?, digits*
+    parse_sign(p, end, sign);
+
+    const char* start_mantissa = p;
+    int num_digits = parse_digits(p, end, 10, dummy);
+    if (p < end && *p == '.') {
+        ++p;
+        num_digits += parse_digits(p, end, 10, dummy);
+    }
+    if (num_digits == 0)
+        return false;
+
+    // check for mandatory exponent
+    if (p >= end || toupper(*p) != 'E') {
+        return false;
+    }
+
+    const char* end_mantissa = p;
+    ++p;
+    bool has_sign = parse_sign(p, end, exp_sign);
+
+    const char* start_exponent = p;
+    int num_digits_exp = parse_digits(p, end, 10, dummy);
+    const char* end_exponent = p;
+
+    if (has_sign && num_digits_exp == 0)
+        return false;   // exponent only with sign
+    else if (p < end)
+        return false;   // extra characters after number
+    else {
+        std::string number = sign < 0 ? "-" : "";
+        number += std::string(start_mantissa, end_mantissa);
+        if (num_digits_exp > 0) {
+            number += "e";
+            number += exp_sign < 0 ? "-" : "";
+            number += std::string(start_exponent, end_exponent);
+        }
+        value = std::stod(number);
+        return true;
+    }
 }
 
 int f_word(char delimiter) {

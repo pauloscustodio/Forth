@@ -15,12 +15,15 @@ public:
     uint addr(const int* ptr) const;
     char* char_ptr(uint addr, uint size = 0);
     int* int_ptr(uint addr, uint size = 0);
+    double* float_ptr(uint addr, uint size = 0);
 
     // access memory
     int fetch(uint addr);
     void store(uint addr, int value);
     dint dfetch(uint addr);
     void dstore(uint addr, dint value);
+    void fstore(uint addr, double value);
+    double ffetch(uint addr);
     int cfetch(uint addr);
     void cstore(uint addr, int value);
 
