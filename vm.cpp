@@ -34,10 +34,9 @@ VM::VM() {
     user->init();
 
     // use the remaing as dictionary space
-    dict = reinterpret_cast<Dict*>(mem.alloc_bottom(sizeof(Dict)));
-    int start_dict = mem.addr(mem.alloc_bottom(0));
-    int end_dict = mem.addr(mem.alloc_top(0));
-    dict->init(start_dict, end_dict);
+    dict_lo_mem = mem.addr(mem.alloc_bottom(0));
+    dict_hi_mem = mem.addr(mem.alloc_top(0));
+    dict.init();
 
     // reinit wordbuf to get predictable results in tests
     wordbuf.init();
@@ -102,19 +101,19 @@ void cstore(uint addr, int value) {
 
 // allot dictionary space
 void ccomma(int value) {
-    vm.dict->ccomma(value);
+    vm.dict.ccomma(value);
 }
 
 void comma(int value) {
-    vm.dict->comma(value);
+    vm.dict.comma(value);
 }
 
 void dcomma(dint value) {
-    vm.dict->dcomma(value);
+    vm.dict.dcomma(value);
 }
 
 void align() {
-    vm.dict->align();
+    vm.dict.align();
 }
 
 // stacks

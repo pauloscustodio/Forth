@@ -16,7 +16,7 @@ void f_colon() {
     }
 
     cs_dpush(mk_dcell(POS_COLON_START, 0));
-    vm.dict->parse_create(idXDOCOL, F_SMUDGE);
+    vm.dict.parse_create(idXDOCOL, F_SMUDGE);
     vm.user->STATE = STATE_COMPILE;
 
     if (vm.user->TRACE) {
@@ -30,9 +30,9 @@ void f_colon_noname() {
     }
 
     cs_dpush(mk_dcell(POS_COLON_START, 0));
-    vm.dict->create("", F_SMUDGE, idXDOCOL);
+    vm.dict.create("", F_SMUDGE, idXDOCOL);
     Header* header = reinterpret_cast<Header*>(
-                         mem_char_ptr(vm.dict->latest()));
+                         mem_char_ptr(vm.latest));
     vm.user->STATE = STATE_COMPILE;
     push(header->xt());
 
@@ -54,7 +54,7 @@ void f_semicolon() {
 
     comma(xtEXIT);
     Header* header = reinterpret_cast<Header*>(
-                         mem_char_ptr(vm.dict->latest()));
+                         mem_char_ptr(vm.latest));
     header->flags.smudge = false;
     vm.user->STATE = STATE_INTERPRET;
 
@@ -65,7 +65,7 @@ void f_semicolon() {
 
 void f_recurse() {
     Header* header = reinterpret_cast<Header*>(
-                         mem_char_ptr(vm.dict->latest()));
+                         mem_char_ptr(vm.latest));
     comma(header->xt());
 }
 
@@ -81,7 +81,7 @@ static void comma_fwd_jump(uint xt_jump, int pos) {
     }
 
     comma(xt_jump);
-    cs_dpush(mk_dcell(pos, vm.dict->here()));
+    cs_dpush(mk_dcell(pos, vm.here));
     comma(0);
 
     if (vm.user->TRACE) {
@@ -106,7 +106,7 @@ static void resolve_fwd_jump() {
     }
     cs_dpop();
 
-    int dist = vm.dict->here() - dcell_lo(pos_patch);
+    int dist = vm.here - dcell_lo(pos_patch);
     store(dcell_lo(pos_patch), dist);
 
     if (vm.user->TRACE) {
@@ -120,7 +120,7 @@ static void mark_target_back_jump(int pos) {
         error(Error::ControlStructureMismatch);
     }
 
-    uint addr = vm.dict->here();
+    uint addr = vm.here;
     cs_dpush(mk_dcell(pos, addr));
 
     if (vm.user->TRACE) {
@@ -141,7 +141,7 @@ static void resolve_back_jump(uint xt_jump) {
     cs_dpop();
 
     comma(xt_jump);
-    int dist = dcell_lo(pos_patch) - vm.dict->here();
+    int dist = dcell_lo(pos_patch) - vm.here;
     comma(dist);
 }
 

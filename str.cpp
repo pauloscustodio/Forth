@@ -152,7 +152,7 @@ void f_dot_quote() {
     uint size;
     const char* message = parse_word(size, '"');
     if (vm.user->STATE == STATE_COMPILE) {
-        int str_addr = vm.dict->alloc_string(message, size);
+        int str_addr = vm.dict.alloc_string(message, size);
         comma(xtXDOT_QUOTE);
         comma(str_addr);
     }
@@ -173,7 +173,7 @@ void f_s_quote() {
     uint size;
     const char* message = parse_word(size, '"');
     if (vm.user->STATE == STATE_COMPILE) {
-        int str_addr = vm.dict->alloc_string(message, size);
+        int str_addr = vm.dict.alloc_string(message, size);
         comma(xtXS_QUOTE);
         comma(str_addr);
     }
@@ -187,8 +187,8 @@ void f_s_quote() {
 void f_s_backslash_quote() {
     std::string message = parse_backslash_string();
     if (vm.user->STATE == STATE_COMPILE) {
-        int str_addr = vm.dict->alloc_string(message.c_str(),
-                                             static_cast<uint>(message.size()));
+        int str_addr = vm.dict.alloc_string(message.c_str(),
+                                            static_cast<uint>(message.size()));
         comma(xtXS_QUOTE);
         comma(str_addr);
     }
@@ -211,7 +211,7 @@ void f_xs_quote() {
 void f_c_quote() {
     const CString* message = parse_cword('"');
     if (vm.user->STATE == STATE_COMPILE) {
-        int str_addr = vm.dict->alloc_cstring(message);
+        int str_addr = vm.dict.alloc_cstring(message);
         comma(xtXC_QUOTE);
         comma(str_addr);
     }

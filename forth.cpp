@@ -59,15 +59,15 @@ void User::init() {
 void create_dictionary() {
     // first pass: define all xtWORDs, second pass: redefine all using real xtWORDs
     for (int pass = 1; pass <= 2; ++pass) {
-        vm.dict->clear();
+        vm.dict.clear();
 
-#define CONST(word, name, flags, value) xt##name = vm.dict->create(word, flags, id##name);
-#define VAR(word, name, flags, value)   xt##name = vm.dict->create(word, flags, id##name);
-#define CODE(word, name, flags, c_code) xt##name = vm.dict->create(word, flags, id##name);
+#define CONST(word, name, flags, value) xt##name = vm.dict.create(word, flags, id##name);
+#define VAR(word, name, flags, value)   xt##name = vm.dict.create(word, flags, id##name);
+#define CODE(word, name, flags, c_code) xt##name = vm.dict.create(word, flags, id##name);
 #include "words.def"
     }
 
-#define FORTH(word, name, flags, text)  xt##name = vm.dict->create(word, flags, idXDOCOL); compile(text);
+#define FORTH(word, name, flags, text)  xt##name = vm.dict.create(word, flags, idXDOCOL); compile(text);
 #include "words.def"
 }
 

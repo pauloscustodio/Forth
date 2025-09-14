@@ -33,16 +33,10 @@ struct Header {
 
 class Dict {
 public:
-    void init(uint lo_mem, uint hi_mem);
+    void init();
     void clear();
-    uint latest() const;
-    uint here() const;
-    uint names() const;
-    void set_latest(uint latest);
-    void set_here(uint here);
-    void set_names(uint names);
 
-    void allot(uint size);
+    void allot(int size);
     int unused() const;
 
     uint parse_create(uint code, int flags); // return xt of word
@@ -75,12 +69,7 @@ public:
     std::vector<std::string> get_words() const;
 
 private:
-    uint lo_mem_, hi_mem_;// memory limits
-    uint latest_;			// point to last defined word header
-    uint here_;			// point to next free position at bottom of memory
-    uint names_;			// point to last name created at top of memory
-
-    void check_free_space(uint size = 0) const;
+    void check_free_space(int size = 0) const;
     uint create_cont(uint name_addr, int flags, uint code);
 };
 

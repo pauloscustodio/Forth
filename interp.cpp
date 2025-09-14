@@ -22,7 +22,7 @@ void interpret_word(const char* word, uint size) {
         bool is_double = false;
         dint value = 0;
 
-        Header* header = vm.dict->find_word(word, size);
+        Header* header = vm.dict.find_word(word, size);
         if (header) {	// word found
             uint xt = header->xt();
             if (header->flags.immediate || vm.user->STATE == STATE_INTERPRET) {

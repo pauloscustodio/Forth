@@ -32,58 +32,32 @@ Header* Header::header(uint xt) {
 
 uint Header::get_size() const {
     if (size == 0) {
-        return vm.dict->here() - body();
+        return vm.here - body();
     }
     else {
         return size;
     }
 }
 
-void Dict::init(uint lo_mem, uint hi_mem) {
-    lo_mem_ = lo_mem;
-    hi_mem_ = hi_mem;
+void Dict::init() {
     clear();
     check_free_space();
     create_dictionary();
 }
 
 void Dict::clear() {
-    here_ = lo_mem_;
-    names_ = hi_mem_;
-    latest_ = 0;
+    vm.here = vm.dict_lo_mem;
+    vm.names = vm.dict_hi_mem;
+    vm.latest = 0;
 }
 
-uint Dict::latest() const {
-    return latest_;
-}
-
-uint Dict::here() const {
-    return here_;
-}
-
-uint Dict::names() const {
-    return names_;
-}
-
-void Dict::set_latest(uint latest) {
-    latest_ = latest;
-}
-
-void Dict::set_here(uint here) {
-    here_ = here;
-}
-
-void Dict::set_names(uint names) {
-    names_ = names;
-}
-
-void Dict::allot(uint size) {
+void Dict::allot(int size) {
     check_free_space(size);
-    here_ += size;
+    vm.here += size;
 }
 
 int Dict::unused() const {
-    return names_ - here_;
+    return vm.names - vm.here;
 }
 
 uint Dict::parse_create(uint code, int flags) {
@@ -119,17 +93,17 @@ uint Dict::create_cont(uint name_addr, int flags, uint code) {
     check_free_space(sizeof(Header));
 
     // fill previous header size
-    if (latest_) {
+    if (vm.latest) {
         Header* latest_header = reinterpret_cast<Header*>(
-                                    mem_char_ptr(latest_));
-        uint latest_size = here_ - latest_header->body();
+                                    mem_char_ptr(vm.latest));
+        uint latest_size = vm.here - latest_header->body();
         latest_header->size = latest_size; // fill size of previous header
     }
 
     // create new header
-    Header* header = reinterpret_cast<Header*>(mem_char_ptr(here_));
-    header->link = latest_;
-    latest_ = here_;
+    Header* header = reinterpret_cast<Header*>(mem_char_ptr(vm.here));
+    header->link = vm.latest;
+    vm.latest = vm.here;
 
     header->name_addr = name_addr;
 
@@ -142,7 +116,7 @@ uint Dict::create_cont(uint name_addr, int flags, uint code) {
     header->does = 0;
     header->code = code;
 
-    here_ += aligned(sizeof(Header));
+    vm.here += aligned(sizeof(Header));
     return header->xt(); // return xt of word
 }
 
@@ -160,10 +134,10 @@ uint Dict::alloc_cstring(const CString* str) {
 
     check_free_space(alloc_size);
 
-    names_ -= alloc_size;
-    memcpy(mem_char_ptr(names_), str, alloc_size);
+    vm.names -= alloc_size;
+    memcpy(mem_char_ptr(vm.names), str, alloc_size);
 
-    return names_;
+    return vm.names;
 }
 
 uint Dict::alloc_string(const std::string& str) {
@@ -175,11 +149,11 @@ uint Dict::alloc_string(const char* str, uint size) {
 
     check_free_space(alloc_size);
 
-    names_ -= alloc_size;
-    LongString* lstring = reinterpret_cast<LongString*>(mem_char_ptr(names_));
+    vm.names -= alloc_size;
+    LongString* lstring = reinterpret_cast<LongString*>(mem_char_ptr(vm.names));
     lstring->set_string(str, size);
 
-    return names_;
+    return vm.names;
 }
 
 uint Dict::alloc_string(const LongString* str) {
@@ -188,23 +162,23 @@ uint Dict::alloc_string(const LongString* str) {
 
 void Dict::ccomma(int value) {
     check_free_space(CHAR_SZ);
-    cstore(here_++, value);
+    cstore(vm.here++, value);
 }
 
 void Dict::comma(int value) {
     check_free_space(CELL_SZ);
-    store(here_, value);
-    here_ += CELL_SZ;
+    store(vm.here, value);
+    vm.here += CELL_SZ;
 }
 
 void Dict::dcomma(dint value) {
     check_free_space(DCELL_SZ);
-    dstore(here_, value);
-    here_ += DCELL_SZ;
+    dstore(vm.here, value);
+    vm.here += DCELL_SZ;
 }
 
 void Dict::align() {
-    here_ = aligned(here_);
+    vm.here = aligned(vm.here);
 }
 
 Header* Dict::parse_find_word() {
@@ -232,7 +206,7 @@ Header* Dict::find_word(const std::string& name) const {
 }
 
 Header* Dict::find_word(const char* name, uint size) const {
-    int ptr = vm.dict->latest();
+    int ptr = vm.latest;
     while (ptr != 0) {
         Header* header = reinterpret_cast<Header*>(mem_char_ptr(ptr));
         CString* found_name = header->name();
@@ -258,7 +232,7 @@ Header* Dict::find_word(const CString* name) const {
 
 std::vector<std::string> Dict::get_words() const {
     std::vector<std::string> words;
-    int ptr = vm.dict->latest();
+    int ptr = vm.latest;
     while (ptr != 0) {
         Header* header = reinterpret_cast<Header*>(mem_char_ptr(ptr));
         CString* found_name = header->name();
@@ -273,15 +247,15 @@ std::vector<std::string> Dict::get_words() const {
     return words;
 }
 
-void Dict::check_free_space(uint size) const {
-    if (here_ + size >= names_) {
+void Dict::check_free_space(int size) const {
+    if (vm.here + size >= vm.names) {
         error(Error::DictionaryOverflow);
     }
 }
 
 void f_find(uint addr) {
     CString* word = reinterpret_cast<CString*>(mem_char_ptr(addr));
-    Header* header = vm.dict->find_word(word->str(), word->size());
+    Header* header = vm.dict.find_word(word->str(), word->size());
     if (header == nullptr) {
         push(addr);
         push(0);
@@ -300,7 +274,7 @@ void f_find(uint addr) {
 }
 
 int f_tick() {
-    Header* header = vm.dict->parse_find_existing_word();
+    Header* header = vm.dict.parse_find_existing_word();
     assert(header != nullptr);
     return header->xt();
 }
@@ -312,7 +286,7 @@ void f_bracket_tick() {
 }
 
 void f_postpone() {
-    Header* header = vm.dict->parse_find_existing_word();
+    Header* header = vm.dict.parse_find_existing_word();
     assert(header != nullptr);
     if (header->flags.immediate) {
         // compile imediate words immediately
@@ -336,47 +310,47 @@ void f_compile_comma() {
 }
 
 void f_immediate() {
-    Header* header = reinterpret_cast<Header*>(mem_char_ptr(vm.dict->latest()));
+    Header* header = reinterpret_cast<Header*>(mem_char_ptr(vm.latest));
     header->flags.immediate = true;
 }
 
 void f_hidden() {
-    Header* header = reinterpret_cast<Header*>(mem_char_ptr(vm.dict->latest()));
+    Header* header = reinterpret_cast<Header*>(mem_char_ptr(vm.latest));
     header->flags.hidden = true;
 }
 
 void f_create() {
-    vm.dict->parse_create(idXDOVAR, 0);
+    vm.dict.parse_create(idXDOVAR, 0);
 }
 
 void f_buffer_colon() {
-    vm.dict->parse_create(idXDOVAR, 0);
+    vm.dict.parse_create(idXDOVAR, 0);
     uint size = pop();
-    vm.dict->allot(size);
+    vm.dict.allot(size);
 }
 
 void f_variable() {
-    vm.dict->parse_create(idXDOVAR, 0);
+    vm.dict.parse_create(idXDOVAR, 0);
     comma(0);
 }
 
 void f_2variable() {
-    vm.dict->parse_create(idXDOVAR, 0);
+    vm.dict.parse_create(idXDOVAR, 0);
     dcomma(0);
 }
 
 void f_value() {
-    vm.dict->parse_create(idXDOCONST, 0);
+    vm.dict.parse_create(idXDOCONST, 0);
     comma(pop());
 }
 
 void f_two_value() {
-    vm.dict->parse_create(idXDO2CONST, 0);
+    vm.dict.parse_create(idXDO2CONST, 0);
     dcomma(dpop());
 }
 
 void f_to() {
-    Header* header = vm.dict->parse_find_existing_word();
+    Header* header = vm.dict.parse_find_existing_word();
     assert(header != nullptr);
     uint code = fetch(header->xt());
     if (code == idXDOCONST) {			// single cell value
@@ -405,20 +379,20 @@ void f_to() {
 }
 
 void f_constant() {
-    vm.dict->parse_create(idXDOCONST, 0);
+    vm.dict.parse_create(idXDOCONST, 0);
     comma(pop());
 }
 
 void f_2constant() {
-    vm.dict->parse_create(idXDO2CONST, 0);
+    vm.dict.parse_create(idXDO2CONST, 0);
     dcomma(dpop());
 }
 
 void f_does() {
-    Header* header = reinterpret_cast<Header*>(mem_char_ptr(vm.dict->latest()));
+    Header* header = reinterpret_cast<Header*>(mem_char_ptr(vm.latest));
     comma(xtXDOES_DEFINE);                  // set this word as having DOES>
     comma(header->xt());					// xt of creater word
-    comma(vm.dict->here() + 2 * CELL_SZ);	// location of run code
+    comma(vm.here + 2 * CELL_SZ);	// location of run code
     comma(xtEXIT);                          // exit from CREATE part
     // run code starts here
 }
@@ -429,7 +403,7 @@ void f_xdoes_define() {
     int run_code = fetch(vm.ip);
     vm.ip += CELL_SZ;						// start of runtime code
 
-    Header* def_word = reinterpret_cast<Header*>(mem_char_ptr(vm.dict->latest()));
+    Header* def_word = reinterpret_cast<Header*>(mem_char_ptr(vm.latest));
     def_word->creator_xt = creator_xt;		// store xt of creator word
     def_word->does = run_code;				// start of DOES> code
     def_word->code = idXDOES_RUN;			// new execution id
@@ -443,11 +417,11 @@ void f_xdoes_run(uint body) {
 }
 
 void f_marker() {
-    int save_latest = vm.dict->latest();
-    int save_here = vm.dict->here();
-    int save_names = vm.dict->names();
+    int save_latest = vm.latest;
+    int save_here = vm.here;
+    int save_names = vm.names;
 
-    vm.dict->parse_create(idXMARKER, 0);
+    vm.dict.parse_create(idXMARKER, 0);
 
     comma(save_latest);
     comma(save_here);
@@ -459,13 +433,13 @@ void f_xmarker(uint body) {
     int save_here = fetch(body + CELL_SZ);
     int save_names = fetch(body + 2 * CELL_SZ);
 
-    vm.dict->set_latest(save_latest);
-    vm.dict->set_here(save_here);
-    vm.dict->set_names(save_names);
+    vm.latest = save_latest;
+    vm.here = save_here;
+    vm.names = save_names;
 }
 
 void f_words() {
-    std::vector<std::string> words = vm.dict->get_words();
+    std::vector<std::string> words = vm.dict.get_words();
     size_t col = 0;
     for (auto& word : words) {
         if (col + 1 + word.size() >= SCREEN_WIDTH) {
@@ -485,7 +459,7 @@ void f_words() {
 }
 
 void f_defer() {
-    vm.dict->parse_create(idXDEFER, 0);
+    vm.dict.parse_create(idXDEFER, 0);
     comma(xtABORT);
 }
 
@@ -512,7 +486,7 @@ void f_defer_store() {
 }
 
 void f_action_of() {
-    Header* header = vm.dict->parse_find_existing_word();
+    Header* header = vm.dict.parse_find_existing_word();
     assert(header != nullptr);
     if (vm.user->STATE == STATE_INTERPRET) {
         f_defer_fetch(header->xt());
@@ -525,7 +499,7 @@ void f_action_of() {
 }
 
 void f_is() {
-    Header* header = vm.dict->parse_find_existing_word();
+    Header* header = vm.dict.parse_find_existing_word();
     assert(header != nullptr);
     if (vm.user->STATE == STATE_INTERPRET) {
         store(header->body(), pop());

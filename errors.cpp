@@ -128,7 +128,7 @@ void f_abort_quote() {
     uint size;
     const char* message = parse_word(size, '"');
     if (vm.user->STATE == STATE_COMPILE) {
-        int str_addr = vm.dict->alloc_string(message, size);
+        int str_addr = vm.dict.alloc_string(message, size);
         comma(xtXABORT_QUOTE);
         comma(str_addr);
     }

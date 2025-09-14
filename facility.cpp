@@ -25,8 +25,8 @@ void f_page() {
 }
 
 void f_begin_structure() {
-    vm.dict->parse_create(idXDOCONST, 0);
-    uint addr = vm.dict->here();     // address to store size of structure
+    vm.dict.parse_create(idXDOCONST, 0);
+    uint addr = vm.here;     // address to store size of structure
     comma(0);                       // reserve space for size
 
     push(addr);                     // push address of size
@@ -38,7 +38,7 @@ static int field(uint offset, uint size, bool do_align) {
         offset = aligned(offset);
     }
 
-    vm.dict->parse_create(idXPLUS_FIELD, 0);
+    vm.dict.parse_create(idXPLUS_FIELD, 0);
     comma(offset);                   // offset of field
 
     offset += size;

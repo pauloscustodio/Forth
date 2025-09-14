@@ -72,7 +72,12 @@ struct VM {
         Error::ExceptionStackUnderflow, Error::ExceptionStackOverflow };
 
     // dictionary
-    Dict* dict;
+    uint dict_lo_mem, dict_hi_mem;    // memory limits for dictionary
+    uint latest;		// point to last defined word header
+    uint here;			// point to next free position at bottom of memory
+    uint names;			// point to last name created at top of memory
+
+    Dict dict;
 
     // files
     Files files;            // system files

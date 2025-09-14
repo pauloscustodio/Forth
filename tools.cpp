@@ -207,7 +207,7 @@ void dump_body_definition(uint body, uint size) {
 }
 
 void f_see() {
-    Header* header = vm.dict->parse_find_existing_word();
+    Header* header = vm.dict.parse_find_existing_word();
     assert(header != nullptr);
     uint xt = header->xt();
     uint size = header->get_size();
