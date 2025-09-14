@@ -225,4 +225,22 @@ forth_ok("12.3 DPL @ .S", "( 123 0 1 )");
 forth_ok("1.23 DPL @ .S", "( 123 0 2 )");
 forth_ok(".123 DPL @ .S", "( 123 0 3 )");
 
+# test float
+forth_ok("1.23E .S .FS", "( ) (F: 1.23 )");
+forth_ok("+-1.23E .S .FS", "( ) (F: -1.23 )");
+forth_ok("--1.23E .S .FS", "( ) (F: 1.23 )");
+forth_ok("--1.23e .S .FS", "( ) (F: 1.23 )");
+forth_ok("--1.23e1 .S .FS", "( ) (F: 12.3 )");
+forth_ok("--1.23e-1 .S .FS", "( ) (F: 0.123 )");
+forth_ok("--1.23e-+1 .S .FS", "( ) (F: 0.123 )");
+forth_ok("--1.23e-+-1 .S .FS", "( ) (F: 12.3 )");
+
+forth_ok(": x --1.23e-+-1 ; x .S .FS", "( ) (F: 12.3 )");
+
+forth_ok("HEX 1.23E DECIMAL .S .FS", "( ".(0x123E)." 0 ) (F: )");
+
+forth_nok("1.23Ea .S .FS", "\nError: undefined word: 1.23Ea\n");
+forth_nok("1.23-E .S .FS", "\nError: undefined word: 1.23-E\n");
+forth_nok("1.23-E- .S .FS", "\nError: undefined word: 1.23-E-\n");
+
 end_test;

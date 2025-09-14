@@ -8,8 +8,9 @@
 #include "forth.h"
 #include "str.h"
 #include "vm.h"
-#include <string>
+#include <cfloat>
 #include <climits>
+#include <string>
 
 int g_argc = 0;
 char** g_argv = nullptr;
@@ -120,11 +121,19 @@ void f_environment_q(const std::string& query) {
         push(F_TRUE);
     }
     else if (case_insensitive_equal(query, "FLOATING")) {
-        push(F_FALSE);
+        push(F_TRUE);
         push(F_TRUE);
     }
     else if (case_insensitive_equal(query, "FLOATING-EXT")) {
-        push(F_FALSE);
+        push(F_TRUE);
+        push(F_TRUE);
+    }
+    else if (case_insensitive_equal(query, "FLOATING-STACK")) {
+        push(STACK_SZ);
+        push(F_TRUE);
+    }
+    else if (case_insensitive_equal(query, "MAX-FLOAT")) {
+        f_push(DBL_MAX);
         push(F_TRUE);
     }
     else if (case_insensitive_equal(query, "LOCALS")) {

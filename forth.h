@@ -19,6 +19,7 @@ typedef uint64_t udint;
 static const int CHAR_SZ = sizeof(char);
 static const int CELL_SZ = sizeof(int);
 static const int DCELL_SZ = sizeof(dint);
+static const int FCELL_SZ = sizeof(double);
 
 static_assert(CELL_SZ * 2 == DCELL_SZ, "DCELL should be double of CELL");
 

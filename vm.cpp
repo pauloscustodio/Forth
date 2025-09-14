@@ -91,6 +91,16 @@ void dstore(uint addr, dint value) {
     vm.mem.dstore(addr, value);
 }
 
+double ffetch(uint addr)
+{
+    return vm.mem.ffetch(addr);
+}
+
+void fstore(uint addr, double value)
+{
+    vm.mem.fstore(addr, value);
+}
+
 int cfetch(uint addr) {
     return vm.mem.cfetch(addr);
 }
@@ -110,6 +120,11 @@ void comma(int value) {
 
 void dcomma(dint value) {
     vm.dict.dcomma(value);
+}
+
+void fcomma(double value)
+{
+    vm.dict.fcomma(value);
 }
 
 void align() {
@@ -206,4 +221,20 @@ dint cs_dpeek(int depth) {
 
 int cs_ddepth() {
     return vm.cs_stack.depth() / 2;
+}
+
+void f_push(double value) {
+    vm.f_stack.push(value);
+}
+
+double f_pop() {
+    return vm.f_stack.pop();
+}
+
+double f_peek(int depth) {
+    return vm.f_stack.peek(depth);
+}
+
+int f_depth() {
+    return vm.f_stack.depth();
 }

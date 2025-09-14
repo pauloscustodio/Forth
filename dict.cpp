@@ -177,6 +177,13 @@ void Dict::dcomma(dint value) {
     vm.here += DCELL_SZ;
 }
 
+void Dict::fcomma(double value)
+{
+    check_free_space(FCELL_SZ);
+    fstore(vm.here, value);
+    vm.here += FCELL_SZ;
+}
+
 void Dict::align() {
     vm.here = aligned(vm.here);
 }

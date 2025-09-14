@@ -20,7 +20,8 @@ void interpret_word(const std::string& word) {
 void interpret_word(const char* word, uint size) {
     if (size > 0) {
         bool is_double = false;
-        dint value = 0;
+        dint dvalue = 0;
+        double fvalue = 0.0;
 
         Header* header = vm.dict.find_word(word, size);
         if (header) {	// word found
@@ -32,39 +33,50 @@ void interpret_word(const char* word, uint size) {
                 comma(xt);
             }
         }
-        else if (parse_number(word, size, is_double, value)) {
+        else if (parse_float(word, size, fvalue)) {
+            if (vm.user->STATE == STATE_INTERPRET) {
+                f_push(fvalue);
+
+                if (vm.user->TRACE) {
+                    std::cout << ">>" << BL << fvalue << BL;
+                    vm.f_stack.print_debug();
+                    std::cout << std::endl;
+                }
+            }
+            else {
+                comma(xtXFLITERAL);
+                fcomma(fvalue);
+            }
+        }
+        else if (parse_number(word, size, is_double, dvalue)) {
             if (is_double) { // double cell
                 if (vm.user->STATE == STATE_INTERPRET) {
-                    dpush(value);
+                    dpush(dvalue);
 
                     if (vm.user->TRACE) {
-                        std::cout << ">>" << BL;
-                        print_number(value);
-                        std::cout << BL;
+                        std::cout << ">>" << BL << dvalue << BL;
                         vm.stack.print_debug();
                         std::cout << std::endl;
                     }
                 }
                 else {
                     comma(xtX2LITERAL);
-                    dcomma(value);
+                    dcomma(dvalue);
                 }
             }
             else { // single cell
                 if (vm.user->STATE == STATE_INTERPRET) {
-                    push(dcell_lo(value));
+                    push(dcell_lo(dvalue));
 
                     if (vm.user->TRACE) {
-                        std::cout << ">>" << BL;
-                        print_number(dcell_lo(value));
-                        std::cout << BL;
+                        std::cout << ">>" << BL << dcell_lo(dvalue) << BL;
                         vm.stack.print_debug();
                         std::cout << std::endl;
                     }
                 }
                 else {
                     comma(xtXLITERAL);
-                    comma(dcell_lo(value));
+                    comma(dcell_lo(dvalue));
                 }
             }
         }
