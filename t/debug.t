@@ -362,8 +362,8 @@ forth_ok("MARKER x SEE x UNUSED 1024 / . 'k' EMIT CR", <<'END');
 MARKER x
 Latest: 30192 
 Here:   30220 
-Names:  259028 
-223 k
+Names:  521188 
+479 k
 END
 
 note "Test TRACE";

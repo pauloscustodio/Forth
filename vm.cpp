@@ -34,10 +34,6 @@ VM::VM() {
     user->init();
 
     // top of memory
-    r_stack = reinterpret_cast<Stack*>(mem.alloc_top(sizeof(Stack)));
-    r_stack->init('R',
-                  Error::ReturnStackUnderflow, Error::ReturnStackOverflow);
-
     cs_stack = reinterpret_cast<Stack*>(mem.alloc_top(sizeof(Stack)));
     cs_stack->init('C',
                    Error::ControlFlowStackUnderflow, Error::ControlFlowStackOverflow);
@@ -169,31 +165,36 @@ dint dpeek(int depth) {
 }
 
 void r_push(int value) {
-    vm.r_stack->push(value);
+    vm.r_stack.push(value);
 }
 
 int r_pop() {
-    return vm.r_stack->pop();
+    return vm.r_stack.pop();
 }
 
 int r_peek(int depth) {
-    return vm.r_stack->peek(depth);
+    return vm.r_stack.peek(depth);
 }
 
 int r_depth() {
-    return vm.r_stack->depth();
+    return vm.r_stack.depth();
 }
 
 void r_dpush(dint value) {
-    vm.r_stack->dpush(value);
+    vm.r_stack.push(dcell_lo(value));
+    vm.r_stack.push(dcell_hi(value));
 }
 
 dint r_dpop() {
-    return vm.r_stack->dpop();
+    int hi = vm.r_stack.pop();
+    int lo = vm.r_stack.pop();
+    return mk_dcell(hi, lo);
 }
 
 dint r_dpeek(int depth) {
-    return vm.r_stack->dpeek(depth);
+    int hi = vm.r_stack.peek(2 * depth);
+    int lo = vm.r_stack.peek(2 * depth + 1);
+    return mk_dcell(hi, lo);
 }
 
 void cs_dpush(dint pos_addr) {

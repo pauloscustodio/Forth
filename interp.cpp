@@ -119,7 +119,7 @@ void f_evaluate(const char* text, uint size) {
 }
 
 void f_quit() {
-    vm.r_stack->clear();
+    vm.r_stack.clear();
     vm.user->STATE = STATE_INTERPRET;
     while (true) {
         while (f_refill()) {

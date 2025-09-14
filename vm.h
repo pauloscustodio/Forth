@@ -59,8 +59,11 @@ struct VM {
     DownwardStack<int> stack{ '\0',
         Error::StackUnderflow, Error::StackOverflow };
 
+    // return stack
+    DownwardStack<int> r_stack{ 'R',
+        Error::ReturnStackUnderflow, Error::ReturnStackOverflow };
+
     // stacks
-    Stack* r_stack;			// return stack
     Stack* cs_stack;		// control stack
     Stack* except_stack;	// exception stack
 

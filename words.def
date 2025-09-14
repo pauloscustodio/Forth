@@ -146,8 +146,8 @@ CODE("2R@", TWO_R_FETCH, 0, dpush(r_dpeek(0)))
 CODE("RDROP", RDROP, 0, r_pop())
 
 CONST("R0", R0, 0, STACK_SZ)
-CODE("RSP@", RSP_FETCH, 0, push(vm.r_stack->sp()))
-CODE("RSP!", RSP_STORE, 0, vm.r_stack->set_sp(pop()))
+CODE("RSP@", RSP_FETCH, 0, push(vm.r_stack.sp()))
+CODE("RSP!", RSP_STORE, 0, vm.r_stack.set_sp(pop()))
 
 
 // dictionary
@@ -349,7 +349,7 @@ CODE("THRU", THRU, 0, f_thru())
 
 // tools
 CODE(".S", DOT_S, 0, vm.stack.print())
-CODE(".RS", DOT_RS, 0, vm.r_stack->print())
+CODE(".RS", DOT_RS, 0, vm.r_stack.print())
 CODE("WORDS", WORDS, 0, f_words())
 CODE("ENVIRONMENT?", ENVIRONMENT_Q, 0, f_environment_q())
 CODE("DUMP", DUMP, 0, f_dump())
