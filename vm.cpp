@@ -33,11 +33,6 @@ VM::VM() {
     user = reinterpret_cast<User*>(mem.alloc_bottom(sizeof(User)));
     user->init();
 
-    // top of memory
-    except_stack = reinterpret_cast<Stack*>(mem.alloc_top(sizeof(Stack)));
-    except_stack->init('E',
-                       Error::ExceptionStackUnderflow, Error::ExceptionStackOverflow);
-
     // use the remaing as dictionary space
     dict = reinterpret_cast<Dict*>(mem.alloc_bottom(sizeof(Dict)));
     int start_dict = mem.addr(mem.alloc_bottom(0));

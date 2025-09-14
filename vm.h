@@ -67,9 +67,9 @@ struct VM {
     DownwardStack<int> cs_stack{ 'C',
         Error::ControlFlowStackUnderflow, Error::ControlFlowStackOverflow };
 
-
-    // stacks
-    Stack* except_stack;	// exception stack
+    // exception stack
+    DownwardStack<int> except_stack{ 'E',
+        Error::ExceptionStackUnderflow, Error::ExceptionStackOverflow };
 
     // dictionary
     Dict* dict;
