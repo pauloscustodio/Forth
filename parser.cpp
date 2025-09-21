@@ -18,6 +18,16 @@ bool is_print(char c) {
     return c >= BL && c < 0x7f;
 }
 
+void strip_blanks(const char*& str, uint& size) {
+    while (size > 0 && is_space(str[0])) {
+        str++;
+        size--;
+    }
+    while (size > 0 && is_space(str[size - 1])) {
+        size--;
+    }
+}
+
 // return digit value of character, or -1 if not a digit
 static int char_digit(char c) {
     if (c >= '0' && c <= '9') {
@@ -180,8 +190,7 @@ std::string parse_backslash_string() {
     return message;
 }
 
-static bool parse_sign(const char*& p, const char* end, int& sign) 
-{
+static bool parse_sign(const char*& p, const char* end, int& sign) {
     bool found_sign = false;
     while (p < end) {
         switch (*p) {
@@ -202,8 +211,8 @@ static bool parse_sign(const char*& p, const char* end, int& sign)
     return found_sign;
 }
 
-static int parse_digits(const char*& p, const char* end, int base, dint& value)
-{
+static int parse_digits(const char*& p, const char* end, int base,
+                        dint& value) {
     int num_digits = 0;
     while (p < end) {
         int digit = char_digit(*p);
@@ -303,16 +312,16 @@ bool parse_number(const char* text, uint size, bool& is_double, dint& value) {
     return true;
 }
 
-bool parse_float(const std::string& text, double& value)
-{
-    return parse_float(text.c_str(), static_cast<uint>(text.size()), value);
+bool parse_float(const std::string& text, double& value, bool needs_exp) {
+    return parse_float(text.c_str(), static_cast<uint>(text.size()), value,
+                       needs_exp);
 }
 
-bool parse_float(const char* text, uint size, double& value)
-{
+bool parse_float(const char* text, uint size, double& value, bool needs_exp) {
     value = 0.0;
-    if (vm.user->BASE != 10)
+    if (vm.user->BASE != 10) {
         return false;
+    }
 
     const char* p = text;
     const char* end = text + size;
@@ -329,36 +338,53 @@ bool parse_float(const char* text, uint size, double& value)
         ++p;
         num_digits += parse_digits(p, end, 10, dummy);
     }
-    if (num_digits == 0)
-        return false;
+    const char* end_mantissa = p;
 
-    // check for mandatory exponent
-    if (p >= end || toupper(*p) != 'E') {
+    if (num_digits == 0) {
         return false;
     }
 
-    const char* end_mantissa = p;
-    ++p;
-    bool has_sign = parse_sign(p, end, exp_sign);
+    // check for mandatory exponent
+    if (needs_exp && p >= end) {
+        return false;
+    }
 
-    const char* start_exponent = p;
-    int num_digits_exp = parse_digits(p, end, 10, dummy);
-    const char* end_exponent = p;
-
-    if (has_sign && num_digits_exp == 0)
-        return false;   // exponent only with sign
-    else if (p < end)
-        return false;   // extra characters after number
-    else {
+    // optional exponent 'e' or 'd', sign?, digits+
+    if (p >= end) {
         std::string number = sign < 0 ? "-" : "";
         number += std::string(start_mantissa, end_mantissa);
-        if (num_digits_exp > 0) {
-            number += "e";
-            number += exp_sign < 0 ? "-" : "";
-            number += std::string(start_exponent, end_exponent);
-        }
         value = std::stod(number);
         return true;
+    }
+    else {
+        if (toupper(*p) != 'D' && toupper(*p) != 'E') {
+            return false;
+        }
+
+        ++p;
+        bool has_sign = parse_sign(p, end, exp_sign);
+
+        const char* start_exponent = p;
+        int num_digits_exp = parse_digits(p, end, 10, dummy);
+        const char* end_exponent = p;
+
+        if (has_sign && num_digits_exp == 0) {
+            return false;    // exponent only with sign
+        }
+        else if (p < end) {
+            return false;    // extra characters after number
+        }
+        else {
+            std::string number = sign < 0 ? "-" : "";
+            number += std::string(start_mantissa, end_mantissa);
+            if (num_digits_exp > 0) {
+                number += "e";
+                number += exp_sign < 0 ? "-" : "";
+                number += std::string(start_exponent, end_exponent);
+            }
+            value = std::stod(number);
+            return true;
+        }
     }
 }
 
@@ -491,3 +517,17 @@ void f_backslash() {
     }
 }
 
+void f_to_float() {
+    uint size = pop();
+    uint addr = pop();
+    const char* str = mem_char_ptr(addr, size);
+    strip_blanks(str, size);
+    double value = 0.0;
+    if (size == 0 || parse_float(str, size, value, false)) {
+        fpush(value);
+        push(F_TRUE);
+    }
+    else {
+        push(F_FALSE);
+    }
+}

@@ -175,7 +175,7 @@ void print_string(const char* str, uint size) {
 }
 
 std::string number_to_string(int value) {
-    dpush(f_dabs(value));
+    dpush(std::abs(value));
     int sign = value;
     return print_dint_uint(sign);
 }
@@ -185,13 +185,23 @@ void print_number(int value) {
 }
 
 std::string number_to_string(dint value) {
-    dpush(f_dabs(value));
+    dpush(std::abs(value));
     int sign = value < 0 ? -1 : 1;
     return print_dint_uint(sign);
 }
 
 void print_number(dint value) {
     print_string(number_to_string(value));
+}
+
+std::string number_to_string(double value) {
+    std::ostringstream oss;
+    oss << (value == 0 ? 0 : value) << BL;
+    return oss.str();
+}
+
+void print_number(double value) {
+    print_string( number_to_string(value));
 }
 
 std::string number_dot_to_string(dint value) {
@@ -206,7 +216,7 @@ void print_number_dot(dint value) {
 }
 
 std::string number_to_string(int value, int width) {
-    dpush(f_dabs(value));
+    dpush(std::abs(value));
     return print_dint_uint_aligned(width, value);
 }
 
@@ -215,7 +225,7 @@ void print_number(int value, int width) {
 }
 
 std::string number_to_string(dint value, int width) {
-    dpush(f_dabs(value));
+    dpush(std::abs(value));
     int sign = value < 0 ? -1 : 1;
     return print_dint_uint_aligned(width, sign);
 }

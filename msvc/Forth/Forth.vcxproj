@@ -62,7 +62,6 @@
     <ClCompile Include="..\..\memory.cpp" />
     <ClCompile Include="..\..\output.cpp" />
     <ClCompile Include="..\..\parser.cpp" />
-    <ClCompile Include="..\..\stack.cpp" />
     <ClCompile Include="..\..\str.cpp" />
     <ClCompile Include="..\..\tools.cpp" />
     <ClCompile Include="..\..\vm.cpp" />

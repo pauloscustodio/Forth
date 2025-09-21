@@ -133,7 +133,7 @@ void f_environment_q(const std::string& query) {
         push(F_TRUE);
     }
     else if (case_insensitive_equal(query, "MAX-FLOAT")) {
-        f_push(DBL_MAX);
+        fpush(DBL_MAX);
         push(F_TRUE);
     }
     else if (case_insensitive_equal(query, "LOCALS")) {

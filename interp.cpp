@@ -33,9 +33,9 @@ void interpret_word(const char* word, uint size) {
                 comma(xt);
             }
         }
-        else if (parse_float(word, size, fvalue)) {
+        else if (parse_float(word, size, fvalue, true)) {
             if (vm.user->STATE == STATE_INTERPRET) {
-                f_push(fvalue);
+                fpush(fvalue);
 
                 if (vm.user->TRACE) {
                     std::cout << ">>" << BL << fvalue << BL;

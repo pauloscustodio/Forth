@@ -234,13 +234,21 @@ forth_ok("--1.23e1 .S .FS", "( ) (F: 12.3 )");
 forth_ok("--1.23e-1 .S .FS", "( ) (F: 0.123 )");
 forth_ok("--1.23e-+1 .S .FS", "( ) (F: 0.123 )");
 forth_ok("--1.23e-+-1 .S .FS", "( ) (F: 12.3 )");
+forth_ok("--1.23d-+-1 .S .FS", "( ) (F: 12.3 )");
 
 forth_ok(": x --1.23e-+-1 ; x .S .FS", "( ) (F: 12.3 )");
+forth_ok(": x --1.23d-+-1 ; x .S .FS", "( ) (F: 12.3 )");
 
 forth_ok("HEX 1.23E DECIMAL .S .FS", "( ".(0x123E)." 0 ) (F: )");
 
 forth_nok("1.23Ea .S .FS", "\nError: undefined word: 1.23Ea\n");
 forth_nok("1.23-E .S .FS", "\nError: undefined word: 1.23-E\n");
 forth_nok("1.23-E- .S .FS", "\nError: undefined word: 1.23-E-\n");
+
+note "Test >FLOAT";
+forth_ok('S" " >FLOAT .S .FS', "( -1 ) (F: 0 )");
+forth_ok('S" 0" >FLOAT .S .FS', "( -1 ) (F: 0 )");
+forth_ok('S" 1" >FLOAT .S .FS', "( -1 ) (F: 1 )");
+forth_ok('S" x" >FLOAT .S .FS', "( 0 ) (F: )");
 
 end_test;

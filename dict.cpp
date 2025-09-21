@@ -177,8 +177,7 @@ void Dict::dcomma(dint value) {
     vm.here += DCELL_SZ;
 }
 
-void Dict::fcomma(double value)
-{
+void Dict::fcomma(double value) {
     check_free_space(FCELL_SZ);
     fstore(vm.here, value);
     vm.here += FCELL_SZ;
@@ -346,6 +345,11 @@ void f_2variable() {
     dcomma(0);
 }
 
+void f_fvariable() {
+    vm.dict.parse_create(idXDOVAR, 0);
+    fcomma(0);
+}
+
 void f_value() {
     vm.dict.parse_create(idXDOCONST, 0);
     comma(pop());
@@ -393,6 +397,11 @@ void f_constant() {
 void f_2constant() {
     vm.dict.parse_create(idXDO2CONST, 0);
     dcomma(dpop());
+}
+
+void f_fconstant() {
+    vm.dict.parse_create(idXDOFCONST, 0);
+    fcomma(fpop());
 }
 
 void f_does() {

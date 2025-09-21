@@ -120,7 +120,12 @@ public:
         }
         std::cout << BL;
         for (uint i = 0; i < size_; ++i) {
-            std::cout << buffer_[capacity_ - 1 - i] << BL;
+            // do not print -0
+            T v = buffer_[capacity_ - 1 - i];
+            if (v == 0) {
+                v = 0;
+            }
+            std::cout << v << BL;
         }
         std::cout << ") ";
     }
@@ -150,36 +155,3 @@ private:
         capacity_ = new_capacity;
     }
 };
-
-class Stack {
-public:
-    void init(char prefix, Error err_underflow, Error err_overflow);
-
-    void push(int value);
-    int pop();
-    int peek(int depth = 0) const;
-    void dpush(dint value);
-    dint dpop();
-    dint dpeek(int depth = 0) const;
-    int depth() const {
-        return STACK_SZ - sp_;
-    }
-    void roll(int depth);
-
-    int sp() const {
-        return sp_;
-    }
-    void set_sp(int sp);
-    void clear();
-
-    void print() const;
-    void print_debug() const;
-
-private:
-    int data_[STACK_SZ];
-    int sp_;
-    char prefix_;
-    Error err_underflow_;
-    Error err_overflow_;
-};
-

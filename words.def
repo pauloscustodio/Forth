@@ -53,9 +53,9 @@ CODE("2/", TWO_DIV, 0, push(f_div(pop(), 2)))
 CODE("NEGATE", NEGATE, 0, push(-pop()))
 CODE("S>D", S_TO_D, 0, dpush(pop()))
 CODE("UM*", UM_MULT, 0, f_um_mult())
-CODE("ABS", ABS, 0, push(f_abs(pop())))
-CODE("MAX", FMAX, 0, push(f_max(pop(), pop())))
-CODE("MIN", FMIN, 0, push(f_min(pop(), pop())))
+CODE("ABS", ABS, 0, push(std::abs(pop())))
+CODE("MAX", MAX, 0, push(std::max(pop(), pop())))
+CODE("MIN", MIN, 0, push(std::min(pop(), pop())))
 CODE("CHAR+", CHAR_PLUS, 0, push(pop() + 1))
 CODE("CHARS", CHARS, 0, push(pop() * 1))
 CODE("CELL+", CELL_PLUS, 0, push(pop() + CELL_SZ))
@@ -95,12 +95,12 @@ CODE("0>=", ZERO_GREATER_EQUAL, 0, push(f_bool(pop() >= 0)))
 
 
 // memory
-CODE("!", STORE, 0, int a = pop(); store(a, pop()))
+CODE("!", STORE, 0, uint a = pop(); store(a, pop()))
 CODE("@", FETCH, 0, push(fetch(pop())))
-CODE("+!", PLUS_STORE, 0, int a = pop(); store(a, fetch(a) + pop()))
-CODE("C!", CSTORE, 0, int a = pop(); cstore(a, pop()))
+CODE("+!", PLUS_STORE, 0, uint a = pop(); store(a, fetch(a) + pop()))
+CODE("C!", CSTORE, 0, uint a = pop(); cstore(a, pop()))
 CODE("C@", CFETCH, 0, push(cfetch(pop())))
-CODE("2!", TWO_STORE, 0, int a = pop(); dstore(a, dpop()))
+CODE("2!", TWO_STORE, 0, uint a = pop(); dstore(a, dpop()))
 CODE("2@", TWO_FETCH, 0, dpush(dfetch(pop())))
 CODE("FILL", FILL, 0, f_fill())
 CODE("ERASE", ERASE, 0, f_erase())
@@ -350,7 +350,7 @@ CODE("THRU", THRU, 0, f_thru())
 // tools
 CODE(".S", DOT_S, 0, vm.stack.print())
 CODE(".RS", DOT_RS, 0, vm.r_stack.print())
-CODE(".FS", DOT_FS, 0, vm.f_stack.print_debug()) // always base 10
+CODE(".FS", DOT_FS, 0, vm.f_stack.print())
 CODE("WORDS", WORDS, 0, f_words())
 CODE("ENVIRONMENT?", ENVIRONMENT_Q, 0, f_environment_q())
 CODE("DUMP", DUMP, 0, f_dump())
@@ -398,9 +398,9 @@ CODE("D0>=", DZERO_GREATER_EQUAL, 0, push(f_bool(dpop() >= 0)))
 
 CODE("D>S", DTOS, 0, push(dcell_lo(dpop())))
 
-CODE("DABS", DABS, 0, dpush(f_dabs(dpop())))
-CODE("DMAX", DMAX, 0, dpush(f_dmax(dpop(), dpop())))
-CODE("DMIN", DMIN, 0, dpush(f_dmin(dpop(), dpop())))
+CODE("DABS", DABS, 0, dpush(std::abs(dpop())))
+CODE("DMAX", DMAX, 0, dpush(std::max(dpop(), dpop())))
+CODE("DMIN", DMIN, 0, dpush(std::min(dpop(), dpop())))
 CODE("DNEGATE", DNEGATE, 0, dpush(-dpop()))
 
 
@@ -500,7 +500,62 @@ CONST("FS-EXECUTABLE", FS_EXECUTABLE, 0, FS_EXECUTABLE)
 
 
 // floating point
-CODE("(FLITERAL)", XFLITERAL, F_HIDDEN, f_push(ffetch(vm.ip)); vm.ip += FCELL_SZ)
+CODE("FLITERAL", FLITERAL, F_IMMEDIATE, comma(xtXFLITERAL); fcomma(fpop()))
+CODE("(FLITERAL)", XFLITERAL, F_HIDDEN, fpush(ffetch(vm.ip)); vm.ip += FCELL_SZ)
+
+CODE("FCONSTANT", FCONSTANT, 0, f_fconstant())
+CODE("(DOFCONST)", XDOFCONST, F_HIDDEN, fpush(ffetch(body)))
+
+CODE("FVARIABLE", F_VARIABLE, 0, f_fvariable())
+
+CODE(">FLOAT", TO_FLOAT, 0, f_to_float())
+CODE("D>F", D_TO_F, 0, d_to_f())
+CODE("F>D", F_TO_D, 0, f_to_d())
+
+CODE("F!", F_STORE, 0, uint a = pop(); fstore(a, fpop()))
+CODE("F@", F_FETCH, 0, uint a = pop(); fpush(ffetch(a)))
+
+CODE("F+", F_PLUS, 0, fpush(fpop() + fpop()))
+CODE("F*", F_MULT, 0, fpush(fpop() * fpop()))
+CODE("F-", F_MINUS, 0, double b = fpop(); fpush(fpop() - b))
+CODE("F/", F_DIV, 0, double b = fpop(); fpush(f_div(fpop(), b)))
+
+
+CODE("F=", F_EQUAL, 0, push(f_bool(fpop() == fpop())))
+CODE("F<>", F_DIFFERENT, 0, push(f_bool(fpop() != fpop())))
+CODE("F<", F_LESS, 0, double b = fpop(); push(f_bool(fpop() < b)))
+CODE("F>", F_GREATER, 0, double b = fpop(); push(f_bool(fpop() > b)))
+CODE("F<=", F_LESS_EQUAL, 0, double b = fpop(); push(f_bool(fpop() <= b)))
+CODE("F>=", F_GREATER_EQUAL, 0, double b = fpop(); push(f_bool(fpop() >= b)))
+
+CODE("F0=", F_ZERO_EQUAL, 0, push(f_bool(fpop() == 0)))
+CODE("F0<>", F_ZERO_DIFFERENT, 0, push(f_bool(fpop() != 0)))
+CODE("F0<", F_ZERO_LESS, 0, push(f_bool(fpop() < 0)))
+CODE("F0>", F_ZERO_GREATER, 0, push(f_bool(fpop() > 0)))
+CODE("F0<=", F_ZERO_LESS_EQUAL, 0, push(f_bool(fpop() <= 0)))
+CODE("F0>=", F_ZERO_GREATER_EQUAL, 0, push(f_bool(fpop() >= 0)))
+
+CODE("FALIGN", FALIGN, 0, vm.dict.align())
+CODE("FALIGNED", FALIGNED, 0, push(aligned(pop())))
+
+CODE("FDROP", FDROP, 0, fpop())
+CODE("FSWAP", FSWAP, 0, double a = fpop(); double b = fpop(); fpush(a); fpush(b))
+CODE("FDUP", FDUP, 0, fpush(fpeek(0)))
+CODE("FOVER", FOVER, 0, fpush(fpeek(1)))
+CODE("FROT", FROT, 0, double c = fpop(); double b = fpop(); double a = fpop(); fpush(b); fpush(c); fpush(a))
+CODE("-FROT", MINUS_FROT, 0, double c = fpop(); double b = fpop(); double a = fpop(); fpush(c); fpush(a); fpush(b))
+CODE("FDEPTH", FDEPTH, 0, push(fdepth()))
+
+CODE("FLOAT+", FLOAT_PLUS, 0, push(pop() + FCELL_SZ))
+CODE("FLOATS", FLOATS, 0, push(pop() * FCELL_SZ))
+CODE("FLOOR", FLOOR, 0, fpush(std::floor(fpop())))
+CODE("FMAX", FMAX, 0, fpush(std::max(fpop(), fpop())))
+CODE("FMIN", FMIN, 0, fpush(std::min(fpop(), fpop())))
+CODE("FNEGATE", FNEGATE, 0, fpush(-fpop()))
+CODE("FROUND", FROUND, 0, fpush(std::round(fpop())))
+CODE("REPRESENT", REPRESENT, 0, f_represent())
+
+CODE("FABS", FABS, 0, fpush(std::fabs(fpop())))
 
 // strings
 CODE("/STRING", SLASH_STRING, 0, f_slash_string())

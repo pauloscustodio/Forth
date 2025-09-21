@@ -9,7 +9,12 @@
 #include "math.h"
 #include "stack.h"
 #include "vm.h"
+#include <algorithm>
+#include <cmath>
+#include <cstring>
+#include <iomanip>
 #include <limits>
+#include <sstream>
 
 int f_mod(int a, int b) {
     if (b == 0) {
@@ -45,6 +50,16 @@ int f_div(int a, int b) {
     int rem = f_mod(a, b);
     int quot = (a - rem) / b;
     return quot;
+}
+
+double f_div(double a, double b) {
+    if (b == 0) {
+        error(Error::DivisionByZero);
+        return 0.0;   // not reached
+    }
+    else {
+        return a / b;
+    }
 }
 
 void f_div_mod() {
@@ -134,30 +149,6 @@ void f_mul_div() {
     push(quot);
 }
 
-int f_abs(int a) {
-    return a < 0 ? -a : a;
-}
-
-int f_max(int a, int b) {
-    return a > b ? a : b;
-}
-
-int f_min(int a, int b) {
-    return a < b ? a : b;
-}
-
-dint f_dabs(dint a) {
-    return a < 0 ? -a : a;
-}
-
-dint f_dmax(dint a, dint b) {
-    return a > b ? a : b;
-}
-
-dint f_dmin(dint a, dint b) {
-    return a < b ? a : b;
-}
-
 bool within(uint x, uint lo, uint hi) {
     // implement the same logic as Forth's WITHIN word
     return (x - lo) < (hi - lo);
@@ -183,3 +174,62 @@ void f_m_plus() {
     dpush(d + n);
 }
 
+void d_to_f() {
+    dint d = dpop();
+    double f = static_cast<double>(d);
+    fpush(f);
+}
+
+void f_to_d() {
+    double f = fpop();
+    dint d = static_cast<dint>(std::trunc(f));
+    dpush(d);
+}
+
+RepresentResult f_represent(double x, int signifanct_digits) {
+    RepresentResult result;
+
+    // Handle sign
+    result.is_negative = std::signbit(x);
+    double abs_x = std::fabs(x);
+
+    // Use scientific notation to extract exponent and digits
+    std::ostringstream oss;
+    oss << std::scientific
+        << std::setprecision(signifanct_digits - 1)
+        << abs_x;
+    std::string sci = oss.str();  // e.g., "1.234567890123456e+03"
+
+    // Parse digits and exponent
+    size_t e_pos = sci.find('e');
+    std::string mantissa = sci.substr(0, e_pos);
+    std::string exponent_str = sci.substr(e_pos + 1);
+
+    // Remove decimal point from mantissa
+    mantissa.erase(std::remove(mantissa.begin(), mantissa.end(), '.'),
+                   mantissa.end());
+
+    result.digits = mantissa;
+    // Adjust exponent for leading digit
+    result.exponent = std::stoi(exponent_str) + 1;
+
+    return result;
+}
+
+void f_represent() {
+    uint size = pop();
+    uint addr = pop();
+    char* buffer = mem_char_ptr(addr, size);
+
+    double f = fpop();
+
+    RepresentResult res = f_represent(f, size);
+
+    memset(buffer, BL, size);
+    memcpy(buffer, res.digits.c_str(),
+           std::min(size, static_cast<uint>(res.digits.size())));
+
+    push(res.exponent);
+    push(res.is_negative ? F_TRUE : F_FALSE);
+    push(F_TRUE);  // success
+}

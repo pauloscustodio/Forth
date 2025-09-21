@@ -18,6 +18,8 @@
 #include "parser.h"
 #include "tools.h"
 #include "vm.h"
+#include <algorithm>
+#include <cmath>
 
 // define xtWORD for all words - execution token from dictionary
 #define CONST(word, name, flags, value) uint xt##name = 0;
@@ -97,8 +99,9 @@ void f_execute(uint xt) {
 
         if (vm.user->TRACE) {
             vm.stack.print_debug();
-            if (vm.f_stack.depth() > 0)
+            if (vm.f_stack.depth() > 0) {
                 vm.f_stack.print_debug();
+            }
             std::cout << std::endl;
         }
 

@@ -153,7 +153,7 @@ dint cs_dpop();
 dint cs_dpeek(int depth = 0);
 int cs_ddepth();
 
-void f_push(double value);
-double f_pop();
-double f_peek(int depth = 0);
-int f_depth();
+void fpush(double value);
+double fpop();
+double fpeek(int depth = 0);
+int fdepth();
