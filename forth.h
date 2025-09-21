@@ -49,6 +49,9 @@ static const int F_IMMEDIATE = 0x80;
 static const int STATE_INTERPRET = 0;
 static const int STATE_COMPILE = 1;
 
+static const double EPSILON = 1e-10;
+static const uint MAX_PRECISION = 15;
+
 // blocks
 static const std::string BLOCKS_FILE = "blocks.fb";
 static const int BLOCK_SZ = 1024;

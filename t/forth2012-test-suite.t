@@ -246,7 +246,21 @@ Forth tests completed
 
 END
 
+# floating point tests
+chdir "fp" or die;
+
+SKIP: {
+	skip "[if] needed to test floating point", 1;
+	
+	note "runfptests.fth";
+	forth_ok('S" runfptests.fth" INCLUDED', <<'END');
+
+END
+}
+
 # unlink test-generated files
-unlink "../../../fatest1.txt";
-unlink "blocks.fb";
+unlink "../../../../fatest1.txt" 	if Test::More->builder->is_passing;
+unlink "../blocks.fb" 				if Test::More->builder->is_passing;
+unlink <../$test.*>					if Test::More->builder->is_passing;
+unlink <$test.*>					if Test::More->builder->is_passing;
 end_test;

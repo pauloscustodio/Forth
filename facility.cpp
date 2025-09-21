@@ -78,6 +78,12 @@ void f_two_field_colon() {
     push(offset);                    // new offset
 }
 
+void f_f_field_colon() {
+    uint offset = pop();
+    offset = field(offset, FCELL_SZ, true);
+    push(offset);                    // new offset
+}
+
 void f_end_structure() {
     uint offset = pop();
     uint addr = pop();

@@ -186,7 +186,19 @@ void f_to_d() {
     dpush(d);
 }
 
-RepresentResult f_represent(double x, int signifanct_digits) {
+void s_to_f() {
+    int d = pop();
+    double f = static_cast<double>(d);
+    fpush(f);
+}
+
+void f_to_s() {
+    double f = fpop();
+    int d = static_cast<int>(std::trunc(f));
+    push(d);
+}
+
+RepresentResult f_represent(double x, int significant_digits) {
     RepresentResult result;
 
     // Handle sign
@@ -196,7 +208,7 @@ RepresentResult f_represent(double x, int signifanct_digits) {
     // Use scientific notation to extract exponent and digits
     std::ostringstream oss;
     oss << std::scientific
-        << std::setprecision(signifanct_digits - 1)
+        << std::setprecision(significant_digits - 1)
         << abs_x;
     std::string sci = oss.str();  // e.g., "1.234567890123456e+03"
 
@@ -233,3 +245,35 @@ void f_represent() {
     push(res.is_negative ? F_TRUE : F_FALSE);
     push(F_TRUE);  // success
 }
+
+bool f_f_tilde() {
+    double tolerance = fpop();
+    double b = fpop();
+    double a = fpop();
+    return f_f_tilde(a, b, tolerance);
+}
+
+// Bitwise comparison for exact encoding (handles +0 vs -0)
+static bool bitwise_equal(double a, double b) {
+    static_assert(sizeof(double) == sizeof(uint64_t),
+                  "Unexpected double size");
+    uint64_t ua, ub;
+    std::memcpy(&ua, &a, sizeof(double));
+    std::memcpy(&ub, &b, sizeof(double));
+    return ua == ub;
+}
+
+bool f_f_tilde(double a, double b, double tolerance) {
+    if (tolerance > 0.0) {
+        return std::fabs(a - b) < tolerance;
+    }
+    else if (std::fabs(tolerance) < EPSILON) {
+        return bitwise_equal(a, b);
+    }
+    else {
+        double scaled_tolerance =
+            std::fabs(tolerance) * (std::fabs(a) + std::fabs(b));
+        return std::fabs(a - b) < scaled_tolerance;
+    }
+}
+

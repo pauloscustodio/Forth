@@ -7,7 +7,9 @@
 #include "math.h"
 #include "output.h"
 #include "vm.h"
+#include <cmath>
 #include <cstring>
+#include <iomanip>
 #include <iostream>
 #include <sstream>
 
@@ -196,12 +198,96 @@ void print_number(dint value) {
 
 std::string number_to_string(double value) {
     std::ostringstream oss;
-    oss << (value == 0 ? 0 : value) << BL;
+    oss << std::setprecision(vm.precision - 1)
+        << (std::fabs(value) < EPSILON ? 0 : value);
     return oss.str();
 }
 
 void print_number(double value) {
     print_string( number_to_string(value));
+}
+
+std::string number_fixed_to_string(double value) {
+    std::ostringstream oss;
+    oss << std::fixed << std::setprecision(vm.precision - 1)
+        << (std::fabs(value) < EPSILON ? 0 : value);
+    std::string number = oss.str();
+    if (number.find('.') == std::string::npos) {
+        number.push_back('.');
+    }
+
+    // Remove trailing zeros
+    number.erase(number.find_last_not_of('0') + 1);
+
+    number.push_back(BL);
+    return number;
+}
+
+void print_number_fixed(double value) {
+    print_string(number_fixed_to_string(value));
+}
+
+std::string number_engineering_to_string(double value) {
+    if (std::fabs(value) < EPSILON) {
+        return "0. ";
+    }
+    else {
+        int exponent = static_cast<int>(std::floor(std::log10(std::fabs(value))));
+        int eng_exponent = exponent >= 0
+                           ? exponent - (exponent % 3)
+                           : exponent - ((exponent % 3 + 3) % 3);
+        double significand = value / std::pow(10.0, eng_exponent);
+
+        std::ostringstream oss;
+        oss << std::fixed << std::setprecision(vm.precision - 1)
+            << significand;
+
+        // Trim trailing zeros and decimal point
+        std::string significand_str = oss.str();
+        significand_str.erase(significand_str.find_last_not_of('0') + 1);
+        if (significand_str.back() == '.') {
+            significand_str.pop_back();
+        }
+
+        std::ostringstream result;
+        result << significand_str << "E" << eng_exponent << BL;
+        return result.str();
+    }
+}
+
+void print_number_engineering(double value) {
+    print_string(number_engineering_to_string(value));
+}
+
+std::string number_scientific_to_string(double value) {
+    if (std::fabs(value) < EPSILON) {
+        return "0E+0 ";
+    }
+    else {
+        int exponent = static_cast<int>(std::floor(std::log10(std::fabs(value))));
+        double significand = value / std::pow(10.0, exponent);
+
+        std::ostringstream oss;
+        oss << std::fixed << std::setprecision(vm.precision - 1)
+            << significand;
+
+        // Trim trailing zeros and decimal point
+        std::string significand_str = oss.str();
+        significand_str.erase(significand_str.find_last_not_of('0') + 1);
+        if (significand_str.back() == '.') {
+            significand_str.pop_back();
+        }
+
+        std::ostringstream result;
+        result << significand_str << "E" << (exponent >= 0 ? "+" : "") << exponent <<
+               " ";
+        return result.str();
+        return std::string();
+    }
+}
+
+void print_number_scientific(double value) {
+    print_string(number_scientific_to_string(value));
 }
 
 std::string number_dot_to_string(dint value) {
@@ -217,7 +303,8 @@ void print_number_dot(dint value) {
 
 std::string number_e_to_string(double value) {
     std::ostringstream oss;
-    oss << (value == 0 ? 0 : value);
+    oss << std::setprecision(vm.precision - 1)
+        << (std::fabs(value) < EPSILON ? 0 : value);
     std::string number = oss.str();
     if (number.find('e') == std::string::npos &&
             number.find('E') == std::string::npos) {

@@ -93,6 +93,7 @@ void f_2variable();
 void f_fvariable();
 void f_value();
 void f_two_value();
+void f_fvalue();
 void f_to();
 void f_constant();
 void f_2constant();

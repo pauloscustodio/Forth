@@ -181,6 +181,12 @@ forth_ok("HEX 123456712345678. 2VALUE xx 1111111122222222. TO xx .S xx .S",
 forth_ok("HEX 123456712345678. 2VALUE xx : x 1111111122222222. TO xx ; x .S xx .S",
 		"( )( 22222222 11111111 )");
 
+note "Test FVALUE";
+note "Test TO";
+forth_ok("1.23e FVALUE num .FS num .FS",                       "(F: )(F: 1.23 )");
+forth_ok("1.23e FVALUE num      2.34e TO num     .FS num .FS", "(F: )(F: 2.34 )");
+forth_ok("1.23e FVALUE num  : x 2.34e TO num ; x .FS num .FS", "(F: )(F: 2.34 )");
+
 # error
 forth_nok("CREATE xx 20 TO xx", "\nError: invalid name argument\n");
 forth_nok("CREATE xx : x 20 TO xx ; x", "\nError: invalid name argument\n");

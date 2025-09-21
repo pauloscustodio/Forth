@@ -26,6 +26,8 @@ void f_um_mult();
 void f_m_plus();
 void d_to_f();
 void f_to_d();
+void s_to_f();
+void f_to_s();
 
 struct RepresentResult {
     std::string digits;
@@ -33,5 +35,8 @@ struct RepresentResult {
     bool is_negative;
 };
 
-RepresentResult f_represent(double x, int signifanct_digits);
+RepresentResult f_represent(double x, int significant_digits);
 void f_represent();
+
+bool f_f_tilde();
+bool f_f_tilde(double a, double b, double tolerance);

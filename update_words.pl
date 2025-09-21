@@ -43,12 +43,13 @@ for my $wordset (sort keys %wordsets) {
 			push @missing, $word;
 		}
 	}
-	$out .= "  Implemented:\n".wrap("    ", "    ", "@exist")."\n" if @exist;
-	$out .= "  Missing:\n".wrap("    ", "    ", "@missing")."\n" if @missing;
+	$out .= wrap("    ", "    ", "@exist")."\n" if @exist;
+	$out .= "  Missing:\n".
+	        wrap("    ", "    ", "@missing")."\n" if @missing;
 	$out .= "\n";
 }
-$out .= "NOT STANDARD:\n  Implemented:\n".
-		wrap("    ", "    ", join(" ", sort keys %not_standard_words))."\n";
+$out .= "NOT STANDARD:\n".
+		    wrap("    ", "    ", join(" ", sort keys %not_standard_words))."\n";
 
 # patch README
 my $readme = path("README.md")->slurp;

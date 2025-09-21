@@ -360,6 +360,11 @@ void f_two_value() {
     dcomma(dpop());
 }
 
+void f_fvalue() {
+    vm.dict.parse_create(idXDOFCONST, 0);
+    fcomma(fpop());
+}
+
 void f_to() {
     Header* header = vm.dict.parse_find_existing_word();
     assert(header != nullptr);
@@ -382,6 +387,16 @@ void f_to() {
         }
         else {
             dstore(header->body(), dpop());
+        }
+    }
+    else if (code == idXDOFCONST) {		// float cell value
+        if (vm.user->STATE == STATE_COMPILE) {
+            comma(xtXLITERAL);
+            comma(header->body());
+            comma(xtF_STORE);
+        }
+        else {
+            fstore(header->body(), fpop());
         }
     }
     else {

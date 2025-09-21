@@ -38,6 +38,7 @@ struct VM {
     // number output buffer
     char* number_output_data{ nullptr };
     uint number_output_ptr{ 0 };
+    uint precision{ 7 };    // number of significant digits for float output
     NumberOutput number_output;
 
     // input buffer

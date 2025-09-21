@@ -20,6 +20,7 @@ void f_xplus_field(uint body);
 void f_cfield_colon();
 void f_field_colon();
 void f_two_field_colon();
+void f_f_field_colon();
 void f_end_structure();
 
 void f_ms();

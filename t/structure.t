@@ -20,12 +20,18 @@ END
 note "Test CFIELD:";
 note "Test FIELD:";
 note "Test 2FIELD:";
-forth_ok(<<'END', "( ) ( 20 1000 1004 1008 1012 ) ");
+note "Test FFIELD:";
+note "Test SFFIELD:";
+note "Test DFFIELD:";
+forth_ok(<<'END', "( ) ( 44 1000 1004 1008 1012 1020 1028 1036 ) ");
 	BEGIN-STRUCTURE s
-		CFIELD: s.char1
-		FIELD:  s.cell
-		CFIELD: s.char2
-		2FIELD: s.dcell
+		CFIELD:  s.char1
+		FIELD:   s.cell
+		CFIELD:  s.char2
+		2FIELD:  s.dcell
+		FFIELD:  s.fcell
+		SFFIELD: s.sfcell
+		DFFIELD: s.dfcell
 	END-STRUCTURE
 	.S
 	s 
@@ -33,6 +39,9 @@ forth_ok(<<'END', "( ) ( 20 1000 1004 1008 1012 ) ");
 	1000 s.cell
 	1000 s.char2
 	1000 s.dcell
+	1000 s.fcell
+	1000 s.sfcell
+	1000 s.dfcell
 	.S
 END
 
