@@ -175,7 +175,7 @@ void print_string(const char* str, uint size) {
 }
 
 std::string number_to_string(int value) {
-    dpush(std::abs(value));
+    dpush(std::abs(static_cast<dint>(value)));
     int sign = value;
     return print_dint_uint(sign);
 }
