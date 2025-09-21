@@ -215,6 +215,22 @@ void print_number_dot(dint value) {
     print_string(number_dot_to_string(value));
 }
 
+std::string number_e_to_string(double value) {
+    std::ostringstream oss;
+    oss << (value == 0 ? 0 : value);
+    std::string number = oss.str();
+    if (number.find('e') == std::string::npos &&
+            number.find('E') == std::string::npos) {
+        number.push_back('e');
+    }
+    number.push_back(BL);
+    return number;
+}
+
+void print_number_e(double value) {
+    print_string(number_e_to_string(value));
+}
+
 std::string number_to_string(int value, int width) {
     dpush(std::abs(value));
     return print_dint_uint_aligned(width, value);

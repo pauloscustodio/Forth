@@ -507,6 +507,7 @@ CODE("FCONSTANT", FCONSTANT, 0, f_fconstant())
 CODE("(DOFCONST)", XDOFCONST, F_HIDDEN, fpush(ffetch(body)))
 
 CODE("FVARIABLE", F_VARIABLE, 0, f_fvariable())
+CODE("(DOFVAR)", XDOFVAR, F_HIDDEN, push(body))
 
 CODE(">FLOAT", TO_FLOAT, 0, f_to_float())
 CODE("D>F", D_TO_F, 0, d_to_f())

@@ -25,19 +25,19 @@ note "Test F/";
 forth_ok("15e 2e F/ .FS", "(F: 7.5 )");
 forth_nok("10e 0e F/", "\nError: division by zero\n");
 
-note "Test =";
-note "Test <>";
-note "Test <";
-note "Test <=";
-note "Test >";
-note "Test >=";
+note "Test F=";
+note "Test F<>";
+note "Test F<";
+note "Test F<=";
+note "Test F>";
+note "Test F>=";
 
-note "Test 0=";
-note "Test 0<>";
-note "Test 0<";
-note "Test 0<=";
-note "Test 0>";
-note "Test 0>=";
+note "Test F0=";
+note "Test F0<>";
+note "Test F0<";
+note "Test F0<=";
+note "Test F0>";
+note "Test F0>=";
 
 for my $op (qw( = <> < <= > >= )) {
 	my $perl_op = $op eq '=' ? '==' : $op eq '<>' ? '!=' : $op;

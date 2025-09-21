@@ -346,7 +346,7 @@ void f_2variable() {
 }
 
 void f_fvariable() {
-    vm.dict.parse_create(idXDOVAR, 0);
+    vm.dict.parse_create(idXDOFVAR, 0);
     fcomma(0);
 }
 

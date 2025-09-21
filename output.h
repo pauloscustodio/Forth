@@ -51,6 +51,9 @@ void print_number(double value);
 std::string number_dot_to_string(dint value);
 void print_number_dot(dint value);
 
+std::string number_e_to_string(double value);
+void print_number_e(double value);
+
 std::string number_to_string(int value, int width);
 void print_number(int value, int width);
 

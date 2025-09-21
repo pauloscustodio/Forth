@@ -77,6 +77,11 @@ static std::vector<Line> disassemble(uint body, uint size) {
             ptr += DCELL_SZ;
             line.text = std::string(indent, ' ') + number_dot_to_string(value);
         }
+        else if (xt == xtXFLITERAL) {
+            double value = ffetch(ptr);
+            ptr += FCELL_SZ;
+            line.text = std::string(indent, ' ') + number_e_to_string(value);
+        }
         else if (xt == xtBRANCH || xt == xtZBRANCH) {
             int dist = fetch(ptr);
             line.target_addr = ptr + dist;
@@ -238,6 +243,18 @@ void f_see() {
             dump_body_definition(body, size);
         }
         break;
+    case idXDOFVAR:
+        if (size == FCELL_SZ) {
+            double value = ffetch(body);
+            std::cout << std::endl << "FVARIABLE " << name << BL;
+            print_number_e(value);
+            std::cout << name << BL << "F!" << std::endl;
+        }
+        else {
+            std::cout << std::endl << "CREATE " << name << BL;
+            dump_body_definition(body, size);
+        }
+        break;
     case idXDOCONST: {
         int value = fetch(body);
         std::cout << std::endl;
@@ -257,6 +274,17 @@ void f_see() {
 
         if (size > DCELL_SZ) {
             dump_body_definition(body + DCELL_SZ, size - DCELL_SZ);
+        }
+        break;
+    }
+    case idXDOFCONST: {
+        double value = ffetch(body);
+        std::cout << std::endl;
+        print_number_e(value);
+        std::cout << "FCONSTANT " << name << std::endl;
+
+        if (size > FCELL_SZ) {
+            dump_body_definition(body + FCELL_SZ, size - FCELL_SZ);
         }
         break;
     }
