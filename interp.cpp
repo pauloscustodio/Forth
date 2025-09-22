@@ -9,6 +9,7 @@
 #include "errors.h"
 #include "forth.h"
 #include "interp.h"
+#include "locals.h"
 #include "output.h"
 #include "parser.h"
 #include "vm.h"
@@ -22,9 +23,21 @@ void interpret_word(const char* word, uint size) {
         bool is_double = false;
         dint dvalue = 0;
         double fvalue = 0.0;
+        uint index;
 
-        Header* header = vm.dict.find_word(word, size);
-        if (header) {	// word found
+        Header* header = nullptr;
+        if (find_local(word, size, index)) { // local found
+            if (vm.user->STATE == STATE_INTERPRET) {
+                error(Error::InterpretingACompileOnlyWord, std::string(word, word + size));
+            }
+            else {
+                comma(xtXLITERAL);
+                comma(index);
+                comma(xtPAREN_GET_LOCAL);
+            }
+        }
+        else if ((header = vm.dict.find_word(word, size))
+                 != nullptr) {	// word found
             uint xt = header->xt();
             if (header->flags.immediate || vm.user->STATE == STATE_INTERPRET) {
                 f_execute(xt);
@@ -147,5 +160,25 @@ void f_quit() {
     }
 
     exit(EXIT_SUCCESS);
+}
+
+void enter_func(uint called_ip) {
+    r_push(vm.ip);              // return address
+
+    uint bp = vm.r_stack.bp();  // get current bp
+    r_push(bp);                 // save it
+    uint sp = vm.r_stack.sp();  // get sp
+    vm.r_stack.set_bp(sp);      // set new bp to sp
+
+    vm.ip = called_ip;
+}
+
+void leave_func() {
+    uint sp = vm.r_stack.bp();  // recover sp where bp is stored
+    vm.r_stack.set_sp(sp);      // shrink stack
+    uint bp = r_pop();          // get old bp
+    vm.r_stack.set_bp(bp);
+
+    vm.ip = r_pop();            // recover return address
 }
 

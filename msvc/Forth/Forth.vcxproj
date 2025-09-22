@@ -30,6 +30,7 @@
     <ClInclude Include="..\..\input.h" />
     <ClInclude Include="..\..\interp.h" />
     <ClInclude Include="..\..\kbd_input.h" />
+    <ClInclude Include="..\..\locals.h" />
     <ClInclude Include="..\..\math.h" />
     <ClInclude Include="..\..\math96.h" />
     <ClInclude Include="..\..\memory.h" />
@@ -56,6 +57,7 @@
     <ClCompile Include="..\..\kbd_input.cpp" />
     <ClCompile Include="..\..\kbd_input_posix.cpp" />
     <ClCompile Include="..\..\kbd_input_win32.cpp" />
+    <ClCompile Include="..\..\locals.cpp" />
     <ClCompile Include="..\..\main.cpp" />
     <ClCompile Include="..\..\math.cpp" />
     <ClCompile Include="..\..\math96.cpp" />

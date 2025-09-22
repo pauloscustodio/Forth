@@ -21,3 +21,6 @@ void f_evaluate(const char* text, uint size);
 // main loop
 void f_quit();
 
+// stack frame for function calls
+void enter_func(uint called_ip);
+void leave_func();

@@ -15,6 +15,8 @@
 #include "stack.h"
 #include "str.h"
 #include <set>
+#include <string>
+#include <unordered_map>
 
 struct VM {
     VM();
@@ -50,6 +52,10 @@ struct VM {
     char* block_data{ nullptr };
     Blocks blocks;
 
+    // locals - map name to bp - index, index 1 based
+    uint last_local_index{ 0 };
+    std::unordered_map<std::string, uint> locals;
+
     // memory
     Mem mem;
 
@@ -78,7 +84,7 @@ struct VM {
 
     // dictionary
     uint dict_lo_mem, dict_hi_mem;    // memory limits for dictionary
-    uint latest;		// point to last defined word header
+    uint latest;		    // point to last defined word header
     uint here;			// point to next free position at bottom of memory
     uint names;			// point to last name created at top of memory
 

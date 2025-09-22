@@ -136,12 +136,16 @@ void f_environment_q(const std::string& query) {
         fpush(DBL_MAX);
         push(F_TRUE);
     }
-    else if (case_insensitive_equal(query, "LOCALS")) {
-        push(F_FALSE);
+    else if (case_insensitive_equal(query, "LOCAL")) {
+        push(F_TRUE);
         push(F_TRUE);
     }
-    else if (case_insensitive_equal(query, "LOCALS-EXT")) {
-        push(F_FALSE);
+    else if (case_insensitive_equal(query, "LOCAL-EXT")) {
+        push(F_TRUE);
+        push(F_TRUE);
+    }
+    else if (case_insensitive_equal(query, "#LOCALS")) {
+        push(STACK_SZ);
         push(F_TRUE);
     }
     else if (case_insensitive_equal(query, "MEMORY-ALLOC")) {

@@ -243,7 +243,7 @@ VAR("TRACE", TRACE, 0, F_FALSE)
 CODE("INTERPRET", INTERPRET, 0, f_interpret())
 CODE("EVALUATE", EVALUATE, 0, f_evaluate())
 CODE("EXECUTE", EXECUTE, 0, f_execute(pop()))
-CODE("EXIT", EXIT, 0, if (r_depth() == 0) do_exit = true; else vm.ip = r_pop())
+CODE("EXIT", EXIT, 0, if (r_depth() == 0) do_exit = true; else leave_func())
 
 
 // compiler
@@ -251,7 +251,7 @@ VAR("STATE", STATE, 0, STATE_INTERPRET)
 CODE(":", COLON, 0, f_colon())
 CODE(":NONAME", COLON_NONAME, 0, f_colon_noname())
 CODE(";", SEMICOLON, F_IMMEDIATE, f_semicolon())
-CODE("(DOCOL)", XDOCOL, F_HIDDEN, r_push(vm.ip); vm.ip = body)
+CODE("(DOCOL)", XDOCOL, F_HIDDEN, enter_func(body))
 
 CODE("[", LBRACKET, F_IMMEDIATE, vm.user->STATE = STATE_INTERPRET)
 CODE("]", RBRACKET, 0, vm.user->STATE = STATE_COMPILE)
@@ -619,6 +619,11 @@ CODE("F~", F_TILDE, 0, push(f_bool(f_f_tilde())))
 CODE("PRECISION", PRECISION, 0, push(vm.precision))
 CODE("SET-PRECISION", SET_PRECISION, 0, uint p = pop(); if (p < 1) p = 1; if (p > MAX_PRECISION) p = MAX_PRECISION; vm.precision = p)
 
+
+// locals
+CODE("(LOCAL)", PAREN_LOCAL, 0, f_paren_local())
+CODE("(GET_LOCAL)", PAREN_GET_LOCAL, F_HIDDEN, uint index = pop(); push(vm.r_stack.get_local(index)))
+CODE("(SET_LOCAL)", PAREN_SET_LOCAL, F_HIDDEN, uint index = pop(); int value = pop(); vm.r_stack.set_local(index, value))
 
 // strings
 CODE("/STRING", SLASH_STRING, 0, f_slash_string())

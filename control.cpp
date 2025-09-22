@@ -7,6 +7,7 @@
 #include "control.h"
 #include "dict.h"
 #include "errors.h"
+#include "locals.h"
 #include "vm.h"
 #include <vector>
 
@@ -14,6 +15,8 @@ void f_colon() {
     if (cs_ddepth() > 0) {
         error(Error::CompilerNesting);
     }
+
+    clear_locals();
 
     cs_dpush(mk_dcell(POS_COLON_START, 0));
     vm.dict.parse_create(idXDOCOL, F_SMUDGE);
@@ -28,6 +31,8 @@ void f_colon_noname() {
     if (cs_ddepth() > 0) {
         error(Error::CompilerNesting);
     }
+
+    clear_locals();
 
     cs_dpush(mk_dcell(POS_COLON_START, 0));
     vm.dict.create("", F_SMUDGE, idXDOCOL);
@@ -51,6 +56,8 @@ void f_semicolon() {
         error(Error::CompilerNesting);
     }
     cs_dpop();
+
+    clear_locals();
 
     comma(xtEXIT);
     Header* header = reinterpret_cast<Header*>(

@@ -7,6 +7,8 @@
 #include "dict.h"
 #include "errors.h"
 #include "forth.h"
+#include "interp.h"
+#include "locals.h"
 #include "parser.h"
 #include "vm.h"
 #include <cassert>
@@ -366,8 +368,29 @@ void f_fvalue() {
 }
 
 void f_to() {
-    Header* header = vm.dict.parse_find_existing_word();
-    assert(header != nullptr);
+    const CString* name = parse_cword(BL);
+    if (name->size() == 0) {
+        error(Error::AttemptToUseZeroLengthStringAsName);
+    }
+
+    uint index = 0;
+    if (find_local(name->str(), name->size(), index)) { // local found
+        if (vm.user->STATE == STATE_COMPILE) {
+            comma(xtXLITERAL);
+            comma(index);
+            comma(xtPAREN_SET_LOCAL);
+        }
+        else {
+            error(Error::InterpretingACompileOnlyWord, name->to_string());
+        }
+        return;
+    }
+
+    Header* header = vm.dict.find_word(name);
+    if (!header) {
+        error(Error::UndefinedWord, name->to_string());
+    }
+
     uint code = fetch(header->xt());
     if (code == idXDOCONST) {			// single cell value
         if (vm.user->STATE == STATE_COMPILE) {
@@ -404,6 +427,7 @@ void f_to() {
     }
 }
 
+
 void f_constant() {
     vm.dict.parse_create(idXDOCONST, 0);
     comma(pop());
@@ -420,6 +444,8 @@ void f_fconstant() {
 }
 
 void f_does() {
+    clear_locals();
+
     Header* header = reinterpret_cast<Header*>(mem_char_ptr(vm.latest));
     comma(xtXDOES_DEFINE);                  // set this word as having DOES>
     comma(header->xt());					// xt of creater word
@@ -442,9 +468,8 @@ void f_xdoes_define() {
 
 void f_xdoes_run(uint body) {
     push(body);							// store parameter field on the stack
-    r_push(vm.ip);						// save current ip
     Header* header = Header::header(body - CELL_SZ);
-    vm.ip = header->does;				// call code after DOES>
+    enter_func(header->does);           // call code after DOES>
 }
 
 void f_marker() {

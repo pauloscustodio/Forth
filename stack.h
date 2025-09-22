@@ -22,7 +22,8 @@ public:
           err_overflow_(err_overflow),
           buffer_(new T[initial_capacity]),
           capacity_(initial_capacity),
-          size_(0) {
+          size_(0),
+          base_(0) {
     }
 
     void clear() {
@@ -46,6 +47,30 @@ public:
             error(Error::InvalidMemoryAddress);
         }
         size_ = STACK_SZ - new_sp;
+    }
+
+    uint bp() const {
+        return STACK_SZ - base_;
+    }
+
+    void set_bp(uint new_bp) {
+        if (new_bp < STACK_SZ - capacity_ || new_bp > STACK_SZ) {
+            error(Error::InvalidMemoryAddress);
+        }
+        base_ = STACK_SZ - new_bp;
+    }
+
+    // idx starts at 1, at 0 BP is saved
+    void set_local(uint idx, const T& value) {
+        uint locals_size = size_ - base_;
+        int depth = locals_size - idx;
+        return poke(depth, value);
+    }
+
+    const T& get_local(uint idx) {
+        uint locals_size = size_ - base_;
+        int depth = locals_size - idx;
+        return peek(depth);
     }
 
     void push(const T& value) {
@@ -78,6 +103,19 @@ public:
         else {
             uint idx = index() + depth;
             return buffer_[idx];
+        }
+    }
+
+    void poke(int depth, const T& value) {
+        if (depth < 0) {
+            error(Error::InvalidMemoryAddress);
+        }
+        else if (static_cast<uint>(depth) >= size_) {
+            error(err_underflow_);
+        }
+        else {
+            uint idx = index() + depth;
+            buffer_[idx] = value;
         }
     }
 
@@ -137,6 +175,7 @@ private:
     std::unique_ptr<T[]> buffer_;
     uint capacity_;
     uint size_;
+    uint base_;
 
     uint index() const {
         return capacity_ - size_;

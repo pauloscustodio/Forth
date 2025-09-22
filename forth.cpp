@@ -12,6 +12,7 @@
 #include "forth.h"
 #include "interp.h"
 #include "kbd_input.h"
+#include "locals.h"
 #include "math.h"
 #include "math96.h"
 #include "output.h"
@@ -81,7 +82,7 @@ void f_execute(uint xt) {
         if (vm.user->TRACE) {
             Header* header = Header::header(xt);
             CString* name = header->name();
-            std::cout << std::string(2 * (1 + r_depth()), '>') << BL
+            std::cout << std::string((2 + r_depth()), '>') << BL
                       << name->to_string() << BL;
         }
 
