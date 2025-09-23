@@ -241,7 +241,13 @@ End of Double-Number word tests
 End of Exception word tests
 ****
 End of Facility word tests
-****************
+*******************
+End of File-Access word set tests
+************
+
+Some search-order words not present - priority of Locals not fully tested
+
+End of Locals word set tests. ( ) 
 Forth tests completed 
 
 END

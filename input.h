@@ -57,6 +57,7 @@ private:
 
     struct SaveInput {
         int source_id;
+        udint fpos;
         int blk;
         std::string tib;
         const char* tib_ptr;

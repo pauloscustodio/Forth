@@ -50,4 +50,31 @@ forth_ok(': x SAVE-INPUT S" .S" EVALUATE RESTORE-INPUT ; x .S',
 forth_ok('RESTORE-INPUT .S', 
 		 "( -1 )");
 
+# John Hayes test - fix #2
+forth_ok(<<'END', "( 11111 0 22222 )");
+VARIABLE (\?) 0 (\?) !
+: [?IF]  ( f -- )  (\?) ! ; IMMEDIATE
+: [?ELSE]  ( -- )  (\?) @ 0= (\?) ! ; IMMEDIATE
+: [?THEN]  ( -- )  0 (\?) ! ; IMMEDIATE
+: \?  ( "..." -- )  (\?) @ IF EXIT THEN SOURCE >IN ! DROP ; IMMEDIATE
+
+VARIABLE SIV -1 SIV !
+: NEVEREXECUTED ABORT" This should never be executed" ;
+
+11111 SAVE-INPUT
+
+SIV @
+
+[?IF]
+\?   0 SIV !
+\?   RESTORE-INPUT
+\?   NEVEREXECUTED
+\?   33333
+[?ELSE]
+\? 	 22222
+[?THEN]
+
+.S
+END
+
 end_test;
