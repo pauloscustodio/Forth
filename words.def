@@ -624,6 +624,8 @@ CODE("SET-PRECISION", SET_PRECISION, 0, uint p = pop(); if (p < 1) p = 1; if (p 
 CODE("(LOCAL)", PAREN_LOCAL, 0, f_paren_local())
 CODE("(GET_LOCAL)", PAREN_GET_LOCAL, F_HIDDEN, uint index = pop(); push(vm.r_stack.get_local(index)))
 CODE("(SET_LOCAL)", PAREN_SET_LOCAL, F_HIDDEN, uint index = pop(); int value = pop(); vm.r_stack.set_local(index, value))
+CODE("LOCALS|", LOCALS_BAR, F_IMMEDIATE, f_locals_bar())
+CODE("{:", LOCALS_BRACKET, F_IMMEDIATE, f_locals_bracket())
 
 // strings
 CODE("/STRING", SLASH_STRING, 0, f_slash_string())

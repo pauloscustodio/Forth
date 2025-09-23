@@ -96,5 +96,6 @@ X(-257, ControlFlowStackUnderflow, "control-flow stack underflow")
 X(-258, ExceptionStackUnderflow, "exception stack underflow")
 X(-259, FloatStackUnderflow, "floating point stack underflow")
 X(-260, FloatStackOverflow, "floating point stack overflow")
+X(-261, DuplicateDefinition, "duplicate definition")
 
 #undef X

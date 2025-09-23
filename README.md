@@ -101,7 +101,6 @@ LOCAL:
     (LOCAL)
 
 LOCAL EXT:
-  Missing:
     LOCALS| {:
 
 MEMORY:
