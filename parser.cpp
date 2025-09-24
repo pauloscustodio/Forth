@@ -477,7 +477,8 @@ void f_convert() {
     uint addr = pop() + 1;
     udint n = (udint)dpop();
     int digit;
-    while ((digit = char_digit(cfetch(addr))) >= 0 && digit < vm.user->BASE) {
+    while ((digit = char_digit(cfetch(addr))) >= 0 &&
+            digit < vm.user->BASE) {
         n = n * vm.user->BASE + digit;
         addr++;
     }

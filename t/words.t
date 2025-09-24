@@ -46,6 +46,32 @@ die if !Test::More->builder->is_passing;
 run_ok("forth -e WORDS > ${test}.out");
 my %words; $words{$_}=1 for sort split(' ', path("${test}.out")->slurp);
 
+# check non-standard words
+my %not_standard_words = %words;
+@ARGV = <t/Forth2012-words.txt>;
+while (<>) {
+	next unless /[0-9.]+\s+(\S+).*?([A-Z]+.*)/;
+	my($chapter, $word, $reading, $wordset) = split(/\t/, $_);
+	for ($chapter, $word, $reading, $wordset) {
+		s/^\s+//; s/\s+$//;
+	}
+	delete $not_standard_words{$word};
+}
+
+# check not-documented words of the non-standard ones
+@ARGV = <README.md>;
+my %not_documented_words = %not_standard_words;
+while (<>) {
+	next unless /^##\s+(\S+)/;
+	my $word = $1;
+	delete $not_documented_words{$word};
+}
+my @not_documented_words = sort keys %not_documented_words;
+ok @not_documented_words==0, "Not documented words: @not_documented_words";
+
+die if (!Test::More->builder->is_passing && $ENV{DEBUG});
+
+# check not-tested words
 my %untested = %words;
 @ARGV = <t/*.t>;
 while (<>) {
@@ -60,6 +86,8 @@ ok %untested==0, "all words tested";
 for (sort keys %untested) {
 	diag "$_ not tested";
 }
+
+die if (!Test::More->builder->is_passing && $ENV{DEBUG});
 
 # show ANS words that are not implemented
 for (['CORE' => 1], ['CORE EXT' => 1], 
@@ -97,5 +125,7 @@ for (['CORE' => 1], ['CORE EXT' => 1],
 		note "$wordset not implemented: @pending";
 	}
 }
+
+die if (!Test::More->builder->is_passing && $ENV{DEBUG});
 
 end_test;
