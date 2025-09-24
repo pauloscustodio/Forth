@@ -33,10 +33,19 @@ VM::VM() {
     user = reinterpret_cast<User*>(mem.alloc_bottom(sizeof(User)));
     user->init();
 
-    // use the remaing as dictionary space
-    dict_lo_mem = mem.addr(mem.alloc_bottom(0));
-    dict_hi_mem = mem.addr(mem.alloc_top(0));
+    // split the rest in two halves - dictionary and heap
+    uint bottom = mem.addr(mem.alloc_bottom(0));
+    uint top = mem.addr(mem.alloc_top(0));
+    uint mid_mem = dcell_aligned((bottom + top) / 2);
+
+    dict_lo_mem = bottom;
+    dict_hi_mem = mid_mem;
+    heap_lo_mem = mid_mem;
+    heap_hi_mem = top;
+
+    // initilize dictionary and heap
     dict.init();
+    heap.init();
 
     // reinit wordbuf to get predictable results in tests
     wordbuf.init();

@@ -145,8 +145,8 @@ void Input::save_input() {
     SaveInput save;
     Error error_code = Error::None;
     save.source_id = source_id_;
-    save.fpos = source_id_ > 0 ? 
-        vm.files.tell(source_id_, error_code) : 0;
+    save.fpos = source_id_ > 0 ?
+                vm.files.tell(source_id_, error_code) : 0;
     save.blk = vm.user->BLK;
     save.tib = std::string(vm.tib_data, vm.tib_data + vm.user->NR_IN);
     save.tib_ptr = vm.tib_ptr;
@@ -167,8 +167,9 @@ bool Input::restore_input() {
         // close current file if any
         Error error_code = Error::None;
         source_id_ = save.source_id;
-        if (source_id_ > 0)
+        if (source_id_ > 0) {
             vm.files.seek(source_id_, save.fpos, error_code);
+        }
         vm.user->BLK = save.blk;
         set_tib(save.tib);
         vm.tib_ptr = save.tib_ptr;

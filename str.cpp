@@ -27,7 +27,7 @@ uint CString::alloc_size(uint num_chars) {
         error(Error::ParsedStringOverflow, std::to_string(num_chars));
     }
 
-    return aligned(1 + num_chars + 1); // count + chars + BL after string
+    return cell_aligned(1 + num_chars + 1); // count + chars + BL after string
 }
 
 void CString::set_cstring(const char* str, uint size) {
@@ -53,8 +53,8 @@ uint LongString::alloc_size(uint num_chars) {
         error(Error::InputBufferOverflow, std::to_string(num_chars));
     }
 
-    return aligned(sizeof(size_) + num_chars +
-                   1); // count + chars + BL after string
+    return cell_aligned(sizeof(size_) + num_chars +
+                        1); // count + chars + BL after string
 }
 
 void LongString::set_string(const char* str, uint size) {

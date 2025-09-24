@@ -148,12 +148,8 @@ void f_environment_q(const std::string& query) {
         push(STACK_SZ);
         push(F_TRUE);
     }
-    else if (case_insensitive_equal(query, "MEMORY-ALLOC")) {
-        push(F_FALSE);
+    else if (case_insensitive_equal(query, "MEMORY")) {
         push(F_TRUE);
-    }
-    else if (case_insensitive_equal(query, "MEMORY-ALLOC-EXT")) {
-        push(F_FALSE);
         push(F_TRUE);
     }
     else if (case_insensitive_equal(query, "TOOLS")) {

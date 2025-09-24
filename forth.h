@@ -24,7 +24,7 @@ static const int FCELL_SZ = sizeof(double);
 static_assert(CELL_SZ * 2 == DCELL_SZ, "DCELL should be double of CELL");
 
 // size of the virtual machine
-static const int MEM_SZ = 1024 * 1024;
+static const int MEM_SZ = 2 * 1024 * 1024;
 static const int BUFFER_SZ = 1024;
 static const int TIB_SZ = BUFFER_SZ + CELL_SZ; // leave room for BL, align
 static const int WORDBUF_SZ = 2 * BUFFER_SZ;
@@ -79,7 +79,8 @@ enum {
 int f_bool(bool f);
 
 // alignment and double cells
-int aligned(int x);
+int cell_aligned(int x);
+int dcell_aligned(int x);
 int dcell_lo(dint x);
 int dcell_hi(dint x);
 dint mk_dcell(int hi, int lo);

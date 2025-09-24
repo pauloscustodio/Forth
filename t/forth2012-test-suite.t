@@ -247,7 +247,9 @@ End of File-Access word set tests
 
 Some search-order words not present - priority of Locals not fully tested
 
-End of Locals word set tests. ( ) 
+End of Locals word set tests. ( ) ****
+End of Memory-Allocation word tests
+
 Forth tests completed 
 
 END

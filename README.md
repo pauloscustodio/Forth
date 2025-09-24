@@ -104,7 +104,6 @@ LOCAL EXT:
     LOCALS| {:
 
 MEMORY:
-  Missing:
     ALLOCATE FREE RESIZE
 
 SEARCH:

@@ -83,12 +83,14 @@ struct VM {
         Error::FloatStackUnderflow, Error::FloatStackOverflow };
 
     // dictionary
-    uint dict_lo_mem, dict_hi_mem;    // memory limits for dictionary
+    uint dict_lo_mem, dict_hi_mem;      // memory limits for dictionary
+    uint heap_lo_mem, heap_hi_mem;      // memory limits for heap
     uint latest;		    // point to last defined word header
     uint here;			// point to next free position at bottom of memory
     uint names;			// point to last name created at top of memory
 
     Dict dict;
+    Heap heap;
 
     // files
     Files files;            // system files

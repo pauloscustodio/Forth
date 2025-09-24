@@ -35,7 +35,7 @@ void f_begin_structure() {
 
 static int field(uint offset, uint size, bool do_align) {
     if (do_align) {
-        offset = aligned(offset);
+        offset = cell_aligned(offset);
     }
 
     vm.dict.parse_create(idXPLUS_FIELD, 0);

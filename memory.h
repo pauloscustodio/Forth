@@ -47,3 +47,27 @@ private:
 void f_fill();
 void f_erase();
 void f_move();
+
+class Heap {
+public:
+    void init();
+    char* allocate(uint size);
+    void free(char* ptr);
+    char* resize(char* ptr, uint new_size);
+
+private:
+    struct Block {
+        uint size;
+        bool free;
+        Block* next;
+    };
+
+    char* pool_{ nullptr };
+    uint size_{ 0 };
+    Block* free_list_{ nullptr };
+    static uint aligned_block_size();
+};
+
+void f_allocate();
+void f_free();
+void f_resize();
