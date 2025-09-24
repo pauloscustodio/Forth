@@ -151,7 +151,7 @@ void f_move() {
 //-----------------------------------------------------------------------------
 
 void Heap::init() {
-    uint size_ = vm.heap_hi_mem - vm.heap_lo_mem;
+    size_ = vm.heap_hi_mem - vm.heap_lo_mem;
     pool_ = mem_char_ptr(vm.heap_lo_mem, size_);
 
     free_list_ = reinterpret_cast<Block*>(pool_);
