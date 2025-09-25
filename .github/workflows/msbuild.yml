@@ -40,7 +40,8 @@ jobs:
     - name: Install perl prerequisites
       run: |
         perl -S cpan App::cpanminus
-        perl -S cpanm App::Prove Modern::Perl Path::Tiny Test::More Test::Harness 
+        perl -S cpan -f Path::Tiny
+        perl -S cpanm App::Prove Modern::Perl Test::More Test::Harness 
 
     - name: Build
       run: |
