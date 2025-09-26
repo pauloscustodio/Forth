@@ -19,12 +19,12 @@ jobs:
 
     - name: Install homebrew dependencies
       run: |
-        brew install perl cpanminus dos2unix make
+        brew install perl dos2unix make
 
     - name: Install perl prerequisites
       run: |
         export PATH=/usr/local/bin:$PATH
-        cpanm App::Prove Modern::Perl Path::Tiny Test::More 
+        cpan App::Prove Modern::Perl Path::Tiny Test::More 
 
     - name: Build
       shell: bash

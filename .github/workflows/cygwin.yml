@@ -38,10 +38,10 @@ jobs:
 
     - name: Install perl prerequisites
       run: |
-        PERL_MM_USE_DEFAULT=1 cpan local::lib App::cpanminus 
+        PERL_MM_USE_DEFAULT=1 cpan local::lib
         eval $(perl -I ~/perl5/lib/perl5/ -Mlocal::lib)
-        cpanm -f Test::Harness
-        cpanm App::Prove Modern::Perl Path::Tiny Test::More 
+        cpan -f Test::Harness
+        cpan App::Prove Modern::Perl Path::Tiny Test::More 
 
     - name: Build
       run: |
