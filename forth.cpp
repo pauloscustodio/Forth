@@ -35,13 +35,8 @@ int f_bool(bool f) {
 }
 
 // alignment and double cells
-int cell_aligned(int x) {
+int aligned(int x) {
     int al_x = (x + CELL_SZ - 1) & ~(CELL_SZ - 1);
-    return al_x == 0 ? x : al_x;    // if al_x is 0, alignment wrapped around
-}
-
-int dcell_aligned(int x) {
-    int al_x = (x + DCELL_SZ - 1) & ~(DCELL_SZ - 1);
     return al_x == 0 ? x : al_x;    // if al_x is 0, alignment wrapped around
 }
 

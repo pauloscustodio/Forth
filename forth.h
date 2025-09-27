@@ -79,8 +79,7 @@ enum {
 int f_bool(bool f);
 
 // alignment and double cells
-int cell_aligned(int x);
-int dcell_aligned(int x);
+int aligned(int x);
 int dcell_lo(dint x);
 int dcell_hi(dint x);
 dint mk_dcell(int hi, int lo);

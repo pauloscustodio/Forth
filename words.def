@@ -158,7 +158,7 @@ CODE("LATEST", LATEST, 0, push(vm.latest))
 CODE("FIND", FIND, 0, f_find(pop()))
 CODE(">BODY", TO_BODY, 0, push(pop() + CELL_SZ))
 CODE("ALIGN", ALIGN, 0, vm.dict.align())
-CODE("ALIGNED", ALIGNED, 0, push(cell_aligned(pop())))
+CODE("ALIGNED", ALIGNED, 0, push(aligned(pop())))
 CODE("ALLOT", ALLOT, 0, vm.dict.allot(pop()))
 CODE("UNUSED", UNUSED, 0, push(vm.dict.unused()))
 
@@ -547,11 +547,11 @@ CODE("F0>=", F_ZERO_GREATER_EQUAL, 0, push(f_bool(fpop() >= 0)))
 
 // only double-precision floating point supported
 CODE("FALIGN", FALIGN, 0, vm.dict.align())
-CODE("FALIGNED", FALIGNED, 0, push(cell_aligned(pop())))
+CODE("FALIGNED", FALIGNED, 0, push(aligned(pop())))
 CODE("DFALIGN", DFALIGN, 0, vm.dict.align())
-CODE("DFALIGNED", DFALIGNED, 0, push(cell_aligned(pop())))
+CODE("DFALIGNED", DFALIGNED, 0, push(aligned(pop())))
 CODE("SFALIGN", SFALIGN, 0, vm.dict.align())
-CODE("SFALIGNED", SFALIGNED, 0, push(cell_aligned(pop())))
+CODE("SFALIGNED", SFALIGNED, 0, push(aligned(pop())))
 
 CODE("FDROP", FDROP, 0, fpop())
 CODE("FSWAP", FSWAP, 0, double a = fpop(); double b = fpop(); fpush(a); fpush(b))

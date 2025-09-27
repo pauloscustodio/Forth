@@ -36,7 +36,7 @@ VM::VM() {
     // split the rest in two halves - dictionary and heap
     uint bottom = mem.addr(mem.alloc_bottom(0));
     uint top = mem.addr(mem.alloc_top(0));
-    uint mid_mem = dcell_aligned((bottom + top) / 2);
+    uint mid_mem = aligned((bottom + top) / 2);
 
     dict_lo_mem = bottom;
     dict_hi_mem = mid_mem;

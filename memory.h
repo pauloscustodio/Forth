@@ -51,21 +51,19 @@ void f_move();
 class Heap {
 public:
     void init();
-    char* allocate(uint size);
-    void free(char* ptr);
-    char* resize(char* ptr, uint new_size);
+    uint allocate(uint size);
+    void free(uint ptr);
+    uint resize(uint, uint new_size);
 
 private:
     struct Block {
         uint size;
-        bool free;
-        Block* next;
+        int free;
+        uint next;
     };
 
-    char* pool_{ nullptr };
+    uint pool_{ 0 };
     uint size_{ 0 };
-    Block* free_list_{ nullptr };
-    static uint aligned_block_size();
 };
 
 void f_allocate();

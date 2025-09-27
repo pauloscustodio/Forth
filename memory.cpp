@@ -98,7 +98,7 @@ void Mem::move(int src, int dst, uint size) {
 }
 
 char* Mem::alloc_bottom(uint size) {
-    size = dcell_aligned(size);
+    size = aligned(size);
     if (bottom_ + size >= top_) {
         error(Error::DictionaryOverflow);
     }
@@ -108,7 +108,7 @@ char* Mem::alloc_bottom(uint size) {
 }
 
 char* Mem::alloc_top(uint size) {
-    size = dcell_aligned(size);
+    size = aligned(size);
     if (bottom_ + size >= top_) {
         error(Error::DictionaryOverflow);
     }
@@ -150,106 +150,100 @@ void f_move() {
 
 //-----------------------------------------------------------------------------
 
+// initialize the heap with a single large free block
 void Heap::init() {
     size_ = vm.heap_hi_mem - vm.heap_lo_mem;
-    pool_ = mem_char_ptr(vm.heap_lo_mem, size_);
-
-    free_list_ = reinterpret_cast<Block*>(pool_);
-    free_list_->size = size_ - aligned_block_size();
-    free_list_->free = true;
-    free_list_->next = nullptr;
+    pool_ = vm.heap_lo_mem;
+    Block* free_block = reinterpret_cast<Block*>(mem_char_ptr(pool_));
+    free_block->size = size_ - sizeof(Block);
+    free_block->free = true;
+    free_block->next = 0;
 }
 
-char* Heap::allocate(uint size) {
-    size = dcell_aligned(size);
+// allocate memory using first fit strategy
+uint Heap::allocate(uint size) {
+    size = aligned(size);
 
-    // search best fit block
-    Block* best = nullptr;
-    Block* curr = free_list_;
+    Block* curr = reinterpret_cast<Block*>(mem_char_ptr(pool_));
     while (curr) {
         if (curr->free && curr->size >= size) {
-            if (!best || curr->size < best->size) {
-                best = curr;
+            // Split block if there's enough space
+            if (curr->size >= size + sizeof(Block) + DCELL_SZ) {
+                // Split block
+                char* new_block_addr =
+                    reinterpret_cast<char*>(curr) + sizeof(Block) + size;
+                Block* new_block = reinterpret_cast<Block*>(new_block_addr);
+                new_block->size = curr->size - size - sizeof(Block);
+                new_block->free = true;
+                new_block->next = curr->next;
+                curr->next = mem_addr(reinterpret_cast<char*>(new_block));
+                curr->size = size;
             }
+            curr->free = false;
+            return mem_addr(reinterpret_cast<char*>(curr)) + sizeof(Block);
         }
-        curr = curr->next;
+        Block* next_block =
+            curr->next ? reinterpret_cast<Block*>(mem_char_ptr(curr->next)) :
+            nullptr;
+        curr = next_block;
     }
-
-    // No suitable block found
-    if (!best) {
-        return nullptr;
-    }
-
-    // Split block if there's enough space
-    if (best->size >= size + aligned_block_size() + DCELL_SZ) {
-        // Split block
-        char* new_block_addr =
-            reinterpret_cast<char*>(best) + aligned_block_size() + size;
-        Block* new_block = reinterpret_cast<Block*>(new_block_addr);
-        new_block->size = best->size - size - aligned_block_size();
-        new_block->free = true;
-        new_block->next = best->next;
-
-        best->next = new_block;
-        best->size = size;
-    }
-
-    best->free = false;
-    return reinterpret_cast<char*>(best) + aligned_block_size();
+    return 0; // no suitable block found
 }
 
-void Heap::free(char* ptr) {
-    if (!ptr) {
+void Heap::free(uint ptr) {
+    if (ptr == 0) {
         return;
     }
-    Block* block = reinterpret_cast<Block*>(ptr - aligned_block_size());
+
+    char* block_addr = mem_char_ptr(ptr) - sizeof(Block);
+    Block* block = reinterpret_cast<Block*>(block_addr);
     block->free = true;
 
     // Coalesce adjacent free blocks
-    Block* curr = free_list_;
+    Block* curr = reinterpret_cast<Block*>(mem_char_ptr(pool_));
     while (curr) {
-        if (curr->free && curr->next && curr->next->free) {
-            curr->size += aligned_block_size() + curr->next->size;
-            curr->next = curr->next->next;
+        Block* next_block =
+            curr->next ? reinterpret_cast<Block*>(mem_char_ptr(curr->next)) :
+            nullptr;
+        if (curr->free && next_block && next_block->free) {
+            curr->size += sizeof(Block) + next_block->size;
+            curr->next = next_block->next;
         }
         else {
-            curr = curr->next;
+            curr = next_block;
         }
     }
 }
 
-char* Heap::resize(char* ptr, uint new_size) {
-    new_size = dcell_aligned(new_size);
-    if (!ptr) {
+uint Heap::resize(uint ptr, uint new_size) {
+    new_size = aligned(new_size);
+    if (ptr == 0) {
         return allocate(new_size);
     }
 
-    Block* block = reinterpret_cast<Block*>(ptr - aligned_block_size());
+    char* block_addr = mem_char_ptr(ptr) - sizeof(Block);
+    Block* block = reinterpret_cast<Block*>(block_addr);
     if (block->size >= new_size) {
         return ptr; // Current block is sufficient
     }
 
     // allocate a new block and copy data
-    char* new_ptr = allocate(new_size);
+    uint new_ptr = allocate(new_size);
     if (new_ptr) {
-        memcpy(new_ptr, ptr, block->size);
+        memcpy(mem_char_ptr(new_ptr), mem_char_ptr(ptr), block->size);
         free(ptr);
     }
 
     return new_ptr;
 }
 
-uint Heap::aligned_block_size() {
-    return dcell_aligned(sizeof(Block));
-}
-
 //-----------------------------------------------------------------------------
 
 void f_allocate() {
     uint size = pop();
-    char* ptr = vm.heap.allocate(size);
+    uint ptr = vm.heap.allocate(size);
     if (ptr) {
-        push(mem_addr(ptr));
+        push(ptr);
         push(0); // no error
     }
     else {
@@ -259,9 +253,8 @@ void f_allocate() {
 }
 
 void f_free() {
-    uint addr = pop();
-    if (addr != 0) {
-        char* ptr = mem_char_ptr(addr);
+    uint ptr = pop();
+    if (ptr != 0) {
         vm.heap.free(ptr);
         push(0); // no error
     }
@@ -272,15 +265,14 @@ void f_free() {
 
 void f_resize() {
     uint new_size = pop();
-    uint addr = pop();
-    char* ptr = (addr != 0) ? mem_char_ptr(addr) : nullptr;
-    char* new_ptr = vm.heap.resize(ptr, new_size);
+    uint ptr = pop();
+    uint new_ptr = vm.heap.resize(ptr, new_size);
     if (new_ptr) {
-        push(mem_addr(new_ptr));
+        push(new_ptr);
         push(0); // no error
     }
     else {
-        push(addr); // did not resize
+        push(ptr); // did not resize
         push(static_cast<int>(Error::ResizeException));
     }
 }

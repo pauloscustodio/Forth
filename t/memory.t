@@ -20,7 +20,7 @@ forth_ok('1234567890123. PAD 2!  PAD 2@ .S', "( 1912276171 287 )");
 note "Test ALLOCATE";
 note "Test RESIZE";
 note "Test FREE";
-forth_ok(<<'END', "1058600 Hello 1058720 Hello 1058936 Hello 1058600 Hello 1059256 Hello 1059776 Hello 1058720 ( )");
+forth_ok(<<'END', "1058592 Hello 1058704 Hello 1058916 Hello 1058592 Hello 1059228 Hello 1059740 Hello 1058704 ( )");
 	100 ALLOCATE THROW VALUE mem1
 	mem1 100 BL FILL
 	mem1 .
@@ -63,7 +63,7 @@ END
 forth_nok("-1 ALLOCATE THROW", "\nError: ALLOCATE exception");
 forth_nok("0      FREE THROW", "\nError: FREE exception");
 
-forth_ok(<<'END', "1058600 Hello 1058600 Hello ( 0 )");
+forth_ok(<<'END', "1058592 Hello 1058592 Hello ( 0 )");
 	100 ALLOCATE THROW VALUE mem1
 	mem1 100 BL FILL
 	mem1 .

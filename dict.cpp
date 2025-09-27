@@ -118,7 +118,7 @@ uint Dict::create_cont(uint name_addr, int flags, uint code) {
     header->does = 0;
     header->code = code;
 
-    vm.here += cell_aligned(sizeof(Header));
+    vm.here += aligned(sizeof(Header));
     return header->xt(); // return xt of word
 }
 
@@ -186,7 +186,7 @@ void Dict::fcomma(double value) {
 }
 
 void Dict::align() {
-    vm.here = cell_aligned(vm.here);
+    vm.here = aligned(vm.here);
 }
 
 Header* Dict::parse_find_word() {
