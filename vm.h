@@ -160,6 +160,7 @@ enum {
 void cs_dpush(dint pos_addr);
 dint cs_dpop();
 dint cs_dpeek(int depth = 0);
+void cs_droll(int depth);
 int cs_ddepth();
 
 void fpush(double value);

@@ -225,6 +225,18 @@ dint cs_dpeek(int depth) {
     return mk_dcell(hi, lo);
 }
 
+void cs_droll(int depth) {
+    std::vector<dint> save;
+    for (int i = 0; i < depth; ++i) {
+        save.push_back(cs_dpop());
+    }
+    dint value = cs_dpop();
+    for (int i = depth - 1; i >= 0; --i) {
+        cs_dpush(save[i]);
+    }
+    cs_dpush(value);
+}
+
 int cs_ddepth() {
     return vm.cs_stack.depth() / 2;
 }

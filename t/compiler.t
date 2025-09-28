@@ -195,4 +195,45 @@ note "Test AHEAD";
 forth_ok(": x AHEAD 1111 2222 THEN 3333 ; x .S", "( 3333 )");
 
 unlink "$test.inc";
+
+note "Test CS-PICK";
+forth_ok(<<'END', "( 111 111 222 111 222 333 111 222 333 )");
+	: ?repeat
+	   0 CS-PICK POSTPONE UNTIL
+	; IMMEDIATE
+	VARIABLE pt4
+	: pt5  ( n1 -- ) 
+		  pt4 ! 
+		  BEGIN 
+			-1 pt4 +! 
+			pt4 @ 4 <= ?repeat    \ Back to BEGIN if false 
+			111 
+			pt4 @ 3 <= ?repeat 
+			222 
+			pt4 @ 2 <= ?repeat 
+			333 
+			pt4 @ 1 = 
+		  UNTIL 
+		;
+		6 pt5 .S
+END
+
+note "Test CS-ROLL";
+forth_ok(<<'END', "( 5 4 3 2 1 )");
+	: ?DONE ( dest -- orig dest )     \ Same as WHILE 
+		  POSTPONE IF 1 CS-ROLL 
+	; IMMEDIATE
+	: pt6 
+		  >R 
+		  BEGIN 
+			R@ 
+		  ?DONE 
+			R@ 
+			R> 1- >R 
+		  REPEAT 
+		  R> DROP 
+	;
+	5 pt6 .S
+END
+
 end_test;
