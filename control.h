@@ -12,6 +12,7 @@ void f_semicolon();
 
 void f_recurse();
 
+void f_ahead();
 void f_if();
 void f_else();
 void f_then();

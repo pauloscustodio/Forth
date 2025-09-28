@@ -348,18 +348,6 @@ CODE("LIST", LIST, 0, f_list())
 CODE("THRU", THRU, 0, f_thru())
 
 
-// tools
-CODE(".S", DOT_S, 0, vm.stack.print())
-CODE(".RS", DOT_RS, 0, vm.r_stack.print())
-CODE(".FS", DOT_FS, 0, vm.f_stack.print())
-CODE("WORDS", WORDS, 0, f_words())
-CODE("ENVIRONMENT?", ENVIRONMENT_Q, 0, f_environment_q())
-CODE("DUMP", DUMP, 0, f_dump())
-CODE("SEE", SEE, 0, f_see())
-CODE("ON", ON, 0, store(pop(), F_TRUE))
-CODE("OFF", OFF, 0, store(pop(), F_FALSE))
-
-
 // double
 CODE("2CONSTANT", TWO_CONSTANT, 0, f_2constant())
 CODE("(DO2CONST)", XDO2CONST, F_HIDDEN, dpush(dfetch(body)))
@@ -632,6 +620,21 @@ CODE("{:", LOCALS_BRACKET, F_IMMEDIATE, f_locals_bracket())
 CODE("ALLOCATE", ALLOCATE, 0, f_allocate())
 CODE("FREE", FREE, 0, f_free())
 CODE("RESIZE", RESIZE, 0, f_resize())
+
+
+// tools
+CODE(".S", DOT_S, 0, vm.stack.print())
+CODE(".RS", DOT_RS, 0, vm.r_stack.print())
+CODE(".FS", DOT_FS, 0, vm.f_stack.print())
+CODE("WORDS", WORDS, 0, f_words())
+CODE("ENVIRONMENT?", ENVIRONMENT_Q, 0, f_environment_q())
+CODE("DUMP", DUMP, 0, f_dump())
+CODE("SEE", SEE, 0, f_see())
+CODE("ON", ON, 0, store(pop(), F_TRUE))
+CODE("OFF", OFF, 0, store(pop(), F_FALSE))
+CODE("AHEAD", AHEAD, F_IMMEDIATE, f_ahead())
+CODE("N>R", N_TO_R, 0, f_n_to_r())
+CODE("NR>", N_R_FROM, 0, f_n_r_from())
 
 
 // strings

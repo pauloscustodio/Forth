@@ -237,6 +237,10 @@ static bool search_resolve_back_jump(int jump_xt,
     return resolved;
 }
 
+void f_ahead() {
+    comma_fwd_jump(xtBRANCH, POS_IF_FWD);
+}
+
 void f_if() {
     comma_fwd_jump(xtZBRANCH, POS_IF_FWD);
 }

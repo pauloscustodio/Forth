@@ -337,3 +337,19 @@ void f_see() {
     }
     }
 }
+
+void f_n_to_r() {
+    uint n = pop();
+    for (uint i = 0; i < n; ++i) {
+        r_push(pop());
+    }
+    r_push(n);
+}
+
+void f_n_r_from() {
+    uint n = r_pop();
+    for (uint i = 0; i < n; ++i) {
+        push(r_pop());
+    }
+}
+

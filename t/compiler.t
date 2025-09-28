@@ -191,5 +191,8 @@ forth_ok("1.23e FVALUE num  : x 2.34e TO num ; x .FS num .FS", "(F: )(F: 2.34 )"
 forth_nok("CREATE xx 20 TO xx", "\nError: invalid name argument\n");
 forth_nok("CREATE xx : x 20 TO xx ; x", "\nError: invalid name argument\n");
 
+note "Test AHEAD";
+forth_ok(": x AHEAD 1111 2222 THEN 3333 ; x .S", "( 3333 )");
+
 unlink "$test.inc";
 end_test;

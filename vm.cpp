@@ -159,13 +159,13 @@ void roll(int depth) {
 }
 
 void dpush(dint value) {
-    vm.stack.push(dcell_lo(value));
-    vm.stack.push(dcell_hi(value));
+    push(dcell_lo(value));
+    push(dcell_hi(value));
 }
 
 dint dpop() {
-    int hi = vm.stack.pop();
-    int lo = vm.stack.pop();
+    int hi = pop();
+    int lo = pop();
     return mk_dcell(hi, lo);
 }
 
@@ -192,13 +192,13 @@ int r_depth() {
 }
 
 void r_dpush(dint value) {
-    vm.r_stack.push(dcell_lo(value));
-    vm.r_stack.push(dcell_hi(value));
+    r_push(dcell_lo(value));
+    r_push(dcell_hi(value));
 }
 
 dint r_dpop() {
-    int hi = vm.r_stack.pop();
-    int lo = vm.r_stack.pop();
+    int hi = r_pop();
+    int lo = r_pop();
     return mk_dcell(hi, lo);
 }
 
