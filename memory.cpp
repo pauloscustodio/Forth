@@ -201,10 +201,9 @@ void Heap::free(uint ptr) {
 
     // Coalesce adjacent free blocks
     Block* curr = reinterpret_cast<Block*>(mem_char_ptr(pool_));
-    while (curr) {
+    while (curr != nullptr && curr->next != 0) {
         Block* next_block =
-            curr->next ? reinterpret_cast<Block*>(mem_char_ptr(curr->next)) :
-            nullptr;
+            reinterpret_cast<Block*>(mem_char_ptr(curr->next));
         if (curr->free && next_block && next_block->free) {
             curr->size += sizeof(Block) + next_block->size;
             curr->next = next_block->next;
