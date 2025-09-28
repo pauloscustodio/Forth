@@ -153,11 +153,11 @@ void f_environment_q(const std::string& query) {
         push(F_TRUE);
     }
     else if (case_insensitive_equal(query, "TOOLS")) {
-        push(F_FALSE);
+        push(F_TRUE);
         push(F_TRUE);
     }
     else if (case_insensitive_equal(query, "TOOLS-EXT")) {
-        push(F_FALSE);
+        push(F_TRUE);
         push(F_TRUE);
     }
     else if (case_insensitive_equal(query, "SEARCH-ORDER")) {

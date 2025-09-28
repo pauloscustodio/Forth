@@ -353,3 +353,23 @@ void f_n_r_from() {
     }
 }
 
+void f_forget() {
+    Header* header = vm.dict.parse_find_existing_word();
+    assert(header != nullptr);
+    vm.here = mem_addr(reinterpret_cast<char*>
+                       (header)); // reset here to reclaim memory
+    vm.latest = header->link; // point to previous word
+    Header* latest = reinterpret_cast<Header*>(mem_char_ptr(vm.latest));
+    vm.names = latest->name_addr;
+}
+
+void f_name_to_string() {
+    uint name_addr = pop();
+    Header* header = reinterpret_cast<Header*>(
+                         mem_char_ptr(name_addr));
+    CString* name = reinterpret_cast<CString*>(
+                        mem_char_ptr(header->name_addr));
+    push(mem_addr(name->str()));
+    push(name->size());
+}
+

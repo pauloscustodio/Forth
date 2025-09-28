@@ -637,6 +637,8 @@ CODE("CS-PICK", CS_PICK, 0, uint n = pop(); cs_dpush(cs_dpeek(n)))
 CODE("CS-ROLL", CS_ROLL, 0, uint n = pop(); cs_droll(n))
 CODE("N>R", N_TO_R, 0, f_n_to_r())
 CODE("NR>", N_R_FROM, 0, f_n_r_from())
+CODE("FORGET", FORGET, 0, f_forget())
+CODE("NAME>STRING", NAME_TO_STRING, 0, f_name_to_string())
 
 
 // strings
