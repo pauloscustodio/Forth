@@ -330,6 +330,18 @@ void f_see() {
             dump_body_definition(body + CELL_SZ, size - CELL_SZ);
         }
         break;
+    case idXSYNONYM: {
+        if (size == CELL_SZ) {
+            uint old_xt = fetch(body);
+            Header* old_header = Header::header(old_xt);
+            std::cout << std::endl << "SYNONYM " << name << BL
+                      << old_header->name()->to_string() << std::endl;
+        }
+        if (size > CELL_SZ) {
+            dump_body_definition(body + CELL_SZ, size - CELL_SZ);
+        }
+        break;
+    }
     default: {
         std::cout << std::endl << name << std::endl;
         dump_body_definition(body, size);
@@ -363,6 +375,27 @@ void f_forget() {
     vm.names = latest->name_addr;
 }
 
+void f_to_name() {
+    uint xt = pop();
+    Header* header = Header::header(xt);
+    uint nt = mem_addr(reinterpret_cast<char*>(header));
+    push(nt);
+}
+
+void f_name_to_compile() {
+    uint name_addr = pop();
+    Header* header = reinterpret_cast<Header*>(
+                         mem_char_ptr(name_addr));
+    if (header->flags.immediate) {
+        push(header->xt());
+        push(xtEXECUTE);
+    }
+    else {
+        push(header->xt());
+        push(xtCOMPILE_COMMA);
+    }
+}
+
 void f_name_to_string() {
     uint name_addr = pop();
     Header* header = reinterpret_cast<Header*>(
@@ -371,5 +404,38 @@ void f_name_to_string() {
                         mem_char_ptr(header->name_addr));
     push(mem_addr(name->str()));
     push(name->size());
+}
+
+void f_name_to_interpret() {
+    uint name_addr = pop();
+    Header* header = reinterpret_cast<Header*>(
+                         mem_char_ptr(name_addr));
+    uint xt = header->xt();
+    push(xt);
+}
+
+void f_synonym() {
+    uint new_xt = vm.dict.parse_create(idXSYNONYM, 0);
+    Header* new_header = Header::header(new_xt);
+
+    Header* old_header = vm.dict.parse_find_existing_word();
+    assert(old_header != nullptr);
+
+    comma(old_header->xt());
+    if (old_header->flags.immediate) {
+        new_header->flags.immediate = true;
+    }
+}
+
+void f_xsynonym(uint body) {
+    uint old_xt = fetch(body);
+    Header* old_header = Header::header(old_xt);
+    if (old_header->flags.immediate ||
+            vm.user->STATE == STATE_INTERPRET) {
+        f_execute(old_xt);
+    }
+    else {
+        fcomma(old_xt);
+    }
 }
 

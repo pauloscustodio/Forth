@@ -41,7 +41,61 @@ forth_nok(<<'END', "\nError: undefined word: x3\n");
 	x1 x2 x3 .S
 END
 
+note "Test >NAME";
+forth_ok(<<'END', "-1 -1 ( )");
+	0 VALUE ntX
+	HERE TO ntX
+	: X ;
+	LATEST ntX = .
+	' X >NAME ntX = .
+	.S
+END
+
+note "Test NAME>COMPILE";
+forth_ok(<<'END', "-1 -1 -1 -1 -1 ()");
+	0 VALUE xtX
+	0 VALUE xtEXECUTE
+	0 VALUE ntX
+	HERE TO ntX
+	: X ; IMMEDIATE
+	BL WORD X       FIND  1 = . TO xtX
+	BL WORD EXECUTE FIND -1 = . TO xtEXECUTE
+	LATEST ntX = .
+	LATEST NAME>COMPILE
+	xtEXECUTE = .
+	xtX = .
+	.S
+END
+
+forth_ok(<<'END', "-1 -1 -1 -1 -1 ()");
+	0 VALUE xtX
+	0 VALUE xtCOMPILE_COMMA
+	0 VALUE ntX
+	HERE TO ntX
+	: X ;
+	BL WORD X        FIND -1 = . TO xtX
+	BL WORD COMPILE, FIND  1 = . TO xtCOMPILE_COMMA
+	LATEST ntX = .
+	LATEST NAME>COMPILE
+	xtCOMPILE_COMMA = .
+	xtX = .
+	.S
+END
+
 note "Test NAME>STRING";
 forth_ok(": x ; LATEST NAME>STRING TYPE .S", "x( )");
+
+note "Test NAME>INTERPRET";
+forth_ok(": x ; LATEST NAME>INTERPRET ' x = . .S", "-1 ( )");
+
+note "Test SYNONYM";
+forth_ok(<<'END', "1 ( )");
+	SYNONYM ENDIF     THEN 
+	SYNONYM PRINT_NUM . 
+	: x ?DUP IF PRINT_NUM ENDIF ;
+	0 x
+	1 x
+	.S
+END
 
 end_test;

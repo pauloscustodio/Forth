@@ -132,10 +132,11 @@ TOOLS:
     .S ? DUMP SEE WORDS
 
 TOOLS EXT:
-    AHEAD BYE CS-PICK CS-ROLL FORGET N>R NAME>STRING NR> STATE
+    AHEAD BYE CS-PICK CS-ROLL FORGET N>R NAME>COMPILE NAME>INTERPRET
+    NAME>STRING NR> STATE SYNONYM
   Missing:
-    ;CODE ASSEMBLER CODE EDITOR NAME>COMPILE NAME>INTERPRET SYNONYM
-    TRAVERSE-WORDLIST [DEFINED] [ELSE] [IF] [THEN] [UNDEFINED]
+    ;CODE ASSEMBLER CODE EDITOR TRAVERSE-WORDLIST [DEFINED] [ELSE] [IF]
+    [THEN] [UNDEFINED]
 
 XCHAR:
   Missing:
@@ -148,12 +149,12 @@ XCHAR EXT:
     X\STRING-
 
 NOT STANDARD:
-    #IN #TIB -2ROT -FROT -ROT .FS .RS 0<= 0>= 2FIELD: <= >= CONVERT D0<=
-    D0<> D0> D0>= D<= D<> D> D>= DPL DU<= DU> DU>= EXPECT F0<= F0<> F0>
-    F0>= F<= F<> F= F> F>= FS-DIRECTORY FS-EXECUTABLE FS-EXISTS FS-READABLE
-    FS-REGULAR FS-SYMLINK FS-WRITABLE INTERPRET LATEST NUMBER NUMBER? OFF
-    ON PARSE-WORD QUERY R0 RDROP RSP! RSP@ S0 SP! SP@ SPAN TIB TRACE U<=
-    U>=
+    #IN #TIB -2ROT -FROT -ROT .FS .RS 0<= 0>= 2FIELD: <= >= >NAME CONVERT
+    D0<= D0<> D0> D0>= D<= D<> D> D>= DPL DU<= DU> DU>= EXPECT F0<= F0<>
+    F0> F0>= F<= F<> F= F> F>= FS-DIRECTORY FS-EXECUTABLE FS-EXISTS
+    FS-READABLE FS-REGULAR FS-SYMLINK FS-WRITABLE INTERPRET LATEST NUMBER
+    NUMBER? OFF ON PARSE-WORD QUERY R0 RDROP RSP! RSP@ S0 SP! SP@ SPAN TIB
+    TRACE U<= U>=
 ```
 
 # Documentation of not standard words
@@ -509,6 +510,11 @@ interpret each word found. It uses the current search order and dictionary to
 resolve each word, executing it if found, or attempting to parse it as a number 
 if not. If a word is not found and cannot be converted to a number, INTERPRET 
 triggers an error.
+
+## >NAME
+( xt -- nt )
+
+Convert an execution token into a name token, the inverse of NAME>INTERPRTET.
 
 #
 
