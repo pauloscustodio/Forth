@@ -645,6 +645,8 @@ CODE("NAME>INTERPRET", NAME_TO_INTERPRET, 0, f_name_to_interpret())
 CODE("SYNONYM", SYNONYM, 0, f_synonym())
 CODE("(SYNONYM)", XSYNONYM, F_HIDDEN, f_xsynonym(body))
 CODE("TRAVERSE-WORDLIST", TRAVERSE_WORDLIST, 0, f_traverse_wordlist())
+CODE("[DEFINED]", BRACKET_DEFINED, F_IMMEDIATE, f_bracket_defined())
+CODE("[UNDEFINED]", BRACKET_UNDEFINED, F_IMMEDIATE, f_bracket_undefined())
 
 
 // strings

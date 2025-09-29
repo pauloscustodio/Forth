@@ -453,3 +453,23 @@ void f_traverse_wordlist() {
         }
     }
 }
+
+void f_bracket_defined() {
+    Header* header = vm.dict.parse_find_word();
+    if (header != nullptr) {
+        push(F_TRUE);
+    }
+    else {
+        push(F_FALSE);
+    }
+}
+
+void f_bracket_undefined() {
+    Header* header = vm.dict.parse_find_word();
+    if (header == nullptr) {
+        push(F_TRUE);
+    }
+    else {
+        push(F_FALSE);
+    }
+}

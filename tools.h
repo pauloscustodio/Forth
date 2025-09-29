@@ -19,3 +19,5 @@ void f_name_to_interpret();
 void f_synonym();
 void f_xsynonym(uint body);
 void f_traverse_wordlist();
+void f_bracket_defined();
+void f_bracket_undefined();

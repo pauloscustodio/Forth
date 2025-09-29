@@ -118,4 +118,20 @@ forth_ok(<<'END', join(" ", @words[0..9])." ( )");
 	0 ( xt wid ) TRAVERSE-WORDLIST .S
 END
 
+note "Test [DEFINED]";
+forth_ok(<<'END', "-1 0 ( )");
+	: x ;
+	: y [DEFINED] x LITERAL ;
+	: z [DEFINED] z LITERAL ;
+	y . z . .S
+END
+
+note "Test [UNDEFINED]";
+forth_ok(<<'END', "0 -1 ( )");
+	: x ;
+	: y [UNDEFINED] x LITERAL ;
+	: z [UNDEFINED] z LITERAL ;
+	y . z . .S
+END
+
 end_test;
