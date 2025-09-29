@@ -18,3 +18,4 @@ void f_name_to_string();
 void f_name_to_interpret();
 void f_synonym();
 void f_xsynonym(uint body);
+void f_traverse_wordlist();

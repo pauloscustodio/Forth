@@ -67,7 +67,8 @@ public:
     Header* find_word(const char* name, uint size) const;
     Header* find_word(const CString* name) const;
 
-    std::vector<std::string> get_words() const;
+    std::vector<std::string> get_words(uint wid = 0) const;
+    std::vector<uint> get_word_nts(uint wid = 0) const;
 
 private:
     void check_free_space(int size = 0) const;

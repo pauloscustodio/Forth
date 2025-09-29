@@ -98,4 +98,24 @@ forth_ok(<<'END', "1 ( )");
 	.S
 END
 
+note "Test TRAVERSE-WORDLIST";
+my @words = split(' ', `forth -e WORDS`);
+forth_ok(<<'END', join(" ", @words)." ( )");
+	:NONAME ( nt - )
+		NAME>STRING TYPE SPACE
+		TRUE
+	;
+	0 ( xt wid ) TRAVERSE-WORDLIST .S
+END
+
+forth_ok(<<'END', join(" ", @words[0..9])." ( )");
+	0 PAD !
+	:NONAME ( nt - )
+		NAME>STRING TYPE SPACE
+		1 PAD +!
+		PAD @ 10 <=
+	;
+	0 ( xt wid ) TRAVERSE-WORDLIST .S
+END
+
 end_test;

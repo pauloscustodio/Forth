@@ -238,21 +238,32 @@ Header* Dict::find_word(const CString* name) const {
     return find_word(name->str(), name->size());
 }
 
-std::vector<std::string> Dict::get_words() const {
+std::vector<std::string> Dict::get_words(uint wid) const {
+    std::vector<uint> nts = get_word_nts(wid);
     std::vector<std::string> words;
-    int ptr = vm.latest;
+    for (auto nt : nts) {
+        Header* header = reinterpret_cast<Header*>(mem_char_ptr(nt));
+        CString* found_name = header->name();
+        words.push_back(found_name->to_string());
+    }
+    return words;
+}
+
+std::vector<uint> Dict::get_word_nts(uint wid) const {
+    std::vector<uint> nts;
+    int ptr = wid == 0 ? vm.latest : fetch(wid + CELL_SZ);
     while (ptr != 0) {
         Header* header = reinterpret_cast<Header*>(mem_char_ptr(ptr));
-        CString* found_name = header->name();
-        if (header->flags.hidden || header->flags.smudge)
-            ; // skip hidden and smudged words
+        if (header->flags.hidden || header->flags.smudge) {
+            // skip hidden and smudged words
+        }
         else {
-            words.push_back(found_name->to_string());
+            nts.push_back(ptr);
         }
 
         ptr = header->link;
     }
-    return words;
+    return nts;
 }
 
 void Dict::check_free_space(int size) const {

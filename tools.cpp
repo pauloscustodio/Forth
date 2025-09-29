@@ -439,3 +439,17 @@ void f_xsynonym(uint body) {
     }
 }
 
+void f_traverse_wordlist() {
+    uint wid = pop();
+    uint xt = pop();
+
+    std::vector<uint> nts = vm.dict.get_word_nts(wid);
+    for (auto nt : nts) {
+        push(nt);
+        f_execute(xt);
+        bool continue_traversal = pop();
+        if (!continue_traversal) {
+            break;
+        }
+    }
+}
