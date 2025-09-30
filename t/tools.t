@@ -134,4 +134,42 @@ forth_ok(<<'END', "0 -1 ( )");
 	y . z . .S
 END
 
+note "Test [IF]";
+note "Test [ELSE]";
+note "Test [THEN]";
+forth_ok(<<'END', "111 ( )");
+	: x [ TRUE ] [IF] 111 [ELSE] 222 [THEN] ;
+	x . .S
+END
+
+forth_ok(<<'END', "222 ( )");
+	: x [ FALSE ] [IF] 111 [ELSE] 222 [THEN] ;
+	x . .S
+END
+
+forth_ok(<<'END', "333 ( )");
+	: x [ TRUE TRUE FALSE ] 
+		[IF] 
+			[IF] 111 [ELSE] 222 [THEN] 
+		[ELSE]
+			[IF] 333 [ELSE] 444 [THEN] 
+		[THEN] ;
+	x . .S
+END
+
+forth_nok(<<'END', "\nError: unmatched conditional compilation\n");
+	: x [ TRUE TRUE FALSE ] [IF] 
+			[IF] 111 [ELSE] 222 [THEN] 
+		[ELSE]
+			[IF] 333 [ELSE] 444 [THEN] 
+	;
+END
+
+note "Test CONTROL-WORD";
+forth_ok(<<'END', "222 ( )");
+	: [ENDIF] POSTPONE [THEN] ; CONTROL-WORD
+	: x [ FALSE ] [IF] 111 [ELSE] 222 [ENDIF] ;
+	x . .S
+END
+
 end_test;

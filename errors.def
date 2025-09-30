@@ -97,5 +97,8 @@ X(-258, ExceptionStackUnderflow, "exception stack underflow")
 X(-259, FloatStackUnderflow, "floating point stack underflow")
 X(-260, FloatStackOverflow, "floating point stack overflow")
 X(-261, DuplicateDefinition, "duplicate definition")
+X(-262, ConditionalCompilationStackUnderflow, "conditional compilation stack underflow")
+X(-263, ConditionalCompilationStackOverflow, "conditional compilation stack overflow")
+X(-264, UnmatchedConditionalCompilation, "unmatched conditional compilation")
 
 #undef X

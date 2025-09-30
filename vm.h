@@ -82,6 +82,11 @@ struct VM {
     DownwardStack<double> f_stack{ 'F',
         Error::FloatStackUnderflow, Error::FloatStackOverflow };
 
+    // conditional compilation stack
+    DownwardStack<bool> cond_stack{ 'C',
+        Error::ConditionalCompilationStackUnderflow, Error::ConditionalCompilationStackOverflow };
+    bool cond_status{ true };
+
     // dictionary
     uint dict_lo_mem, dict_hi_mem;      // memory limits for dictionary
     uint heap_lo_mem, heap_hi_mem;      // memory limits for heap

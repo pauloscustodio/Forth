@@ -6,11 +6,13 @@
 
 #pragma once
 
+#include "dict.h"
 #include <string>
 
 // outer interpreter
 void interpret_word(const std::string& word);
 void interpret_word(const char* word, uint size);
+void interpret_word(const char* word, uint size, Header* header);
 void f_interpret();
 
 // evaluate text

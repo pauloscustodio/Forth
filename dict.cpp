@@ -109,6 +109,7 @@ uint Dict::create_cont(uint name_addr, int flags, uint code) {
 
     header->name_addr = name_addr;
 
+    header->flags.control = (flags & F_CONTROL) ? true : false;
     header->flags.smudge = (flags & F_SMUDGE) ? true : false;
     header->flags.hidden = (flags & F_HIDDEN) ? true : false;
     header->flags.immediate = (flags & F_IMMEDIATE) ? true : false;
@@ -312,7 +313,7 @@ void f_postpone() {
         comma(header->xt());
     }
     else {
-        // make code to compile worder later
+        // make code to compile word later
         comma(xtXLITERAL);		// xt of word in stack
         comma(header->xt());
         comma(xtCOMMA);
@@ -336,6 +337,12 @@ void f_immediate() {
 void f_hidden() {
     Header* header = reinterpret_cast<Header*>(mem_char_ptr(vm.latest));
     header->flags.hidden = true;
+}
+
+void f_control_word() {
+    Header* header = reinterpret_cast<Header*>(mem_char_ptr(vm.latest));
+    header->flags.immediate = true;
+    header->flags.control = true;
 }
 
 void f_create() {

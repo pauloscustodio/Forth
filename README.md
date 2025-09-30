@@ -15,9 +15,9 @@ EXCEPTION, EXCEPTION-EXT,
 FACILITY, FACILITY-EXT,
 FILE, FILE-EXT,
 FLOATING, FLOATING-EXT,
-LOCAL, LOCAL-EXT 
-and
-MEMORY
+LOCAL, LOCAL-EXT,
+MEMORY,
+TOOLS and most of TOOLS-EXT
 words. 
 
 It is intended to be be used as a script interpreter, 
@@ -133,9 +133,10 @@ TOOLS:
 
 TOOLS EXT:
     AHEAD BYE CS-PICK CS-ROLL FORGET N>R NAME>COMPILE NAME>INTERPRET
-    NAME>STRING NR> STATE SYNONYM TRAVERSE-WORDLIST [DEFINED] [UNDEFINED]
+    NAME>STRING NR> STATE SYNONYM TRAVERSE-WORDLIST [DEFINED] [ELSE] [IF]
+    [THEN] [UNDEFINED]
   Missing:
-    ;CODE ASSEMBLER CODE EDITOR [ELSE] [IF] [THEN]
+    ;CODE ASSEMBLER CODE EDITOR
 
 XCHAR:
   Missing:
@@ -148,12 +149,12 @@ XCHAR EXT:
     X\STRING-
 
 NOT STANDARD:
-    #IN #TIB -2ROT -FROT -ROT .FS .RS 0<= 0>= 2FIELD: <= >= >NAME CONVERT
-    D0<= D0<> D0> D0>= D<= D<> D> D>= DPL DU<= DU> DU>= EXPECT F0<= F0<>
-    F0> F0>= F<= F<> F= F> F>= FS-DIRECTORY FS-EXECUTABLE FS-EXISTS
-    FS-READABLE FS-REGULAR FS-SYMLINK FS-WRITABLE INTERPRET LATEST NUMBER
-    NUMBER? OFF ON PARSE-WORD QUERY R0 RDROP RSP! RSP@ S0 SP! SP@ SPAN TIB
-    TRACE U<= U>=
+    #IN #TIB -2ROT -FROT -ROT .FS .RS 0<= 0>= 2FIELD: <= >= >NAME
+    CONTROL-WORD CONVERT D0<= D0<> D0> D0>= D<= D<> D> D>= DPL DU<= DU>
+    DU>= EXPECT F0<= F0<> F0> F0>= F<= F<> F= F> F>= FS-DIRECTORY
+    FS-EXECUTABLE FS-EXISTS FS-READABLE FS-REGULAR FS-SYMLINK FS-WRITABLE
+    INTERPRET LATEST NUMBER NUMBER? OFF ON PARSE-WORD QUERY R0 RDROP RSP!
+    RSP@ S0 SP! SP@ SPAN TIB TRACE U<= U>=
 ```
 
 # Documentation of not standard words
@@ -514,6 +515,13 @@ triggers an error.
 ( xt -- nt )
 
 Convert an execution token into a name token, the inverse of NAME>INTERPRTET.
+
+## CONTROL-WORD
+( -- )
+
+Makes the last defined word a control-word, i.e. one that is executed in the 
+false-path of an [IF] [ELSE] [THEN] sequence. Useful to define new control
+words or aliases, e.g. : [ENDIF] POSTPONE [THEN] ; CONTROL-WORD
 
 #
 

@@ -12,6 +12,7 @@
 #include "locals.h"
 #include "output.h"
 #include "parser.h"
+#include "tools.h"
 #include "vm.h"
 
 void interpret_word(const std::string& word) {
@@ -19,13 +20,17 @@ void interpret_word(const std::string& word) {
 }
 
 void interpret_word(const char* word, uint size) {
+    Header* header = vm.dict.find_word(word, size);
+    interpret_word(word, size, header);
+}
+
+void interpret_word(const char* word, uint size, Header* header) {
     if (size > 0) {
         bool is_double = false;
         dint dvalue = 0;
         double fvalue = 0.0;
         uint index;
 
-        Header* header = nullptr;
         if (find_local(word, size, index)) { // local found
             if (vm.user->STATE == STATE_INTERPRET) {
                 error(Error::InterpretingACompileOnlyWord, std::string(word, word + size));
@@ -36,8 +41,7 @@ void interpret_word(const char* word, uint size) {
                 comma(xtPAREN_GET_LOCAL);
             }
         }
-        else if ((header = vm.dict.find_word(word, size))
-                 != nullptr) {	// word found
+        else if (header) {	// word found
             uint xt = header->xt();
             if (header->flags.immediate || vm.user->STATE == STATE_INTERPRET) {
                 f_execute(xt);
@@ -112,7 +116,15 @@ void f_interpret() {
             }
         }
 
-        interpret_word(word, size);
+        Header* header = vm.dict.find_word(word, size);
+        if (header && header->flags.control) {  // [IF], [ELSE], [THEN]
+            interpret_word(word, size, header);
+        }
+        else if (vm.cond_status) {  // in true branch of [IF]
+            interpret_word(word, size, header);
+        }
+        else {  // in false branch of [IF], skip word
+        }
     }
 
     if (vm.user->STATE == STATE_INTERPRET && g_interactive) {
@@ -145,11 +157,14 @@ void f_evaluate(const char* text, uint size) {
 
 void f_quit() {
     vm.r_stack.clear();
+    start_cond_compilation();
     vm.user->STATE = STATE_INTERPRET;
     while (true) {
         while (f_refill()) {
             f_interpret();
         }
+        check_end_cond_compilation();
+
         if (vm.input.restore_input()) {
             f_interpret();  // skip first refill(), buffer is already setup
             continue;
