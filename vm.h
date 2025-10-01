@@ -82,10 +82,9 @@ struct VM {
     DownwardStack<double> f_stack{ 'F',
         Error::FloatStackUnderflow, Error::FloatStackOverflow };
 
-    // conditional compilation stack
-    DownwardStack<bool> cond_stack{ 'C',
-        Error::ConditionalCompilationStackUnderflow, Error::ConditionalCompilationStackOverflow };
-    bool cond_status{ true };
+    // condititional execution
+    bool skipping_conditional{ false };  // true if skipping due to [IF]
+    int conditional_nest{ 0 };              // nesting level for [IF]/[ELSE]/[THEN]
 
     // dictionary
     uint dict_lo_mem, dict_hi_mem;      // memory limits for dictionary

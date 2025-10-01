@@ -21,9 +21,3 @@ void f_xsynonym(uint body);
 void f_traverse_wordlist();
 void f_bracket_defined();
 void f_bracket_undefined();
-
-void start_cond_compilation();
-void check_end_cond_compilation();
-void f_bracket_if();
-void f_bracket_else();
-void f_bracket_then();

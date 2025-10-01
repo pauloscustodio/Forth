@@ -42,7 +42,6 @@ static const int SCREEN_WIDTH = 80;
 static const int F_TRUE = -1;
 static const int F_FALSE = 0;
 
-static const int F_CONTROL = 0x10;
 static const int F_SMUDGE = 0x20;
 static const int F_HIDDEN = 0x40;
 static const int F_IMMEDIATE = 0x80;

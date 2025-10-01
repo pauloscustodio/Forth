@@ -8,6 +8,7 @@
 #include "parser.h"
 #include "str.h"
 #include "vm.h"
+#include <algorithm>
 #include <cstring>
 
 uint CString::size() const {
@@ -139,6 +140,12 @@ bool case_insensitive_equal(const char* a_str, uint a_size, const char* b_str,
         }
     }
     return true;
+}
+
+std::string to_upper(const std::string& str) {
+    std::string result = str;
+    std::transform(result.begin(), result.end(), result.begin(), ::toupper);
+    return result;
 }
 
 void f_count() {

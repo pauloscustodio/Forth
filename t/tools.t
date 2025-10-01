@@ -164,11 +164,4 @@ forth_nok(<<'END', "\nError: unmatched conditional compilation\n");
 	;
 END
 
-note "Test CONTROL-WORD";
-forth_ok(<<'END', "222 ( )");
-	: [ENDIF] POSTPONE [THEN] ; CONTROL-WORD
-	: x [ FALSE ] [IF] 111 [ELSE] 222 [ENDIF] ;
-	x . .S
-END
-
 end_test;

@@ -647,10 +647,11 @@ CODE("(SYNONYM)", XSYNONYM, F_HIDDEN, f_xsynonym(body))
 CODE("TRAVERSE-WORDLIST", TRAVERSE_WORDLIST, 0, f_traverse_wordlist())
 CODE("[DEFINED]", BRACKET_DEFINED, F_IMMEDIATE, f_bracket_defined())
 CODE("[UNDEFINED]", BRACKET_UNDEFINED, F_IMMEDIATE, f_bracket_undefined())
-CODE("[IF]", BRACKET_IF, F_IMMEDIATE|F_CONTROL, f_bracket_if())
-CODE("[ELSE]", BRACKET_ELSE, F_IMMEDIATE|F_CONTROL, f_bracket_else())
-CODE("[THEN]", BRACKET_THEN, F_IMMEDIATE|F_CONTROL, f_bracket_then())
-CODE("CONTROL-WORD", CONTROL_WORD, 0, f_control_word())
+
+// these are implemented as nop, their functionality is handled in interpret_word()
+CODE("[IF]", BRACKET_IF, F_IMMEDIATE, /*nop*/)
+CODE("[ELSE]", BRACKET_ELSE, F_IMMEDIATE, /*nop*/)
+CODE("[THEN]", BRACKET_THEN, F_IMMEDIATE, /*nop*/)
 
 // strings
 CODE("/STRING", SLASH_STRING, 0, f_slash_string())

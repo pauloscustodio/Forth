@@ -14,7 +14,6 @@ struct Header {
     uint link;			// address of previous header
     uint name_addr;		// address of name
     struct {
-        bool control : 1;
         bool smudge : 1;
         bool hidden : 1;
         bool immediate : 1;
@@ -87,7 +86,6 @@ void f_bracket_compile();
 void f_compile_comma();
 void f_immediate();
 void f_hidden();
-void f_control_word();
 
 void f_create();
 void f_buffer_colon();

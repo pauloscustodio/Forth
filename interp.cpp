@@ -15,22 +15,18 @@
 #include "tools.h"
 #include "vm.h"
 
-void interpret_word(const std::string& word) {
-    interpret_word(word.c_str(), static_cast<uint>(word.size()));
+void f_interpret_word(const std::string& word) {
+    f_interpret_word(word.c_str(), static_cast<uint>(word.size()));
 }
 
-void interpret_word(const char* word, uint size) {
-    Header* header = vm.dict.find_word(word, size);
-    interpret_word(word, size, header);
-}
-
-void interpret_word(const char* word, uint size, Header* header) {
+void f_interpret_word(const char* word, uint size) {
     if (size > 0) {
         bool is_double = false;
         dint dvalue = 0;
         double fvalue = 0.0;
         uint index;
 
+        Header* header = vm.dict.find_word(word, size);
         if (find_local(word, size, index)) { // local found
             if (vm.user->STATE == STATE_INTERPRET) {
                 error(Error::InterpretingACompileOnlyWord, std::string(word, word + size));
@@ -103,27 +99,69 @@ void interpret_word(const char* word, uint size, Header* header) {
     }
 }
 
+// implement [IF], [ELSE], [THEN] logic here
+static void interpret_word(const char* word_ptr, uint size) {
+    std::string word = to_upper(std::string(word_ptr, word_ptr + size));
+
+    // If currently skipping due to [IF] or [ELSE]
+    if (vm.skipping_conditional) {
+        if (word == "[IF]") {
+            vm.conditional_nest++;
+        }
+        else if (word == "[ELSE]") {
+            if (vm.conditional_nest == 1) {
+                // Stop skipping at [ELSE]
+                vm.skipping_conditional = false;
+            }
+        }
+        else if (word == "[THEN]") {
+            vm.conditional_nest--;
+            if (vm.conditional_nest == 0) {
+                vm.skipping_conditional = false;
+            }
+        }
+    }
+    // Not skipping: check for [IF]
+    else if (word == "[IF]") {
+        int flag = pop();
+        if (flag) {
+            vm.skipping_conditional = false;
+            vm.conditional_nest++;
+        }
+        else {
+            vm.skipping_conditional = true;
+            vm.conditional_nest++;
+        }
+    }
+    // Not skipping: check for [ELSE]
+    else if (word == "[ELSE]") {
+        // Start skipping until [THEN]
+        vm.skipping_conditional = true;
+    }
+    // Not skipping: check for [THEN]
+    else if (word == "[THEN]") {
+        if (vm.conditional_nest > 0) {
+            vm.conditional_nest--;
+        }
+    }
+    else {
+        // ... normal word interpretation logic ...
+        f_interpret_word(word_ptr, size);
+    }
+}
+
 void f_interpret() {
     while (true) {
         uint size;
         const char* word = parse_word(size, BL);
-        if (size == 0) {
-            if (vm.input.restore_input_if_query()) {
-                continue;
-            }
-            else {
-                break;
-            }
+        if (size) {
+            interpret_word(word, size);
         }
-
-        Header* header = vm.dict.find_word(word, size);
-        if (header && header->flags.control) {  // [IF], [ELSE], [THEN]
-            interpret_word(word, size, header);
+        else if (vm.input.restore_input_if_query()) {
+            continue;
         }
-        else if (vm.cond_status) {  // in true branch of [IF]
-            interpret_word(word, size, header);
-        }
-        else {  // in false branch of [IF], skip word
+        else {
+            break;
         }
     }
 
@@ -157,14 +195,13 @@ void f_evaluate(const char* text, uint size) {
 
 void f_quit() {
     vm.r_stack.clear();
-    start_cond_compilation();
     vm.user->STATE = STATE_INTERPRET;
+    vm.skipping_conditional = false;
+    vm.conditional_nest = 0;
     while (true) {
         while (f_refill()) {
             f_interpret();
         }
-        check_end_cond_compilation();
-
         if (vm.input.restore_input()) {
             f_interpret();  // skip first refill(), buffer is already setup
             continue;
@@ -172,6 +209,14 @@ void f_quit() {
         else {
             break;
         }
+    }
+
+    // Check for missing [THEN]
+    if (vm.conditional_nest != 0) {
+        error(Error::UnmatchedConditionalCompilation);
+        // Optionally reset state to avoid cascading errors
+        vm.skipping_conditional = false;
+        vm.conditional_nest = 0;
     }
 
     exit(EXIT_SUCCESS);

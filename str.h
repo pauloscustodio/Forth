@@ -68,6 +68,8 @@ bool case_insensitive_equal(
     const char* a_str, uint a_size,
     const char* b_str, uint b_size);
 
+std::string to_upper(const std::string& str);
+
 void f_count();
 void f_dot_quote();
 void f_xdot_quote();

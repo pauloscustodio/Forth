@@ -257,14 +257,15 @@ END
 # floating point tests
 chdir "fp" or die;
 
-SKIP: {
-	skip "[if] needed to test floating point", 1;
-	
-	note "runfptests.fth";
-	forth_ok('S" runfptests.fth" INCLUDED', <<'END');
+note "runfptests.fth";
+forth_ok('S" runfptests.fth" INCLUDED', <<'END');
+
+Running FP Tests
+
+
+FP tests finished
 
 END
-}
 
 # unlink test-generated files
 unlink "../../../../fatest1.txt" 	if Test::More->builder->is_passing;
