@@ -485,7 +485,7 @@ static void update_cond_status() {
 }
 
 void f_bracket_if() {
-    int flag = pop();
+    int flag = vm.cond_status ? pop() : 0;  // only pop if in true branch
     vm.cond_stack.push(flag);
     update_cond_status();
 }

@@ -148,20 +148,19 @@ forth_ok(<<'END', "222 ( )");
 END
 
 forth_ok(<<'END', "333 ( )");
-	: x [ TRUE TRUE FALSE ] 
-		[IF] 
-			[IF] 111 [ELSE] 222 [THEN] 
+	: x [ FALSE ] [IF] 
+			[ TRUE ] [IF] 111 [ELSE] 222 [THEN] 
 		[ELSE]
-			[IF] 333 [ELSE] 444 [THEN] 
+			[ TRUE ] [IF] 333 [ELSE] 444 [THEN] 
 		[THEN] ;
 	x . .S
 END
 
 forth_nok(<<'END', "\nError: unmatched conditional compilation\n");
-	: x [ TRUE TRUE FALSE ] [IF] 
-			[IF] 111 [ELSE] 222 [THEN] 
+	: x [ FALSE ] [IF] 
+			[ TRUE ] [IF] 111 [ELSE] 222 [THEN] 
 		[ELSE]
-			[IF] 333 [ELSE] 444 [THEN] 
+			[ TRUE ] [IF] 333 [ELSE] 444 [THEN] 
 	;
 END
 
