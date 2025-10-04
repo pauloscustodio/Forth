@@ -89,7 +89,13 @@ struct VM {
     // dictionary
     uint dict_lo_mem, dict_hi_mem;      // memory limits for dictionary
     uint heap_lo_mem, heap_hi_mem;      // memory limits for heap
-    uint latest;		    // point to last defined word header
+
+    uint latest_word;                   // last defined word
+    std::vector<uint> wordlists;        // each wordlist latest word
+    // indexed by wid
+    std::vector<uint> search_order;     // search order of wordlists
+    uint definitions_wid;               // wid where definitions are stored
+
     uint here;			// point to next free position at bottom of memory
     uint names;			// point to last name created at top of memory
 

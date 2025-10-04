@@ -33,6 +33,7 @@ static const int NUMBER_OUTPUT_SZ = 256;
 static const int STACK_SZ = 64 * 1024;
 static const int MAX_CSTRING_SZ = 0xff;
 static const int MAX_NAME_SZ = 0x3f;
+static const int SYSTEM_WID = 0;
 
 // constants
 static const char BL = ' ';
@@ -64,7 +65,6 @@ enum {
 #define CONST(word, name, flags, value) id##name,
 #define VAR(word, name, flags, value)   id##name,
 #define CODE(word, name, flags, c_code) id##name,
-#define FORTH(word, name, flags, text)  id##name,
 #include "words.def"
 };
 
@@ -72,7 +72,6 @@ enum {
 #define CONST(word, name, flags, value) extern uint xt##name;
 #define VAR(word, name, flags, value)   extern uint xt##name;
 #define CODE(word, name, flags, c_code) extern uint xt##name;
-#define FORTH(word, name, flags, text)  extern uint xt##name;
 #include "words.def"
 
 // bool

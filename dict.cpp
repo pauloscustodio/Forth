@@ -9,6 +9,7 @@
 #include "forth.h"
 #include "interp.h"
 #include "locals.h"
+#include "output.h"
 #include "parser.h"
 #include "vm.h"
 #include <cassert>
@@ -50,7 +51,16 @@ void Dict::init() {
 void Dict::clear() {
     vm.here = vm.dict_lo_mem;
     vm.names = vm.dict_hi_mem;
-    vm.latest = 0;
+
+    vm.latest_word = 0;
+
+    vm.wordlists.clear();
+    vm.wordlists.push_back(0); // SYSTEM_WID = 0
+
+    vm.search_order.clear();
+    vm.search_order.push_back(SYSTEM_WID);
+
+    vm.definitions_wid = SYSTEM_WID;
 }
 
 void Dict::allot(int size) {
@@ -95,18 +105,26 @@ uint Dict::create_cont(uint name_addr, int flags, uint code) {
     check_free_space(sizeof(Header));
 
     // fill previous header size
-    if (vm.latest) {
+    if (vm.latest_word) {
         Header* latest_header = reinterpret_cast<Header*>(
-                                    mem_char_ptr(vm.latest));
+                                    mem_char_ptr(vm.latest_word));
         uint latest_size = vm.here - latest_header->body();
         latest_header->size = latest_size; // fill size of previous header
     }
 
     // create new header
     Header* header = reinterpret_cast<Header*>(mem_char_ptr(vm.here));
-    header->link = vm.latest;
-    vm.latest = vm.here;
 
+    // link into list of all words
+    header->prev = vm.latest_word;
+    vm.latest_word = vm.here;
+
+    // link into current wordlist
+    assert(vm.definitions_wid < vm.wordlists.size());
+    header->link = vm.wordlists[vm.definitions_wid];
+    vm.wordlists[vm.definitions_wid] = vm.here;
+
+    // fill header
     header->name_addr = name_addr;
 
     header->flags.smudge = (flags & F_SMUDGE) ? true : false;
@@ -214,7 +232,33 @@ Header* Dict::find_word(const std::string& name) const {
 }
 
 Header* Dict::find_word(const char* name, uint size) const {
-    int ptr = vm.latest;
+    // search in search order
+    for (int i = static_cast<int>(vm.search_order.size()) - 1; i >= 0; i--) {
+        uint wid = vm.search_order[i];
+        Header* header = find_word_in_wid(name, size, wid);
+        if (header != nullptr) {
+            return header;
+        }
+    }
+
+    // search in system wordlist as fallback
+    Header* header = find_word_in_wid(name, size, SYSTEM_WID);
+    return header;
+}
+
+Header* Dict::find_word(const CString* name) const {
+    return find_word(name->str(), name->size());
+}
+
+Header* Dict::find_word_in_wid(const std::string& name, uint wid) const {
+    return find_word_in_wid(
+               name.c_str(), static_cast<uint>(name.size()), wid);
+}
+
+Header* Dict::find_word_in_wid(const char* name, uint size, uint wid) const {
+    assert(wid < vm.wordlists.size());
+    uint ptr = vm.wordlists[wid];
+
     while (ptr != 0) {
         Header* header = reinterpret_cast<Header*>(mem_char_ptr(ptr));
         CString* found_name = header->name();
@@ -234,8 +278,8 @@ Header* Dict::find_word(const char* name, uint size) const {
     return nullptr;
 }
 
-Header* Dict::find_word(const CString* name) const {
-    return find_word(name->str(), name->size());
+Header* Dict::find_word_in_wid(const CString* name, uint wid) const {
+    return find_word_in_wid(name->str(), name->size(), wid);
 }
 
 std::vector<std::string> Dict::get_words(uint wid) const {
@@ -251,7 +295,10 @@ std::vector<std::string> Dict::get_words(uint wid) const {
 
 std::vector<uint> Dict::get_word_nts(uint wid) const {
     std::vector<uint> nts;
-    int ptr = wid == 0 ? vm.latest : fetch(wid + CELL_SZ);
+    if (wid >= static_cast<uint>(vm.wordlists.size())) {
+        error(Error::CompilationWordListDeleted);
+    }
+    int ptr = vm.wordlists[wid];
     while (ptr != 0) {
         Header* header = reinterpret_cast<Header*>(mem_char_ptr(ptr));
         if (header->flags.hidden || header->flags.smudge) {
@@ -329,12 +376,14 @@ void f_compile_comma() {
 }
 
 void f_immediate() {
-    Header* header = reinterpret_cast<Header*>(mem_char_ptr(vm.latest));
+    Header* header = reinterpret_cast<Header*>(
+                         mem_char_ptr(vm.latest_word));
     header->flags.immediate = true;
 }
 
 void f_hidden() {
-    Header* header = reinterpret_cast<Header*>(mem_char_ptr(vm.latest));
+    Header* header = reinterpret_cast<Header*>(
+                         mem_char_ptr(vm.latest_word));
     header->flags.hidden = true;
 }
 
@@ -457,7 +506,8 @@ void f_fconstant() {
 void f_does() {
     clear_locals();
 
-    Header* header = reinterpret_cast<Header*>(mem_char_ptr(vm.latest));
+    Header* header = reinterpret_cast<Header*>(
+                         mem_char_ptr(vm.latest_word));
     comma(xtXDOES_DEFINE);                  // set this word as having DOES>
     comma(header->xt());					// xt of creater word
     comma(vm.here + 2 * CELL_SZ);	// location of run code
@@ -471,7 +521,8 @@ void f_xdoes_define() {
     int run_code = fetch(vm.ip);
     vm.ip += CELL_SZ;						// start of runtime code
 
-    Header* def_word = reinterpret_cast<Header*>(mem_char_ptr(vm.latest));
+    Header* def_word = reinterpret_cast<Header*>(
+                           mem_char_ptr(vm.latest_word));
     def_word->creator_xt = creator_xt;		// store xt of creator word
     def_word->does = run_code;				// start of DOES> code
     def_word->code = idXDOES_RUN;			// new execution id
@@ -484,29 +535,48 @@ void f_xdoes_run(uint body) {
 }
 
 void f_marker() {
-    int save_latest = vm.latest;
-    int save_here = vm.here;
-    int save_names = vm.names;
+    uint save_latest_word = vm.latest_word;
+    std::vector<uint> save_wordlists = vm.wordlists;
+    uint save_here = vm.here;
+    uint save_names = vm.names;
 
     vm.dict.parse_create(idXMARKER, 0);
 
-    comma(save_latest);
+    comma(save_latest_word);
     comma(save_here);
     comma(save_names);
+    comma(static_cast<uint>(save_wordlists.size()));
+    for (auto latest : save_wordlists) {
+        comma(latest);
+    }
 }
 
 void f_xmarker(uint body) {
-    int save_latest = fetch(body);
-    int save_here = fetch(body + CELL_SZ);
-    int save_names = fetch(body + 2 * CELL_SZ);
+    uint ptr = body;
+    uint save_latest_word = fetch(ptr);
+    ptr += CELL_SZ;
+    uint save_here = fetch(ptr);
+    ptr += CELL_SZ;
+    uint save_names = fetch(ptr);
+    ptr += CELL_SZ;
 
-    vm.latest = save_latest;
+    vm.latest_word = save_latest_word;
     vm.here = save_here;
     vm.names = save_names;
+
+    vm.wordlists.clear();
+    uint save_wordlists_size = fetch(ptr);
+    ptr += CELL_SZ;
+    for (uint i = 0; i < save_wordlists_size; ++i) {
+        uint latest = fetch(ptr);
+        ptr += CELL_SZ;
+        vm.wordlists.push_back(latest);
+    }
 }
 
 void f_words() {
-    std::vector<std::string> words = vm.dict.get_words();
+    uint wid = vm.search_order.empty() ? SYSTEM_WID : vm.search_order.back();
+    std::vector<std::string> words = vm.dict.get_words(wid);
     size_t col = 0;
     for (auto& word : words) {
         if (col + 1 + word.size() >= SCREEN_WIDTH) {
@@ -576,5 +646,99 @@ void f_is() {
         comma(header->xt());
         comma(xtDEFER_STORE);
     }
+}
+
+void f_definitions() {
+    uint wid = vm.search_order.empty() ? SYSTEM_WID : vm.search_order.back();
+    vm.definitions_wid = wid;
+}
+
+void f_wordlist() {
+    uint wid = static_cast<uint>(vm.wordlists.size());
+    vm.wordlists.push_back(0);
+    push(wid);
+}
+
+void f_get_order() {
+    for(uint i = 0; i < vm.search_order.size(); i++) {
+        push(vm.search_order[i]);
+    }
+    push(static_cast<uint>(vm.search_order.size()));
+}
+
+void f_set_order() {
+    int n = pop();
+    if (n < 0) {
+        f_only();
+    }
+    else if (n == 0) {
+        vm.search_order.clear();
+    }
+    else {
+        vm.search_order.resize(n);
+        for (int i = n - 1; i >= 0; --i) {
+            vm.search_order[i] = pop();
+        }
+    }
+}
+
+void f_search_wordlist() {
+    uint wid = pop();
+    uint size = pop();
+    uint addr = pop();
+    const char* word = mem_char_ptr(addr);
+
+    Header* header = vm.dict.find_word_in_wid(word, size, wid);
+    if (header == nullptr) {
+        push(0);
+    }
+    else {
+        uint xt = header->xt();
+        if (header->flags.immediate) {
+            push(xt);
+            push(1);
+        }
+        else {
+            push(xt);
+            push(-1);
+        }
+    }
+}
+
+void f_also() {
+    if (vm.search_order.empty()) {
+        vm.search_order.push_back(SYSTEM_WID);
+    }
+    else {
+        uint wid = vm.search_order.back();
+        vm.search_order.push_back(wid);
+    }
+}
+
+void f_previous() {
+    if (!vm.search_order.empty()) {
+        vm.search_order.pop_back();
+    }
+}
+
+void f_only() {
+    vm.search_order.clear();
+    vm.search_order.push_back(SYSTEM_WID);
+}
+
+void f_order() {
+    std::cout << std::endl << "Search order: ";
+    for (uint i = 0; i < static_cast<uint>(vm.search_order.size()); ++i) {
+        uint wid = vm.search_order[i];
+        print_number(static_cast<int>(wid));
+    }
+    std::cout << std::endl << "Definitions: ";
+    print_number(static_cast<int>(vm.definitions_wid));
+    std::cout << std::endl;
+}
+
+void f_forth() {
+    f_previous();
+    vm.search_order.push_back(SYSTEM_WID);
 }
 

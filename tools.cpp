@@ -288,21 +288,37 @@ void f_see() {
         }
         break;
     }
-    case idXMARKER:
+    case idXMARKER: {
+        uint ptr = body;
         std::cout << std::endl << "MARKER " << name << std::endl
-                  << "Latest: ";
-        print_number(fetch(body));
+                  << "Latest:    ";
+        print_number(fetch(ptr));
+        ptr += CELL_SZ;
         std::cout << std::endl
-                  << "Here:   ";
-        print_number(fetch(body + CELL_SZ));
+                  << "Here:      ";
+        print_number(fetch(ptr));
+        ptr += CELL_SZ;
         std::cout << std::endl
-                  << "Names:  ";
-        print_number(fetch(body + 2 * CELL_SZ));
+                  << "Names:     ";
+        print_number(fetch(ptr));
+        ptr += CELL_SZ;
+        std::cout << std::endl
+                  << "Wordlists: ";
+        uint num_wordlists = fetch(ptr);
+        ptr += CELL_SZ;
+        for (uint i = 0; i < num_wordlists; ++i) {
+            if (i > 0) {
+                std::cout << ", ";
+            }
+            print_number(fetch(ptr));
+            ptr += CELL_SZ;
+        }
         std::cout << std::endl;
-        if (size > 3 * CELL_SZ) {
-            dump_body_definition(body + 3 * CELL_SZ, size - 3 * CELL_SZ);
+        if (size > ptr) {
+            dump_body_definition(ptr, body + size - ptr);
         }
         break;
+    }
     case idXDEFER:
         if (size == CELL_SZ) {
             int action_xt = fetch(body);
@@ -370,9 +386,19 @@ void f_forget() {
     assert(header != nullptr);
     vm.here = mem_addr(reinterpret_cast<char*>
                        (header)); // reset here to reclaim memory
-    vm.latest = header->link; // point to previous word
-    Header* latest = reinterpret_cast<Header*>(mem_char_ptr(vm.latest));
+    vm.latest_word = header->prev; // point to previous word
+    Header* latest = reinterpret_cast<Header*>(
+                         mem_char_ptr(vm.latest_word));
     vm.names = latest->name_addr;
+
+    // reclaim wordlists
+    for (uint i = 0; i < static_cast<uint>(vm.wordlists.size()); ++i) {
+        while (vm.wordlists[i] > vm.latest_word) {
+            Header* latest = reinterpret_cast<Header*>(
+                                 mem_char_ptr(vm.wordlists[i]));
+            vm.wordlists[i] = latest->link;
+        }
+    }
 }
 
 void f_to_name() {

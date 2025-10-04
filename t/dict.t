@@ -159,7 +159,7 @@ forth_ok(<<END, "x( -1 )");
 		HERE
 		: x 1 2 3 4 5 6 7 8 9 10 ;
 		LATEST = 
-		LATEST CELL+ @ COUNT TYPE
+		LATEST 2 CELLS + @ COUNT TYPE
 		.S
 END
 
@@ -178,5 +178,279 @@ END
 
 note "Test BUFFER:";
 forth_ok("127 BUFFER: buf1  127 BUFFER: buf2  buf1 buf2 - ABS 127 > .S", "( -1 )");
+
+note "Test ORDER";
+my $forth = <<'END';
+	ORDER
+END
+forth_ok($forth, <<'END');
+
+Search order: 0
+Definitions: 0
+END
+
+note "Test ALSO";
+my $forth = <<'END';
+	ALSO ORDER
+END
+forth_ok($forth, <<'END');
+
+Search order: 0 0 
+Definitions: 0
+END
+
+note "Test WORDLIST";
+note "Test GET-ORDER";
+note "Test SET-ORDER";
+$forth = <<'END';
+	WORDLIST CONSTANT wid
+	GET-ORDER .S SET-ORDER
+	ALSO GET-ORDER .S 
+	NIP wid SWAP .S SET-ORDER
+	ORDER
+END
+forth_ok($forth, <<'END');
+( 0 1 ) ( 0 0 2 ) ( 0 1 2 )
+Search order: 0 1 
+Definitions: 0
+END
+
+note "Test DEFINITIONS";
+$forth = <<'END';
+	WORDLIST CONSTANT wid
+	ALSO GET-ORDER NIP wid SWAP SET-ORDER
+	DEFINITIONS
+	: x ;
+	WORDS
+END
+forth_ok($forth, <<'END');
+x
+END
+
+note "Test ONLY";
+$forth = <<'END';
+	WORDLIST CONSTANT wid
+	0 1 2 SET-ORDER
+	ORDER
+	ONLY
+	ORDER
+END
+forth_ok($forth, <<'END');
+
+Search order: 0 1 
+Definitions: 0
+
+Search order: 0 
+Definitions: 0
+END
+
+note "Test SET-ORDER";
+$forth = <<'END';
+	WORDLIST CONSTANT wid1
+	WORDLIST CONSTANT wid2
+	WORDLIST CONSTANT wid3
+	wid3 wid2 wid1 0 4 SET-ORDER
+	ORDER
+END
+forth_ok($forth, <<'END');
+
+Search order: 3 2 1 0
+Definitions: 0
+END
+
+$forth = <<'END';
+	WORDLIST CONSTANT wid1
+	WORDLIST CONSTANT wid2
+	WORDLIST CONSTANT wid3
+	wid3 wid2 wid1 0 4 SET-ORDER
+	0 SET-ORDER
+	ORDER
+END
+forth_ok($forth, <<'END');
+
+Search order: 
+Definitions: 0
+END
+
+$forth = <<'END';
+	WORDLIST CONSTANT wid1
+	WORDLIST CONSTANT wid2
+	WORDLIST CONSTANT wid3
+	wid3 wid2 wid1 0 4 SET-ORDER
+	-1 SET-ORDER
+	ORDER
+END
+forth_ok($forth, <<'END');
+
+Search order: 0
+Definitions: 0
+END
+
+note "Test FORTH-WORDLIST";
+forth_ok("FORTH-WORDLIST .S", "( 0 )");
+
+note "Test FORTH";
+$forth = <<'END';
+	0 SET-ORDER
+	FORTH
+	ORDER
+END
+forth_ok($forth, <<'END');
+
+Search order: 0
+Definitions: 0
+END
+
+$forth = <<'END';
+	0 SET-ORDER
+	FORTH
+	ORDER
+END
+forth_ok($forth, <<'END');
+
+Search order: 0
+Definitions: 0
+END
+
+$forth = <<'END';
+	FORTH
+	ORDER
+END
+forth_ok($forth, <<'END');
+
+Search order: 0
+Definitions: 0
+END
+
+$forth = <<'END';
+	WORDLIST CONSTANT wid1
+	0 wid1 2 SET-ORDER
+	FORTH
+	ORDER
+END
+forth_ok($forth, <<'END');
+
+Search order: 0 0
+Definitions: 0
+END
+
+note "Test PREVIOUS";
+$forth = <<'END';
+	WORDLIST CONSTANT wid1
+	0 wid1 2 SET-ORDER
+	PREVIOUS
+	ORDER
+END
+forth_ok($forth, <<'END');
+
+Search order: 0 
+Definitions: 0
+END
+
+note "Test SEARCH-WORDLIST";
+$forth = <<'END';
+	0 VALUE xtX
+	WORDLIST CONSTANT wid
+	ALSO GET-ORDER NIP wid SWAP SET-ORDER
+	DEFINITIONS
+	: x ;
+	' X TO xtX
+	ONLY FORTH
+	S" x" wid SEARCH-WORDLIST 
+	SWAP xtX = SWAP .S
+END
+forth_ok($forth, <<'END');
+( -1 -1 )
+END
+
+$forth = <<'END';
+	WORDLIST CONSTANT wid
+	ALSO GET-ORDER NIP wid SWAP SET-ORDER
+	DEFINITIONS
+	: x ;
+	ONLY FORTH
+	S" x" 0 SEARCH-WORDLIST 
+	.S
+END
+forth_ok($forth, <<'END');
+( 0 )
+END
+
+note "Test GET-CURRENT";
+forth_ok("GET-CURRENT .S", "( 0 )");
+
+$forth = <<'END';
+	WORDLIST CONSTANT wid
+	ALSO GET-ORDER NIP wid SWAP SET-ORDER
+	DEFINITIONS
+	GET-CURRENT .S
+END
+forth_ok($forth, <<'END');
+( 1 )
+END
+
+note "Test SET-CURRENT";
+$forth = <<'END';
+	WORDLIST CONSTANT wid
+	0 SET-CURRENT : x ;
+	ORDER
+	1 SET-CURRENT : y ;
+	ORDER
+END
+forth_ok($forth, <<'END');
+
+Search order: 0 
+Definitions: 0
+
+Search order: 0 
+Definitions: 1
+END
+
+note "Test SET-CURRENT";
+$forth = <<'END';
+	0 VALUE xtX
+	WORDLIST CONSTANT wid
+	0 SET-CURRENT : x ;
+	LATEST NAME>INTERPRET TO xtX
+	S" x" 0 SEARCH-WORDLIST
+	SWAP xtX = SWAP .S
+END
+forth_ok($forth, <<'END');
+( -1 -1 )
+END
+
+$forth = <<'END';
+	WORDLIST CONSTANT wid
+	0 SET-CURRENT : x ;
+	S" x" 1 SEARCH-WORDLIST
+	.S
+END
+forth_ok($forth, <<'END');
+( 0 )
+END
+
+$forth = <<'END';
+	WORDLIST CONSTANT wid
+	1 SET-CURRENT : x ;
+	S" x" 0 SEARCH-WORDLIST
+	.S
+END
+forth_ok($forth, <<'END');
+( 0 )
+END
+
+$forth = <<'END';
+	0 VALUE xtX
+	WORDLIST CONSTANT wid
+	1 SET-CURRENT : x ;
+	LATEST NAME>INTERPRET TO xtX
+	S" x" 1 SEARCH-WORDLIST
+	SWAP xtX = SWAP .S
+END
+forth_ok($forth, <<'END');
+( -1 -1 )
+END
+
+
 
 end_test;

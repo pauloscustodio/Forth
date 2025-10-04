@@ -161,11 +161,15 @@ void f_environment_q(const std::string& query) {
         push(F_TRUE);
     }
     else if (case_insensitive_equal(query, "SEARCH-ORDER")) {
-        push(F_FALSE);
+        push(F_TRUE);
         push(F_TRUE);
     }
     else if (case_insensitive_equal(query, "SEARCH-ORDER-EXT")) {
-        push(F_FALSE);
+        push(F_TRUE);
+        push(F_TRUE);
+    }
+    else if (case_insensitive_equal(query, "WORDLISTS")) {
+        push(STACK_SZ);
         push(F_TRUE);
     }
     else if (case_insensitive_equal(query, "STRING")) {

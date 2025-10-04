@@ -16,10 +16,6 @@
 #define CODE(word, name, flags, c_code)
 #endif
 
-#ifndef FORTH
-#define FORTH(word, name, flags, text)
-#endif
-
 // constants
 CONST("BL", BL, 0, BL)
 CODE("PAD", PAD, 0, push(mem_addr(vm.pad_data)))
@@ -154,7 +150,7 @@ CODE("RSP!", RSP_STORE, 0, vm.r_stack.set_sp(pop()))
 CODE(",", COMMA, 0, comma(pop()))
 CODE("C,", CCOMMA, 0, ccomma(pop()))
 CODE("HERE", HERE, 0, push(vm.here))
-CODE("LATEST", LATEST, 0, push(vm.latest))
+CODE("LATEST", LATEST, 0, push(vm.latest_word))
 CODE("FIND", FIND, 0, f_find(pop()))
 CODE(">BODY", TO_BODY, 0, push(pop() + CELL_SZ))
 CODE("ALIGN", ALIGN, 0, vm.dict.align())
@@ -653,10 +649,26 @@ CODE("[IF]", BRACKET_IF, F_IMMEDIATE, /*nop*/)
 CODE("[ELSE]", BRACKET_ELSE, F_IMMEDIATE, /*nop*/)
 CODE("[THEN]", BRACKET_THEN, F_IMMEDIATE, /*nop*/)
 
+
+// wordlists
+CODE("DEFINITIONS", DEFINITIONS, 0, f_definitions())
+CODE("WORDLIST", WORDLIST, 0, f_wordlist())
+CODE("GET-CURRENT", GET_CURRENT, 0, push(vm.definitions_wid))
+CODE("SET-CURRENT", SET_CURRENT, 0, vm.definitions_wid = pop())
+CODE("GET-ORDER", GET_ORDER, 0, f_get_order())
+CODE("SET-ORDER", SET_ORDER, 0, f_set_order())
+CODE("SEARCH-WORDLIST", SEARCH_WORDLIST, 0, f_search_wordlist())
+CODE("ALSO", ALSO, 0, f_also())
+CODE("PREVIOUS", PREVIOUS, 0, f_previous())
+CODE("ONLY", ONLY, 0, f_only())
+CODE("ORDER", ORDER, 0, f_order())
+CODE("FORTH-WORDLIST", FORTH_WORDLIST, 0, push(SYSTEM_WID))
+CODE("FORTH", FORTH, 0, f_forth())
+
 // strings
 CODE("/STRING", SLASH_STRING, 0, f_slash_string())
+
 
 #undef CONST
 #undef VAR
 #undef CODE
-#undef FORTH

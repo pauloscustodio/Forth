@@ -37,7 +37,7 @@ void f_colon_noname() {
     cs_dpush(mk_dcell(POS_COLON_START, 0));
     vm.dict.create("", F_SMUDGE, idXDOCOL);
     Header* header = reinterpret_cast<Header*>(
-                         mem_char_ptr(vm.latest));
+                         mem_char_ptr(vm.latest_word));
     vm.user->STATE = STATE_COMPILE;
     push(header->xt());
 
@@ -61,7 +61,7 @@ void f_semicolon() {
 
     comma(xtEXIT);
     Header* header = reinterpret_cast<Header*>(
-                         mem_char_ptr(vm.latest));
+                         mem_char_ptr(vm.latest_word));
     header->flags.smudge = false;
     vm.user->STATE = STATE_INTERPRET;
 
@@ -72,7 +72,7 @@ void f_semicolon() {
 
 void f_recurse() {
     Header* header = reinterpret_cast<Header*>(
-                         mem_char_ptr(vm.latest));
+                         mem_char_ptr(vm.latest_word));
     comma(header->xt());
 }
 

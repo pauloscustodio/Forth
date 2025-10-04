@@ -65,9 +65,9 @@ forth_ok('S" #LOCALS" 			ENVIRONMENT? .S', "( 65536 -1 )");
 forth_ok('S" MEMORY"      		ENVIRONMENT? .S', "( -1 -1 )");
 forth_ok('S" TOOLS" 			ENVIRONMENT? .S', "( -1 -1 )");
 forth_ok('S" TOOLS-EXT" 		ENVIRONMENT? .S', "( -1 -1 )");
-forth_ok('S" SEARCH-ORDER" 		ENVIRONMENT? .S', "( 0 -1 )");
-forth_ok('S" SEARCH-ORDER-EXT" 	ENVIRONMENT? .S', "( 0 -1 )");
-forth_ok('S" WORDLISTS" 		ENVIRONMENT? .S', "( 0 )");
+forth_ok('S" SEARCH-ORDER" 		ENVIRONMENT? .S', "( -1 -1 )");
+forth_ok('S" SEARCH-ORDER-EXT" 	ENVIRONMENT? .S', "( -1 -1 )");
+forth_ok('S" WORDLISTS" 		ENVIRONMENT? .S', "( 65536 -1 )");
 forth_ok('S" STRING" 	 		ENVIRONMENT? .S', "( 0 -1 )");
 forth_ok('S" STRING-EXT" 		ENVIRONMENT? .S', "( 0 -1 )");
 

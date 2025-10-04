@@ -11,7 +11,8 @@
 #include <vector>
 
 struct Header {
-    uint link;			// address of previous header
+    uint prev;          // address of previous header in dictionary
+    uint link;			// address of previous header in search order
     uint name_addr;		// address of name
     struct {
         bool smudge : 1;
@@ -19,7 +20,7 @@ struct Header {
         bool immediate : 1;
     } flags;
     uint size;			// size of body, filled by next header
-    uint creator_xt;		// xt of word that created this word
+    uint creator_xt;	// xt of word that created this word
     uint does;			// address of DOES> code
     uint code;			// primitive code
 
@@ -67,8 +68,12 @@ public:
     Header* find_word(const char* name, uint size) const;
     Header* find_word(const CString* name) const;
 
-    std::vector<std::string> get_words(uint wid = 0) const;
-    std::vector<uint> get_word_nts(uint wid = 0) const;
+    Header* find_word_in_wid(const std::string& name, uint wid) const;
+    Header* find_word_in_wid(const char* name, uint size, uint wid) const;
+    Header* find_word_in_wid(const CString* name, uint wid) const;
+
+    std::vector<std::string> get_words(uint wid) const;
+    std::vector<uint> get_word_nts(uint wid) const;
 
 private:
     void check_free_space(int size = 0) const;
@@ -115,3 +120,14 @@ void f_defer_fetch(uint xt);
 void f_defer_store();
 void f_action_of();
 void f_is();
+
+void f_definitions();
+void f_wordlist();
+void f_get_order();
+void f_set_order();
+void f_search_wordlist();
+void f_also();
+void f_previous();
+void f_only();
+void f_order();
+void f_forth();
