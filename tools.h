@@ -13,6 +13,7 @@ void f_n_to_r();
 void f_n_r_from();
 void f_forget();
 void f_to_name();
+void f_xcompile();
 void f_name_to_compile();
 void f_name_to_string();
 void f_name_to_interpret();

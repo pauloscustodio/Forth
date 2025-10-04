@@ -16,9 +16,9 @@ forth_ok("1 >R 2 >R .RS BYE", "(R: 1 2 )");
 
 note "Test N>R";
 note "Test NR>";
-forth_ok(<<'END', "( ) ( 1 2 3 4 )");
+forth_ok(<<'END', "( ) ( 10 20 30 40 4 )");
 	: x
-		1 2 3 4  4 N>R .S
+		10 20 30 40 4 N>R .S
 		NR> .S
 	;
 	x
@@ -52,34 +52,17 @@ forth_ok(<<'END', "-1 -1 ( )");
 END
 
 note "Test NAME>COMPILE";
-forth_ok(<<'END', "-1 -1 -1 -1 -1 ()");
-	0 VALUE xtX
-	0 VALUE xtEXECUTE
-	0 VALUE ntX
-	HERE TO ntX
-	: X ; IMMEDIATE
-	BL WORD X       FIND  1 = . TO xtX
-	BL WORD EXECUTE FIND -1 = . TO xtEXECUTE
-	LATEST ntX = .
-	LATEST NAME>COMPILE
-	xtEXECUTE = .
-	xtX = .
+forth_ok(<<'END', "( 2 )");
+	: X 2 ; IMMEDIATE
+	LATEST NAME>COMPILE EXECUTE
 	.S
 END
 
-forth_ok(<<'END', "-1 -1 -1 -1 -1 ()");
-	0 VALUE xtX
-	0 VALUE xtCOMPILE_COMMA
-	0 VALUE ntX
-	HERE TO ntX
-	: X ;
-	BL WORD X        FIND -1 = . TO xtX
-	BL WORD COMPILE, FIND  1 = . TO xtCOMPILE_COMMA
-	LATEST ntX = .
-	LATEST NAME>COMPILE
-	xtCOMPILE_COMMA = .
-	xtX = .
-	.S
+forth_ok(<<'END', "( 2 )");
+	: X 2 ;
+	LATEST NAME>COMPILE 
+	: Y [ EXECUTE ] ;
+	Y .S
 END
 
 note "Test NAME>STRING";
@@ -163,5 +146,9 @@ forth_nok(<<'END', "\nError: unmatched conditional compilation\n");
 			[ TRUE ] [IF] 333 [ELSE] 444 [THEN] 
 	;
 END
+
+forth_ok("TRUE  [IF] 1 TRUE  [IF] 2 [ELSE] 3 [THEN] [ELSE] 4 [THEN] .S", "( 1 2 )");
+
+forth_ok("1 [ELSE] 2 [THEN] 3 .S", "( 1 3 )");
 
 end_test;

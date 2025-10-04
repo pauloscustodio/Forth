@@ -379,6 +379,7 @@ void f_n_r_from() {
     for (uint i = 0; i < n; ++i) {
         push(r_pop());
     }
+    push(n);
 }
 
 void f_forget() {
@@ -408,18 +409,21 @@ void f_to_name() {
     push(nt);
 }
 
-void f_name_to_compile() {
-    uint name_addr = pop();
-    Header* header = reinterpret_cast<Header*>(
-                         mem_char_ptr(name_addr));
+void f_xcompile() {
+    uint nt = pop();
+    Header* header = reinterpret_cast<Header*>(mem_char_ptr(nt));
     if (header->flags.immediate) {
-        push(header->xt());
-        push(xtEXECUTE);
+        f_execute(header->xt());  // execute immediately
     }
     else {
-        push(header->xt());
-        push(xtCOMPILE_COMMA);
+        comma(header->xt());  // compile into current definition
     }
+}
+
+void f_name_to_compile() {
+    uint nt = pop();
+    push(nt);
+    push(xtXCOMPILE);
 }
 
 void f_name_to_string() {

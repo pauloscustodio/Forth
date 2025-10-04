@@ -87,7 +87,7 @@ CString* Wordbuf::append_cstring(const char* str, uint size) {
     }
 
     uint alloc_size = CString::alloc_size(size);
-    if (vm.wordbuf_ptr + alloc_size > sizeof(vm.wordbuf_data)) {
+    if (vm.wordbuf_ptr + alloc_size > WORDBUF_SZ) {
         vm.wordbuf_ptr = 0;
     }
     CString* cstring = reinterpret_cast<CString*>(vm.wordbuf_data + vm.wordbuf_ptr);

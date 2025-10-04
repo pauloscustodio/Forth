@@ -247,6 +247,12 @@ End of File-Access word set tests
 End of Locals word set tests. ( ) ****
 End of Memory-Allocation word tests
 **********
+NAME>INTERPRET returns an execution token for all
+core words with undefined interpretation semantics.
+So NAME>INTERPRET returning 0 is untested.
+
+End of Programming Tools word tests
+**********
 ONLY FORTH DEFINITIONS search order and compilation wordlist
 
 Search order: 0 
@@ -254,8 +260,8 @@ Definitions: 0
 
 Plus another unnamed wordlist at the head of the search order
 
-Search order: 0 3 
-Definitions: 3 
+Search order: 0 4 
+Definitions: 4 
 
 End of Search Order word tests
 

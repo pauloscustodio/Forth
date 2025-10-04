@@ -83,8 +83,8 @@ struct VM {
         Error::FloatStackUnderflow, Error::FloatStackOverflow };
 
     // condititional execution
-    bool skipping_conditional{ false };  // true if skipping due to [IF]
-    int conditional_nest{ 0 };              // nesting level for [IF]/[ELSE]/[THEN]
+    std::vector<bool> skipping_stack;   // stack of skipping states
+    bool skipping{ false };             // currently skipping
 
     // dictionary
     uint dict_lo_mem, dict_hi_mem;      // memory limits for dictionary
@@ -177,3 +177,7 @@ void fpush(double value);
 double fpop();
 double fpeek(int depth = 0);
 int fdepth();
+
+void init_conditional();
+void end_conditional();
+void compute_skipping();

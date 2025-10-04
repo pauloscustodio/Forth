@@ -256,3 +256,27 @@ double fpeek(int depth) {
 int fdepth() {
     return vm.f_stack.depth();
 }
+
+void init_conditional() {
+    vm.skipping_stack.clear();
+    vm.skipping = 0;
+}
+
+void end_conditional() {
+    // Check for missing [THEN]
+    if (!vm.skipping_stack.empty()) {
+        error(Error::UnmatchedConditionalCompilation);
+        init_conditional();
+    }
+}
+
+void compute_skipping() {
+    for (auto skipping : vm.skipping_stack) {
+        if (skipping) {
+            vm.skipping = true;
+            return;
+        }
+    }
+    vm.skipping = false;
+}
+

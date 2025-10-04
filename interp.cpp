@@ -103,49 +103,32 @@ void f_interpret_word(const char* word, uint size) {
 static void interpret_word(const char* word_ptr, uint size) {
     std::string word = to_upper(std::string(word_ptr, word_ptr + size));
 
-    // If currently skipping due to [IF] or [ELSE]
-    if (vm.skipping_conditional) {
-        if (word == "[IF]") {
-            vm.conditional_nest++;
-        }
-        else if (word == "[ELSE]") {
-            if (vm.conditional_nest == 1) {
-                // Stop skipping at [ELSE]
-                vm.skipping_conditional = false;
-            }
-        }
-        else if (word == "[THEN]") {
-            vm.conditional_nest--;
-            if (vm.conditional_nest == 0) {
-                vm.skipping_conditional = false;
-            }
-        }
+    if (word == "[IF]") {
+        bool flag = vm.skipping ? true : pop();
+        vm.skipping_stack.push_back(!flag);
+        compute_skipping();
     }
-    // Not skipping: check for [IF]
-    else if (word == "[IF]") {
-        int flag = pop();
-        if (flag) {
-            vm.skipping_conditional = false;
-            vm.conditional_nest++;
+    else if (word == "[ELSE]") {
+        // lone [ELSE] start a comment until [THEN]
+        if (vm.skipping_stack.empty()) {
+            vm.skipping_stack.push_back(true);
         }
         else {
-            vm.skipping_conditional = true;
-            vm.conditional_nest++;
+            bool flag = vm.skipping_stack.back();
+            vm.skipping_stack.back() = !flag;
         }
+        compute_skipping();
     }
-    // Not skipping: check for [ELSE]
-    else if (word == "[ELSE]") {
-        // Start skipping until [THEN]
-        vm.skipping_conditional = true;
-    }
-    // Not skipping: check for [THEN]
     else if (word == "[THEN]") {
-        if (vm.conditional_nest > 0) {
-            vm.conditional_nest--;
+        if (!vm.skipping_stack.empty()) {
+            vm.skipping_stack.pop_back();
         }
+        compute_skipping();
+    }
+    else if (vm.skipping) {
+        // skip
     }
     else {
-        // ... normal word interpretation logic ...
         f_interpret_word(word_ptr, size);
     }
 }
@@ -196,8 +179,7 @@ void f_evaluate(const char* text, uint size) {
 void f_quit() {
     vm.r_stack.clear();
     vm.user->STATE = STATE_INTERPRET;
-    vm.skipping_conditional = false;
-    vm.conditional_nest = 0;
+    init_conditional();
     while (true) {
         while (f_refill()) {
             f_interpret();
@@ -210,14 +192,7 @@ void f_quit() {
             break;
         }
     }
-
-    // Check for missing [THEN]
-    if (vm.conditional_nest != 0) {
-        error(Error::UnmatchedConditionalCompilation);
-        // Optionally reset state to avoid cascading errors
-        vm.skipping_conditional = false;
-        vm.conditional_nest = 0;
-    }
+    end_conditional();
 
     exit(EXIT_SUCCESS);
 }

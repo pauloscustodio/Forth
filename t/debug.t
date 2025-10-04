@@ -3,37 +3,56 @@
 BEGIN { use lib 't'; require 'testlib.pl'; }
 
 note "Test DUMP";
-forth_ok('S" The quick brown fox jumps over the lazy dog." DUMP', <<'END');
+my $forth = <<'END';
+	S" The quick brown fox jumps over the lazy dog."
+	DUMP
+END
+forth_ok($forth, <<'END');
 
 00000000              54 68 65 20 71 75 69 63 6b 20 62 72       The quick br
 00000010  6f 77 6e 20 66 6f 78 20 6a 75 6d 70 73 20 6f 76   own fox jumps ov
 00000020  65 72 20 74 68 65 20 6c 61 7a 79 20 64 6f 67 2e   er the lazy dog.
 END
 
-forth_ok('S" hello world" PAD 1+ SWAP MOVE PAD 1+ 11 DUMP', <<'END');
+$forth = <<'END';
+	S" hello world" VALUE size VALUE addr
+	addr PAD size MOVE
+	PAD size DUMP
+END
+forth_ok($forth, <<'END');
 
 00000800                 68 65 6c 6c 6f 20 77 6f 72 6c 64        hello world
 END
 
-forth_ok('256 BUFFER: buf : init 256 0 DO I buf I + C! LOOP ; init buf 256 DUMP', <<'END');
+$forth = <<'END';
+	256 BUFFER: buf
+	: init 
+		256 0 DO 
+			I buf I + C! 
+		LOOP 
+	;
+	init
+	buf PAD 256 MOVE
+	PAD 256 DUMP
+END
+forth_ok($forth, <<'END');
 
-00008c40                          00 01 02 03 04 05 06 07           ........
-00008c50  08 09 0a 0b 0c 0d 0e 0f 10 11 12 13 14 15 16 17   ................
-00008c60  18 19 1a 1b 1c 1d 1e 1f 20 21 22 23 24 25 26 27   ........ !"#$%&'
-00008c70  28 29 2a 2b 2c 2d 2e 2f 30 31 32 33 34 35 36 37   ()*+,-./01234567
-00008c80  38 39 3a 3b 3c 3d 3e 3f 40 41 42 43 44 45 46 47   89:;<=>?@ABCDEFG
-00008c90  48 49 4a 4b 4c 4d 4e 4f 50 51 52 53 54 55 56 57   HIJKLMNOPQRSTUVW
-00008ca0  58 59 5a 5b 5c 5d 5e 5f 60 61 62 63 64 65 66 67   XYZ[\]^_`abcdefg
-00008cb0  68 69 6a 6b 6c 6d 6e 6f 70 71 72 73 74 75 76 77   hijklmnopqrstuvw
-00008cc0  78 79 7a 7b 7c 7d 7e 7f 80 81 82 83 84 85 86 87   xyz{|}~.........
-00008cd0  88 89 8a 8b 8c 8d 8e 8f 90 91 92 93 94 95 96 97   ................
-00008ce0  98 99 9a 9b 9c 9d 9e 9f a0 a1 a2 a3 a4 a5 a6 a7   ................
-00008cf0  a8 a9 aa ab ac ad ae af b0 b1 b2 b3 b4 b5 b6 b7   ................
-00008d00  b8 b9 ba bb bc bd be bf c0 c1 c2 c3 c4 c5 c6 c7   ................
-00008d10  c8 c9 ca cb cc cd ce cf d0 d1 d2 d3 d4 d5 d6 d7   ................
-00008d20  d8 d9 da db dc dd de df e0 e1 e2 e3 e4 e5 e6 e7   ................
-00008d30  e8 e9 ea eb ec ed ee ef f0 f1 f2 f3 f4 f5 f6 f7   ................
-00008d40  f8 f9 fa fb fc fd fe ff                           ........        
+00000800  00 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f   ................
+00000810  10 11 12 13 14 15 16 17 18 19 1a 1b 1c 1d 1e 1f   ................
+00000820  20 21 22 23 24 25 26 27 28 29 2a 2b 2c 2d 2e 2f    !"#$%&'()*+,-./
+00000830  30 31 32 33 34 35 36 37 38 39 3a 3b 3c 3d 3e 3f   0123456789:;<=>?
+00000840  40 41 42 43 44 45 46 47 48 49 4a 4b 4c 4d 4e 4f   @ABCDEFGHIJKLMNO
+00000850  50 51 52 53 54 55 56 57 58 59 5a 5b 5c 5d 5e 5f   PQRSTUVWXYZ[\]^_
+00000860  60 61 62 63 64 65 66 67 68 69 6a 6b 6c 6d 6e 6f   `abcdefghijklmno
+00000870  70 71 72 73 74 75 76 77 78 79 7a 7b 7c 7d 7e 7f   pqrstuvwxyz{|}~.
+00000880  80 81 82 83 84 85 86 87 88 89 8a 8b 8c 8d 8e 8f   ................
+00000890  90 91 92 93 94 95 96 97 98 99 9a 9b 9c 9d 9e 9f   ................
+000008a0  a0 a1 a2 a3 a4 a5 a6 a7 a8 a9 aa ab ac ad ae af   ................
+000008b0  b0 b1 b2 b3 b4 b5 b6 b7 b8 b9 ba bb bc bd be bf   ................
+000008c0  c0 c1 c2 c3 c4 c5 c6 c7 c8 c9 ca cb cc cd ce cf   ................
+000008d0  d0 d1 d2 d3 d4 d5 d6 d7 d8 d9 da db dc dd de df   ................
+000008e0  e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 ea eb ec ed ee ef   ................
+000008f0  f0 f1 f2 f3 f4 f5 f6 f7 f8 f9 fa fb fc fd fe ff   ................
 END
 
 note "Test SEE";
@@ -142,7 +161,7 @@ forth_ok(": x ABORT\" hello\" ; SEE x", <<END);
 ;
 END
 
-forth_ok(<<'END', <<'END');
+$forth = <<'END';
 : const CREATE ,
   DOES> @ ;
 10 const ten
@@ -150,6 +169,7 @@ forth_ok(<<'END', <<'END');
 SEE const
 SEE ten
 END
+forth_ok($forth, <<'END');
 
 : const
     CREATE
@@ -162,7 +182,7 @@ L1:
 ;
 
 const ten
-00008c80                          0a 00 00 00                       ....    
+00008ca0                          0a 00 00 00                       ....    
 END
 
 forth_ok(<<'END', <<'END');
@@ -317,8 +337,8 @@ forth_ok("123 CONSTANT x 16 ALLOT SEE x", <<'END');
 
 123 CONSTANT x
 
-00008c40                                      00 00 00 00               ....
-00008c50  00 00 00 00 00 00 00 00 00 00 00 00               ............    
+00008c60                                      00 00 00 00               ....
+00008c70  00 00 00 00 00 00 00 00 00 00 00 00               ............    
 END
 
 forth_ok("123. 2CONSTANT xx SEE xx", <<'END');
@@ -335,7 +355,7 @@ forth_ok("123. 2CONSTANT xx 16 ALLOT SEE xx", <<'END');
 
 123. 2CONSTANT xx
 
-00008c50  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
+00008c70  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
 END
 
 forth_ok("VARIABLE x  123 x !  SEE x", <<'END');
@@ -356,8 +376,8 @@ END
 forth_ok("2VARIABLE x  123. x 2! 16 ALLOT  SEE x", <<'END');
 
 CREATE x 
-00008c40                          00 00 00 00 7b 00 00 00           ....{...
-00008c50  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
+00008c60                          00 00 00 00 7b 00 00 00           ....{...
+00008c70  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
 END
 
 forth_ok(<<'END', <<'END');
@@ -380,10 +400,10 @@ END
 forth_ok("MARKER x SEE x UNUSED 1024 / . 'k' EMIT CR", <<'END');
 
 MARKER x
-Latest:    35848 
-Here:      35880 
-Names:     1054256 
-Wordlists: 35848 
+Latest:    35880 
+Here:      35912 
+Names:     1054244 
+Wordlists: 35880 
 994 k
 END
 
