@@ -50,6 +50,15 @@ double* Mem::float_ptr(uint addr, uint size) {
     return reinterpret_cast<double*>(data_ + addr);
 }
 
+float* Mem::sfloat_ptr(uint addr, uint size) {
+    if ((addr % CELL_SZ) != 0) {
+        error(Error::AddressAlignmentException);
+        return nullptr;
+    }
+    addr = check_addr(addr, size);
+    return reinterpret_cast<float*>(data_ + addr);
+}
+
 int Mem::fetch(uint addr) {
     return *int_ptr(addr, CELL_SZ);
 }
@@ -75,6 +84,14 @@ void Mem::fstore(uint addr, double value) {
 
 double Mem::ffetch(uint addr) {
     return *float_ptr(addr);
+}
+
+void Mem::sfstore(uint addr, float value) {
+    *sfloat_ptr(addr) = value;
+}
+
+float Mem::sffetch(uint addr) {
+    return *sfloat_ptr(addr);
 }
 
 int Mem::cfetch(uint addr) {

@@ -130,6 +130,8 @@ dint dfetch(uint addr);
 void dstore(uint addr, dint value);
 double ffetch(uint addr);
 void fstore(uint addr, double value);
+double sffetch(uint addr);
+void sfstore(uint addr, double value);
 int cfetch(uint addr);
 void cstore(uint addr, int value);
 

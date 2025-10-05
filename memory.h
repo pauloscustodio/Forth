@@ -16,6 +16,7 @@ public:
     char* char_ptr(uint addr, uint size = 0);
     int* int_ptr(uint addr, uint size = 0);
     double* float_ptr(uint addr, uint size = 0);
+    float* sfloat_ptr(uint addr, uint size = 0);
 
     // access memory
     int fetch(uint addr);
@@ -24,6 +25,8 @@ public:
     void dstore(uint addr, dint value);
     void fstore(uint addr, double value);
     double ffetch(uint addr);
+    void sfstore(uint addr, float value);
+    float sffetch(uint addr);
     int cfetch(uint addr);
     void cstore(uint addr, int value);
 

@@ -18,14 +18,13 @@ bool is_print(char c) {
     return c >= BL && c < 0x7f;
 }
 
-void strip_blanks(const char*& str, uint& size) {
-    while (size > 0 && is_space(str[size - 1])) {
-        size--;
+static bool only_blanks(const char* str, uint size) {
+    for (uint i = 0; i < size; ++i) {
+        if (!is_space(str[i])) {
+            return false;
+        }
     }
-    while (size > 0 && is_space(str[0])) {
-        str++;
-        size--;
-    }
+    return true;
 }
 
 // return digit value of character, or -1 if not a digit
@@ -349,7 +348,7 @@ bool parse_float(const char* text, uint size, double& value, bool needs_exp) {
         return false;
     }
 
-    // optional exponent 'e' or 'd', sign?, digits+
+    // optional exponent 'e' 'd' or sign, digits+
     if (p >= end) {
         std::string number = sign < 0 ? "-" : "";
         number += std::string(start_mantissa, end_mantissa);
@@ -357,21 +356,22 @@ bool parse_float(const char* text, uint size, double& value, bool needs_exp) {
         return true;
     }
     else {
-        if (toupper(*p) != 'D' && toupper(*p) != 'E') {
+        if (toupper(*p) != 'D' && toupper(*p) != 'E' &&
+                *p != '-' && *p != '+') {
             return false;
         }
 
-        ++p;
-        bool has_sign = parse_sign(p, end, exp_sign);
+        if (toupper(*p) == 'D' || toupper(*p) == 'E') {
+            ++p;
+        }
+
+        parse_sign(p, end, exp_sign);
 
         const char* start_exponent = p;
         int num_digits_exp = parse_digits(p, end, 10, dummy);
         const char* end_exponent = p;
 
-        if (has_sign && num_digits_exp == 0) {
-            return false;    // exponent only with sign
-        }
-        else if (p < end) {
+        if (p < end) {
             return false;    // extra characters after number
         }
         else {
@@ -522,13 +522,18 @@ void f_to_float() {
     uint size = pop();
     uint addr = pop();
     const char* str = mem_char_ptr(addr, size);
-    strip_blanks(str, size);
-    double value = 0.0;
-    if (size == 0 || parse_float(str, size, value, false)) {
-        fpush(value);
+    if (only_blanks(str, size)) {
+        fpush(0.0);
         push(F_TRUE);
     }
     else {
-        push(F_FALSE);
+        double value = 0.0;
+        if (parse_float(str, size, value, false)) {
+            fpush(value);
+            push(F_TRUE);
+        }
+        else {
+            push(F_FALSE);
+        }
     }
 }

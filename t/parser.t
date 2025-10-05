@@ -247,8 +247,18 @@ forth_nok("1.23-E- .S .FS", "\nError: undefined word: 1.23-E-\n");
 
 note "Test >FLOAT";
 forth_ok('S" " >FLOAT .S .FS', "( -1 ) (F: 0 )");
+forth_ok('S"      " >FLOAT .S .FS', "( -1 ) (F: 0 )");
 forth_ok('S" 0" >FLOAT .S .FS', "( -1 ) (F: 0 )");
 forth_ok('S" 1" >FLOAT .S .FS', "( -1 ) (F: 1 )");
 forth_ok('S" x" >FLOAT .S .FS', "( 0 ) (F: )");
+forth_ok('S"  9" >FLOAT .S .FS', "( 0 ) (F: )");
+forth_ok('S" 1+1" >FLOAT .S .FS', "( -1 ) (F: 10 )");
+forth_ok('S" 1-1" >FLOAT .S .FS', "( -1 ) (F: 0.1 )");
+forth_ok('S" 9E" >FLOAT .S .FS', "( -1 ) (F: 9 )");
+forth_ok('S" 9E+" >FLOAT .S .FS', "( -1 ) (F: 9 )");
+forth_ok('S" 9E-" >FLOAT .S .FS', "( -1 ) (F: 9 )");
+forth_ok('S" 9d" >FLOAT .S .FS', "( -1 ) (F: 9 )");
+forth_ok('S" 9d+" >FLOAT .S .FS', "( -1 ) (F: 9 )");
+forth_ok('S" 9d-" >FLOAT .S .FS', "( -1 ) (F: 9 )");
 
 end_test;

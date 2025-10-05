@@ -22,6 +22,8 @@ STRING, STRING-EXT,
 TOOLS and most of TOOLS-EXT
 words. 
 
+It passes all the John Hayes test suite.
+
 It is intended to be be used as a script interpreter, 
 i.e. calling ABORT exits the interpreter instead of restarting the QUIT loop.
 

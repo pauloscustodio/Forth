@@ -7,8 +7,8 @@
 CR .( Running ANS Forth and Forth 2012 test programs, version 0.13.4) CR
 
 S" prelimtest.fth" INCLUDED
-S" tester.fr" INCLUDED
-\ S" ttester.fs" INCLUDED
+\ S" tester.fr" INCLUDED
+S" ttester.fs" INCLUDED
 
 S" core.fr" INCLUDED
 S" coreplustest.fth" INCLUDED

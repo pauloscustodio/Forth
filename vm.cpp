@@ -110,6 +110,14 @@ void fstore(uint addr, double value) {
     vm.mem.fstore(addr, value);
 }
 
+double sffetch(uint addr) {
+    return static_cast<double>(vm.mem.sffetch(addr));
+}
+
+void sfstore(uint addr, double value) {
+    vm.mem.sfstore(addr, static_cast<float>(value));
+}
+
 int cfetch(uint addr) {
     return vm.mem.cfetch(addr);
 }

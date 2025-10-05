@@ -53,13 +53,7 @@ int f_div(int a, int b) {
 }
 
 double f_div(double a, double b) {
-    if (b == 0) {
-        error(Error::DivisionByZero);
-        return 0.0;   // not reached
-    }
-    else {
-        return a / b;
-    }
+    return a / b;
 }
 
 void f_div_mod() {

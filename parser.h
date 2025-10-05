@@ -12,7 +12,6 @@
 
 bool is_space(char c);
 bool is_print(char c);
-void strip_blanks(const char*& str, uint& size);
 
 const char* parse_word(uint& size, char delimiter = BL);
 CString* parse_cword(char delimiter = BL);
