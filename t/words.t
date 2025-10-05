@@ -49,7 +49,11 @@ die if !Test::More->builder->is_passing;
 
 # check that all words are tested
 run_ok("forth -e WORDS > ${test}.out");
-my %words; $words{$_}=1 for sort split(' ', path("${test}.out")->slurp);
+my @words = split(' ', path("${test}.out")->slurp);
+note "Implemented ",scalar(@words),": @words";
+
+my %words; 
+$words{$_}=1 for @words;
 
 # check non-standard words
 my %not_standard_words = %words;
@@ -141,5 +145,15 @@ for (['CORE' => 1], ['CORE EXT' => 1],
 }
 
 die if (!Test::More->builder->is_passing && $ENV{DEBUG});
+
+# show gforth words that are not implemented
+my @gforth = split(" ", path("t/gforth.txt")->slurp);
+my @missing;
+for (@gforth) {
+	if (!exists $words{uc($_)} ) {
+		push(@missing, $_);
+	}
+}
+note "Gforth words missing ",scalar(@missing),": @missing";
 
 end_test;
