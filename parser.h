@@ -7,7 +7,7 @@
 #pragma once
 
 #include "forth.h"
-#include "str.h"
+#include "strings.h"
 #include <string>
 
 bool is_space(char c);

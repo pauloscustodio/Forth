@@ -7,7 +7,7 @@
 #include "facility.h"
 #include "forth.h"
 #include "kbd_input.h"
-#include "str.h"
+#include "strings.h"
 #include "vm.h"
 
 VM vm;
@@ -42,6 +42,8 @@ VM::VM() {
     dict_hi_mem = mid_mem;
     heap_lo_mem = mid_mem;
     heap_hi_mem = top;
+
+    substitutions.clear();
 
     // initilize dictionary and heap
     dict.init();

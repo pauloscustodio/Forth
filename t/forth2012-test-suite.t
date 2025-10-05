@@ -264,6 +264,29 @@ Search order: 0 4
 Definitions: 4 
 
 End of Search Order word tests
+**********
+End of String word tests
+
+---------------------------
+        Error Report
+Word Set             Errors
+---------------------------
+Core                    0
+Core extension          0
+Block                   0
+Double number           0
+Exception               0
+Facility                0
+File-access             0
+Locals                  0
+Memory-allocation       0
+Programming-tools       0
+Search-order            0
+String                  0
+---------------------------
+Total                   0
+---------------------------
+
 
 Forth tests completed 
 

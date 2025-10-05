@@ -6,7 +6,7 @@
 
 #include "environment.h"
 #include "forth.h"
-#include "str.h"
+#include "strings.h"
 #include "vm.h"
 #include <cfloat>
 #include <climits>
@@ -173,11 +173,11 @@ void f_environment_q(const std::string& query) {
         push(F_TRUE);
     }
     else if (case_insensitive_equal(query, "STRING")) {
-        push(F_FALSE);
+        push(F_TRUE);
         push(F_TRUE);
     }
     else if (case_insensitive_equal(query, "STRING-EXT")) {
-        push(F_FALSE);
+        push(F_TRUE);
         push(F_TRUE);
     }
     else {

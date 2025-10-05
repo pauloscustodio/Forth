@@ -132,20 +132,26 @@ void f_fill() {
     int c = pop();
     int n = pop();
     uint addr = pop();
-    memset(mem_char_ptr(addr, n), c, n);
+    if (n > 0) {
+        memset(mem_char_ptr(addr, n), c, n);
+    }
 }
 
 void f_erase() {
     int n = pop();
     uint addr = pop();
-    memset(mem_char_ptr(addr, n), 0, n);
+    if (n > 0) {
+        memset(mem_char_ptr(addr, n), 0, n);
+    }
 }
 
 void f_move() {
     int n = pop();
     int dst = pop();
     int src = pop();
-    memmove(mem_char_ptr(dst, n), mem_char_ptr(src, n), n);
+    if (n > 0) {
+        memmove(mem_char_ptr(dst, n), mem_char_ptr(src, n), n);
+    }
 }
 
 //-----------------------------------------------------------------------------

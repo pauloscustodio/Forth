@@ -37,7 +37,7 @@
     <ClInclude Include="..\..\output.h" />
     <ClInclude Include="..\..\parser.h" />
     <ClInclude Include="..\..\stack.h" />
-    <ClInclude Include="..\..\str.h" />
+    <ClInclude Include="..\..\strings.h" />
     <ClInclude Include="..\..\tools.h" />
     <ClInclude Include="..\..\vm.h" />
   </ItemGroup>
@@ -64,7 +64,7 @@
     <ClCompile Include="..\..\memory.cpp" />
     <ClCompile Include="..\..\output.cpp" />
     <ClCompile Include="..\..\parser.cpp" />
-    <ClCompile Include="..\..\str.cpp" />
+    <ClCompile Include="..\..\strings.cpp" />
     <ClCompile Include="..\..\tools.cpp" />
     <ClCompile Include="..\..\vm.cpp" />
   </ItemGroup>

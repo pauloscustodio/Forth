@@ -24,8 +24,8 @@ S" localstest.fth" INCLUDED
 S" memorytest.fth" INCLUDED
 S" toolstest.fth" INCLUDED
 S" searchordertest.fth" INCLUDED
-\ S" stringtest.fth" INCLUDED
-\ REPORT-ERRORS
+S" stringtest.fth" INCLUDED
+REPORT-ERRORS
 
 CR .( Forth tests completed ) CR CR
 

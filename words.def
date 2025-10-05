@@ -178,18 +178,6 @@ CODE(">NUMBER", TO_NUMBER, 0, f_to_number())
 CODE("CONVERT", CONVERT, 0, f_convert())
 
 
-// strings
-CODE("COUNT", COUNT, 0, f_count())
-CODE(".\"", DOT_QUOTE, F_IMMEDIATE, f_dot_quote())
-CODE("(.\")", XDOT_QUOTE, F_HIDDEN, f_xdot_quote())
-CODE("S\"", S_QUOTE, F_IMMEDIATE, f_s_quote())
-CODE("S\\\"", S_BACKSLASH_QUOTE, F_IMMEDIATE, f_s_backslash_quote())
-CODE("(S\")", XS_QUOTE, F_HIDDEN, f_xs_quote())
-CODE("C\"", C_QUOTE, F_IMMEDIATE, f_c_quote())
-CODE("(C\")", XC_QUOTE, F_HIDDEN, f_xc_quote())
-CODE(".(", DOT_PAREN, F_IMMEDIATE, f_dot_paren())
-
-
 // input
 VAR(">IN", TO_IN, 0, 0)
 VAR("#IN", NR_IN, 0, 0)
@@ -651,6 +639,29 @@ CODE("[ELSE]", BRACKET_ELSE, F_IMMEDIATE, /*nop*/)
 CODE("[THEN]", BRACKET_THEN, F_IMMEDIATE, /*nop*/)
 
 
+// strings
+CODE("COUNT", COUNT, 0, f_count())
+CODE(".\"", DOT_QUOTE, F_IMMEDIATE, f_dot_quote())
+CODE("(.\")", XDOT_QUOTE, F_HIDDEN, f_xdot_quote())
+CODE("S\"", S_QUOTE, F_IMMEDIATE, f_s_quote())
+CODE("S\\\"", S_BACKSLASH_QUOTE, F_IMMEDIATE, f_s_backslash_quote())
+CODE("(SLITERAL)", XSLITERAL, F_HIDDEN, f_xsliteral())
+CODE("C\"", C_QUOTE, F_IMMEDIATE, f_c_quote())
+CODE("(C\")", XC_QUOTE, F_HIDDEN, f_xc_quote())
+CODE(".(", DOT_PAREN, F_IMMEDIATE, f_dot_paren())
+CODE("-TRAILING", MINUS_TRAILING, 0, f_minus_trailing())
+CODE("/STRING", SLASH_STRING, 0, f_slash_string())
+CODE("BLANK", BLANK, 0, f_blank())
+CODE("CMOVE", CMOVE, 0, f_cmove())
+CODE("CMOVE>", CMOVE_TO, 0, f_cmove_to())
+CODE("COMPARE", COMPARE, 0, f_compare())
+CODE("SEARCH", SEARCH, 0, f_search())
+CODE("SLITERAL", SLITERAL, F_IMMEDIATE, f_sliteral())
+CODE("REPLACES", REPLACES, 0, f_replaces())
+CODE("SUBSTITUTE", SUBSTITUTE, 0, f_substitute())
+CODE("UNESCAPE", UNESCAPE, 0, f_unescape())
+
+
 // wordlists
 CODE("DEFINITIONS", DEFINITIONS, 0, f_definitions())
 CODE("WORDLIST", WORDLIST, 0, f_wordlist())
@@ -665,9 +676,6 @@ CODE("ONLY", ONLY, 0, f_only())
 CODE("ORDER", ORDER, 0, f_order())
 CODE("FORTH-WORDLIST", FORTH_WORDLIST, 0, push(SYSTEM_WID))
 CODE("FORTH", FORTH, 0, f_forth())
-
-// strings
-CODE("/STRING", SLASH_STRING, 0, f_slash_string())
 
 
 #undef CONST

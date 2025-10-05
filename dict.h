@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include "str.h"
+#include "strings.h"
 #include <string>
 #include <vector>
 

@@ -19,11 +19,11 @@ bool is_print(char c) {
 }
 
 void strip_blanks(const char*& str, uint& size) {
-    while (size > 0 && is_space(str[0])) {
-        str++;
+    while (size > 0 && is_space(str[size - 1])) {
         size--;
     }
-    while (size > 0 && is_space(str[size - 1])) {
+    while (size > 0 && is_space(str[0])) {
+        str++;
         size--;
     }
 }

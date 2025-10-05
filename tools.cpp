@@ -95,7 +95,7 @@ static std::vector<Line> disassemble(uint body, uint size) {
                                             mem_char_ptr(str_addr));
             line.text = std::string(indent, ' ') + ".\" " + message->to_string() + "\"";
         }
-        else if (xt == xtXS_QUOTE) {
+        else if (xt == xtXSLITERAL) {
             int str_addr = fetch(ptr);
             ptr += CELL_SZ;
             const LongString* message = reinterpret_cast<const LongString*>(

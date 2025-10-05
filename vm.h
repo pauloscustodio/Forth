@@ -13,7 +13,7 @@
 #include "memory.h"
 #include "output.h"
 #include "stack.h"
-#include "str.h"
+#include "strings.h"
 #include <set>
 #include <string>
 #include <unordered_map>
@@ -91,13 +91,16 @@ struct VM {
     uint heap_lo_mem, heap_hi_mem;      // memory limits for heap
 
     uint latest_word;                   // last defined word
-    std::vector<uint> wordlists;        // each wordlist latest word
-    // indexed by wid
+    // each wordlist latest word indexed by wid
+    std::vector<uint> wordlists;
     std::vector<uint> search_order;     // search order of wordlists
     uint definitions_wid;               // wid where definitions are stored
 
     uint here;			// point to next free position at bottom of memory
     uint names;			// point to last name created at top of memory
+
+    // list of substitutions
+    std::unordered_map<std::string, std::string> substitutions;
 
     Dict dict;
     Heap heap;
