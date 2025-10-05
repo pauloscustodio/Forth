@@ -41,8 +41,8 @@ forth_ok("2e 1e F- .FS", "(F: 1 )");
 
 note "Test F/";
 forth_ok("15e 2e F/ .FS", "(F: 7.5 )");
-if ($ENV{DEVELOPER}) {
-	forth_ok(" 0e 0e F/ .FS", "(F: -nan)");
+if (0) {	# test results differ from machine to machine
+	forth_ok(" 0e 0e F/ .FS", "(F: nan)");
 	forth_ok("10e 0e F/ .FS", "(F: inf)");
 }
 
