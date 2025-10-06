@@ -10,6 +10,7 @@
 #include "dict.h"
 #include "file.h"
 #include "input.h"
+#include "locals.h"
 #include "memory.h"
 #include "output.h"
 #include "stack.h"
@@ -52,9 +53,8 @@ struct VM {
     char* block_data{ nullptr };
     Blocks blocks;
 
-    // locals - map name to bp - index, index 1 based
-    uint last_local_index{ 0 };
-    std::unordered_map<std::string, uint> locals;
+    // locals
+    Locals locals;
 
     // memory
     Mem mem;
@@ -81,6 +81,10 @@ struct VM {
     // floating point stack
     DownwardStack<double> f_stack{ 'F',
         Error::FloatStackUnderflow, Error::FloatStackOverflow };
+
+    // local variables stack
+    DownwardStack<int> locals_stack{ 'L',
+        Error::LocalsStackUnderflow, Error::LocalsStackOverflow };
 
     // condititional execution
     std::vector<bool> skipping_stack;   // stack of skipping states

@@ -433,12 +433,12 @@ void f_to() {
         error(Error::AttemptToUseZeroLengthStringAsName);
     }
 
-    uint index = 0;
-    if (find_local(name->str(), name->size(), index)) { // local found
+    VarName vname;
+    if (find_local(name->str(), name->size(), vname)) { // local found
         if (vm.user->STATE == STATE_COMPILE) {
             comma(xtXLITERAL);
-            comma(index);
-            comma(xtPAREN_SET_LOCAL);
+            comma(vname.index);
+            comma(xtXSET_LOCAL);
         }
         else {
             error(Error::InterpretingACompileOnlyWord, name->to_string());
@@ -504,7 +504,7 @@ void f_fconstant() {
 }
 
 void f_does() {
-    clear_locals();
+    vm.locals.clear();
 
     Header* header = reinterpret_cast<Header*>(
                          mem_char_ptr(vm.latest_word));

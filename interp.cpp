@@ -24,17 +24,17 @@ void f_interpret_word(const char* word, uint size) {
         bool is_double = false;
         dint dvalue = 0;
         double fvalue = 0.0;
-        uint index;
+        VarName vname;
 
         Header* header = vm.dict.find_word(word, size);
-        if (find_local(word, size, index)) { // local found
+        if (find_local(word, size, vname)) { // local found
             if (vm.user->STATE == STATE_INTERPRET) {
                 error(Error::InterpretingACompileOnlyWord, std::string(word, word + size));
             }
             else {
                 comma(xtXLITERAL);
-                comma(index);
-                comma(xtPAREN_GET_LOCAL);
+                comma(vname.index);
+                comma(xtXGET_LOCAL);
             }
         }
         else if (header) {	// word found
@@ -198,22 +198,15 @@ void f_quit() {
 }
 
 void enter_func(uint called_ip) {
-    r_push(vm.ip);              // return address
-
-    uint bp = vm.r_stack.bp();  // get current bp
-    r_push(bp);                 // save it
-    uint sp = vm.r_stack.sp();  // get sp
-    vm.r_stack.set_bp(sp);      // set new bp to sp
-
+    r_push(vm.ip);                  // return address
     vm.ip = called_ip;
+
+    vm.locals.enter_frame();
 }
 
 void leave_func() {
-    uint sp = vm.r_stack.bp();  // recover sp where bp is stored
-    vm.r_stack.set_sp(sp);      // shrink stack
-    uint bp = r_pop();          // get old bp
-    vm.r_stack.set_bp(bp);
+    vm.ip = r_pop();                // recover return address
 
-    vm.ip = r_pop();            // recover return address
+    vm.locals.leave_frame();
 }
 

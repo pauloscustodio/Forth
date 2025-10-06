@@ -594,11 +594,14 @@ CODE("SET-PRECISION", SET_PRECISION, 0, uint p = pop(); if (p < 1) p = 1; if (p 
 
 // locals
 CODE("(LOCAL)", PAREN_LOCAL, 0, f_paren_local())
-CODE("(GET_LOCAL)", PAREN_GET_LOCAL, F_HIDDEN, uint index = pop(); push(vm.r_stack.get_local(index)))
-CODE("(SET_LOCAL)", PAREN_SET_LOCAL, F_HIDDEN, uint index = pop(); int value = pop(); vm.r_stack.set_local(index, value))
 CODE("LOCALS|", LOCALS_BAR, F_IMMEDIATE, f_locals_bar())
-CODE("{:", LOCALS_BRACKET, F_IMMEDIATE, f_locals_bracket())
-
+CODE("{:", LOCALS_BRACKET_COLON, F_IMMEDIATE, f_locals_bracket())   // ANS
+CODE("{", LOCALS_BRACKET, F_IMMEDIATE, f_locals_bracket())          // Gforth
+CODE("(GET_LOCAL)", XGET_LOCAL, F_HIDDEN, uint index = pop(); vm.locals.get_local(index))
+CODE("(SET_LOCAL)", XSET_LOCAL, F_HIDDEN, uint index = pop(); vm.locals.set_local(index))
+CODE("(W>LOCAL)", XW_TO_LOCAL, F_HIDDEN, vm.locals.init_int_local())
+CODE("(D>LOCAL)", XD_TO_LOCAL, F_HIDDEN, vm.locals.init_dint_local())
+CODE("(F>LOCAL)", XF_TO_LOCAL, F_HIDDEN, vm.locals.init_float_local())
 
 // memory allocation
 CODE("ALLOCATE", ALLOCATE, 0, f_allocate())

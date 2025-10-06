@@ -16,7 +16,7 @@ void f_colon() {
         error(Error::CompilerNesting);
     }
 
-    clear_locals();
+    vm.locals.clear();
 
     cs_dpush(mk_dcell(POS_COLON_START, 0));
     vm.dict.parse_create(idXDOCOL, F_SMUDGE);
@@ -32,7 +32,7 @@ void f_colon_noname() {
         error(Error::CompilerNesting);
     }
 
-    clear_locals();
+    vm.locals.clear();
 
     cs_dpush(mk_dcell(POS_COLON_START, 0));
     vm.dict.create("", F_SMUDGE, idXDOCOL);
@@ -57,7 +57,7 @@ void f_semicolon() {
     }
     cs_dpop();
 
-    clear_locals();
+    vm.locals.clear();
 
     comma(xtEXIT);
     Header* header = reinterpret_cast<Header*>(

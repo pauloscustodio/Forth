@@ -100,5 +100,7 @@ X(-261, DuplicateDefinition, "duplicate definition")
 X(-262, ConditionalCompilationStackUnderflow, "conditional compilation stack underflow")
 X(-263, ConditionalCompilationStackOverflow, "conditional compilation stack overflow")
 X(-264, UnmatchedConditionalCompilation, "unmatched conditional compilation")
+X(-265, LocalsStackUnderflow, "locals stack underflow")
+X(-266, LocalsStackOverflow, "locals stack overflow")
 
 #undef X

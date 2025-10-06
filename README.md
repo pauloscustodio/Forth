@@ -152,7 +152,7 @@ NOT STANDARD:
     F0> F0>= F<= F<> F= F> F>= FS-DIRECTORY FS-EXECUTABLE FS-EXISTS
     FS-READABLE FS-REGULAR FS-SYMLINK FS-WRITABLE INTERPRET LATEST NUMBER
     NUMBER? OFF ON PARSE-WORD QUERY R0 RDROP RSP! RSP@ S0 SP! SP@ SPAN TIB
-    TRACE U<= U>=
+    TRACE U<= U>= {
 ```
 
 # Documentation of not standard words
@@ -513,6 +513,12 @@ triggers an error.
 ( xt -- nt )
 
 Convert an execution token into a name token, the inverse of NAME>INTERPRTET.
+
+## {
+( "a b c | d e f -- x y z }" )
+
+Same as {:, define local variables a b c from stack, define local variables 
+d e f as zero.
 
 #
 
