@@ -182,7 +182,7 @@ L1:
 ;
 
 const ten
-00008e60                          0a 00 00 00                       ....    
+10 
 END
 
 forth_ok(<<'END', <<'END');
@@ -337,8 +337,7 @@ forth_ok("123 CONSTANT x 16 ALLOT SEE x", <<'END');
 
 123 CONSTANT x
 
-00008e20                                      00 00 00 00               ....
-00008e30  00 00 00 00 00 00 00 00 00 00 00 00               ............    
+0 0 0 0 
 END
 
 forth_ok("123. 2CONSTANT xx SEE xx", <<'END');
@@ -355,7 +354,7 @@ forth_ok("123. 2CONSTANT xx 16 ALLOT SEE xx", <<'END');
 
 123. 2CONSTANT xx
 
-00008e30  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
+0 0 0 0 
 END
 
 forth_ok("VARIABLE x  123 x !  SEE x", <<'END');
@@ -376,8 +375,7 @@ END
 forth_ok("2VARIABLE x  123. x 2! 16 ALLOT  SEE x", <<'END');
 
 CREATE x 
-00008e20                          00 00 00 00 7b 00 00 00           ....{...
-00008e30  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
+0 123 0 0 0 0 
 END
 
 forth_ok(<<'END', <<'END');
@@ -400,11 +398,11 @@ END
 forth_ok("MARKER x SEE x UNUSED 1024 / . 'k' EMIT CR", <<'END');
 
 MARKER x
-Latest:    36328 
-Here:      36360 
-Names:     1054096 
-Wordlists: 36328 
-993 k
+Latest:    36136 
+Here:      36168 
+Names:     1054136 
+Wordlists: 36136 
+994 k
 END
 
 note "Test TRACE";

@@ -156,15 +156,15 @@ int pop() {
     return vm.stack.pop();
 }
 
-int peek(int depth) {
+int peek(uint depth) {
     return vm.stack.peek(depth);
 }
 
-int depth() {
-    return vm.stack.depth();
+uint depth() {
+    return vm.stack.size();
 }
 
-void roll(int depth) {
+void roll(uint depth) {
     vm.stack.roll(depth);
 }
 
@@ -179,7 +179,7 @@ dint dpop() {
     return mk_dcell(hi, lo);
 }
 
-dint dpeek(int depth) {
+dint dpeek(uint depth) {
     int hi = vm.stack.peek(2 * depth);
     int lo = vm.stack.peek(2 * depth + 1);
     return mk_dcell(hi, lo);
@@ -193,12 +193,12 @@ int r_pop() {
     return vm.r_stack.pop();
 }
 
-int r_peek(int depth) {
+int r_peek(uint depth) {
     return vm.r_stack.peek(depth);
 }
 
-int r_depth() {
-    return vm.r_stack.depth();
+uint r_depth() {
+    return vm.r_stack.size();
 }
 
 void r_dpush(dint value) {
@@ -212,7 +212,7 @@ dint r_dpop() {
     return mk_dcell(hi, lo);
 }
 
-dint r_dpeek(int depth) {
+dint r_dpeek(uint depth) {
     int hi = vm.r_stack.peek(2 * depth);
     int lo = vm.r_stack.peek(2 * depth + 1);
     return mk_dcell(hi, lo);
@@ -229,26 +229,26 @@ dint cs_dpop() {
     return mk_dcell(hi, lo);
 }
 
-dint cs_dpeek(int depth) {
+dint cs_dpeek(uint depth) {
     int hi = vm.cs_stack.peek(2 * depth);
     int lo = vm.cs_stack.peek(2 * depth + 1);
     return mk_dcell(hi, lo);
 }
 
-void cs_droll(int depth) {
+void cs_droll(uint depth) {
     std::vector<dint> save;
-    for (int i = 0; i < depth; ++i) {
+    for (uint i = 0; i < depth; ++i) {
         save.push_back(cs_dpop());
     }
     dint value = cs_dpop();
-    for (int i = depth - 1; i >= 0; --i) {
+    for (uint i = depth - 1; i < depth; --i) {
         cs_dpush(save[i]);
     }
     cs_dpush(value);
 }
 
-int cs_ddepth() {
-    return vm.cs_stack.depth() / 2;
+uint cs_ddepth() {
+    return vm.cs_stack.size() / 2;
 }
 
 void fpush(double value) {
@@ -259,12 +259,12 @@ double fpop() {
     return vm.f_stack.pop();
 }
 
-double fpeek(int depth) {
+double fpeek(uint depth) {
     return vm.f_stack.peek(depth);
 }
 
-int fdepth() {
-    return vm.f_stack.depth();
+uint fdepth() {
+    return vm.f_stack.size();
 }
 
 void init_conditional() {

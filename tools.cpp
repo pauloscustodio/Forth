@@ -208,7 +208,11 @@ static void dump_colon_definition(uint body, uint size) {
 }
 
 void dump_body_definition(uint body, uint size) {
-    f_dump(mem_char_ptr(body, size), size);
+    std::cout << std::endl;
+    for (uint ptr = body; ptr < body + size; ptr += CELL_SZ) {
+        std::cout << fetch(ptr) << BL;
+    }
+    std::cout << std::endl;
 }
 
 void f_see() {

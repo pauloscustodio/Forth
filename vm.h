@@ -63,28 +63,19 @@ struct VM {
     User* user;
 
     // data stack
-    DownwardStack<int> stack{ '\0',
-        Error::StackUnderflow, Error::StackOverflow };
+    Stack<int> stack{ '\0', Error::StackUnderflow };
 
     // return stack
-    DownwardStack<int> r_stack{ 'R',
-        Error::ReturnStackUnderflow, Error::ReturnStackOverflow };
+    Stack<int> r_stack{ 'R', Error::ReturnStackUnderflow };
 
     // control stack
-    DownwardStack<int> cs_stack{ 'C',
-        Error::ControlFlowStackUnderflow, Error::ControlFlowStackOverflow };
+    Stack<int> cs_stack{ 'C', Error::ControlFlowStackUnderflow };
 
     // exception stack
-    DownwardStack<int> except_stack{ 'E',
-        Error::ExceptionStackUnderflow, Error::ExceptionStackOverflow };
+    Stack<int> except_stack{ 'E', Error::ExceptionStackUnderflow };
 
     // floating point stack
-    DownwardStack<double> f_stack{ 'F',
-        Error::FloatStackUnderflow, Error::FloatStackOverflow };
-
-    // local variables stack
-    DownwardStack<int> locals_stack{ 'L',
-        Error::LocalsStackUnderflow, Error::LocalsStackOverflow };
+    Stack<double> f_stack{ 'F', Error::FloatStackUnderflow };
 
     // condititional execution
     std::vector<bool> skipping_stack;   // stack of skipping states
@@ -149,22 +140,22 @@ void align();
 // stacks
 void push(int value);
 int pop();
-int peek(int depth = 0);
-int depth();
-void roll(int depth);
+int peek(uint depth = 0);
+uint depth();
+void roll(uint depth);
 
 void dpush(dint value);
 dint dpop();
-dint dpeek(int depth = 0);
+dint dpeek(uint depth = 0);
 
 void r_push(int value);
 int r_pop();
-int r_peek(int depth = 0);
-int r_depth();
+int r_peek(uint depth = 0);
+uint r_depth();
 
 void r_dpush(dint value);
 dint r_dpop();
-dint r_dpeek(int depth = 0);
+dint r_dpeek(uint depth = 0);
 
 enum {
     POS_COLON_START, POS_BEGIN_START, POS_DO_START, POS_CASE_START,
@@ -178,14 +169,14 @@ enum {
 
 void cs_dpush(dint pos_addr);
 dint cs_dpop();
-dint cs_dpeek(int depth = 0);
-void cs_droll(int depth);
-int cs_ddepth();
+dint cs_dpeek(uint depth = 0);
+void cs_droll(uint depth);
+uint cs_ddepth();
 
 void fpush(double value);
 double fpop();
-double fpeek(int depth = 0);
-int fdepth();
+double fpeek(uint depth = 0);
+uint fdepth();
 
 void init_conditional();
 void end_conditional();

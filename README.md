@@ -151,8 +151,7 @@ NOT STANDARD:
     D0<= D0<> D0> D0>= D<= D<> D> D>= DPL DU<= DU> DU>= EXPECT F0<= F0<>
     F0> F0>= F<= F<> F= F> F>= FS-DIRECTORY FS-EXECUTABLE FS-EXISTS
     FS-READABLE FS-REGULAR FS-SYMLINK FS-WRITABLE INTERPRET LATEST NUMBER
-    NUMBER? OFF ON PARSE-WORD QUERY R0 RDROP RSP! RSP@ S0 SP! SP@ SPAN TIB
-    TRACE U<= U>= {
+    NUMBER? OFF ON PARSE-WORD QUERY RDROP SPAN TIB TRACE U<= U>= {
 ```
 
 # Documentation of not standard words
@@ -398,36 +397,6 @@ a-addr is the address of a cell variable. ON sets the variable to TRUE (-1).
 ( a-addr -- )
 
 a-addr is the address of a cell variable. OFF sets the variable to FALSE (0).
-
-## SP@
-( -- n )
-
-Return the current value of the stack pointer.
-
-## SP!
-( n -- )
-
-Sets the value of the stack pointer.
-
-## S0
-( -- n )
-
-Returns the value that when used by SP! clears the stack.
-
-## RSP@
-( -- n )
-
-Return the current value of the return stack pointer.
-
-## RSP!
-( n -- )
-
-Sets the value of the return stack pointer.
-
-## R0
-( -- n )
-
-Returns the value that when used by RSP! clears the return stack.
 
 ## RDROP
 (R: x -- )

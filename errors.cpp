@@ -73,11 +73,10 @@ void f_catch() {
 }
 
 void f_catch(uint xt) {
-    vm.except_stack.push(vm.r_stack.sp());
-    vm.except_stack.push(vm.r_stack.bp());
+    vm.except_stack.push(vm.r_stack.size());
     vm.except_stack.push(vm.locals.size());
     vm.except_stack.push(vm.locals.frame());
-    vm.except_stack.push(vm.stack.sp());
+    vm.except_stack.push(vm.stack.size());
     vm.except_stack.push(vm.input.input_level());
     vm.except_stack.push(vm.ip);
 
@@ -88,11 +87,10 @@ void f_catch(uint xt) {
     catch (ThrowException& e) {
         vm.ip = vm.except_stack.pop(); // restore instruction pointer
         vm.input.restore_input(vm.except_stack.pop());
-        vm.stack.set_sp(vm.except_stack.pop()); // restore data stack pointer
+        vm.stack.resize(vm.except_stack.pop()); // restore data stack pointer
         vm.locals.set_frame(vm.except_stack.pop()); // restore locals frame
         vm.locals.resize(vm.except_stack.pop()); // restore locals stack
-        vm.r_stack.set_bp(vm.except_stack.pop()); // restore return base pointer
-        vm.r_stack.set_sp(vm.except_stack.pop()); // restore return stack pointer
+        vm.r_stack.resize(vm.except_stack.pop()); // restore return stack pointer
 
         catch_result = e.error_code;
     }
@@ -116,7 +114,7 @@ void f_throw(int error_code) {
         return;
     }
 
-    if (vm.except_stack.depth() == 0) {
+    if (vm.except_stack.empty()) {
         exit_error(error_code, vm.error_message);
     }
     else {

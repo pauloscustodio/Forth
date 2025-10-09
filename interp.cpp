@@ -26,7 +26,6 @@ void f_interpret_word(const char* word, uint size) {
         double fvalue = 0.0;
         VarName vname;
 
-        Header* header = vm.dict.find_word(word, size);
         if (find_local(word, size, vname)) { // local found
             if (vm.user->STATE == STATE_INTERPRET) {
                 error(Error::InterpretingACompileOnlyWord, std::string(word, word + size));
@@ -37,64 +36,68 @@ void f_interpret_word(const char* word, uint size) {
                 comma(xtXGET_LOCAL);
             }
         }
-        else if (header) {	// word found
-            uint xt = header->xt();
-            if (header->flags.immediate || vm.user->STATE == STATE_INTERPRET) {
-                f_execute(xt);
-            }
-            else {
-                comma(xt);
-            }
-        }
-        else if (parse_float(word, size, fvalue, true)) {
-            if (vm.user->STATE == STATE_INTERPRET) {
-                fpush(fvalue);
-
-                if (vm.user->TRACE) {
-                    std::cout << ">>" << BL << fvalue << BL;
-                    vm.f_stack.print_debug();
-                    std::cout << std::endl;
-                }
-            }
-            else {
-                comma(xtXFLITERAL);
-                fcomma(fvalue);
-            }
-        }
-        else if (parse_number(word, size, is_double, dvalue)) {
-            if (is_double) { // double cell
-                if (vm.user->STATE == STATE_INTERPRET) {
-                    dpush(dvalue);
-
-                    if (vm.user->TRACE) {
-                        std::cout << ">>" << BL << dvalue << BL;
-                        vm.stack.print_debug();
-                        std::cout << std::endl;
-                    }
-                }
-                else {
-                    comma(xtX2LITERAL);
-                    dcomma(dvalue);
-                }
-            }
-            else { // single cell
-                if (vm.user->STATE == STATE_INTERPRET) {
-                    push(dcell_lo(dvalue));
-
-                    if (vm.user->TRACE) {
-                        std::cout << ">>" << BL << dcell_lo(dvalue) << BL;
-                        vm.stack.print_debug();
-                        std::cout << std::endl;
-                    }
-                }
-                else {
-                    comma(xtXLITERAL);
-                    comma(dcell_lo(dvalue));
-                }
-            }
-        }
         else {
-            error(Error::UndefinedWord, std::string(word, word + size));
+            Header* header = vm.dict.find_word(word, size);
+            if (header) {	// word found
+                uint xt = header->xt();
+                if (header->flags.immediate ||
+                        vm.user->STATE == STATE_INTERPRET) {
+                    f_execute(xt);
+                }
+                else {
+                    comma(xt);
+                }
+            }
+            else if (parse_float(word, size, fvalue, true)) {
+                if (vm.user->STATE == STATE_INTERPRET) {
+                    fpush(fvalue);
+
+                    if (vm.user->TRACE) {
+                        std::cout << ">>" << BL << fvalue << BL;
+                        vm.f_stack.print_debug();
+                        std::cout << std::endl;
+                    }
+                }
+                else {
+                    comma(xtXFLITERAL);
+                    fcomma(fvalue);
+                }
+            }
+            else if (parse_number(word, size, is_double, dvalue)) {
+                if (is_double) { // double cell
+                    if (vm.user->STATE == STATE_INTERPRET) {
+                        dpush(dvalue);
+
+                        if (vm.user->TRACE) {
+                            std::cout << ">>" << BL << dvalue << BL;
+                            vm.stack.print_debug();
+                            std::cout << std::endl;
+                        }
+                    }
+                    else {
+                        comma(xtX2LITERAL);
+                        dcomma(dvalue);
+                    }
+                }
+                else { // single cell
+                    if (vm.user->STATE == STATE_INTERPRET) {
+                        push(dcell_lo(dvalue));
+
+                        if (vm.user->TRACE) {
+                            std::cout << ">>" << BL << dcell_lo(dvalue) << BL;
+                            vm.stack.print_debug();
+                            std::cout << std::endl;
+                        }
+                    }
+                    else {
+                        comma(xtXLITERAL);
+                        comma(dcell_lo(dvalue));
+                    }
+                }
+            }
+            else {
+                error(Error::UndefinedWord, std::string(word, word + size));
+            }
         }
     }
 }

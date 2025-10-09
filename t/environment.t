@@ -39,8 +39,8 @@ forth_ok('S" MAX-D" 			ENVIRONMENT? .S', "( -1 2147483647 -1 )");
 forth_ok('S" MAX-N" 			ENVIRONMENT? .S', "( 2147483647 -1 )");
 forth_ok('S" MAX-U" 			ENVIRONMENT? .S', "( -1 -1 )");
 forth_ok('S" MAX-UD" 			ENVIRONMENT? .S', "( -1 -1 -1 )");
-forth_ok('S" RETURN-STACK-CELLS"ENVIRONMENT? .S', "( 65536 -1 )");
-forth_ok('S" STACK-CELLS" 		ENVIRONMENT? .S', "( 65536 -1 )");
+forth_ok('S" RETURN-STACK-CELLS"ENVIRONMENT? .S', "( 2147483647 -1 )");
+forth_ok('S" STACK-CELLS" 		ENVIRONMENT? .S', "( 2147483647 -1 )");
 
 # deprecated queries
 forth_ok('S" CORE" 				ENVIRONMENT? .S', "( -1 -1 )");
@@ -57,17 +57,17 @@ forth_ok('S" FILE" 				ENVIRONMENT? .S', "( -1 -1 )");
 forth_ok('S" FILE-EXT" 			ENVIRONMENT? .S', "( -1 -1 )");
 forth_ok('S" FLOATING" 			ENVIRONMENT? .S', "( -1 -1 )");
 forth_ok('S" FLOATING-EXT" 		ENVIRONMENT? .S', "( -1 -1 )");
-forth_ok('S" FLOATING-STACK" 	ENVIRONMENT? .S', "( 65536 -1 )");
+forth_ok('S" FLOATING-STACK" 	ENVIRONMENT? .S', "( 2147483647 -1 )");
 forth_ok('S" MAX-FLOAT" 		ENVIRONMENT? .S .FS', "( -1 ) (F: 1.79769e+308 )");
 forth_ok('S" LOCAL" 			ENVIRONMENT? .S', "( -1 -1 )");
 forth_ok('S" LOCAL-EXT" 		ENVIRONMENT? .S', "( -1 -1 )");
-forth_ok('S" #LOCALS" 			ENVIRONMENT? .S', "( 65536 -1 )");
+forth_ok('S" #LOCALS" 			ENVIRONMENT? .S', "( 2147483647 -1 )");
 forth_ok('S" MEMORY"      		ENVIRONMENT? .S', "( -1 -1 )");
 forth_ok('S" TOOLS" 			ENVIRONMENT? .S', "( -1 -1 )");
 forth_ok('S" TOOLS-EXT" 		ENVIRONMENT? .S', "( -1 -1 )");
 forth_ok('S" SEARCH-ORDER" 		ENVIRONMENT? .S', "( -1 -1 )");
 forth_ok('S" SEARCH-ORDER-EXT" 	ENVIRONMENT? .S', "( -1 -1 )");
-forth_ok('S" WORDLISTS" 		ENVIRONMENT? .S', "( 65536 -1 )");
+forth_ok('S" WORDLISTS" 		ENVIRONMENT? .S', "( 2147483647 -1 )");
 forth_ok('S" STRING" 	 		ENVIRONMENT? .S', "( -1 -1 )");
 forth_ok('S" STRING-EXT" 		ENVIRONMENT? .S', "( -1 -1 )");
 

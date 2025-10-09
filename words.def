@@ -125,10 +125,6 @@ CODE("2OVER", TWO_OVER, 0, push(peek(3)); push(peek(3)))
 CODE("2ROT", TWO_ROT, 0, dint c = dpop(); dint b = dpop(); dint a = dpop(); dpush(b); dpush(c); dpush(a))
 CODE("-2ROT", MINUS_2ROT, 0, dint c = dpop(); dint b = dpop(); dint a = dpop(); dpush(c); dpush(a); dpush(b))
 
-CONST("S0", S0, 0, STACK_SZ)
-CODE("SP@", SPFETCH, 0, push(vm.stack.sp()))
-CODE("SP!", SPSTORE, 0, vm.stack.set_sp(pop()))
-
 
 // return stack
 CODE(">R", TOR, 0, r_push(pop()))
@@ -140,10 +136,6 @@ CODE("2>R", TWO_TO_R, 0, r_dpush(dpop()))
 CODE("2R>", TWO_R_TO, 0, dpush(r_dpop()))
 CODE("2R@", TWO_R_FETCH, 0, dpush(r_dpeek(0)))
 CODE("RDROP", RDROP, 0, r_pop())
-
-CONST("R0", R0, 0, STACK_SZ)
-CODE("RSP@", RSP_FETCH, 0, push(vm.r_stack.sp()))
-CODE("RSP!", RSP_STORE, 0, vm.r_stack.set_sp(pop()))
 
 
 // dictionary

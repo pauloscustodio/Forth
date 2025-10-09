@@ -11,131 +11,90 @@
 #include <iostream>
 #include <memory>
 #include <string>
+#include <vector>
 
 template<typename T>
-class DownwardStack {
+class Stack {
 public:
-    DownwardStack(char prefix, Error err_underflow, Error err_overflow,
-                  uint initial_capacity = 8)
+    Stack(char prefix, Error err_underflow)
         : prefix_(prefix),
           err_underflow_(err_underflow),
-          err_overflow_(err_overflow),
-          buffer_(new T[initial_capacity]),
-          capacity_(initial_capacity),
-          size_(0),
-          base_(0) {
+          sp_(0) {
     }
 
     void clear() {
-        size_ = 0;
+        sp_ = 0;    // keep the data for catch
     }
 
-    bool is_empty() const {
-        return size_ == 0;
+    uint size() const {
+        return static_cast<uint>(sp_);
     }
 
-    int depth() const {
-        return size_;
+    bool empty() const {
+        return sp_ == 0;
     }
 
-    uint sp() const {
-        return STACK_SZ - size_;
-    }
-
-    void set_sp(uint new_sp) {
-        if (new_sp < STACK_SZ - capacity_ || new_sp > STACK_SZ) {
-            error(Error::InvalidMemoryAddress);
+    void resize(uint new_size) {
+        if (new_size > data_.size()) {
+            data_.resize(new_size);
         }
-        size_ = STACK_SZ - new_sp;
-    }
-
-    uint bp() const {
-        return STACK_SZ - base_;
-    }
-
-    void set_bp(uint new_bp) {
-        if (new_bp < STACK_SZ - capacity_ || new_bp > STACK_SZ) {
-            error(Error::InvalidMemoryAddress);
-        }
-        base_ = STACK_SZ - new_bp;
-    }
-
-    // idx starts at 1, at 0 BP is saved
-    void set_local(uint idx, const T& value) {
-        uint locals_size = size_ - base_;
-        int depth = locals_size - idx;
-        return poke(depth, value);
-    }
-
-    const T& get_local(uint idx) {
-        uint locals_size = size_ - base_;
-        int depth = locals_size - idx;
-        return peek(depth);
+        sp_ = new_size;
     }
 
     void push(const T& value) {
-        if (size_ == capacity_) {
-            grow();
+        if (sp_ < data_.size()) {
+            data_[sp_++] = value;
         }
-        ++size_;
-        buffer_[index()] = value;
+        else {
+            data_.push_back(value);
+            sp_ = data_.size();
+        }
     }
 
     T pop() {
-        if (size_ == 0) {
+        if (empty()) {
             error(err_underflow_);
         }
-        T value = buffer_[index()];
-        --size_;
+        T value = data_[--sp_];
         return value;
     }
 
-    const T& peek(int depth = 0) const {
+    const T& peek(uint depth = 0) const {
         static T empty{};
-        if (depth < 0) {
-            error(Error::InvalidMemoryAddress);
-            return empty;
-        }
-        else if (static_cast<uint>(depth) >= size_) {
+        if (depth >= sp_) {
             error(err_underflow_);
             return empty;
         }
         else {
-            uint idx = index() + depth;
-            return buffer_[idx];
+            size_t idx = sp_ - 1 - depth;
+            return data_[idx];
         }
     }
 
-    void poke(int depth, const T& value) {
-        if (depth < 0) {
-            error(Error::InvalidMemoryAddress);
-        }
-        else if (static_cast<uint>(depth) >= size_) {
+    void poke(uint depth, const T& value) {
+        if (depth >= sp_) {
             error(err_underflow_);
         }
         else {
-            uint idx = index() + depth;
-            buffer_[idx] = value;
+            size_t idx = sp_ - 1 - depth;
+            data_[idx] = value;
         }
     }
 
-    void roll(int depth) {
-        if (depth < 0) {
-            error(Error::InvalidMemoryAddress);
-        }
-        else if (static_cast<uint>(depth) >= size_) {
+    void roll(uint depth) {
+        if (depth >= sp_) {
             error(err_underflow_);
         }
         if (depth == 0) {
             ; // ignore
         }
         else {
-            uint idx = index() + depth;
-            T value = buffer_[idx];
-            for (uint i = idx; i > index(); --i) {
-                buffer_[i] = buffer_[i - 1];
+            size_t idx = sp_ - 1 - depth;
+            T value = data_[idx];
+            for (size_t i = idx + 1; i < sp_; ++i) {
+                data_[i - 1] = data_[i];
             }
-            buffer_[index()] = value;
+            data_[sp_ - 1] = value;
         }
     }
 
@@ -145,8 +104,8 @@ public:
             std::cout << prefix_ << ":";
         }
         std::cout << BL;
-        for (uint i = 0; i < size_; ++i) {
-            print_number(buffer_[capacity_ - 1 - i]);
+        for (uint i = 0; i < sp_; ++i) {
+            print_number(data_[i]);
         }
         std::cout << ") ";
     }
@@ -157,13 +116,8 @@ public:
             std::cout << prefix_ << ":";
         }
         std::cout << BL;
-        for (uint i = 0; i < size_; ++i) {
-            // do not print -0
-            T v = buffer_[capacity_ - 1 - i];
-            if (v == 0) {
-                v = 0;
-            }
-            std::cout << v << BL;
+        for (uint i = 0; i < sp_; ++i) {
+            std::cout << data_[i] << BL;
         }
         std::cout << ") ";
     }
@@ -171,26 +125,6 @@ public:
 private:
     char prefix_;
     Error err_underflow_;
-    Error err_overflow_;
-    std::unique_ptr<T[]> buffer_;
-    uint capacity_;
-    uint size_;
-    uint base_;
-
-    uint index() const {
-        return capacity_ - size_;
-    }
-
-    void grow() {
-        uint new_capacity = capacity_ * 2;
-        std::unique_ptr<T[]> new_buffer(new T[new_capacity]);
-
-        for (uint i = 0; i < size_; ++i) {
-            new_buffer[new_capacity - 1 - i] =
-                buffer_[capacity_ - 1 - i];
-        }
-
-        buffer_ = std::move(new_buffer);
-        capacity_ = new_capacity;
-    }
+    std::vector<T> data_;
+    size_t sp_;
 };
