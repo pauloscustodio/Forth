@@ -32,6 +32,13 @@ struct VarValue {
 class Locals {
 public:
     void clear();
+
+    uint size() const;
+    void resize(uint size);
+
+    uint frame() const;
+    void set_frame(uint frame);
+
     void enter_frame();
     void leave_frame();
 
@@ -44,14 +51,14 @@ public:
     void get_local(uint index);
     void set_local(uint index);
 
-    bool find_local(const std::string& name, VarName& vname);
+    bool find_local(const std::string& name, VarName& vname) const;
 
     void parse_declaration();
 
 private:
-    std::vector<VarValue> vars;
-    size_t frame{ 0 };
-    std::unordered_map<std::string, VarName> names;
+    std::vector<VarValue> vars_;
+    size_t frame_{ 0 };
+    std::unordered_map<std::string, VarName> names_;
 
 };
 

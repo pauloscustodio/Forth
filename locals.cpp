@@ -12,45 +12,61 @@
 #include <vector>
 
 void Locals::clear() {
-    vars.clear();
-    frame = 0;
-    names.clear();
+    vars_.clear();
+    frame_ = 0;
+    names_.clear();
+}
+
+uint Locals::size() const {
+    return static_cast<uint>(vars_.size());
+}
+
+void Locals::resize(uint size) {
+    vars_.resize(size);
+}
+
+uint Locals::frame() const {
+    return static_cast<uint>(frame_);
+}
+
+void Locals::set_frame(uint frame) {
+    frame_ = frame;
 }
 
 void Locals::enter_frame() {
     VarValue v;
     v.type = VarType::Frame;
-    v.value.frame = frame;
-    frame = vars.size() + 1;
-    vars.push_back(v);
+    v.value.frame = frame_;
+    frame_ = vars_.size() + 1;
+    vars_.push_back(v);
 }
 
 void Locals::leave_frame() {
-    if (vars.empty()) {
-        // no frame to leave
-        frame = 0;
+    if (vars_.empty()) {
+        // no frame_ to leave
+        frame_ = 0;
     }
     else {
-        // remove all vars in current frame
-        vars.resize(frame);
-        frame = vars.back().value.frame;
-        vars.pop_back();
+        // remove all vars_ in current frame_
+        vars_.resize(frame_);
+        frame_ = vars_.back().value.frame;
+        vars_.pop_back();
     }
 }
 
 void Locals::add_local(const std::string& name, VarType type) {
-    auto it = names.find(to_upper(name));
-    if (it != names.end()) {
+    auto it = names_.find(to_upper(name));
+    if (it != names_.end()) {
         error(Error::DuplicateDefinition, name);
     }
 
-    uint index = static_cast<uint>(names.size());
+    uint index = static_cast<uint>(names_.size());
 
     VarName vname;
     vname.type = type;
     vname.name = name;
     vname.index = index;
-    names[to_upper(name)] = vname;
+    names_[to_upper(name)] = vname;
 
     switch (vname.type) {
     case VarType::Int:
@@ -72,7 +88,7 @@ void Locals::init_int_local() {
     VarValue vv;
     vv.type = VarType::Int;
     vv.value.n = value;
-    vars.push_back(vv);
+    vars_.push_back(vv);
 }
 
 void Locals::init_dint_local() {
@@ -80,7 +96,7 @@ void Locals::init_dint_local() {
     VarValue vv;
     vv.type = VarType::DInt;
     vv.value.d = value;
-    vars.push_back(vv);
+    vars_.push_back(vv);
 }
 
 void Locals::init_float_local() {
@@ -88,24 +104,24 @@ void Locals::init_float_local() {
     VarValue vv;
     vv.type = VarType::Float;
     vv.value.f = value;
-    vars.push_back(vv);
+    vars_.push_back(vv);
 }
 
 void Locals::get_local(uint index) {
-    size_t i = index + frame;
-    if (i >= vars.size()) {
+    size_t i = index + frame_;
+    if (i >= vars_.size()) {
         error(Error::LocalsStackUnderflow);
     }
 
-    switch (vars[i].type) {
+    switch (vars_[i].type) {
     case VarType::Int:
-        push(vars[i].value.n);
+        push(vars_[i].value.n);
         break;
     case VarType::DInt:
-        dpush(vars[i].value.d);
+        dpush(vars_[i].value.d);
         break;
     case VarType::Float:
-        fpush(vars[i].value.f);
+        fpush(vars_[i].value.f);
         break;
     default:
         assert(0);
@@ -113,29 +129,29 @@ void Locals::get_local(uint index) {
 }
 
 void Locals::set_local(uint index) {
-    size_t i = index + frame;
-    if (i >= vars.size()) {
+    size_t i = index + frame_;
+    if (i >= vars_.size()) {
         error(Error::LocalsStackUnderflow);
     }
 
-    switch (vars[i].type) {
+    switch (vars_[i].type) {
     case VarType::Int:
-        vars[i].value.n = pop();
+        vars_[i].value.n = pop();
         break;
     case VarType::DInt:
-        vars[i].value.d = dpop();
+        vars_[i].value.d = dpop();
         break;
     case VarType::Float:
-        vars[i].value.f = fpop();
+        vars_[i].value.f = fpop();
         break;
     default:
         assert(0);
     }
 }
 
-bool Locals::find_local(const std::string& name, VarName& vname) {
-    auto it = names.find(to_upper(name));
-    if (it == names.end()) {
+bool Locals::find_local(const std::string& name, VarName& vname) const {
+    auto it = names_.find(to_upper(name));
+    if (it == names_.end()) {
         return false;
     }
     else {
