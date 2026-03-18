@@ -398,11 +398,11 @@ END
 forth_ok("MARKER x SEE x UNUSED 1024 / . 'k' EMIT CR", <<'END');
 
 MARKER x
-Latest:    36168 
-Here:      36200 
-Names:     1054132 
-Wordlists: 36168 
-994 k
+Latest:    36200 
+Here:      36232 
+Names:     1054120 
+Wordlists: 36200 
+993 k
 END
 
 note "Test TRACE";

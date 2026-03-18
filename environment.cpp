@@ -10,6 +10,7 @@
 #include "vm.h"
 #include <cfloat>
 #include <climits>
+#include <cstring>
 #include <string>
 
 int g_argc = 0;
@@ -187,4 +188,20 @@ void f_environment_q(const std::string& query) {
 
 void f_environment_q(const char* query, uint size) {
     f_environment_q(std::string(query, query + size));
+}
+
+void f_next_arg() {
+    if (g_argc > 0) {
+        const char* arg = g_argv[0];
+        uint size = static_cast<uint>(strlen(arg));
+        g_argc--;
+        g_argv++;
+        LongString* lstring = vm.wordbuf.append_long_string(arg, size);
+        push(mem_addr(lstring->str()));
+        push(lstring->size());
+    }
+    else {
+        push(0);
+        push(0);
+    }
 }

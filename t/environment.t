@@ -71,4 +71,12 @@ forth_ok('S" WORDLISTS" 		ENVIRONMENT? .S', "( 2147483647 -1 )");
 forth_ok('S" STRING" 	 		ENVIRONMENT? .S', "( -1 -1 )");
 forth_ok('S" STRING-EXT" 		ENVIRONMENT? .S', "( -1 -1 )");
 
+note "Test NEXT-ARG";
+path("$test.fs")->spew("NEXT-ARG NEXT-ARG NEXT-ARG .S");
+capture_ok("forth $test.fs", "( 0 0 0 0 0 0 )");
+capture_ok("forth $test.fs Hello world!", "( 4 5 16 6 0 0 )");
+
+path("$test.fs")->spew("NEXT-ARG TYPE SPACE NEXT-ARG TYPE .S");
+capture_ok("forth $test.fs Hello world!", "Hello world!( )");
+
 end_test;

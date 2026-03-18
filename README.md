@@ -150,8 +150,8 @@ NOT STANDARD:
     #! #IN #TIB -2ROT -FROT -ROT .FS .RS 0<= 0>= 2FIELD: <= >= >NAME
     CONVERT D0<= D0<> D0> D0>= D<= D<> D> D>= DPL DU<= DU> DU>= EXPECT F0<=
     F0<> F0> F0>= F<= F<> F= F> F>= FS-DIRECTORY FS-EXECUTABLE FS-EXISTS
-    FS-READABLE FS-REGULAR FS-SYMLINK FS-WRITABLE INTERPRET LATEST NUMBER
-    NUMBER? OFF ON PARSE-WORD QUERY RDROP SPAN TIB TRACE U<= U>= {
+    FS-READABLE FS-REGULAR FS-SYMLINK FS-WRITABLE INTERPRET LATEST NEXT-ARG
+    NUMBER NUMBER? OFF ON PARSE-WORD QUERY RDROP SPAN TIB TRACE U<= U>= {
 ```
 
 # Documentation of not standard words
@@ -494,6 +494,11 @@ d e f as zero.
 
 Same as \\. Ignore the text up to the end of the line, immediate word i.e. 
 works both in interpret and compile mode.
+
+## NEXT-ARG
+( - addr u | 0 0 )
+
+Get the next argument from the OS command line, consuming it; if there is no argument left, return 0 0.
 
 #
 

@@ -16,3 +16,4 @@ extern bool g_interactive;
 void f_environment_q();
 void f_environment_q(const std::string& query);
 void f_environment_q(const char* query, uint size);
+void f_next_arg();
