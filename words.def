@@ -269,6 +269,7 @@ CODE("IS", IS, F_IMMEDIATE, f_is())
 
 CODE("(", OPEN_PAREN, F_IMMEDIATE, f_open_paren())
 CODE("\\", BACKSLASH, F_IMMEDIATE, f_backslash())
+CODE("#!", SHEBANG, F_IMMEDIATE, f_backslash())
 
 // control flow
 CODE("BRANCH", BRANCH, F_HIDDEN, vm.ip += fetch(vm.ip))

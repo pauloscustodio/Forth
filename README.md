@@ -147,9 +147,9 @@ XCHAR EXT:
     X\STRING-
 
 NOT STANDARD:
-    #IN #TIB -2ROT -FROT -ROT .FS .RS 0<= 0>= 2FIELD: <= >= >NAME CONVERT
-    D0<= D0<> D0> D0>= D<= D<> D> D>= DPL DU<= DU> DU>= EXPECT F0<= F0<>
-    F0> F0>= F<= F<> F= F> F>= FS-DIRECTORY FS-EXECUTABLE FS-EXISTS
+    #! #IN #TIB -2ROT -FROT -ROT .FS .RS 0<= 0>= 2FIELD: <= >= >NAME
+    CONVERT D0<= D0<> D0> D0>= D<= D<> D> D>= DPL DU<= DU> DU>= EXPECT F0<=
+    F0<> F0> F0>= F<= F<> F= F> F>= FS-DIRECTORY FS-EXECUTABLE FS-EXISTS
     FS-READABLE FS-REGULAR FS-SYMLINK FS-WRITABLE INTERPRET LATEST NUMBER
     NUMBER? OFF ON PARSE-WORD QUERY RDROP SPAN TIB TRACE U<= U>= {
 ```
@@ -488,6 +488,12 @@ Convert an execution token into a name token, the inverse of NAME>INTERPRTET.
 
 Same as {:, define local variables a b c from stack, define local variables 
 d e f as zero.
+
+## #!
+( - )
+
+Same as \\. Ignore the text up to the end of the line, immediate word i.e. 
+works both in interpret and compile mode.
 
 #
 

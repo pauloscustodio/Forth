@@ -63,6 +63,21 @@ forth_ok(<<'END', "( 1 4 )");
 		x .S
 END
 
+note "Test #!";
+forth_ok(<<'END', "( 1 4 )");
+		1 #! 2 3
+		4 #! 5 6
+		.S
+END
+
+forth_ok(<<'END', "( 1 4 )");
+		: x
+		  1 #! 2 3
+		  4 #! 5 6 
+		;
+		x .S
+END
+
 note "Test IF";
 note "Test ELSE";
 note "Test THEN";
