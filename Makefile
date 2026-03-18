@@ -34,7 +34,7 @@ clean:
 	$(RM) $(PROJ) $(PROJ)$(EXE) $(OBJS) $(DEPENDS) $(wildcard *.o *.d *.i *.exe *.orig *.core *.bak *~)
 
 test: $(PROJ)$(EXE)
-	perl -S prove --state=slow,save t/*.t
+	perl -S prove -j9 --state=slow,save t/*.t
 
 astyle:
 	$(ASTYLE) *.cpp *.h

@@ -11,7 +11,7 @@ use Config;
 
 # create $test variable unique to each test script
 use vars qw($test);
-$test = 'test_'.(path($0)->basename) =~ s/\.\w+$//r;
+$test = 'test_'.(path($0)->basename) =~ s/\W/_/gr;
 
 # add current working directory to start of PATH so that our executable is tested
 my $cwd = path('.')->absolute;
