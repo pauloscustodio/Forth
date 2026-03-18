@@ -497,6 +497,6 @@ works both in interpret and compile mode.
 
 #
 
-Copyright (c) Paulo Custodio, 2020-2025
+Copyright (c) Paulo Custodio, 2020-2026
 
 License: [GPL3](https://www.gnu.org/licenses/gpl-3.0.html) 
